@@ -10,8 +10,10 @@ class ilMumieTaskServerForm extends ilPropertyFormGUI {
     public function setFields() {
         global $lng;
         $this->nameItem = new ilTextInputGUI("name", 'name');
+        $this->nameItem->setRequired(true);
         parent::addItem($this->nameItem);
         $this->urlItem = new ilTextInputGUI("url_prefix", 'url_prefix');
+        $this->urlItem->setRequired(true);
         parent::addItem($this->urlItem);
 
         $this->addCommandButton('submitServer', $lng->txt('save'));
@@ -24,24 +26,32 @@ class ilMumieTaskServerForm extends ilPropertyFormGUI {
         $DIC->ctrl()->setParameter($this, "server_id", $id);
 
         $ok = parent::checkInput();
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+        if ($ok) {
+            require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
-        $server = new ilMumieTaskServer();
-        $server->setName($this->nameItem->getValue());
-        $server->setUrlPrefix($this->urlItem->getValue());
+            $server = new ilMumieTaskServer();
+            $server->setName($this->getInput("name"));
+            $server->setUrlPrefix($this->getInput("url_prefix"));
 
-        $nameExists = $server->nameExists();
-        $urlPrefixExists = $server->urlPrefixExists();
+            $server->serverExists();
 
-        if (!$id) {
-            if ($nameExists) {
-                $ok = false;
-            }
-            if ($urlPrefixExists) {
-                $ok = false;
+            $nameExists = $server->nameExists();
+            $urlPrefixExists = $server->urlPrefixExists();
+
+            $errors = "";
+            if (!isset($id)) {
+                if ($nameExists) {
+                    $ok = false;
+                    $this->nameItem->setAlert("There is already a MumieServer configuration for this name!");
+                }
+                if ($urlPrefixExists) {
+                    $ok = false;
+                    $this->urlItem->setAlert("There is already a MumieServer configuration for this URL!");
+                }
             }
         }
-
         return $ok;
     }
 }
+
+?>

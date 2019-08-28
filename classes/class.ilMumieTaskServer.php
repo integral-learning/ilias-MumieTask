@@ -82,13 +82,39 @@ class ilMumieTaskServer {
 
     public function nameExists() {
         global $DIC;
-        $query = "SELECT * FROM " . ilMumieTaskServer::$SERVER_TABLE_NAME . " WHERE name = " . $DIC->database()->quote($this->name, 'text');
-        return $DIC->database()->query($query);
+        $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE name = ' . $DIC->database()->quote($this->name, 'text');
+        $result = $DIC->database()->query($query);
+
+        return $DIC->database()->numRows($result) > 0;
     }
 
     public function urlPrefixExists() {
         global $DIC;
         $query = "SELECT * FROM " . ilMumieTaskServer::$SERVER_TABLE_NAME . " WHERE url_prefix = " . $DIC->database()->quote($this->url_prefix, 'text');
-        return $DIC->database()->query($query);
+        $result = $DIC->database()->query($query);
+        return $DIC->database()->numRows($result) > 0;
     }
+
+    public function serverExists() {
+
+        $ch = curl_init();
+
+        debug_backtrace(json_encode($http));
+    }
+
+    public function getCoursesAndTasks() {
+    }
+
+    private function getCoursesAndTasksURL() {
+        return $this->url_prefix . 'public/courses-and-tasks';
+    }
+}
+
+function debug_to_console($data) {
+    $output = $data;
+    if (is_array($output)) {
+        $output = implode(',', $output);
+    }
+
+    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
