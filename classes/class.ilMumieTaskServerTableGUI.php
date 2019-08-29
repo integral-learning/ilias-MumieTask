@@ -19,8 +19,8 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI {
         global $ilCtrl, $lng;
 
         $this->addColumn($lng->txt('id'), 'server_id', '10%');
-        $this->addColumn($lng->txt('name'), 'name', '50%');
-        $this->addColumn($lng->txt('rep_obj_xmum_url_prefix'), 'url_prefix', '50%');
+        $this->addColumn($lng->txt('name'), 'name', '20%');
+        $this->addColumn($lng->txt('rep_robj_xmum_url_prefix'), 'url_prefix', '50%');
         $this->setEnableHeader(true);
         $this->setFormAction($ilCtrl->getFormAction($a_parent_obj));
         $this->addCommandButton('addServer', $lng->txt('rep_robj_xmum_add_server'));

@@ -9,10 +9,10 @@ class ilMumieTaskServerForm extends ilPropertyFormGUI {
 
     public function setFields() {
         global $lng;
-        $this->nameItem = new ilTextInputGUI("name", 'name');
+        $this->nameItem = new ilTextInputGUI($lng->txt('name'), 'name');
         $this->nameItem->setRequired(true);
         parent::addItem($this->nameItem);
-        $this->urlItem = new ilTextInputGUI("url_prefix", 'url_prefix');
+        $this->urlItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_url_prefix'), 'url_prefix');
         $this->urlItem->setRequired(true);
         parent::addItem($this->urlItem);
 
@@ -21,7 +21,8 @@ class ilMumieTaskServerForm extends ilPropertyFormGUI {
     }
 
     function checkInput() {
-        global $DIC;
+        global $DIC, $lng;
+        //$lng->loadLanguageModule("xmum");
         $id = $_GET['server_id'];
         $DIC->ctrl()->setParameter($this, "server_id", $id);
 
@@ -38,17 +39,17 @@ class ilMumieTaskServerForm extends ilPropertyFormGUI {
 
             if (!$server->isValidMumieServer()) {
                 $ok = false;
-                $this->urlItem->setAlert("There is no MUMIE server for this URL");
+                $this->urlItem->setAlert($lng->txt("rep_robj_xmum_server_not_valid"));
             }
 
             if (!isset($id)) {
                 if ($nameExists) {
                     $ok = false;
-                    $this->nameItem->setAlert("There is already a MumieServer configuration for this name!");
+                    $this->nameItem->setAlert($lng->txt("rep_robj_xmum_name_exists"));
                 }
                 if ($urlPrefixExists) {
                     $ok = false;
-                    $this->urlItem->setAlert("There is already a MumieServer configuration for this URL!");
+                    $this->urlItem->setAlert($lng->txt("rep_robj_xmum_url_exists"));
                 }
             } else {
                 $oldServer = new ilMumieTaskServer($id);
@@ -56,11 +57,11 @@ class ilMumieTaskServerForm extends ilPropertyFormGUI {
 
                 if ($nameExists && $oldServer->getName() != $server->getName()) {
                     $ok = false;
-                    $this->nameItem->setAlert("There is already a MumieServer configuration for this name!");
+                    $this->nameItem->setAlert($lng->txt("rep_robj_xmum_name_exists"));
                 }
                 if ($urlPrefixExists && $oldServer->getUrlPrefix() != $server->getUrlPrefix()) {
                     $ok = false;
-                    $this->urlItem->setAlert("There is already a MumieServer configuration for this URL!");
+                    $this->urlItem->setAlert($lng->txt("rep_robj_xmum_url_exists"));
                 }
             }
         }

@@ -98,7 +98,7 @@ class ilMumieTaskServer {
 
     public function isValidMumieServer() {
 
-        return $this->getCoursesAndTasks() != null;
+        return $this->getCoursesAndTasks()->courses != null;
     }
 
     public function getCoursesAndTasks() {
@@ -109,7 +109,7 @@ class ilMumieTaskServer {
         ]);
         $response = curl_exec($curl);
         curl_close($curl);
-        return $response;
+        return json_decode($response);
     }
 
     private function getCoursesAndTasksURL() {
