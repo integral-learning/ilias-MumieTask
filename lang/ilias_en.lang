@@ -1,6 +1,18 @@
 <!-- language file start -->
 add_server#:#Add MumieServer
 id#:#ID
+share_first_name#:#First name 
+share_last_name#:#Last name
+share_email#:#E-Mail
+tab_shared_data#:#Shared data
+tab_servers#:#Servers
+tab_authentication#:#Authentication
+frm_auth_api#:#MUMIE API Key
+frm_auth_api_desc#:#Specify the MUMIE API key for grade synchronization
+frm_auth_org#:#MUMIE Org
+frm_auth_org_desc#:#Specify the MUMIE organization key, i.e "rwth"
+frm_shared_data_description#:#Choose which user data other than the id should be shared with MUMIE servers
+frm_server_description#:# TODO
 url_prefix#:#Server URL
 server_not_valid#:#There is no MUMIE server for this URL
 name_exists#:#There is already a MumieServer configuration for this name!

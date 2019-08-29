@@ -1,5 +1,5 @@
 <?php
-class ilMumieTaskServerForm extends ilPropertyFormGUI {
+class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
 
     function __construct() {
         parent::__construct();

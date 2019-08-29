@@ -102,3 +102,57 @@ if (!$ilDB->tableExists("xmum_mumie_servers")) {
     $ilDB->createSequence("xmum_mumie_servers");
 }
 ?>
+<#4>
+<?php
+if (!$ilDB->tableExists('xmum_admin_settings')) {
+    $fieldsAminSettings = array(
+        'id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'share_first_name' => array(
+            'type' => 'text',
+            'default' => 'false',
+            'length' => '7',
+        ),
+        'share_last_name' => array(
+            'type' => 'text',
+            'default' => 'false',
+            'length' => '7',
+        ),
+        'share_email' => array(
+            'type' => 'text',
+            'default' => 'false',
+            'length' => '7',
+        ),
+        'api_key' => array(
+            'type' => 'text',
+            'length' => '255',
+        ),
+        'org' => array(
+            'type' => 'text',
+            'length' => '7',
+        ),
+    );
+    $ilDB->createTable("xmum_admin_settings", $fieldsAminSettings);
+    $ilDB->addPrimaryKey("xmum_admin_settings", array("id"));
+}
+?>
+<#5>
+<?php
+$query = 'SELECT * FROM ' . 'xmum_admin_settings';
+$result = $ilDB->query($query);
+if ($ilDB->numRows($result) < 1) {
+    $ilDB->manipulate("INSERT INTO xmum_admin_settings "
+        . '(id, share_first_name, share_last_name, share_email, api_key, org) VALUES('
+        . $ilDB->quote(1, 'integer') . ','
+        . $ilDB->quote('false', 'text') . ','
+        . $ilDB->quote('false', 'text') . ','
+        . $ilDB->quote('false', 'text') . ','
+        . $ilDB->quote('', 'text') . ','
+        . $ilDB->quote('', 'text')
+        . ')'
+    );
+}
+?>
