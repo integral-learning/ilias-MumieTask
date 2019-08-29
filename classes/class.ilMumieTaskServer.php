@@ -47,6 +47,7 @@ class ilMumieTaskServer {
     }
 
     public function setUrlPrefix($url_prefix) {
+        $url_prefix = (substr($url_prefix, -1) == '/' ? $url_prefix : $url_prefix . '/');
         $this->url_prefix = $url_prefix;
     }
 
@@ -80,7 +81,7 @@ class ilMumieTaskServer {
         $this->url_prefix = $result->url_prefix;
     }
 
-    public function nameExists() {
+    public function nameExistsInDB() {
         global $DIC;
         $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE name = ' . $DIC->database()->quote($this->name, 'text');
         $result = $DIC->database()->query($query);
@@ -88,21 +89,27 @@ class ilMumieTaskServer {
         return $DIC->database()->numRows($result) > 0;
     }
 
-    public function urlPrefixExists() {
+    public function urlPrefixExistsInDB() {
         global $DIC;
         $query = "SELECT * FROM " . ilMumieTaskServer::$SERVER_TABLE_NAME . " WHERE url_prefix = " . $DIC->database()->quote($this->url_prefix, 'text');
         $result = $DIC->database()->query($query);
         return $DIC->database()->numRows($result) > 0;
     }
 
-    public function serverExists() {
+    public function isValidMumieServer() {
 
-        $ch = curl_init();
-
-        debug_backtrace(json_encode($http));
+        return $this->getCoursesAndTasks() != null;
     }
 
     public function getCoursesAndTasks() {
+        $curl = curl_init($this->getCoursesAndTasksURL());
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_USERAGENT => 'Codular Sample cURL Request',
+        ]);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        return $response;
     }
 
     private function getCoursesAndTasksURL() {

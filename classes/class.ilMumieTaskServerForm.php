@@ -33,18 +33,32 @@ class ilMumieTaskServerForm extends ilPropertyFormGUI {
             $server->setName($this->getInput("name"));
             $server->setUrlPrefix($this->getInput("url_prefix"));
 
-            $server->serverExists();
+            $nameExists = $server->nameExistsInDb();
+            $urlPrefixExists = $server->urlPrefixExistsInDb();
 
-            $nameExists = $server->nameExists();
-            $urlPrefixExists = $server->urlPrefixExists();
+            if (!$server->isValidMumieServer()) {
+                $ok = false;
+                $this->urlItem->setAlert("There is no MUMIE server for this URL");
+            }
 
-            $errors = "";
             if (!isset($id)) {
                 if ($nameExists) {
                     $ok = false;
                     $this->nameItem->setAlert("There is already a MumieServer configuration for this name!");
                 }
                 if ($urlPrefixExists) {
+                    $ok = false;
+                    $this->urlItem->setAlert("There is already a MumieServer configuration for this URL!");
+                }
+            } else {
+                $oldServer = new ilMumieTaskServer($id);
+                $oldServer->load();
+
+                if ($nameExists && $oldServer->getName() != $server->getName()) {
+                    $ok = false;
+                    $this->nameItem->setAlert("There is already a MumieServer configuration for this name!");
+                }
+                if ($urlPrefixExists && $oldServer->getUrlPrefix() != $server->getUrlPrefix()) {
                     $ok = false;
                     $this->urlItem->setAlert("There is already a MumieServer configuration for this URL!");
                 }
