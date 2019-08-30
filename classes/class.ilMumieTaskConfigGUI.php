@@ -82,21 +82,22 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $form->setTitle($lng->txt("rep_robj_xmum_tab_shared_data"));
         $form->setDescription($lng->txt("rep_robj_xmum_frm_shared_data_description"));
 
-        $firstNameItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_share_first_name"), "shareFirstName");
+        $firstNameItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_frm_share_first_name"), "shareFirstName");
+        $firstNameItem->setInfo($lng->txt("rep_robj_xmum_frm_share_first_name_desc"));
         //debug_to_console("loadSaved Vlaues: " . $loadSavedValues . json_encode($adminSettings->getShareFirstName()));
         if ($adminSettings->getShareFirstName() && $loadSavedValues) {
             $firstNameItem->setValue('1');
             $firstNameItem->setChecked(true);
         }
-        $lastNameItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_share_last_name"), "shareLastName");
-
+        $lastNameItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_frm_share_last_name"), "shareLastName");
+        $lastNameItem->setInfo($lng->txt("rep_robj_xmum_frm_share_last_name_desc"));
         if ($adminSettings->getShareLastName() && $loadSavedValues) {
             $lastNameItem->setValue('1');
             $lastNameItem->setChecked(true);
         }
 
-        $emailItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_share_email"), "shareEmail");
-
+        $emailItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_frm_share_email"), "shareEmail");
+        $emailItem->setInfo($lng->txt("rep_robj_xmum_frm_share_email_desc"));
         if ($adminSettings->getShareEmail() && $loadSavedValues) {
             $emailItem->setValue('1');
             $emailItem->setChecked(true);
@@ -142,6 +143,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $adminSettings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setTitle($lng->txt("rep_robj_xmum_tab_authentication"));
         $apiItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_auth_api'), 'api_key');
         $apiItem->setInfo($lng->txt('rep_robj_xmum_frm_auth_api_desc'));
         $orgItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_auth_org'), 'org');

@@ -1,10 +1,13 @@
 <!-- language file start -->
 add_server#:#Add MumieServer
 id#:#ID
-share_first_name#:#First name 
-share_last_name#:#Last name
-share_email#:#E-Mail
-tab_shared_data#:#Shared data
+frm_share_first_name#:#First name 
+frm_share_first_name_desc#:#Choose, whether a users first name should be share with MUMIE servers
+frm_share_last_name#:#Last name
+frm_share_last_name_desc#:#Choose, whether a users last name should be share with MUMIE servers
+frm_share_email#:#E-Mail
+frm_share_email_desc#:#Choose, whether a users e-mail address should be share with MUMIE servers
+tab_shared_data#:#Privacy
 tab_servers#:#Servers
 tab_authentication#:#Authentication
 frm_auth_api#:#MUMIE API Key
