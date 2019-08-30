@@ -112,19 +112,19 @@ if (!$ilDB->tableExists('xmum_admin_settings')) {
             'notnull' => true,
         ),
         'share_first_name' => array(
-            'type' => 'text',
+            'type' => 'integer',
             'default' => 'false',
-            'length' => '7',
+            'length' => '1',
         ),
         'share_last_name' => array(
-            'type' => 'text',
+            'type' => 'integer',
             'default' => 'false',
-            'length' => '7',
+            'length' => '1',
         ),
         'share_email' => array(
-            'type' => 'text',
+            'type' => 'integer',
             'default' => 'false',
-            'length' => '7',
+            'length' => '1',
         ),
         'api_key' => array(
             'type' => 'text',
@@ -147,9 +147,9 @@ if ($ilDB->numRows($result) < 1) {
     $ilDB->manipulate("INSERT INTO xmum_admin_settings "
         . '(id, share_first_name, share_last_name, share_email, api_key, org) VALUES('
         . $ilDB->quote(1, 'integer') . ','
-        . $ilDB->quote('false', 'text') . ','
-        . $ilDB->quote('false', 'text') . ','
-        . $ilDB->quote('false', 'text') . ','
+        . $ilDB->quote(0, 'integer') . ','
+        . $ilDB->quote(0, 'integer') . ','
+        . $ilDB->quote(0, 'integer') . ','
         . $ilDB->quote('', 'text') . ','
         . $ilDB->quote('', 'text')
         . ')'

@@ -66,8 +66,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
     }
 
     function sharedData($setSavedValues = false) {
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_shared_data");
         $this->initShareDataForm();
@@ -85,22 +83,25 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $form->setDescription($lng->txt("rep_robj_xmum_frm_shared_data_description"));
 
         $firstNameItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_share_first_name"), "shareFirstName");
-        /*
-        if ($adminSettings->getShare_first_name() && $loadSavedValues) {
-        $firstNameItem->setValue('1');
-        }*/
+        //debug_to_console("loadSaved Vlaues: " . $loadSavedValues . json_encode($adminSettings->getShareFirstName()));
+        if ($adminSettings->getShareFirstName() && $loadSavedValues) {
+            $firstNameItem->setValue('1');
+            $firstNameItem->setChecked(true);
+        }
         $lastNameItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_share_last_name"), "shareLastName");
-        /*
-        if ($adminSettings->getShare_last_name() && $loadSavedValues) {
-        $lastNameItem->setValue('1');
+
+        if ($adminSettings->getShareLastName() && $loadSavedValues) {
+            $lastNameItem->setValue('1');
+            $lastNameItem->setChecked(true);
         }
-         */
-        $emailItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_share_email", "shareEmail"));
-        /*
-        if ($adminSettings->getShare_email() && $loadSavedValues) {
-        $emailItem->setValue('1');
+
+        $emailItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_share_email"), "shareEmail");
+
+        if ($adminSettings->getShareEmail() && $loadSavedValues) {
+            $emailItem->setValue('1');
+            $emailItem->setChecked(true);
         }
-         */
+
         $form->addItem($firstNameItem);
         $form->addItem($lastNameItem);
         $form->addItem($emailItem);
@@ -112,7 +113,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
     private function submitSharedData() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         global $tpl, $ilCtrl;
-        //debug_to_console("shareFirstName is called");
         $this->initShareDataForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -121,31 +121,59 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         }
 
         $adminSettings = ilMumieTaskAdminSettings::getInstance();
-        $adminSettings->setShare_first_name($this->form->getInput('shareFirstName'));
-        $adminSettings->SetShare_last_name($this->form->getInput('shareLastName'));
-        //$adminSettings->SetShare_email($this->form->getInput('shareEmail'));
-        //debug_to_console("shareFirstName = " . $this->form->getInput('shareFirstName') . "adminsettings share name: " . json_encode($this->form->getInputItemsRecursive()));
+        $adminSettings->setShareFirstName($this->form->getInput('shareFirstName'));
+        $adminSettings->setShareLastName($this->form->getInput('shareLastName'));
+        $adminSettings->setShareEmail($this->form->getInput('shareEmail'));
         $adminSettings->update();
-        //$cmd = "configure";
-        //$this->$cmd();
+        $cmd = "configure";
+        $this->$cmd();
     }
 
     function authentication() {
         global $lng, $tpl, $ilTabs;
         $ilTabs->activateTab("tab_authentication");
+        $this->initAuthForm();
+        $tpl->setContent($this->form->getHTML());
+    }
+
+    function initAuthForm($loadSavedValues = true) {
+        global $lng, $tpl, $ilTabs, $ilCtrl;
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+        $adminSettings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
+        $form->setFormAction($ilCtrl->getFormAction($this));
         $apiItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_auth_api'), 'api_key');
         $apiItem->setInfo($lng->txt('rep_robj_xmum_frm_auth_api_desc'));
-        $form->addItem($apiItem);
         $orgItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_auth_org'), 'org');
         $orgItem->setInfo($lng->txt('rep_robj_xmum_frm_auth_org_desc'));
+        if ($loadSavedValues) {
+            $orgItem->setValue($adminSettings->getOrg());
+            $apiItem->setValue($adminSettings->getApiKey());
+        }
+        $form->addCommandButton('submitAuthForm', $lng->txt('save'));
+        $form->addCommandButton('authentication', $lng->txt('cancel'));
         $form->addItem($orgItem);
-        $form->addCommandButton('submitAuthentication', $lng->txt('save'));
-        $form->addCommandButton('config', $lng->txt('cancel'));
+        $form->addItem($apiItem);
 
         $this->form = $form;
+    }
 
-        $tpl->setContent($form->getHTML());
+    function submitAuthForm() {
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+        global $tpl, $ilCtrl;
+        $this->initAuthForm(false);
+        if (!$this->form->checkInput()) {
+            $this->form->setValuesByPost();
+            $tpl->setContent($this->form->getHTML());
+            return;
+        }
+
+        $adminSettings = ilMumieTaskAdminSettings::getInstance();
+        $adminSettings->setApiKey($this->form->getInput("api_key"));
+        $adminSettings->setOrg($this->form->getInput("org"));
+        $adminSettings->update();
+        $cmd = "configure";
+        $this->$cmd();
     }
 
     function addServer() {

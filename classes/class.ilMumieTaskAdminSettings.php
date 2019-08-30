@@ -1,201 +1,95 @@
 <?php
-class ilMumieTaskAdminSettings extends ActiveRecord {
+
+class ilMumieTaskAdminSettings {
     const TABLE_NAME = 'xmum_admin_settings';
 
-    /**
-     * @return string
-     */
-    static function returnDbTableName() {
-        return self::TABLE_NAME;
-    }
-
-    /**
-     * @var string
-     *
-     * @con_has_field true
-     * @con_fieldtype text
-     * @con_length    7
-     */
     protected $share_first_name;
-    /**
-     * @var string
-     *
-     * @con_has_field true
-     * @con_fieldtype text
-     * @con_length    7
-     */
     protected $share_last_name;
-    /**
-     * @var string
-     *
-     * @con_has_field true
-     * @con_fieldtype text
-     * @con_length    7
-     */
     protected $share_email;
-    /**
-     * @var string
-     *
-     * @con_has_field true
-     * @con_fieldtype text
-     * @con_length    255
-     */
     protected $api_key;
-
-    /**
-     * @var string
-     *
-     * @con_has_field true
-     * @con_fieldtype text
-     * @con_length    7
-     */
     protected $org;
-    /**
-     * @var int
-     *
-     * @con_is_primary true
-     * @con_sequence true
-     * @con_has_field  true
-     * @con_fieldtype  integer
-     * @con_length     8
-     */
     protected $id;
 
-    /**
-     *
-     */
     public static function getInstance() {
         $instance = new ilMumieTaskAdminSettings();
-        return $instance->first();
+        //debug_to_console("FIST IS" . $instance);
+        $instance->load();
+        return $instance;
     }
 
-    /**
-     * Get the value of id
-     */
-    public function getId() {
-        return $this->id;
+    private function load() {
+        global $ilDB;
+        $result = $ilDB->fetchObject($ilDB->query("SELECT * FROM " . ilMumieTaskAdminSettings::TABLE_NAME . " WHERE id = 1"));
+        $this->id = $result->id;
+        $this->share_first_name = $result->share_first_name;
+        $this->share_last_name = $result->share_last_name;
+        $this->share_email = $result->share_email;
+        $this->api_key = $result->api_key;
+        $this->org = $result->org;
     }
 
-    /**
-     * Set the value of id
-     *
-     * @return  self
-     */
-    public function setId($id) {
-        $this->id = $id;
-
-        return $this;
+    public function update() {
+        global $ilDB;
+        $ilDB->update(ilMumieTaskAdminSettings::TABLE_NAME, array(
+            "share_first_name" => array("integer", $this->share_first_name),
+            "share_last_name" => array("integer", $this->share_last_name),
+            "share_email" => array("integer", $this->share_email),
+            "api_key" => array("text", $this->api_key),
+            "org" => array("text", $this->org),
+        ), array(
+            "id" => array("int", $this->id),
+        )
+        );
     }
 
-    /**
-     * Get the value of share_first_name
-     *
-     * @return  string
-     */
-    public function getShare_first_name() {
+    public function getShareFirstName() {
         return $this->share_first_name;
     }
 
-    /**
-     * Set the value of share_first_name
-     *
-     * @param  string  $share_first_name
-     *
-     * @return  self
-     */
-    public function setShare_first_name(string $share_first_name) {
+    public function setShareFirstName($share_first_name) {
         $this->share_first_name = $share_first_name;
 
         return $this;
     }
 
-    /**
-     * Get the value of share_last_name
-     *
-     * @return  string
-     */
-    public function getShare_last_name() {
+    public function getShareLastName() {
         return $this->share_last_name;
     }
 
-    /**
-     * Set the value of share_last_name
-     *
-     * @param  string  $share_last_name
-     *
-     * @return  self
-     */
-    public function setShare_last_name(string $share_last_name) {
+    public function setShareLastName($share_last_name) {
         $this->share_last_name = $share_last_name;
 
         return $this;
     }
 
-    /**
-     * Get the value of share_email
-     *
-     * @return  string
-     */
-    public function getShare_email() {
+    public function getShareEmail() {
         return $this->share_email;
     }
 
-    /**
-     * Set the value of share_email
-     *
-     * @param  string  $share_email
-     *
-     * @return  self
-     */
-    public function setShare_email(string $share_email) {
+    public function setShareEmail($share_email) {
         $this->share_email = $share_email;
 
         return $this;
     }
 
-    /**
-     * Get the value of api_key
-     *
-     * @return  string
-     */
-    public function getApi_key() {
+    public function getApiKey() {
         return $this->api_key;
     }
 
-    /**
-     * Set the value of api_key
-     *
-     * @param  string  $api_key
-     *
-     * @return  self
-     */
-    public function setApi_key(string $api_key) {
+    public function setApiKey($api_key) {
         $this->api_key = $api_key;
 
         return $this;
     }
 
-    /**
-     * Get the value of org
-     *
-     * @return  string
-     */
     public function getOrg() {
         return $this->org;
     }
 
-    /**
-     * Set the value of org
-     *
-     * @param  string  $org
-     *
-     * @return  self
-     */
-    public function setOrg(string $org) {
+    public function setOrg($org) {
         $this->org = $org;
 
         return $this;
     }
 }
-
 ?>
