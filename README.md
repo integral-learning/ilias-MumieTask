@@ -3,4 +3,11 @@ testserver:
 	admin:		 root
 	password:	 4dm1n11sT?At0r
 
+
+Execute tests:
+
+	run the following command in /var/www/html
+
+	./phpunit Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/test/ilMumieTaskSuite.php
+
 	
