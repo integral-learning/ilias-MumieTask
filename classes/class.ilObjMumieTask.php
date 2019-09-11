@@ -8,6 +8,7 @@ require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject
  */
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface {
 
+    private static $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
     private $name, $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile; /**
      * Constructor
      *
@@ -32,14 +33,29 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         global $ilDB;
 
         /*
-    $ilDB->manipulate("INSERT INTO rep_robj_xtst_data " .
-    "(id, is_online, option_one, option_two) VALUES (" .
-    $ilDB->quote($this->getId(), "integer") . "," .
-    $ilDB->quote(0, "integer") . "," .
-    $ilDB->quote("default 1", "text") . "," .
-    $ilDB->quote("default 2", "text") .
-    ")");
-     */
+        $ilDB->manipulate("INSERT INTO rep_robj_xtst_data " .
+        "(id, is_online, option_one, option_two) VALUES (" .
+        $ilDB->quote($this->getId(), "integer") . "," .
+        $ilDB->quote(0, "integer") . "," .
+        $ilDB->quote("default 1", "text") . "," .
+        $ilDB->quote("default 2", "text") .
+        ")");
+         */
+        /*
+        $ilDB->insert("xmum_mumie_task", array(
+        "id" => array('integer', $this->getId()),
+        'name' => array('text', $this->getName()),
+        'taskurl' => array('text', $this->getTaskurl()),
+        'launchcontainer' => array('integer', $this->getLaunchcontainer()),
+        'mumie_course' => array('text', $this->getMumie_course()),
+        'language' => array('text', $this->getLanguage()),
+        'server' => array('text', $this->getServer()),
+        'mumie_coursefile' => array('text', $this->getMumie_coursefile),
+        ));*/
+
+        $ilDB->insert(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME, array(
+            "id" => array('integer', $this->getId()),
+        ));
     }
 
     /**
@@ -64,6 +80,19 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     function doUpdate() {
         global $ilDB;
 
+        $ilDB->update(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
+            array(
+                'name' => array('text', $this->getName()),
+                'taskurl' => array('text', $this->getTaskurl()),
+                'launchcontainer' => array('integer', $this->getLaunchcontainer()),
+                'mumie_course' => array('text', $this->getMumie_course()),
+                'language' => array('text', $this->getLanguage()),
+                'server' => array('text', $this->getServer()),
+                'mumie_coursefile' => array('text', $this->getMumie_coursefile),
+            ),
+            array(
+                'id' => array("int", $this->getId()),
+            ));
         /*
     $ilDB->manipulate($up = "UPDATE rep_robj_xtst_data SET " .
     " is_online = " . $ilDB->quote($this->isOnline(), "integer") . "" .
@@ -291,4 +320,14 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
         return $this;
     }
 }
+
+/*
+function debug_to_console($data) {
+$output = $data;
+if (is_array($output)) {
+$output = implode(',', $output);
+}
+
+echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+}*/
 ?>

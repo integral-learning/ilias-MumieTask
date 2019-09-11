@@ -40,36 +40,29 @@ if (!$ilDB->tableExists("xmum_mumie_task")) {
         'name' => array(
             'type' => 'text',
             'length' => 255,
-            'notnull' => true,
         ),
         'taskurl' => array(
             'type' => 'text',
-            'notnull' => true,
         ),
         'launchcontainer' => array(
             'type' => 'integer',
             'length' => '4',
-            'notnull' => true,
         ),
         'mumie_course' => array(
             'type' => 'text',
             'length' => '255',
-            'notnull' => true,
         ),
         'language' => array(
             'type' => 'text',
             'length' => '255',
-            'notnull' => true,
         ),
         'server' => array(
             'type' => 'text',
             'length' => '255',
-            'notnull' => true,
         ),
         'mumie_coursefile' => array(
             'type' => 'text',
             'length' => '255',
-            'notnull' => true,
         ),
     );
     $ilDB->createTable("xmum_mumie_task", $fieldsMumie);

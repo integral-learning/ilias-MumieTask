@@ -45,7 +45,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
     protected function initPropertiesForm() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormGUI.php');
-        global $tpl;
+        global $tpl, $ilCtrl;
 
         $form = new ilMumieTaskFormGUI();
         $form->setFields();
@@ -54,13 +54,26 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function submitMumieTask() {
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+
         global $tpl;
         $this->initPropertiesForm();
+        /*
         if (!$this->form->checkInput()) {
-            $this->form->setValuesByPost();
-            $tpl->setContent($this->form->getHTML());
-            return;
-        }
+        $this->form->setValuesByPost();
+        $tpl->setContent($this->form->getHTML());
+        return;
+        }*/
+        $mumieTask = new ilObjMumieTask();
+        $mumieTask->setName($this->form->getInput('name'));
+        $mumieTask->setServer($this->form->getInput('server'));
+        $mumieTask->setMumie_course($this->form->getInput('course'));
+        $mumieTask->setTaskurl($this->form->getInput('task'));
+        $mumieTask->setLanguage($this->form->getInput('language'));
+        $mumieTask->setLaunchcontainer($this->form->getInput('launchcontainer'));
+        $mumieTask->setMumie_coursefile("asdwwqeweq");
+        debug_to_console(json_encode($mumieTask));
+        $mumieTask->doUpdate();
     }
 
     /**
@@ -99,5 +112,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     protected function setStatusToNotAttempted() {
         $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM);
     }
+}
+
+function debug_to_console($data) {
+    $output = $data;
+    if (is_array($output)) {
+        $output = implode(',', $output);
+    }
+
+    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
 ?>
