@@ -1,6 +1,7 @@
 <?php
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskServerStructure.php');
 
-class ilMumieTaskServer {
+class ilMumieTaskServer extends ilMumieTaskServerStructure {
     private $server_id;
     private $name;
     private $url_prefix;
@@ -114,6 +115,10 @@ class ilMumieTaskServer {
 
     private function getCoursesAndTasksURL() {
         return $this->url_prefix . 'public/courses-and-tasks';
+    }
+
+    public function loadStructure() {
+        parent::loadStructure($this->getCoursesAndTasks());
     }
 }
 /*

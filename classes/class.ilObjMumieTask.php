@@ -7,7 +7,8 @@ require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject
 /**
  */
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface {
-    /**
+
+    private $name, $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile; /**
      * Constructor
      *
      * @access        public
@@ -162,6 +163,132 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
         } else {
             return ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM;
         }
+    }
+
+    /**
+     * Get the value of name
+     */
+    public function getName() {
+        return $this->name;
+    }
+
+    /**
+     * Set the value of name
+     *
+     * @return  self
+     */
+    public function setName($name) {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of server
+     */
+    public function getServer() {
+        return $this->server;
+    }
+
+    /**
+     * Set the value of server
+     *
+     * @return  self
+     */
+    public function setServer($server) {
+        $this->server = $server;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of mumie_course
+     */
+    public function getMumie_course() {
+        return $this->mumie_course;
+    }
+
+    /**
+     * Set the value of mumie_course
+     *
+     * @return  self
+     */
+    public function setMumie_course($mumie_course) {
+        $this->mumie_course = $mumie_course;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of taskurl
+     */
+    public function getTaskurl() {
+        return $this->taskurl;
+    }
+
+    /**
+     * Set the value of taskurl
+     *
+     * @return  self
+     */
+    public function setTaskurl($taskurl) {
+        $this->taskurl = $taskurl;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of launchcontainer
+     */
+    public function getLaunchcontainer() {
+        return $this->launchcontainer;
+    }
+
+    /**
+     * Set the value of launchcontainer
+     *
+     * @return  self
+     */
+    public function setLaunchcontainer($launchcontainer) {
+        $this->launchcontainer = $launchcontainer;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of language
+     */
+    public function getLanguage() {
+        return $this->language;
+    }
+
+    /**
+     * Set the value of language
+     *
+     * @return  self
+     */
+    public function setLanguage($language) {
+        $this->language = $language;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of mumie_coursefile
+     */
+    public function getMumie_coursefile() {
+        return $this->mumie_coursefile;
+    }
+
+    /**
+     * Set the value of mumie_coursefile
+     *
+     * @return  self
+     */
+    public function setMumie_coursefile($mumie_coursefile) {
+        $this->mumie_coursefile = $mumie_coursefile;
+
+        return $this;
     }
 }
 ?>
