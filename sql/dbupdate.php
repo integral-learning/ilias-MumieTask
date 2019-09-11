@@ -42,7 +42,7 @@ if (!$ilDB->tableExists("xmum_mumie_task")) {
             'length' => 255,
             'notnull' => true,
         ),
-        'name' => array(
+        'taskurl' => array(
             'type' => 'text',
             'notnull' => true,
         ),
