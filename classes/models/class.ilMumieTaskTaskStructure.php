@@ -2,9 +2,6 @@
 class ilMumieTaskTaskStructure {
     private $link, $headline, $languages;
 
-    public function loadStructure() {
-    }
-
     /**
      * Get the value of headline
      */

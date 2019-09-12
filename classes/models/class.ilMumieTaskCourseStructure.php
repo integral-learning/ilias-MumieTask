@@ -1,11 +1,8 @@
 <?php
-require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskTaskStructure.php');
+include_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskTaskStructure.php');
 
 class ilMumieTaskCourseStructure {
     private $name, $tasks, $pathToCourseFile;
-
-    public function loadStructure() {
-    }
 
     /**
      * Get the value of pathToCourseFile
@@ -62,11 +59,22 @@ class ilMumieTaskCourseStructure {
     }
 
     function __construct($courseAndTasks) {
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+        debug_to_console("COURSE STRUCTURE: " . json_encode($courseAndTasks));
         $this->name = $courseAndTasks->name;
         $this->pathToCourseFile = $courseAndTasks->pathToCourseFile;
-        foreach ($tasks as $task) {
+        $this->tasks = [];
+        foreach ($courseAndTasks->tasks as $task) {
             array_push($this->tasks, new ilMumieTaskTaskStructure($task));
         }
+    }
+
+    function getLanguages() {
+        $langs = [];
+        foreach ($courses as $course) {
+            array_push($langs, $course->getLanguages());
+        }
+        return array_unique($langs);
     }
 }
 ?>

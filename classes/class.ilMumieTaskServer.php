@@ -117,7 +117,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure {
         return $this->url_prefix . 'public/courses-and-tasks';
     }
 
-    public function loadStructure() {
+    public function buildStructure() {
         parent::loadStructure($this->getCoursesAndTasks());
     }
 }
