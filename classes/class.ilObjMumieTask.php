@@ -78,9 +78,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * Update data
      */
     function doUpdate() {
-        global $ilDB;
+        global $DIC;
 
-        $ilDB->update(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
+        $DIC->database()->update(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
             array(
                 'name' => array('text', $this->getName()),
                 'taskurl' => array('text', $this->getTaskurl()),
@@ -320,7 +320,6 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
         return $this;
     }
 }
-
 /*
 function debug_to_console($data) {
 $output = $data;
@@ -329,5 +328,6 @@ $output = implode(',', $output);
 }
 
 echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}*/
+}
+ */
 ?>
