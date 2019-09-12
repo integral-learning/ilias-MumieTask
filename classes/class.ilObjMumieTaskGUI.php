@@ -41,18 +41,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     function editProperties() {
         global $tpl;
         $this->initPropertiesForm();
-        //$this->setPropertyValues();
+        $this->setPropertyValues();
         $tpl->setContent($this->form->getHTML());
     }
 
     function setPropertyValues() {
+        $this->object->doRead();
         $values["name"] = $this->object->getName();
-        $values["taskurl"] = $this->object->getTaskurl();
+        $values["task"] = $this->object->getTaskurl();
         $values["launchcontainer"] = $this->object->getLaunchcontainer();
-        $values["mumie_course"] = $this->object->getMumie_course();
+        $values["course"] = $this->object->getMumie_course();
         $values["language"] = $this->object->getLanguage();
         $values["server"] = $this->object->getServer();
         $values["mumie_coursefile"] = $this->object->getMumie_coursefile();
+        //debug_to_console("ID: " . $this->object->getId() . json_encode($values));
         $this->form->setValuesByArray($values);
     }
 
@@ -67,7 +69,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     public function submitMumieTask() {
-        //debug_to_console("SUBMIT MT IS CALLED");
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 
         global $tpl, $ilCtrl;
@@ -76,11 +77,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
-            //debug_to_console("CHECK INPUT FAILED");
-
             return;
         }
-        //debug_to_console("CHECK INPUT OK");
         $mumieTask = $this->object;
         $mumieTask->setName($this->form->getInput('name'));
         $mumieTask->setServer($this->form->getInput('server'));
@@ -89,7 +87,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $mumieTask->setLanguage($this->form->getInput('language'));
         $mumieTask->setLaunchcontainer($this->form->getInput('launchcontainer'));
         $mumieTask->setMumie_coursefile("asdwwqeweq");
-        //debug_to_console(json_encode($mumieTask->getName()));
         $mumieTask->doUpdate();
     }
 
@@ -130,13 +127,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM);
     }
 }
-/*
+
 function debug_to_console($data) {
-$output = $data;
-if (is_array($output)) {
-$output = implode(',', $output);
+    $output = $data;
+    if (is_array($output)) {
+        $output = implode(',', $output);
+    }
+
+    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
 
-echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}*/
 ?>

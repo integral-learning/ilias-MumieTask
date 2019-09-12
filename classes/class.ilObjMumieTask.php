@@ -31,28 +31,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     function doCreate() {
         global $ilDB;
-
-        /*
-        $ilDB->manipulate("INSERT INTO rep_robj_xtst_data " .
-        "(id, is_online, option_one, option_two) VALUES (" .
-        $ilDB->quote($this->getId(), "integer") . "," .
-        $ilDB->quote(0, "integer") . "," .
-        $ilDB->quote("default 1", "text") . "," .
-        $ilDB->quote("default 2", "text") .
-        ")");
-         */
-        /*
-        $ilDB->insert("xmum_mumie_task", array(
-        "id" => array('integer', $this->getId()),
-        'name' => array('text', $this->getName()),
-        'taskurl' => array('text', $this->getTaskurl()),
-        'launchcontainer' => array('integer', $this->getLaunchcontainer()),
-        'mumie_course' => array('text', $this->getMumie_course()),
-        'language' => array('text', $this->getLanguage()),
-        'server' => array('text', $this->getServer()),
-        'mumie_coursefile' => array('text', $this->getMumie_coursefile),
-        ));*/
-
         $ilDB->insert(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME, array(
             "id" => array('integer', $this->getId()),
         ));
@@ -63,15 +41,21 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     function doRead() {
         global $ilDB;
-        /*
 
-    $set = $ilDB->query("SELECT * FROM rep_robj_xtst_data " .
-    " WHERE id = " . $ilDB->quote($this->getId(), "integer")
-    );
-    while ($rec = $ilDB->fetchAssoc($set)) {
-    $this->setOnline($rec["is_online"]);
-    }
-     */
+        $result = $ilDB->query("SELECT * FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME .
+            " WHERE id = " . $ilDB->quote($this->getId(), "integer")
+        );
+        if (!is_null($result)) {
+            $rec = $ilDB->fetchAssoc($result);
+            $this->setName($rec['name']);
+            $this->setTaskurl($rec['taskurl']);
+            $this->setLaunchcontainer($rec['launchcontainer']);
+            $this->setMumie_course($rec['mumie_course']);
+            $this->setMumie_coursefile($rec['mumie_coursefile']);
+            $this->setLanguage($rec['language']);
+            $this->setServer($rec['server']);
+            //debug_to_console(json_encode($rec));
+        }
     }
 
     /**
@@ -320,6 +304,7 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
         return $this;
     }
 }
+
 /*
 function debug_to_console($data) {
 $output = $data;
