@@ -12,7 +12,6 @@ class ilMumieTaskAdminSettings {
 
     public static function getInstance() {
         $instance = new ilMumieTaskAdminSettings();
-        //debug_to_console("FIST IS" . $instance);
         $instance->load();
         return $instance;
     }

@@ -60,7 +60,7 @@ class ilMumieTaskCourseStructure {
 
     function __construct($courseAndTasks) {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
-        debug_to_console("COURSE STRUCTURE: " . json_encode($courseAndTasks));
+        //debug_to_console("COURSE STRUCTURE: " . json_encode($courseAndTasks));
         $this->name = $courseAndTasks->name;
         $this->pathToCourseFile = $courseAndTasks->pathToCourseFile;
         $this->tasks = [];

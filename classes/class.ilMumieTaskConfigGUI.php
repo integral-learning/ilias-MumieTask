@@ -84,7 +84,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
 
         $firstNameItem = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_frm_share_first_name"), "shareFirstName");
         $firstNameItem->setInfo($lng->txt("rep_robj_xmum_frm_share_first_name_desc"));
-        //debug_to_console("loadSaved Vlaues: " . $loadSavedValues . json_encode($adminSettings->getShareFirstName()));
         if ($adminSettings->getShareFirstName() && $loadSavedValues) {
             $firstNameItem->setValue('1');
             $firstNameItem->setChecked(true);
@@ -264,15 +263,4 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $this->form = $form;
     }
 }
-
-/*
-function debug_to_console($data) {
-$output = $data;
-if (is_array($output)) {
-$output = implode(',', $output);
-}
-
-echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}*/
-
 ?>

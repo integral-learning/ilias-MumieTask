@@ -38,7 +38,7 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
             $urlPrefixExists = $server->urlPrefixExistsInDb();
             require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
             $server->buildStructure();
-            debug_to_console("SERVER FORM GUI: " . json_encode($server->getCourses()));
+            //debug_to_console("SERVER FORM GUI: " . json_encode($server->getCourses()));
             if (!$server->isValidMumieServer()) {
                 $ok = false;
                 $this->urlItem->setAlert($lng->txt("rep_robj_xmum_server_not_valid"));

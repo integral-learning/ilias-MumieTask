@@ -54,7 +54,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setMumie_coursefile($rec['mumie_coursefile']);
             $this->setLanguage($rec['language']);
             $this->setServer($rec['server']);
-            //debug_to_console(json_encode($rec));
         }
     }
 
@@ -304,15 +303,4 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
         return $this;
     }
 }
-
-/*
-function debug_to_console($data) {
-$output = $data;
-if (is_array($output)) {
-$output = implode(',', $output);
-}
-
-echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}
- */
 ?>
