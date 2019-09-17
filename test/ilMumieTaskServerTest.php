@@ -7,7 +7,7 @@ class ilMumieTaskServerTest extends TestCase {
         ilUnitUtil::performInitialisation();*/
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskCourseStructure.php');
+        //require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskCourseStructure.php');
 
     }
 
@@ -32,7 +32,7 @@ class ilMumieTaskServerTest extends TestCase {
     public function testCourseStructure() {
         $server = new ilMumieTaskServer();
         $server->setUrlPrefix("https://test.mumie.net/gwt");
-        $server->loadStructure();
+        $server->buildStructure();
 
         $this->assertTrue(!is_null($server->getCourses()));
         /*
