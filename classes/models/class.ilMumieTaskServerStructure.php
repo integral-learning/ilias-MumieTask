@@ -1,5 +1,6 @@
 <?php
 include_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskCourseStructure.php');
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilMumieTaskServerStructure {
 
@@ -9,6 +10,8 @@ class ilMumieTaskServerStructure {
      * Get the value of courses
      */
     public function getCourses() {
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+        //debug_to_console("SERVER STRUCTURE: " . json_encode($coursesAndTasks));
         return $this->courses;
     }
 
@@ -24,11 +27,17 @@ class ilMumieTaskServerStructure {
     }
     protected function loadStructure($coursesAndTasks) {
         $this->courses = [];
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
-        //debug_to_console("SERVER STRUCTURE: " . json_encode($coursesAndTasks));
         foreach ($coursesAndTasks->courses as $course) {
             array_push($this->courses, new ilMumieTaskCourseStructure($course));
         }
+    }
+
+    public function getLanguages() {
+        $langs = [];
+        foreach ($this->courses as $course) {
+            array_push($langs, ...$course->getLanguages());
+        }
+        return array_values(array_unique($langs));
     }
 }
 

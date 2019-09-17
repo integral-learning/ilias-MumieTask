@@ -11,7 +11,7 @@ class ilMumieTaskServerTest extends TestCase {
 
     }
 
-    public function testUrlStreamlinging() {
+    public function testUrlStreamlining() {
         $server = new ilMumieTaskServer();
         $server->setUrlPrefix("https://test.mumie.net/gwt");
         $this->assertEquals($server->getUrlPrefix(), "https://test.mumie.net/gwt/");
@@ -29,16 +29,16 @@ class ilMumieTaskServerTest extends TestCase {
         $this->assertFalse($server->isValidMumieServer());
     }
 
-    public function testCourseStructure() {
+    public function testAvailableLanguages() {
         $server = new ilMumieTaskServer();
         $server->setUrlPrefix("https://test.mumie.net/gwt");
         $server->buildStructure();
 
-        $this->assertTrue(!is_null($server->getCourses()));
-        /*
-    $availableLangs = ["en", 'de', 'zh'];
-    $foundLang = $server->getCourses()[0]->getLanguages();
-    $this->assertTrue($server);*/
+        $foundLang = $server->getLanguages();
+        $this->assertTrue(in_array("de", $foundLang));
+        $this->assertTrue(in_array("en", $foundLang));
+        $this->assertTrue(in_array("zh", $foundLang));
+        $this->assertFalse(in_array("fr", $foundLang));
     }
 
 }

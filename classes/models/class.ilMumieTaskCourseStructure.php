@@ -65,16 +65,17 @@ class ilMumieTaskCourseStructure {
         $this->pathToCourseFile = $courseAndTasks->pathToCourseFile;
         $this->tasks = [];
         foreach ($courseAndTasks->tasks as $task) {
-            array_push($this->tasks, new ilMumieTaskTaskStructure($task));
+            $taskObj = new ilMumieTaskTaskStructure($task);
+            array_push($this->tasks, $taskObj);
         }
     }
 
     function getLanguages() {
         $langs = [];
-        foreach ($courses as $course) {
-            array_push($langs, $course->getLanguages());
+        foreach ($this->tasks as $task) {
+            array_push($langs, ...$task->getLanguages());
         }
-        return array_unique($langs);
+        return array_values(array_unique($langs));
     }
 }
 ?>
