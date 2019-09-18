@@ -1,5 +1,6 @@
 <?php
 require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskServerStructure.php');
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilMumieTaskServer extends ilMumieTaskServerStructure {
     private $server_id;
@@ -36,6 +37,18 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure {
         $servers = array();
         while ($row = $DIC->database()->fetchAssoc($result)) {
             $servers[] = $row;
+        }
+        return $servers;
+    }
+
+    public static function getAllServers() {
+        $servers = array();
+        foreach (ilMumieTaskServer::getAllServerData() as $data) {
+            $server = new ilMumieTaskServer($data["server_id"]);
+            $server->setName($data["name"]);
+            $server->setUrlPrefix($data["url_prefix"]);
+            $server->buildStructure();
+            array_push($servers, $server);
         }
         return $servers;
     }

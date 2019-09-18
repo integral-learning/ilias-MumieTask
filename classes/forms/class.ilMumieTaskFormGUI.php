@@ -1,4 +1,7 @@
 <?php
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+
 class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function __construct() {
         parent::__construct();
@@ -12,8 +15,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->nameItem->setRequired(true);
         $this->addItem($this->nameItem);
 
-        $this->serverItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_mumie_server'), 'server');
+        $servers = ilMumieTaskServer::getAllServers();
+        $this->serverItem = new ilSelectInputGui($lng->txt('rep_robj_xmum_mumie_server'), 'server');
         $this->serverItem->setRequired(true);
+        $this->populateServerOptions($servers);
         $this->addItem($this->serverItem);
 
         $this->courseItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_mumie_course'), 'course');
@@ -42,11 +47,24 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
 
         $this->addCommandButton("submitMumieTask", $lng->txt('save'));
         $this->addCommandButton('editProperties', $lng->txt('cancel'));
-
     }
 
     function checkInput() {
         //TODO: implement validation
         return parent::checkInput();
+    }
+
+    function populateServerOptions($servers) {
+        $options = array();
+
+        //debug_to_console($servers);
+        foreach ($servers as $server) {
+            //debug_to_console(json_encode($server));
+
+            $options[$server->getUrlprefix()] = $server->getName();
+        }
+        //debug_to_console(json_encode($options));
+
+        $this->serverItem->setOptions($options);
     }
 }
