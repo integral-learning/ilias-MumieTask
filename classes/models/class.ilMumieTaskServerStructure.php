@@ -2,9 +2,10 @@
 include_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskCourseStructure.php');
 require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
-class ilMumieTaskServerStructure {
+class ilMumieTaskServerStructure implements \JsonSerializable {
 
     private $courses;
+    private $languages = array();
 
     /**
      * Get the value of courses
@@ -30,14 +31,39 @@ class ilMumieTaskServerStructure {
         foreach ($coursesAndTasks->courses as $course) {
             array_push($this->courses, new ilMumieTaskCourseStructure($course));
         }
+        $this->collectLanguages();
     }
 
-    public function getLanguages() {
+    private function collectLanguages() {
         $langs = [];
         foreach ($this->courses as $course) {
             array_push($langs, ...$course->getLanguages());
         }
-        return array_values(array_unique($langs));
+        $this->languages = array_values(array_unique($langs));
+    }
+
+    public function jsonSerialize() {
+        $vars = get_object_vars($this);
+
+        return $vars;
+    }
+
+    /**
+     * Get the value of languages
+     */
+    public function getLanguages() {
+        return $this->languages;
+    }
+
+    /**
+     * Set the value of languages
+     *
+     * @return  self
+     */
+    public function setLanguages($languages) {
+        $this->languages = $languages;
+
+        return $this;
     }
 }
 

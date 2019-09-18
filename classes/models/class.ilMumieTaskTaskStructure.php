@@ -1,6 +1,7 @@
 <?php
-class ilMumieTaskTaskStructure {
-    private $link, $headline, $languages;
+class ilMumieTaskTaskStructure implements \JsonSerializable {
+    private $link, $headline;
+    private $languages = array();
 
     /**
      * Get the value of headline
@@ -25,15 +26,13 @@ class ilMumieTaskTaskStructure {
         //debug_to_console("TASK STRUCTURE: " . json_encode($task));
         $this->link = $task->link;
         $this->headline = $task->headline;
+        $this->collectLanguages();
     }
 
-    function getLanguages() {
-        $langs = [];
+    function collectLanguages() {
         foreach ($this->headline as $langItem) {
-            array_push($langs, $langItem->language);
+            array_push($this->languages, $langItem->language);
         }
-
-        return $langs;
     }
 
     /**
@@ -50,6 +49,30 @@ class ilMumieTaskTaskStructure {
      */
     public function setLink($link) {
         $this->link = $link;
+
+        return $this;
+    }
+
+    public function jsonSerialize() {
+        $vars = get_object_vars($this);
+
+        return $vars;
+    }
+
+    /**
+     * Get the value of languages
+     */
+    public function getLanguages() {
+        return $this->languages;
+    }
+
+    /**
+     * Set the value of languages
+     *
+     * @return  self
+     */
+    public function setLanguages($languages) {
+        $this->languages = $languages;
 
         return $this;
     }

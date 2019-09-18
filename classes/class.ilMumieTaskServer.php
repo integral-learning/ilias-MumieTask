@@ -2,7 +2,7 @@
 require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskServerStructure.php');
 require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
-class ilMumieTaskServer extends ilMumieTaskServerStructure {
+class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSerializable {
     private $server_id;
     private $name;
     private $url_prefix;
@@ -132,5 +132,11 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure {
 
     public function buildStructure() {
         parent::loadStructure($this->getCoursesAndTasks());
+    }
+
+    public function jsonSerialize() {
+        $vars = parent::jsonSerialize();
+        array_push($vars, ...array_values(get_object_vars($this)));
+        return $vars;
     }
 }

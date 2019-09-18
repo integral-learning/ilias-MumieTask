@@ -1,8 +1,9 @@
 <?php
 include_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskTaskStructure.php');
 
-class ilMumieTaskCourseStructure {
+class ilMumieTaskCourseStructure implements \JsonSerializable {
     private $name, $tasks, $pathToCourseFile;
+    private $languages = array();
 
     /**
      * Get the value of pathToCourseFile
@@ -68,14 +69,39 @@ class ilMumieTaskCourseStructure {
             $taskObj = new ilMumieTaskTaskStructure($task);
             array_push($this->tasks, $taskObj);
         }
+        $this->collectLanguages();
     }
 
-    function getLanguages() {
+    function collectLanguages() {
         $langs = [];
         foreach ($this->tasks as $task) {
             array_push($langs, ...$task->getLanguages());
         }
-        return array_values(array_unique($langs));
+        $this->languages = array_values(array_unique($langs));
+    }
+
+    public function jsonSerialize() {
+        $vars = get_object_vars($this);
+
+        return $vars;
+    }
+
+    /**
+     * Get the value of languages
+     */
+    public function getLanguages() {
+        return $this->languages;
+    }
+
+    /**
+     * Set the value of languages
+     *
+     * @return  self
+     */
+    public function setLanguages($languages) {
+        $this->languages = $languages;
+
+        return $this;
     }
 }
 ?>

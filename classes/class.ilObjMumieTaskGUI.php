@@ -1,4 +1,6 @@
 <?php
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+
 /**
  * @ilCtrl_isCalledBy ilObjMumieTaskGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI
@@ -43,17 +45,19 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $this->initPropertiesForm();
         $this->setPropertyValues();
         $tpl->setContent($this->form->getHTML());
+        $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
     }
 
     function setPropertyValues() {
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $this->object->doRead();
         $values["name"] = $this->object->getName();
-        $values["task"] = $this->object->getTaskurl();
-        $values["launchcontainer"] = $this->object->getLaunchcontainer();
-        $values["course"] = $this->object->getMumie_course();
-        $values["language"] = $this->object->getLanguage();
-        $values["server"] = $this->object->getServer();
-        $values["mumie_coursefile"] = $this->object->getMumie_coursefile();
+        $values["xmum_task"] = $this->object->getTaskurl();
+        $values["xmum_launchcontainer"] = $this->object->getLaunchcontainer();
+        $values["xmum_course"] = $this->object->getMumie_course();
+        $values["xmum_language"] = $this->object->getLanguage();
+        $values["xmum_server"] = $this->object->getServer();
+        $values["xmum_mumie_coursefile"] = $this->object->getMumie_coursefile();
         //debug_to_console("ID: " . $this->object->getId() . json_encode($values));
         $this->form->setValuesByArray($values);
     }
@@ -81,11 +85,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         }
         $mumieTask = $this->object;
         $mumieTask->setName($this->form->getInput('name'));
-        $mumieTask->setServer($this->form->getInput('server'));
-        $mumieTask->setMumie_course($this->form->getInput('course'));
-        $mumieTask->setTaskurl($this->form->getInput('task'));
-        $mumieTask->setLanguage($this->form->getInput('language'));
-        $mumieTask->setLaunchcontainer($this->form->getInput('launchcontainer'));
+        $mumieTask->setServer($this->form->getInput('xmum_server'));
+        $mumieTask->setMumie_course($this->form->getInput('xmum_course'));
+        $mumieTask->setTaskurl($this->form->getInput('xmum_task'));
+        $mumieTask->setLanguage($this->form->getInput('xmum_language'));
+        $mumieTask->setLaunchcontainer($this->form->getInput('xmum_launchcontainer'));
         $mumieTask->setMumie_coursefile("asdwwqeweq");
         $mumieTask->doUpdate();
     }
