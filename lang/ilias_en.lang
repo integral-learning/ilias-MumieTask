@@ -1,5 +1,5 @@
 <!-- language file start -->
-add_server#:#Add MumieServer
+add_server#:#Add MUMIE server
 id#:#ID
 frm_share_first_name#:#First name 
 frm_share_first_name_desc#:#Choose, whether a users first name should be share with MUMIE servers
@@ -31,3 +31,4 @@ launchcontainer#:#Launch container
 window#:#New window
 embedded#:#Embedded
 language#:#Language
+edit_task#:#Edit

@@ -17,6 +17,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
             case 'addServer':
             case 'deleteServer':
             case 'editServer':
+            case 'cancelServer':
             case 'listServers':
             case 'sharedData':
             case 'authentication':
@@ -261,6 +262,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $form->addCommandButton('submitServer', $lng->txt('save'));
         $form->addCommandButton('listServers', $lng->txt('cancel'));
         $this->form = $form;
+    }
+
+    function cancelServer() {
+        $this->listServers();
     }
 }
 ?>

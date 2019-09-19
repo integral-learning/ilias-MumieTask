@@ -32,7 +32,6 @@
             },
             setOnclickListeners: function () {
                 serverDropDown.addEventListener('change', function(){
-                    //console.log('serverDroptdown change');
                     languageController.setLanguageOptions();
                     courseController.setCourseOptions();
                     taskController.setTaskOptions();
@@ -84,7 +83,6 @@
             },
 
             setLanguageOptions: function () {
-                console.log('setLangOptions is called')
                 var availableLangs = getAvailableLanguages();
                 selectedLang = this.getSelectedLanguage();
                 removeAllChildElements(languageDropDown);
@@ -217,7 +215,6 @@
         }
 
         function getHeadlineForLang(task, lang) {
-            console.log("GETHEADLINESFORLANG", lang);
             var headlines = task.headline
             for(var i = 0; i< headlines.length; i++) {
                 var headline = headlines[i];
@@ -237,7 +234,6 @@
 
             },
             setTaskOptions: function() {
-                console.log('setTaskOptions is called');
                 var availableTasks = getAvailableTasks();
                 selectedTask = getSelectedTask();
                 taskDropDown.selectedIndex = 0;
@@ -245,7 +241,6 @@
 
                 for(var i = 0; i < availableTasks.length; i++) {
                     var task = availableTasks[i];
-                    console.log(task);
                     taskDropDown.appendChild(createTaskOption(task))
                     if(isSelectedTask(task)) {
                         taskDropDown.selectedIndex = i;
@@ -257,4 +252,5 @@
         }
 
     })();
+
 })(jQuery)

@@ -17,7 +17,7 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
         parent::addItem($this->urlItem);
 
         $this->addCommandButton('submitServer', $lng->txt('save'));
-        $this->addCommandButton('listServers', $lng->txt('cancel'));
+        $this->addCommandButton('cancelServer', $lng->txt('cancel'));
     }
 
     function checkInput() {
@@ -37,9 +37,6 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
             $nameExists = $server->nameExistsInDb();
             $urlPrefixExists = $server->urlPrefixExistsInDb();
             require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
-            $server->buildStructure();
-            $server->getLanguages();
-            //debug_to_console("SERVER get languages: " . json_encode($server->getLanguages()));
             if (!$server->isValidMumieServer()) {
                 $ok = false;
                 $this->urlItem->setAlert($lng->txt("rep_robj_xmum_server_not_valid"));

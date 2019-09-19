@@ -21,7 +21,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     function performCommand($cmd) {
         switch ($cmd) {
             case "editProperties":
+                $this->setSubTabs("properties");
+                $cmd .= 'Object';
+                $this->$cmd();
             case "submitMumieTask":
+            case 'cancelServer':
+            case 'addServer':
+            case 'submitServer';
             // list all commands that need read permission here
             case "setStatusToCompleted":
             case "setStatusToFailed":
@@ -40,8 +46,18 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $this->addPermissionTab();
     }
 
-    function editProperties() {
-        global $tpl;
+    function setSubTabs($a_tab) {
+        global $ilTabs, $ilCtrl, $lng;
+        switch ($a_tab) {
+            case 'properties':
+                $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_edit_task'), $ilCtrl->getLinkTarget($this, "editProperties"));
+                $ilTabs->addSubTab("add_server", $lng->txt('rep_robj_xmum_add_server'), $ilCtrl->getLinkTarget($this, "addServer"));
+        }
+    }
+
+    function editPropertiesObject() {
+        global $tpl, $ilTabs;
+        $ilTabs->activateSubTab("edit_task");
         $this->initPropertiesForm();
         $this->setPropertyValues();
         $tpl->setContent($this->form->getHTML());
@@ -92,6 +108,53 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $mumieTask->setLaunchcontainer($this->form->getInput('xmum_launchcontainer'));
         $mumieTask->setMumie_coursefile($this->form->getInput('xmum_coursefile'));
         $mumieTask->doUpdate();
+    }
+
+    function addServer() {
+        global $tpl, $ilTabs;
+        $this->setSubTabs('properties');
+        $ilTabs->activateSubTab('add_server');
+        $this->initAddForm();
+        $tpl->setContent($this->form->getHTML());
+    }
+
+    private function initAddForm() {
+        global $ilCtrl, $lng;
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
+
+        $form = new ilMumieTaskServerFormGUI();
+        $form->setFields();
+        $form->setFormAction($ilCtrl->getFormAction($this));
+
+        $this->form = $form;
+    }
+
+    function submitServer() {
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+        //debug_to_console("SUBMIT SERVER IS ALLED");
+        global $tpl;
+        $this->initAddForm();
+        if (!$this->form->checkInput()) {
+            //debug_to_console("INVALID INPUT");
+            $this->form->setValuesByPost();
+            $tpl->setContent($this->form->getHTML());
+            return;
+        }
+        $inputName = $this->form->getInput('name');
+        $inputUrlPrefix = $this->form->getInput("url_prefix");
+
+        $mumieServer = new ilMumieTaskServer();
+        $mumieServer->setName($inputName);
+        $mumieServer->setUrlPrefix($inputUrlPrefix);
+        $mumieServer->upsert();
+
+        $cmd = 'editProperties';
+        $this->performCommand($cmd);
+    }
+
+    function cancelServer() {
+        $cmd = 'editProperties';
+        $this->performCommand($cmd);
     }
 
     /**
