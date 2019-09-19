@@ -6,6 +6,7 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
 
     private $courses;
     private $languages = array();
+    private $tags = array();
 
     /**
      * Get the value of courses
@@ -31,6 +32,8 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
             array_push($this->courses, new ilMumieTaskCourseStructure($course));
         }
         $this->collectLanguages();
+        $this->collectTags();
+        //debug_to_console('SERVER LOAD' . $this->tags);
     }
 
     private function collectLanguages() {
@@ -39,6 +42,14 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
             array_push($langs, ...$course->getLanguages());
         }
         $this->languages = array_values(array_unique($langs));
+    }
+
+    private function collectTags() {
+        $tags = [];
+        foreach ($this->courses as $course) {
+            array_push($tags, ...$course->getTags());
+        }
+        $this->tags = array_values(array_unique($tags));
     }
 
     public function jsonSerialize() {
@@ -63,6 +74,13 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
         $this->languages = $languages;
 
         return $this;
+    }
+
+    /**
+     * Get the value of tags
+     */
+    public function getTags() {
+        return $this->tags;
     }
 }
 

@@ -47,7 +47,7 @@ class ilMumieTaskServerTest extends TestCase {
         $server->buildStructure();
 
         $this->assertTrue($server->isValidMumieServer());
-        $this->assertTrue(count($server->getCourses()[0]->getTags()) > 0);
+        $this->assertTrue(count($server->getTags()) > 0);
     }
 
 }
