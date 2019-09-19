@@ -116,6 +116,83 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     }
 
     public function getCoursesAndTasks() {
+        //MOCK START
+
+        if ($this->getUrlPrefix() == "test/") {
+            $res = json_decode('
+            {
+              "courses":[
+                {
+                  "name":"oHMint - BE Differenzialrechnung",
+                  "tasks":[
+                    {
+                      "link":"link/OHMintIntern/BEDiffer/Ableit/DieProduk/Traini",
+                      "tags":[
+                        "easy",
+                        "short",
+                        "green"
+                      ],
+                      "headline":[
+                        {
+                          "language":"de",
+                          "name":"Spiel Produktregel"
+                        }
+                      ]
+                    },
+                    {
+                      "link":"link/OHMintIntern/BEDiffer/Ableit/DieQuotie/Traini",
+                      "headline":[
+                        {
+                          "language":"de",
+                          "name":"Spiel Quotientenregel"
+                        }
+                      ]
+                    },
+                    {
+                      "link":"link/OHMintIntern/BEDiffer/Ableit/DieKetten/Traini",
+                      "tags":[
+                        "easy",
+                        "green"
+                      ],
+                      "headline":[
+                        {
+                          "language":"de",
+                          "name":"Spiel Kettenregel"
+                        }
+                      ]
+                    },
+                    {
+                      "link":"link/OHMintIntern/BEDiffer/DieAbleitEinerFunkti/Selbst/AbleitAlsTangen",
+                      "tags":[
+                        "green"
+                      ],
+                      "headline":[
+                        {
+                          "language":"de",
+                          "name":"Quiz Differenzen- und Differenzialquotient"
+                        }
+                      ]
+                    },
+                    {
+                      "link":"link/OHMintIntern/BEDiffer/DieAbleitEinerFunkti/Selbst/LinearApprox",
+                      "headline":[
+                        {
+                          "language":"de",
+                          "name":"Quiz Linearisierung"
+                        }
+                      ]
+                    }
+                  ],
+                  "pathToCourseFile":"org/HM_INT/Course/crs_oHMint_intern.meta.xml"
+                }
+              ]
+            }
+            ');
+
+            return $res;
+        }
+
+        //MOCK END
         $curl = curl_init($this->getCoursesAndTasksURL());
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,

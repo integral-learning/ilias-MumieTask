@@ -1,4 +1,6 @@
 <?php
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+
 class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
 
     function __construct() {
@@ -36,7 +38,6 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
 
             $nameExists = $server->nameExistsInDb();
             $urlPrefixExists = $server->urlPrefixExistsInDb();
-            require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
             if (!$server->isValidMumieServer()) {
                 $ok = false;
                 $this->urlItem->setAlert($lng->txt("rep_robj_xmum_server_not_valid"));

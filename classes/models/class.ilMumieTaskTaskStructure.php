@@ -2,6 +2,7 @@
 class ilMumieTaskTaskStructure implements \JsonSerializable {
     private $link, $headline;
     private $languages = array();
+    private $tags = array();
 
     /**
      * Get the value of headline
@@ -23,9 +24,12 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
 
     function __construct($task) {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
-        //debug_to_console("TASK STRUCTURE: " . json_encode($task));
         $this->link = $task->link;
         $this->headline = $task->headline;
+        if (isset($task->tags)) {
+            $this->tags = $task->tags;
+        }
+
         $this->collectLanguages();
     }
 
@@ -75,6 +79,13 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
         $this->languages = $languages;
 
         return $this;
+    }
+
+    /**
+     * Get the value of tags
+     */
+    public function getTags() {
+        return $this->tags;
     }
 }
 ?>

@@ -41,6 +41,15 @@ class ilMumieTaskServerTest extends TestCase {
         $this->assertFalse(in_array("fr", $foundLang));
     }
 
+    public function testTags() {
+        $server = new ilMumieTaskServer();
+        $server->setUrlPrefix('test');
+        $server->buildStructure();
+
+        $this->assertTrue($server->isValidMumieServer());
+        $this->assertTrue(count($server->getCourses()[0]->getTags()) > 0);
+    }
+
 }
 
 ?>

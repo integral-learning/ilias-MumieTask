@@ -48,8 +48,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
 
         $servers = ilMumieTaskServer::getAllServers();
 
-        //debug_to_console("fields: " . json_encode($servers));
-
         $this->serverDataItem = new ilHiddenInputGUI('server_data');
         $this->addItem($this->serverDataItem);
 

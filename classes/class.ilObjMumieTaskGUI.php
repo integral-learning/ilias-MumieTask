@@ -74,7 +74,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $values["xmum_language"] = $this->object->getLanguage();
         $values["xmum_server"] = $this->object->getServer();
         $values["xmum_mumie_coursefile"] = $this->object->getMumie_coursefile();
-        //debug_to_console("ID: " . $this->object->getId() . json_encode($values));
         $this->form->setValuesByArray($values);
     }
 
@@ -131,11 +130,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
     function submitServer() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-        //debug_to_console("SUBMIT SERVER IS ALLED");
         global $tpl;
         $this->initAddForm();
         if (!$this->form->checkInput()) {
-            //debug_to_console("INVALID INPUT");
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
             return;

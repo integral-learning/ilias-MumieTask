@@ -12,7 +12,6 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
      */
     public function getCourses() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
-        //debug_to_console("SERVER STRUCTURE: " . json_encode($coursesAndTasks));
         return $this->courses;
     }
 
