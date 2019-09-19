@@ -6,7 +6,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function __construct() {
         parent::__construct();
     }
-    private $nameItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem;
+    private $nameItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem;
 
     private $serverOptions = array();
     private $courseOptions = array();
@@ -52,6 +52,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
 
         $this->serverDataItem = new ilHiddenInputGUI('server_data');
         $this->addItem($this->serverDataItem);
+
+        $this->courseFileItem = new ilHiddenInputGUI('xmum_coursefile');
+        $this->addItem($this->courseFileItem);
 
         $this->populateOptions($servers);
         $this->addCommandButton("submitMumieTask", $lng->txt('save'));

@@ -90,7 +90,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $mumieTask->setTaskurl($this->form->getInput('xmum_task'));
         $mumieTask->setLanguage($this->form->getInput('xmum_language'));
         $mumieTask->setLaunchcontainer($this->form->getInput('xmum_launchcontainer'));
-        $mumieTask->setMumie_coursefile("asdwwqeweq");
+        $mumieTask->setMumie_coursefile($this->form->getInput('xmum_coursefile'));
         $mumieTask->doUpdate();
     }
 
