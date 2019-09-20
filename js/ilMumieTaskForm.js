@@ -7,15 +7,21 @@
 
     $(document).ready(function () {
         server_data = JSON.parse(document.getElementById('server_data').getAttribute('value'));
-        serverController.init();
-        languageController.init();
-        courseController.init();
-        taskController.init();
+        init();
 
         serverController.setOnclickListeners();
         languageController.setOnclickListeners();
         courseController.setOnclickListeners();
     })
+
+    function init() {
+        serverController.init();
+        languageController.init();
+        courseController.init();
+        taskController.init();
+        filterController.init();
+        taskController.setTaskOptions();
+    }
 
     function removeAllChildElements(elem) {
         while (elem.firstChild) {
@@ -34,6 +40,7 @@
                 serverDropDown.addEventListener('change', function(){
                     languageController.setLanguageOptions();
                     courseController.setCourseOptions();
+                    filterController.setFilterOptions();
                     taskController.setTaskOptions();
                 })
             },
@@ -156,6 +163,7 @@
                 courseDropDown.addEventListener('change', function () {
                     setCoursefile();
                     taskController.setTaskOptions();
+                    filterController.setFilterOptions();
                 })
             },
             setCourseOptions: function () {
@@ -181,6 +189,7 @@
     var taskController = (function() {
         var taskDropDown;
         var selectedTask;
+        var taskCount;
 
         function getAvailableTasks() {
             var availableTasks = [];
@@ -196,12 +205,25 @@
             return availableTasks;
         }
 
+        /*
+        function getFilteredTasks() {
+            var availableTasks = getAvailableTasks();
+            var filteredTasks = []
+            for(var i = 0; i < availableTasks.length; i++){
+                var task = availableTasks[i];
+                if(filterController.filterTask(task)) {
+                    filteredTasks.push(task);
+                }
+            }
+            return task;
+        }
+        */
         function getSelectedTask() {
             var availableTasks = getAvailableTasks();
 
             for(var i = 0; i < availableTasks.length; i++) {
                 var task = availableTasks[i];
-                if(task.link == taskDropDown.options[taskDropDown.selectedIndex].getAttribute('value')) {
+                if(taskDropDown.options[taskDropDown.selectedIndex] && task.link == taskDropDown.options[taskDropDown.selectedIndex].getAttribute('value')) {
                     return task;
                 }
             }
@@ -225,32 +247,154 @@
         }
 
         function isSelectedTask(task) {
-            return selectedTask.link == task.link;
+            return selectedTask && selectedTask.link == task.link;
+        }
+
+        function setTaskCount(count) {
+            taskCount.innerHTML = count;
         }
         return {
             init: function() {
                 taskDropDown = document.getElementById('xmum_task');
-                        taskController.setTaskOptions();
-
+                taskCount = document.getElementById('xmum_task_count');
             },
             setTaskOptions: function() {
-                var availableTasks = getAvailableTasks();
+                var filteredTasks = filterController.getFilteredTasks();
                 selectedTask = getSelectedTask();
                 taskDropDown.selectedIndex = 0;
                 removeAllChildElements(taskDropDown);
 
-                for(var i = 0; i < availableTasks.length; i++) {
-                    var task = availableTasks[i];
+                for(var i = 0; i < filteredTasks.length; i++) {
+                    
+                    var task = filteredTasks[i];
                     taskDropDown.appendChild(createTaskOption(task))
                     if(isSelectedTask(task)) {
                         taskDropDown.selectedIndex = i;
                     }
 
                 }
+                setTaskCount(filteredTasks.length);
 
-            }
+            },
+            getAvailableTasks: getAvailableTasks,
         }
 
+    })();
+
+    var filterController = (function() {
+        var filterElem;
+        var selectedTags;
+        function getAvailableTags() {
+            return courseController.getSelectedCourse()['tags'];
+        }
+
+        function createTagOption(tag, id, checked) {
+            var option = document.createElement('input');
+            option.setAttribute('type', 'checkbox');
+            option.setAttribute('name', "xmum_filter[]");
+            option.setAttribute('value', tag);
+            option.setAttribute('id', id);
+            option.checked = checked;
+
+            var label = document.createElement('label');
+            label.setAttribute('for', id);
+            label.textContent = tag + (checked ? "" : ' (' + getFilteredCount(tag) + ')');
+
+            var wrapper = document.createElement('div');
+            wrapper.style = 'white-space:nowrap';
+            wrapper.appendChild(option);
+            wrapper.appendChild(label);
+
+            return wrapper;
+        }
+
+        function getFilteredCount(tag) {
+            var tags = [tag, ...selectedTags];
+            return getFilteredTasks(tags).length;
+        }
+
+        function filterTask(task, selectedTags) {
+            console.log('filter task: ' + task + ' for tags: ' + selectedTags);
+            return selectedTags.every(function(tag) {
+                return task.tags.includes(tag);
+            });
+        }
+
+        function getFilteredTasks(tags) {
+            var availableTasks = taskController.getAvailableTasks();
+            var filteredTasks = []
+            for(var i = 0; i < availableTasks.length; i++){
+                var task = availableTasks[i];
+                if(filterTask(task, tags)) {
+                    filteredTasks.push(task);
+                }
+            }
+            return filteredTasks;
+        }
+
+
+        function getSelectedTags() {
+            var selectedTags = [];
+
+            for(var i = 0; i < filterElem.children.length; i++) {
+                var input =  filterElem.children[i].children[0];
+                if(input.checked) {
+                    selectedTags.push(input.getAttribute('value'));
+                }
+            }
+
+            return selectedTags;
+        }
+
+        function getInputId(index) {
+            return 'xmum_filter_'+index;
+        }
+
+        function setEventListener(id) {
+            $('#' + id).change(function() {
+                console.log('filter option');
+                taskController.setTaskOptions();
+                filterController.setFilterOptions()
+            })
+        }
+        
+        function hideEmptyFilter(hide) {
+            wrapper = document.getElementById('il_prop_cont_xmum_filter');
+            if(hide) {
+                wrapper.style = 'display:none';
+            } else {
+                wrapper.style = 'display:block';
+            }
+        }
+        return {
+            init: function() {
+                filterElem = document.getElementById("xmum_filter");
+                optionWrapper = filterElem.children[0];
+                this.setFilterOptions();
+            },
+            setFilterOptions: function() {
+                console.log('setFilterOptions is called');
+                var availableTags = getAvailableTags();
+                selectedTags = getSelectedTags();
+                console.log('selectedTags is : ' + selectedTags);
+                removeAllChildElements(filterElem);
+
+                for(var i = 0; i < availableTags.length; i++) {
+                    var tag = availableTags[i]
+                    var tagOption = createTagOption(tag, getInputId(i), selectedTags.includes(tag));
+
+                    filterElem.appendChild(tagOption);
+                    setEventListener(getInputId(i));
+                }
+
+                hideEmptyFilter(availableTags.length < 1);
+            },
+            getFilteredTasks: function() {
+                console.log("API getFilteredTasks is called");
+                return getFilteredTasks(getSelectedTags());
+            }
+
+        }
     })();
 
 })(jQuery)

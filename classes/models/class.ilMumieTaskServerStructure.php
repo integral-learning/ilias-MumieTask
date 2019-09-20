@@ -33,7 +33,6 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
         }
         $this->collectLanguages();
         $this->collectTags();
-        //debug_to_console('SERVER LOAD' . $this->tags);
     }
 
     private function collectLanguages() {

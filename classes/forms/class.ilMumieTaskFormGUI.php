@@ -6,7 +6,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function __construct() {
         parent::__construct();
     }
-    private $nameItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem;
+    private $nameItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem, $filterItem;
 
     private $serverOptions = array();
     private $courseOptions = array();
@@ -28,14 +28,17 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->languageItem->setRequired(true);
         $this->addItem($this->languageItem);
 
-        //$this->courseItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_mumie_course'), 'course');
         $this->courseItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_course'), 'xmum_course');
         $this->courseItem->setRequired(true);
         $this->addItem($this->courseItem);
 
-        //$this->taskItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_mumie_task'), 'task');
+        $this->filterItem = new ilMultiSelectInputGUI($lng->txt("rep_robj_xmum_filter"), "xmum_filter");
+        $this->addItem($this->filterItem);
+
         $this->taskItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_task'), 'xmum_task');
+        $this->taskItem->setInfo($lng->txt('rep_robj_xmum_mumie_task_desc'));
         $this->taskItem->setRequired(true);
+
         $this->addItem($this->taskItem);
 
         $this->launchcontainerItem = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_launchcontainer'), 'xmum_launchcontainer');
@@ -64,7 +67,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         return parent::checkInput();
     }
 
-    function populateOptions($servers) {
+    private function populateOptions($servers) {
         forEach ($servers as $server) {
             $this->compileServerOption($server);
             $this->compileLangOptions($server);
@@ -75,13 +78,13 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->languageItem->setOptions($this->langOptions);
     }
 
-    function compileLangOptions($server) {
+    private function compileLangOptions($server) {
         foreach ($server->getLanguages() as $lang) {
             $this->langOptions[$lang] = $lang;
         };
     }
 
-    function compileServerOption($server) {
+    private function compileServerOption($server) {
 
         $this->serverOptions[$server->getUrlprefix()] = $server->getName();
 
@@ -90,7 +93,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         }
     }
 
-    function compileCourseOption($course) {
+    private function compileCourseOption($course) {
         $this->courseOptions[$course->getName()] = $course->getName();
 
         foreach ($course->getTasks() as $task) {
@@ -98,7 +101,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         }
     }
 
-    function compileTaskOption($task) {
+    private function compileTaskOption($task) {
         $this->taskOptions[$task->getLink()] = $task->getLink();
     }
 

@@ -129,8 +129,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
                       "link":"link/OHMintIntern/BEDiffer/Ableit/DieProduk/Traini",
                       "tags":[
                         "easy",
-                        "short",
-                        "green"
+                        "short"
                       ],
                       "headline":[
                         {

@@ -27,8 +27,10 @@ properties#:#Properties
 mumie_server#:#MUMIE server
 mumie_course#:#MUMIE course
 mumie_task#:#MUMIE task
+mumie_task_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE tasks
 launchcontainer#:#Launch container
 window#:#New window
 embedded#:#Embedded
 language#:#Language
 edit_task#:#Edit
+filter#:#Filter MUMIE Tasks
