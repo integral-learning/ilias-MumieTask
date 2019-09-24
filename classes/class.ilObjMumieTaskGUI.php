@@ -173,7 +173,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
-            return;
         } else {
             $inputName = $this->form->getInput('name');
             $inputUrlPrefix = $this->form->getInput("url_prefix");

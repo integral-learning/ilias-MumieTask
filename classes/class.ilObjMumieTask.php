@@ -71,7 +71,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'mumie_course' => array('text', $this->getMumie_course()),
                 'language' => array('text', $this->getLanguage()),
                 'server' => array('text', $this->getServer()),
-                'mumie_coursefile' => array('text', $this->getMumie_coursefile),
+                'mumie_coursefile' => array('text', $this->getMumie_coursefile()),
             ),
             array(
                 'id' => array("int", $this->getId()),

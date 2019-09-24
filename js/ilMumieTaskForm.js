@@ -161,7 +161,8 @@
             },
             setOnclickListeners: function () {
                 courseDropDown.addEventListener('change', function () {
-                    setCoursefile();
+                    
+                    setCoursefile(courseController.getSelectedCourse());
                     taskController.setTaskOptions();
                     filterController.setFilterOptions();
                 })
