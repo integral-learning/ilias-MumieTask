@@ -24,7 +24,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
                 $this->setSubTabs("properties");
                 $cmd .= 'Object';
                 $this->$cmd();
-            case "submitMumieTask":
+            case "submitMumieTaskUpdate":
+            case "submitMumieTaskCreate":
             case 'cancelServer':
             case 'addServer':
             case 'submitServer';
@@ -55,6 +56,15 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         }
     }
 
+    function create() {
+        global $tpl;
+        $this->initPropertiesForm(true);
+        $this->form->setValuesByArray(array());
+        $tpl->setContent($this->form->getHTML());
+        $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
+        $tpl->setVariable('ADM_CONTENT', $this->form->getHTML());
+    }
+
     function editPropertiesObject() {
         global $tpl, $ilTabs;
         $ilTabs->activateSubTab("edit_task");
@@ -67,7 +77,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     function setPropertyValues() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $this->object->doRead();
-        $values["name"] = $this->object->getName();
+        $values["title"] = $this->object->getTitle();
         $values["xmum_task"] = $this->object->getTaskurl();
         $values["xmum_launchcontainer"] = $this->object->getLaunchcontainer();
         $values["xmum_course"] = $this->object->getMumie_course();
@@ -77,43 +87,71 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $this->form->setValuesByArray($values);
     }
 
-    public function initPropertiesForm() {
+    public function initPropertiesForm($creationMode = false) {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormGUI.php');
-        global $ilCtrl;
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+        global $ilCtrl, $lng;
 
+        //debug_to_console(json_encode($this));
         $form = new ilMumieTaskFormGUI();
         $form->setFields();
+        $form->setTitle($lng->txt('rep_robj_xmum_obj_xmum'));
+        $form->addCommandButton($creationMode ? 'submitMumieTaskCreate' : "submitMumieTaskUpdate", $lng->txt('save'));
+        $form->addCommandButton($creationMode ? 'cancelCreate' : 'editProperties', $lng->txt('cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
 
-    public function submitMumieTask() {
+    public function submitMumieTaskUpdate() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-
         global $tpl, $ilCtrl;
         $this->initPropertiesForm();
 
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
-            return;
+        } else {
+            $this->saveFormValues();
         }
+    }
+
+    public function submitMumieTaskCreate() {
+        $this->initPropertiesForm(true);
+
+        if (!$this->form->checkInput()) {
+            $this->form->setValuesByPost();
+            $tpl->setContent($this->form->getHTML());
+        } else {
+            $this->object = new ilObjMumieTask;
+            $this->object->setType($this->type);
+            $this->object->create();
+            $this->object->createReference();
+            $this->object->putInTree($_GET["ref_id"]);
+            $this->saveFormValues();
+
+            $this->ctrl->setParameter($this, "ref_id", $this->object->getRefId());
+            $this->afterSave($this->object);
+        }
+    }
+
+    public function saveFormValues() {
         $mumieTask = $this->object;
-        $mumieTask->setName($this->form->getInput('name'));
+        $mumieTask->setTitle($this->form->getInput('title'));
         $mumieTask->setServer($this->form->getInput('xmum_server'));
         $mumieTask->setMumie_course($this->form->getInput('xmum_course'));
         $mumieTask->setTaskurl($this->form->getInput('xmum_task'));
         $mumieTask->setLanguage($this->form->getInput('xmum_language'));
         $mumieTask->setLaunchcontainer($this->form->getInput('xmum_launchcontainer'));
         $mumieTask->setMumie_coursefile($this->form->getInput('xmum_coursefile'));
-        $mumieTask->doUpdate();
-    }
 
+        $mumieTask->update();
+    }
     function addServer() {
-        global $tpl, $ilTabs;
+        global $tpl, $ilTabs, $lng;
         $this->setSubTabs('properties');
         $ilTabs->activateSubTab('add_server');
         $this->initAddForm();
+        $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
         $tpl->setContent($this->form->getHTML());
     }
 
@@ -136,17 +174,18 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
             return;
+        } else {
+            $inputName = $this->form->getInput('name');
+            $inputUrlPrefix = $this->form->getInput("url_prefix");
+
+            $mumieServer = new ilMumieTaskServer();
+            $mumieServer->setName($inputName);
+            $mumieServer->setUrlPrefix($inputUrlPrefix);
+            $mumieServer->upsert();
+
+            $cmd = 'editProperties';
+            $this->performCommand($cmd);
         }
-        $inputName = $this->form->getInput('name');
-        $inputUrlPrefix = $this->form->getInput("url_prefix");
-
-        $mumieServer = new ilMumieTaskServer();
-        $mumieServer->setName($inputName);
-        $mumieServer->setUrlPrefix($inputUrlPrefix);
-        $mumieServer->upsert();
-
-        $cmd = 'editProperties';
-        $this->performCommand($cmd);
     }
 
     function cancelServer() {
@@ -166,6 +205,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
      */
     function getStandardCmd() {
         return "showContent";
+    }
+
+    function cancelCreate() {
+        global $ilCtrl;
+
+        $ilCtrl->returnToParent($this);
     }
 
     private function setStatusToCompleted() {

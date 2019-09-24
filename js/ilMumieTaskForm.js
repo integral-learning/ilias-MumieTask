@@ -314,7 +314,6 @@
         }
 
         function filterTask(task, selectedTags) {
-            console.log('filter task: ' + task + ' for tags: ' + selectedTags);
             return selectedTags.every(function(tag) {
                 return task.tags.includes(tag);
             });
@@ -352,7 +351,6 @@
 
         function setEventListener(id) {
             $('#' + id).change(function() {
-                console.log('filter option');
                 taskController.setTaskOptions();
                 filterController.setFilterOptions()
             })
@@ -373,10 +371,8 @@
                 this.setFilterOptions();
             },
             setFilterOptions: function() {
-                console.log('setFilterOptions is called');
                 var availableTags = getAvailableTags();
                 selectedTags = getSelectedTags();
-                console.log('selectedTags is : ' + selectedTags);
                 removeAllChildElements(filterElem);
 
                 for(var i = 0; i < availableTags.length; i++) {
@@ -390,7 +386,6 @@
                 hideEmptyFilter(availableTags.length < 1);
             },
             getFilteredTasks: function() {
-                console.log("API getFilteredTasks is called");
                 return getFilteredTasks(getSelectedTags());
             }
 

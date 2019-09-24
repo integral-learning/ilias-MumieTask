@@ -6,7 +6,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function __construct() {
         parent::__construct();
     }
-    private $nameItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem, $filterItem;
+    private $titleItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem, $filterItem;
 
     private $serverOptions = array();
     private $courseOptions = array();
@@ -16,9 +16,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function setFields() {
         global $lng;
 
-        $this->nameItem = new ilTextInputGUI($lng->txt('name'), 'name');
-        $this->nameItem->setRequired(true);
-        $this->addItem($this->nameItem);
+        $this->titleItem = new ilTextInputGUI($lng->txt('title'), 'title');
+        $this->titleItem->setRequired(true);
+        $this->addItem($this->titleItem);
 
         $this->serverItem = new ilSelectInputGui($lng->txt('rep_robj_xmum_mumie_server'), 'xmum_server');
         $this->serverItem->setRequired(true);
@@ -58,8 +58,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->addItem($this->courseFileItem);
 
         $this->populateOptions($servers);
-        $this->addCommandButton("submitMumieTask", $lng->txt('save'));
-        $this->addCommandButton('editProperties', $lng->txt('cancel'));
     }
 
     function checkInput() {
@@ -108,6 +106,14 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function setValuesByArray($a_values, $a_restrict_to_value_keys = false) {
         parent::setValuesByArray($a_values);
         $servers = (array) ilMumieTaskServer::getAllServers();
+
         $this->serverDataItem->setValue(json_encode($servers));
+        $this->setDefault();
+    }
+
+    function setDefault() {
+        if ($this->launchcontainerItem->getValue() == null) {
+            $this->launchcontainerItem->setValue("0");
+        }
     }
 }

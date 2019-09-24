@@ -22,6 +22,8 @@ name_exists#:#There is already a MumieServer configuration for this name!
 url_exists#:#There is already a MumieServer configuration for this URL!
 xmum_new#:#Add new MumieTask
 xmum_add#:#Add MumieTask
+frm_server_add_title#:#Add a new MUMIE server to ILIAS
+frm_server_edit_title#:#Edit MUMIE server
 obj_xmum#:#MumieTask
 properties#:#Properties
 mumie_server#:#MUMIE server

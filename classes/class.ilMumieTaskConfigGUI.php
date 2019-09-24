@@ -179,15 +179,15 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
     }
 
     function addServer() {
-        global $tpl;
-        $this->initAddForm();
+        global $tpl, $lng;
+        $this->initServerForm();
+        $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
         $tpl->setContent($this->form->getHTML());
     }
 
-    private function initAddForm() {
+    private function initServerForm() {
         global $ilCtrl, $lng;
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
-
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
         $this->form = $form;
@@ -196,7 +196,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
     function submitServer() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         global $tpl;
-        $this->initAddForm();
+        $this->initServerForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
@@ -217,7 +217,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
 
     function deleteServer() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-
         $server = new ilMumieTaskServer($_GET['server_id']);
         $server->delete();
         $cmd = "configure";
@@ -225,43 +224,24 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
     }
 
     function editServer() {
-        global $tpl, $DIC;
+        global $tpl, $DIC, $lng, $ilCtrl;
         $id = $_GET['server_id'];
         $DIC->ctrl()->setParameter($this, "server_id", $id);
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-        $this->initEditForm($this->loadServerSettings($id));
+        $this->initServerForm();
+        $this->form->setValuesByArray($this->loadServerSettings($id));
+        $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_edit_title'));
+        $this->form->setFormAction($ilCtrl->getFormAction($this));
         $tpl->setContent($this->form->getHTML());
     }
 
     protected function loadServerSettings($id) {
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $values = array();
         $server = new ilMumieTaskServer($id);
-
         $server->load();
         $values["name"] = $server->getName();
         $values["url_prefix"] = $server->getUrlPrefix();
         return $values;
-    }
-
-    private function initEditForm($values = array()) {
-        global $ilCtrl, $lng;
-
-        include_once ("./Services/Form/classes/class.ilPropertyFormGUI.php");
-        $form = new ilPropertyFormGUI();
-        $form->setFormAction($ilCtrl->getFormAction($this));
-        $form->setTitle("FORM TITLE");
-
-        $item1 = new ilTextInputGUI("name", 'name');
-        $item1->setValue($values["name"]);
-        $form->addItem($item1);
-
-        $item2 = new ilTextInputGUI("url_prefix", 'url_prefix');
-        $item2->setValue($values["url_prefix"]);
-        $form->addItem($item2);
-
-        $form->addCommandButton('submitServer', $lng->txt('save'));
-        $form->addCommandButton('listServers', $lng->txt('cancel'));
-        $this->form = $form;
     }
 
     function cancelServer() {

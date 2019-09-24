@@ -24,7 +24,6 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
 
     function checkInput() {
         global $DIC, $lng;
-        //$lng->loadLanguageModule("xmum");
         $id = $_GET['server_id'];
         $DIC->ctrl()->setParameter($this, "server_id", $id);
 
