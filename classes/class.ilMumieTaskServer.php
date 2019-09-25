@@ -116,6 +116,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     }
 
     public function getCoursesAndTasks() {
+        //TODO: REMOVE THIS BEFORE PUBLISH
         //MOCK START
 
         if ($this->getUrlPrefix() == "test/") {
