@@ -31,6 +31,9 @@ mumie_server#:#MUMIE server
 mumie_course#:#MUMIE course
 mumie_task#:#MUMIE task
 mumie_task_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE tasks
+frm_tsk_course_not_found#:#This course doesn't exist on the choosen server
+frm_tsk_task_not_found#:#This task doesn't exist in the selected course
+frm_tsk_lang_not_found#:#There is no translation in this langauge for the selected task
 launchcontainer#:#Launch container
 window#:#New window
 embedded#:#Embedded

@@ -119,5 +119,13 @@ class ilMumieTaskCourseStructure implements \JsonSerializable {
     public function getTags() {
         return $this->tags;
     }
+
+    public function getTaskByLink($link) {
+        foreach ($this->tasks as $task) {
+            if ($task->getLink() == $link) {
+                return $task;
+            }
+        }
+    }
 }
 ?>

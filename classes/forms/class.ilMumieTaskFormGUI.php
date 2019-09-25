@@ -55,6 +55,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->addItem($this->serverDataItem);
 
         $this->courseFileItem = new ilHiddenInputGUI('xmum_coursefile');
+        $this->courseFileItem->setRequired(true);
         $this->addItem($this->courseFileItem);
 
         $this->populateOptions($servers);
@@ -62,7 +63,33 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
 
     function checkInput() {
         //TODO: implement validation
-        return parent::checkInput();
+        global $lng;
+        $ok = parent::checkInput();
+        $server = new ilMumieTaskServer();
+        $server->setUrlPrefix($this->getInput('xmum_server'));
+        $server->buildStructure();
+
+        if (!$server->isValidMumieServer()) {
+            $ok = false;
+            $this->serverItem->setAlert($lng->txt('rep_robj_xmum_server_not_valid'));
+        }
+        $course = $server->getCoursebyName($this->getInput('xmum_course'));
+        if ($course == null) {
+            $ok = false;
+            $this->courseItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_course_not_found'));
+        }
+
+        $task = $course->getTaskByLink($this->getInput('xmum_task'));
+        if ($task == null) {
+            $ok = false;
+            $this->taskItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_task_not_found'));
+        }
+        if (!in_array($this->getInput("xmum_language"), $task->getLanguages())) {
+            $ok = false;
+            $this->languageItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_lang_not_found'));
+        }
+
+        return $ok;
     }
 
     private function populateOptions($servers) {

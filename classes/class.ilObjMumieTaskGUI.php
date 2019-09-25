@@ -110,6 +110,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
+            $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
         } else {
             $this->saveFormValues();
         }
@@ -121,6 +122,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
+            $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
         } else {
             $this->object = new ilObjMumieTask;
             $this->object->setType($this->type);

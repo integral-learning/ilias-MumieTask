@@ -81,6 +81,14 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
     public function getTags() {
         return $this->tags;
     }
+
+    public function getCoursebyName($name) {
+        foreach ($this->courses as $course) {
+            if ($course->getName() == $name) {
+                return $course;
+            }
+        }
+    }
 }
 
 ?>
