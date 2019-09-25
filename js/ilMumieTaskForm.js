@@ -12,6 +12,7 @@
         serverController.setOnclickListeners();
         languageController.setOnclickListeners();
         courseController.setOnclickListeners();
+        taskController.setOnclickListeners();
     })
 
     function init() {
@@ -21,6 +22,7 @@
         taskController.init();
         filterController.init();
         taskController.setTaskOptions();
+        taskController.updateDefaultName();
     }
 
     function removeAllChildElements(elem) {
@@ -42,6 +44,7 @@
                     courseController.setCourseOptions();
                     filterController.setFilterOptions();
                     taskController.setTaskOptions();
+                    taskController.updateDefaultName();
                 })
             },
             getSelectedServerName: function () {
@@ -83,6 +86,7 @@
                 languageDropDown.addEventListener('change', function() {
                     courseController.setCourseOptions()
                     taskController.setTaskOptions();
+                    taskController.updateDefaultName();
                 });
             },
             getSelectedLanguage: function () {
@@ -191,6 +195,7 @@
         var taskDropDown;
         var selectedTask;
         var taskCount;
+        var titleElem;
 
         function getAvailableTasks() {
             var availableTasks = [];
@@ -206,19 +211,17 @@
             return availableTasks;
         }
 
-        /*
-        function getFilteredTasks() {
-            var availableTasks = getAvailableTasks();
-            var filteredTasks = []
-            for(var i = 0; i < availableTasks.length; i++){
-                var task = availableTasks[i];
-                if(filterController.filterTask(task)) {
-                    filteredTasks.push(task);
-                }
+        function isDefaultTaskName(name) {
+            if(name == null || name == "") {
+                return true;
             }
-            return task;
+            return server_data
+                .flatMap(server => server.courses)
+                .flatMap(course => course.tasks)
+                .flatMap(task => task.headline)
+                .map(headline => headline.name)
+                .includes(name);            
         }
-        */
         function getSelectedTask() {
             var availableTasks = getAvailableTasks();
 
@@ -254,10 +257,25 @@
         function setTaskCount(count) {
             taskCount.innerHTML = count;
         }
+
+        function updateDefaultName() {
+            if(isDefaultTaskName(titleElem.value)) {
+                var task = getSelectedTask();
+                var lang = languageController.getSelectedLanguage();
+                titleElem.value = getHeadlineForLang(task, lang);
+            }
+        }
         return {
             init: function() {
                 taskDropDown = document.getElementById('xmum_task');
                 taskCount = document.getElementById('xmum_task_count');
+                titleElem = document.getElementById('title');
+            },
+
+            setOnclickListeners: function() {
+                taskDropDown.addEventListener('change', function() {
+                    updateDefaultName();
+                })
             },
             setTaskOptions: function() {
                 var filteredTasks = filterController.getFilteredTasks();
@@ -278,6 +296,7 @@
 
             },
             getAvailableTasks: getAvailableTasks,
+            updateDefaultName: updateDefaultName
         }
 
     })();
@@ -353,7 +372,8 @@
         function setEventListener(id) {
             $('#' + id).change(function() {
                 taskController.setTaskOptions();
-                filterController.setFilterOptions()
+                filterController.setFilterOptions();
+                taskController.updateDefaultName();
             })
         }
         
