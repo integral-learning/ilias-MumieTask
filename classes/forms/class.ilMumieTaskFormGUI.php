@@ -62,7 +62,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     }
 
     function checkInput() {
-        //TODO: implement validation
         global $lng;
         $ok = parent::checkInput();
         $server = new ilMumieTaskServer();
