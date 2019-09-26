@@ -3,6 +3,7 @@
 include_once ("./Services/Repository/classes/class.ilObjectPlugin.php");
 require_once ("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
+require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
 
 /**
  */
@@ -302,5 +303,42 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
 
         return $this;
     }
+
+    /**
+     * Generates the html code for launching the mumietask 
+     */
+
+    public function getContent(){
+        $ssoService = new ilMummieTaskSSOService;
+        return $ssoService->setUpTokenAndLaunchForm($this->getLoginUrl(), $this->launchcontainer, $this->getProblemUrl());
+    }
+
+    /**
+     * Get complete url for single sign in to MUMIE server
+     *
+     * @return string login url
+     */
+    public function getLoginUrl() {
+        return $this->server . 'public/xapi/auth/sso/login' ;
+    }
+
+    /**
+     * Get complete url for single sign out from MUMIE server
+     *
+     * @return string logout url
+     */
+    public function getLogoutUrl() {
+        return $this->server . 'public/xapi/auth/sso/logout' ;
+    }
+
+    /**
+     * Get complete url to the problem on MUMIE server
+     *
+     * @return string login url
+     */
+    public function getProblemUrl() {
+        return $this->server . $this->taskurl . '?lang=' . $this->language;
+    }
+
 }
 ?>

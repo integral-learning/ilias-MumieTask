@@ -1,0 +1,28 @@
+<!-- fim: [exco] new template. -->
+<!-- BEGIN form_action_and_target -->
+<form id='mumie_sso_form' name='mumie_sso_form' method='post' action={TASKURL} target = {TARGET}>
+    <!-- END form_action_and_target -->
+    <input class='btn btn-default' type={BUTTONTYPE} value = 'Launch' /> 
+    <!-- BEGIN userId -->
+    <input type='hidden' name='userId' id='userId' type ='text' value={USER_ID}/>
+    <!-- END userId -->
+    <!-- BEGIN token -->
+    <input type='hidden' name='token' id='token' type ='text' value={TOKEN}/> 
+    <!-- END token -->
+    <!-- BEGIN org -->
+    <input type='hidden' name='org' id='org' type ='text' value={ORG}/>
+    <!-- END org -->
+    <!-- BEGIN problemurl -->
+    <input type='hidden' name='resource' id='resource' type ='text' value={PROBLEMURL}/>
+    <!-- END problemurl -->
+        
+</form>
+    <p> </p>
+<!-- BEGIN iframe-->
+<iframe name='MumieTaskLaunchFrame'  id='basicMumieTaskLaunchFrame' src=''
+width={WIDTH} height={HEIGHT} scrolling='auto' frameborder='0' transparency>
+</iframe>
+<!--END iframe-->
+<!--BEGIN test-->
+{EMBED}
+<!--END test-->

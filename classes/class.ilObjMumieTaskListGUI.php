@@ -17,7 +17,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI {
             (
             array(
                 "permission" => "read",
-                "cmd" => "view",
+                "cmd" => "viewContent",
                 "default" => true),
             array(
                 "permission" => "write",

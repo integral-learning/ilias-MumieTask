@@ -5,6 +5,11 @@ require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject
  * @ilCtrl_isCalledBy ilObjMumieTaskGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI
  */
+
+
+include_once('./Services/Repository/classes/class.ilObjectPluginGUI.php');
+include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+
 class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     const LP_SESSION_ID = 'xmum_lp_session_state';
 
@@ -30,6 +35,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'addServer':
             case 'submitServer';
             // list all commands that need read permission here
+            case "viewContent":
             case "setStatusToCompleted":
             case "setStatusToFailed":
             case "setStatusToInProgress":
@@ -41,6 +47,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
     function setTabs() {
         global $ilCtrl, $ilAccess, $ilTabs;
+        $this->tabs->addTab("viewContent", $this->lng->txt("content"), $ilCtrl->getLinkTarget($this, "viewContent"));
         if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
             $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
         }
@@ -205,7 +212,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
      * Get standard command
      */
     function getStandardCmd() {
-        return "showContent";
+        return "viewContent";
     }
 
     function cancelCreate() {
@@ -217,6 +224,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     private function setStatusToCompleted() {
         $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_COMPLETED_NUM);
     }
+
+    protected function viewContent()
+	{
+        global $ilCtrl, $DIC;
+        $this->tpl->setContent($this->object->getContent());
+
+	}
 
     private function setStatusAndRedirect($status) {
         global $ilUser;

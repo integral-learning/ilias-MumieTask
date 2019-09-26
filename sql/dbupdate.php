@@ -2,7 +2,7 @@
 <?php
 if (!$ilDB->tableExists("xmum_sso_tokens")) {
     $fieldsToken = array(
-        'id' => array(
+        'id' => array( 
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
@@ -12,7 +12,8 @@ if (!$ilDB->tableExists("xmum_sso_tokens")) {
             'length' => 30,
             'notnull' => true,
         ),
-        'user' => array(
+        // user id
+        'user' => array( 
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
@@ -26,6 +27,8 @@ if (!$ilDB->tableExists("xmum_sso_tokens")) {
 
     $ilDB->createTable("xmum_sso_tokens", $fieldsToken);
     $ilDB->addPrimaryKey("xmum_sso_tokens", array("id"));
+    $ilDB->createSequence("xmum_sso_tokens");
+
 }
 ?>
 <#2>
