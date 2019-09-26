@@ -17,9 +17,6 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
         $this->urlItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_url_prefix'), 'url_prefix');
         $this->urlItem->setRequired(true);
         parent::addItem($this->urlItem);
-
-        $this->addCommandButton('submitServer', $lng->txt('save'));
-        $this->addCommandButton('cancelServer', $lng->txt('cancel'));
     }
 
     function checkInput() {

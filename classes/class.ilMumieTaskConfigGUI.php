@@ -113,7 +113,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
 
     private function submitSharedData() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        global $tpl, $ilCtrl;
+        global $tpl, $ilCtrl, $lng;
         $this->initShareDataForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -126,7 +126,8 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $adminSettings->setShareLastName($this->form->getInput('shareLastName'));
         $adminSettings->setShareEmail($this->form->getInput('shareEmail'));
         $adminSettings->update();
-        $cmd = "configure";
+        $cmd = "sharedData";
+        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         $this->$cmd();
     }
 
@@ -162,7 +163,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
 
     function submitAuthForm() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        global $tpl, $ilCtrl;
+        global $tpl, $ilCtrl, $lng;
         $this->initAuthForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -174,7 +175,8 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $adminSettings->setApiKey($this->form->getInput("api_key"));
         $adminSettings->setOrg($this->form->getInput("org"));
         $adminSettings->update();
-        $cmd = "configure";
+        $cmd = "authentication";
+        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         $this->$cmd();
     }
 
@@ -190,12 +192,14 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
+        $form->addCommandButton('submitServer', $lng->txt('save'));
+        $form->addCommandButton('cancelServer', $lng->txt('cancel'));
         $this->form = $form;
     }
 
     function submitServer() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-        global $tpl;
+        global $tpl, $lng;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -212,14 +216,17 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $mumieServer->setName($inputName);
         $mumieServer->setUrlPrefix($inputUrlPrefix);
         $mumieServer->upsert();
+        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
         $this->listServers();
     }
 
     function deleteServer() {
+        global $lng;
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $server = new ilMumieTaskServer($_GET['server_id']);
         $server->delete();
         $cmd = "configure";
+        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_deleted'), true);
         $this->$cmd();
     }
 

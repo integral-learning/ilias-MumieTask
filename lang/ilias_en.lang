@@ -38,5 +38,9 @@ launchcontainer#:#Launch container
 window#:#New window
 embedded#:#Embedded
 language#:#Language
-edit_task#:#Edit
+edit_task#:#Settings
 filter#:#Filter MUMIE Tasks
+msg_suc_saved#:#Changes successfully saved
+msg_suc_server_add#:#Added MUMIE server successfully
+msg_suc_deleted#:#Deletion successful
+msg_no_server_found#:#No MUMIE server configuration found! <br><br> Please add a new MUMIE server before continuing.

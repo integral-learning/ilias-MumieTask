@@ -18,6 +18,7 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI {
     public function init($a_parent_obj) {
         global $ilCtrl, $lng;
 
+        $this->setTitle($lng->txt("rep_robj_xmum_tab_servers"));
         $this->addColumn($lng->txt('id'), 'server_id', '10%');
         $this->addColumn($lng->txt('name'), 'name', '20%');
         $this->addColumn($lng->txt('rep_robj_xmum_url_prefix'), 'url_prefix', '50%');

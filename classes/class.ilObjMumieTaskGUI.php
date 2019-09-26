@@ -6,9 +6,9 @@ require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI
  */
 
-
-include_once('./Services/Repository/classes/class.ilObjectPluginGUI.php');
-include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+include_once ('./Services/Repository/classes/class.ilObjectPluginGUI.php');
+include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
 class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     const LP_SESSION_ID = 'xmum_lp_session_state';
@@ -29,6 +29,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
                 $this->setSubTabs("properties");
                 $cmd .= 'Object';
                 $this->$cmd();
+            case 'createObject':
             case "submitMumieTaskUpdate":
             case "submitMumieTaskCreate":
             case 'cancelServer':
@@ -47,33 +48,52 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
     function setTabs() {
         global $ilCtrl, $ilAccess, $ilTabs;
-        $this->tabs->addTab("viewContent", $this->lng->txt("content"), $ilCtrl->getLinkTarget($this, "viewContent"));
-        if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
-            $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
+        $this->tabs->clearTargets();
+        if ($this->isCreationMode()) {
+        } else {
+            $this->tabs->addTab("viewContent", $this->lng->txt("content"), $ilCtrl->getLinkTarget($this, "viewContent"));
+            if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
+                $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
+            }
+            $this->addPermissionTab();
         }
-        $this->addPermissionTab();
     }
 
     function setSubTabs($a_tab) {
         global $ilTabs, $ilCtrl, $lng;
+        //$ilTabs->clearSubTabs();
         switch ($a_tab) {
             case 'properties':
                 $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_edit_task'), $ilCtrl->getLinkTarget($this, "editProperties"));
                 $ilTabs->addSubTab("add_server", $lng->txt('rep_robj_xmum_add_server'), $ilCtrl->getLinkTarget($this, "addServer"));
+                break;
         }
     }
 
     function create() {
-        global $tpl;
+        $this->setCreationMode(true);
+        global $$ilTabs, $ilCtrl, $lng;
+        if (empty(ilMumieTaskServer::getAllServers())) {
+            $this->addServer();
+            ilUtil::sendInfo($lng->txt("rep_robj_xmum_msg_no_server_found"), true);
+        } else {
+            $this->createObject();
+        }
+    }
+
+    function createObject() {
+        global $tpl, $ilTabs;
+        $ilTabs->activateSubTab('create_task');
         $this->initPropertiesForm(true);
         $this->form->setValuesByArray(array());
         $tpl->setContent($this->form->getHTML());
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
-        $tpl->setVariable('ADM_CONTENT', $this->form->getHTML());
+        //$tpl->setVariable('ADM_CONTENT', $this->form->getHTML());
     }
 
     function editPropertiesObject() {
         global $tpl, $ilTabs;
+        $ilTabs->activateTab('properties');
         $ilTabs->activateSubTab("edit_task");
         $this->initPropertiesForm();
         $this->setPropertyValues();
@@ -94,7 +114,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $this->form->setValuesByArray($values);
     }
 
-    public function initPropertiesForm($creationMode = false) {
+    public function initPropertiesForm() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormGUI.php');
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         global $ilCtrl, $lng;
@@ -103,15 +123,15 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $form = new ilMumieTaskFormGUI();
         $form->setFields();
         $form->setTitle($lng->txt('rep_robj_xmum_obj_xmum'));
-        $form->addCommandButton($creationMode ? 'submitMumieTaskCreate' : "submitMumieTaskUpdate", $lng->txt('save'));
-        $form->addCommandButton($creationMode ? 'cancelCreate' : 'editProperties', $lng->txt('cancel'));
+        $form->addCommandButton($this->getCreationMode() ? 'submitMumieTaskCreate' : "submitMumieTaskUpdate", $lng->txt('save'));
+        $form->addCommandButton($this->getCreationMode() ? 'cancelCreate' : 'editProperties', $lng->txt('cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
 
     public function submitMumieTaskUpdate() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-        global $tpl, $ilCtrl;
+        global $tpl, $ilCtrl, $lng;
         $this->initPropertiesForm();
 
         if (!$this->form->checkInput()) {
@@ -120,10 +140,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
         } else {
             $this->saveFormValues();
+            ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
+            $cmd = 'editProperties';
+            $this->performCommand($cmd);
         }
     }
 
     public function submitMumieTaskCreate() {
+        global $lng;
         $this->initPropertiesForm(true);
 
         if (!$this->form->checkInput()) {
@@ -140,6 +164,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
             $this->ctrl->setParameter($this, "ref_id", $this->object->getRefId());
             $this->afterSave($this->object);
+            $this->setCreationMode(false);
+            ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         }
     }
 
@@ -157,28 +183,30 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
     function addServer() {
         global $tpl, $ilTabs, $lng;
-        $this->setSubTabs('properties');
+        $this->setSubTabs($this->getCreationMode() ? 'create' : 'properties');
         $ilTabs->activateSubTab('add_server');
-        $this->initAddForm();
+        $this->initServerForm();
         $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
         $tpl->setContent($this->form->getHTML());
     }
 
-    private function initAddForm() {
+    private function initServerForm() {
         global $ilCtrl, $lng;
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
 
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
         $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->addCommandButton('submitServer', $lng->txt('save'));
+        $form->addCommandButton('cancelServer', $lng->txt('cancel'));
 
         $this->form = $form;
     }
 
     function submitServer() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-        global $tpl;
-        $this->initAddForm();
+        global $tpl, $lng;
+        $this->initServerForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
@@ -190,9 +218,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             $mumieServer->setName($inputName);
             $mumieServer->setUrlPrefix($inputUrlPrefix);
             $mumieServer->upsert();
+            ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
+            if ($this->isCreationMode()) {
+                $this->create();
+            } else {
+                $cmd = 'editProperties';
 
-            $cmd = 'editProperties';
-            $this->performCommand($cmd);
+                $this->performCommand($cmd);
+            }
         }
     }
 
@@ -225,12 +258,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_COMPLETED_NUM);
     }
 
-    protected function viewContent()
-	{
-        global $ilCtrl, $DIC;
+    protected function viewContent() {
+        global $ilCtrl, $DIC, $ilTabs;
+        $ilTabs->activateTab('viewContent');
         $this->tpl->setContent($this->object->getContent());
-
-	}
+    }
 
     private function setStatusAndRedirect($status) {
         global $ilUser;
@@ -249,6 +281,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
     protected function setStatusToNotAttempted() {
         $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM);
+    }
+
+    function isCreationMode() {
+
+        return $this->getCreationMode() == true || !($this->object instanceof ilObjMumieTask);
     }
 }
 
