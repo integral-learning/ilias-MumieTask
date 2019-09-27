@@ -33,6 +33,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case "submitMumieTaskUpdate":
             case "submitMumieTaskCreate":
             case 'cancelServer':
+            case 'cancelCreate':
             case 'addServer':
             case 'submitServer';
             // list all commands that need read permission here
@@ -61,7 +62,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
     function setSubTabs($a_tab) {
         global $ilTabs, $ilCtrl, $lng;
-        //$ilTabs->clearSubTabs();
+        $ilTabs->clearSubTabs();
         switch ($a_tab) {
             case 'properties':
                 $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_edit_task'), $ilCtrl->getLinkTarget($this, "editProperties"));
@@ -71,6 +72,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function create() {
+
         $this->setCreationMode(true);
         global $$ilTabs, $ilCtrl, $lng;
         if (empty(ilMumieTaskServer::getAllServers())) {
@@ -86,9 +88,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $ilTabs->activateSubTab('create_task');
         $this->initPropertiesForm(true);
         $this->form->setValuesByArray(array());
-        $tpl->setContent($this->form->getHTML());
+
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
-        //$tpl->setVariable('ADM_CONTENT', $this->form->getHTML());
+        $tpl->setContent($this->form->getHTML());
+        //$tpl->setVariable('ADM_CONTENT', $this->form->getHTML());*/
     }
 
     function editPropertiesObject() {
@@ -119,12 +122,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         global $ilCtrl, $lng;
 
-        //debug_to_console(json_encode($this));
         $form = new ilMumieTaskFormGUI();
         $form->setFields();
         $form->setTitle($lng->txt('rep_robj_xmum_obj_xmum'));
-        $form->addCommandButton($this->getCreationMode() ? 'submitMumieTaskCreate' : "submitMumieTaskUpdate", $lng->txt('save'));
-        $form->addCommandButton($this->getCreationMode() ? 'cancelCreate' : 'editProperties', $lng->txt('cancel'));
+        $form->addCommandButton($this->isCreationMode() ? 'submitMumieTaskCreate' : "submitMumieTaskUpdate", $lng->txt('save'));
+        $form->addCommandButton($this->isCreationMode() ? 'cancelCreate' : 'viewContent', $lng->txt('cancel'));
+
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
@@ -147,7 +150,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     public function submitMumieTaskCreate() {
-        global $lng;
+        global $lng, $tpl;
         $this->initPropertiesForm(true);
 
         if (!$this->form->checkInput()) {
@@ -182,12 +185,23 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $mumieTask->update();
     }
     function addServer() {
-        global $tpl, $ilTabs, $lng;
+
+        /**
+         *
+         * ref_id=1&cmd=addServer&cmdClass=ilobjmumietaskgui&cmdNode=oi:14d&baseClass=ilRepositoryGUI
+         * ref_id=150&cmd=addServer&cmdClass=ilobjmumietaskgui&cmdNode=oe:14d&baseClass=ilObjPluginDispatchGUI
+         */
+
+        //debug_to_console("asdasd");
+        global $ilTabs, $lng;
         $this->setSubTabs($this->getCreationMode() ? 'create' : 'properties');
+        $ilTabs->activateTab('properties');
         $ilTabs->activateSubTab('add_server');
         $this->initServerForm();
         $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
-        $tpl->setContent($this->form->getHTML());
+        //debug_to_console("content: " . json_encode($this->tpl));
+        $this->tpl->setContent($this->form->getHTML());
+        //$tpl->setVariable('ADM_CONTENT', $this->form->getHTML());
     }
 
     private function initServerForm() {
@@ -230,8 +244,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function cancelServer() {
-        $cmd = 'editProperties';
-        $this->performCommand($cmd);
+        if ($this->isCreationMode()) {
+            $this->cancelCreate();
+        } else {
+            $cmd = 'editProperties';
+            $this->performCommand($cmd);
+        }
     }
 
     /**
@@ -249,9 +267,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function cancelCreate() {
-        global $ilCtrl;
-
-        $ilCtrl->returnToParent($this);
+        $this->ctrl->returnToParent($this);
     }
 
     private function setStatusToCompleted() {
