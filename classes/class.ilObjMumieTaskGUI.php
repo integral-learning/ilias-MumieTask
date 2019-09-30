@@ -95,18 +95,23 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function editPropertiesObject() {
-        global $tpl, $ilTabs;
+        global $tpl, $ilTabs, $lng;
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $ilTabs->activateTab('properties');
         $ilTabs->activateSubTab("edit_task");
+        $this->object->doRead();
         $this->initPropertiesForm();
         $this->setPropertyValues();
-        $tpl->setContent($this->form->getHTML());
+        if (!ilMumieTaskServer::serverExistsForUrl($this->object->getServer())) {
+            $this->form->disableDropdowns();
+            ilUtil::sendFailure($lng->txt('rep_robj_xmum_msg_server_missing') . $this->object->getServer());
+        }
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
+        $tpl->setContent($this->form->getHTML());
     }
 
     function setPropertyValues() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-        $this->object->doRead();
         $values["title"] = $this->object->getTitle();
         $values["xmum_task"] = $this->object->getTaskurl();
         $values["xmum_launchcontainer"] = $this->object->getLaunchcontainer();

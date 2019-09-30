@@ -44,3 +44,4 @@ msg_suc_saved#:#Changes successfully saved
 msg_suc_server_add#:#Added MUMIE server successfully
 msg_suc_deleted#:#Deletion successful
 msg_no_server_found#:#No MUMIE server configuration found! <br><br> Please add a new MUMIE server before continuing.
+msg_server_missing#:#This MumieTask uses a server configuration that has been deleted! <br><br>Some options cannot be changed until a MUMIE server is added for the following url prefix: <br><br>
