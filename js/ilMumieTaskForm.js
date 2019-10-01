@@ -319,6 +319,7 @@
             var label = document.createElement('label');
             label.setAttribute('for', id);
             label.textContent = tag + (checked ? "" : ' (' + getFilteredCount(tag) + ')');
+            label.style = "margin-left: 5px";
 
             var wrapper = document.createElement('div');
             wrapper.style = 'white-space:nowrap';

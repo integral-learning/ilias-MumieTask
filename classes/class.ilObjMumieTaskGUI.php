@@ -3,7 +3,7 @@ require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject
 
 /**
  * @ilCtrl_isCalledBy ilObjMumieTaskGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
- * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI
+ * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI, ilLearningProgressGUI, ilLPListOfObjectsGUI,ilObjPluginDispatchGUI
  */
 
 include_once ('./Services/Repository/classes/class.ilObjectPluginGUI.php');
@@ -35,7 +35,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'cancelServer':
             case 'cancelCreate':
             case 'addServer':
-            case 'submitServer';
+            case 'submitServer':
+            case 'editLPSettings':
+            case 'submitLPSettings':
             // list all commands that need read permission here
             case "viewContent":
             case "setStatusToCompleted":
@@ -48,13 +50,25 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         }
     }
     function setTabs() {
-        global $ilCtrl, $ilAccess, $ilTabs;
+        global $ilCtrl, $ilAccess, $ilTabs, $lng;
         $this->tabs->clearTargets();
+        $this->object->read();
         if ($this->isCreationMode()) {
         } else {
             $this->tabs->addTab("viewContent", $this->lng->txt("content"), $ilCtrl->getLinkTarget($this, "viewContent"));
             if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
                 $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
+            }
+            /*
+            include_once ("Services/Tracking/classes/class.ilObjUserTracking.php");
+            include_once ('Services/Tracking/classes/class.ilLearningProgress.php');
+             */
+            if ($this->checkPermissionBool("read_learning_progress")) {
+                $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI')));
+            }
+
+            if (in_array($ilCtrl->getCmdClass(), array('illearningprogressgui', 'illplistofobjectsgui'))) {
+                $ilTabs->addSubTab("lp_settings", $this->txt('settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
             }
             $this->addPermissionTab();
         }
@@ -65,8 +79,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $ilTabs->clearSubTabs();
         switch ($a_tab) {
             case 'properties':
-                $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_edit_task'), $ilCtrl->getLinkTarget($this, "editProperties"));
+                $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
                 $ilTabs->addSubTab("add_server", $lng->txt('rep_robj_xmum_add_server'), $ilCtrl->getLinkTarget($this, "addServer"));
+                break;
+            case 'learning_progress':
+                $ilTabs->addSubTab("lp_settings", $this->txt('settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
                 break;
         }
     }
@@ -191,22 +208,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
     function addServer() {
 
-        /**
-         *
-         * ref_id=1&cmd=addServer&cmdClass=ilobjmumietaskgui&cmdNode=oi:14d&baseClass=ilRepositoryGUI
-         * ref_id=150&cmd=addServer&cmdClass=ilobjmumietaskgui&cmdNode=oe:14d&baseClass=ilObjPluginDispatchGUI
-         */
-
-        //debug_to_console("asdasd");
         global $ilTabs, $lng;
         $this->setSubTabs($this->getCreationMode() ? 'create' : 'properties');
         $ilTabs->activateTab('properties');
         $ilTabs->activateSubTab('add_server');
         $this->initServerForm();
         $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
-        //debug_to_console("content: " . json_encode($this->tpl));
         $this->tpl->setContent($this->form->getHTML());
-        //$tpl->setVariable('ADM_CONTENT', $this->form->getHTML());
     }
 
     private function initServerForm() {
@@ -307,6 +315,25 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     function isCreationMode() {
 
         return $this->getCreationMode() == true || !($this->object instanceof ilObjMumieTask);
+    }
+
+    function editLPSettings() {
+        $this->tabs_gui->activateTab('learning_progress');
+        $this->setSubTabs('learning_progress');
+        $this->tabs_gui->activateSubTab('lp_settings');
+        $this->initLPSettingsForm();
+        $this->tpl->setContent($this->form->getHTML());
+    }
+
+    function initLPSettingsForm() {
+        require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskLPSettingsFormGUI.php');
+        $form = new ilMumieTaskLPSettingsFormGUI();
+        $form->setFields();
+        $form->addCommandButton('submitLPSetting', $this->lng->txt('save'));
+        $this->form = $form;
+    }
+
+    function submitLPSettings() {
     }
 }
 
