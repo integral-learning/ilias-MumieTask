@@ -59,16 +59,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
                 $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
             }
-            /*
-            include_once ("Services/Tracking/classes/class.ilObjUserTracking.php");
-            include_once ('Services/Tracking/classes/class.ilLearningProgress.php');
-             */
             if ($this->checkPermissionBool("read_learning_progress")) {
                 $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI')));
-            }
-
-            if (in_array($ilCtrl->getCmdClass(), array('illearningprogressgui', 'illplistofobjectsgui'))) {
-                $ilTabs->addSubTab("lp_settings", $this->txt('settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
+            } else {
+                $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjExternalContentGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary'));
             }
             $this->addPermissionTab();
         }
@@ -79,11 +73,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $ilTabs->clearSubTabs();
         switch ($a_tab) {
             case 'properties':
-                $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
+                $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_tab_gen_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
+                $ilTabs->addSubTab("lp_settings", $lng->txt('rep_robj_xmum_tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
                 $ilTabs->addSubTab("add_server", $lng->txt('rep_robj_xmum_add_server'), $ilCtrl->getLinkTarget($this, "addServer"));
-                break;
-            case 'learning_progress':
-                $ilTabs->addSubTab("lp_settings", $this->txt('settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
                 break;
         }
     }
@@ -318,22 +310,45 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function editLPSettings() {
-        $this->tabs_gui->activateTab('learning_progress');
-        $this->setSubTabs('learning_progress');
-        $this->tabs_gui->activateSubTab('lp_settings');
+        global $ilTabs;
+
+        $ilTabs->activateTab('properties');
+        $this->setSubTabs("properties");
+        $ilTabs->activateSubTab('lp_settings');
         $this->initLPSettingsForm();
+        $values = array();
+        $values['lp_modus'] = $this->object->getLp_modus();
+        $values['passing_grade'] = $this->object->getPassing_grade();
+        $this->form->setValuesByArray($values);
         $this->tpl->setContent($this->form->getHTML());
     }
 
     function initLPSettingsForm() {
+        global $ilCtrl;
         require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskLPSettingsFormGUI.php');
         $form = new ilMumieTaskLPSettingsFormGUI();
         $form->setFields();
-        $form->addCommandButton('submitLPSetting', $this->lng->txt('save'));
+        $form->setTitle($this->lng->txt('rep_robj_xmum_tab_lp_settings'));
+        $form->addCommandButton('submitLPSettings', $this->lng->txt('save'));
+        $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
 
     function submitLPSettings() {
+        //debug_to_console("submitting lp settings");
+        $this->initLPSettingsForm();
+        if (!$this->form->checkInput()) {
+            $this->form->setValuesByPost();
+            $this->tpl->setContent($this->form->getHTML());
+            return;
+        }
+        $this->object->setLp_modus($this->form->getInput('lp_modus'));
+        $this->object->setPassing_grade($this->form->getInput('passing_grade'));
+        $this->object->doUpdate();
+        ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
+
+        $cmd = 'editLPSettings';
+        $this->performCommand($cmd);
     }
 }
 

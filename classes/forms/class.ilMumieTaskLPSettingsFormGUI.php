@@ -7,14 +7,15 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI {
 
     private $modusItem, $passingThresholdItem;
     function setFields() {
-        $this->modusItem = new ilRadioGroupInputGUI('Save learning progress', "lp_modus");
-        $modusOptionTrue = new ilRadioOption("Enable", true);
-        $modusOptionFalse = new ilRadioOption("Disable", false);
+        global $lng;
+        $this->modusItem = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_sync_lp'), "lp_modus");
+        $modusOptionTrue = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 1);
+        $modusOptionFalse = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 0);
         $this->modusItem->addOption($modusOptionTrue);
         $this->modusItem->addOption($modusOptionFalse);
         $this->addItem($this->modusItem);
 
-        $this->passingThresholdItem = new ilNumberInputGUI('Passing threshold', 'passing_grade');
+        $this->passingThresholdItem = new ilNumberInputGUI($lng->txt('rep_robj_xmum_frm_passing_grade'), 'passing_grade');
         $this->passingThresholdItem->setRequired(true);
         $this->passingThresholdItem->setMinValue(0);
         $this->passingThresholdItem->setMaxValue(100);

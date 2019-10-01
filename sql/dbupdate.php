@@ -2,7 +2,7 @@
 <?php
 if (!$ilDB->tableExists("xmum_sso_tokens")) {
     $fieldsToken = array(
-        'id' => array( 
+        'id' => array(
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
@@ -13,7 +13,7 @@ if (!$ilDB->tableExists("xmum_sso_tokens")) {
             'notnull' => true,
         ),
         // user id
-        'user' => array( 
+        'user' => array(
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
@@ -28,7 +28,6 @@ if (!$ilDB->tableExists("xmum_sso_tokens")) {
     $ilDB->createTable("xmum_sso_tokens", $fieldsToken);
     $ilDB->addPrimaryKey("xmum_sso_tokens", array("id"));
     $ilDB->createSequence("xmum_sso_tokens");
-
 }
 ?>
 <#2>
@@ -39,10 +38,6 @@ if (!$ilDB->tableExists("xmum_mumie_task")) {
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-        'name' => array(
-            'type' => 'text',
-            'length' => 255,
         ),
         'taskurl' => array(
             'type' => 'text',
@@ -66,6 +61,16 @@ if (!$ilDB->tableExists("xmum_mumie_task")) {
         'mumie_coursefile' => array(
             'type' => 'text',
             'length' => '255',
+        ),
+        'passing_grade' => array(
+            'type' => 'integer',
+            'length' => '4',
+            'default' => '60',
+        ),
+        'lp_modus' => array(
+            'type' => 'integer',
+            'length' => '2',
+            'default' => '0',
         ),
     );
     $ilDB->createTable("xmum_mumie_task", $fieldsMumie);
