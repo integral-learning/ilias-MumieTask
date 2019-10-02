@@ -38,11 +38,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'submitServer':
             case 'editLPSettings':
             case 'submitLPSettings':
-            // list all commands that need read permission here
             case "viewContent":
-            case "setStatusToCompleted":
-            case "setStatusToFailed":
-            case "setStatusToInProgress":
+            case "displayLearningProgress":
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
                 $this->$cmd();
@@ -59,11 +56,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
                 $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
             }
+            /*
             if ($this->checkPermissionBool("read_learning_progress")) {
-                $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI')));
+            $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'illplistofprogressgui')));
             } else {
-                $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjExternalContentGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary'));
-            }
+            $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary'));
+            }*/
+            $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
             $this->addPermissionTab();
         }
     }
@@ -257,6 +256,19 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         }
     }
 
+    function displayLearningProgress() {
+        global $ilUser, $ilCtrl;
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+
+        ilMumieTaskLPStatus::updateGrades($ilUser->getId(), $this->object);
+
+        if ($this->checkPermissionBool("read_learning_progress")) {
+            $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'illplistofprogressgui'));
+        } else {
+            $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
+        }
+    }
+
     /**
      * After object has been created -> jump to this command
      */
@@ -275,43 +287,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $this->ctrl->returnToParent($this);
     }
 
-    private function setStatusToCompleted() {
-        $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_COMPLETED_NUM);
-    }
-
     protected function viewContent() {
         global $ilCtrl, $DIC, $ilTabs;
         $ilTabs->activateTab('viewContent');
+        $this->object->updateAccess();
+        //$this->object->update
         $this->tpl->setContent($this->object->getContent());
     }
 
-    private function setStatusAndRedirect($status) {
-        global $ilUser;
-        $_SESSION[self::LP_SESSION_ID] = $status;
-        ilLPStatusWrapper::_updateStatus($this->object->getId(), $ilUser->getId());
-        $this->ctrl->redirect($this, $this->getStandardCmd());
-    }
-
-    protected function setStatusToFailed() {
-        $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_FAILED_NUM);
-    }
-
-    protected function setStatusToInProgress() {
-        $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_IN_PROGRESS_NUM);
-    }
-
-    protected function setStatusToNotAttempted() {
-        $this->setStatusAndRedirect(ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM);
-    }
-
     function isCreationMode() {
-
         return $this->getCreationMode() == true || !($this->object instanceof ilObjMumieTask);
     }
 
     function editLPSettings() {
         global $ilTabs;
-
         $ilTabs->activateTab('properties');
         $this->setSubTabs("properties");
         $ilTabs->activateSubTab('lp_settings');

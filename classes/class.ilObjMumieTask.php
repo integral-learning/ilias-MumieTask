@@ -4,6 +4,7 @@ include_once ("./Services/Repository/classes/class.ilObjectPlugin.php");
 require_once ("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
 require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
+include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 /**
  */
@@ -134,7 +135,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @return array
      */
     public function getLPCompleted() {
-        return array();
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        return array(ilMumieTaskLPStatus::getLPCompletedForMumieTask($this->getId()));
     }
 
     /**
@@ -143,7 +145,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @return array
      */
     public function getLPNotAttempted() {
-        return array();
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        return array(ilMumieTaskLPStatus::getLPNotAttemptedForMumieTask($this->getId()));
     }
 
     /**
@@ -152,7 +155,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @return array
      */
     public function getLPFailed() {
-        return array(6);
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        return array(ilMumieTaskLPStatus::getLPFailedForMumieTask($this->getId()));
     }
 
     /**
@@ -161,7 +165,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @return array
      */
     public function getLPInProgress() {
-        return array();
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        return array(ilMumieTaskLPStatus::getLPInProgressForMumieTask($this->getId()));
     }
 
     /**
@@ -176,6 +181,14 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             return $_SESSION[ilObjMumieTaskGUI::LP_SESSION_ID];
         } else {
             return ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM;
+        }
+    }
+
+    public function updateAccess() {
+        global $ilUser;
+        if ($ilUser->getId() != ANONYMOUS_USER_ID && $this->getLP_modus()) {
+            $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+            ilMumieTaskLPStatus::updateAccess($ilUser->getId(), $this->getId(), $this->getRefId());
         }
     }
 
