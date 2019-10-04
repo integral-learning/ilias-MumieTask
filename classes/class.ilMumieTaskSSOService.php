@@ -13,6 +13,14 @@ class ilMummieTaskSSOService {
      * @param int $length word length of the token
      * @return string token
      */
+
+    public static function foo(){
+        var_dump("what in the fuck");
+        global $ilDB,$ilUser;
+
+        $testvar = $ilUser->getId();
+    }
+
     public function getToken($length) {
         $token = "";
         $codealphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -82,18 +90,8 @@ class ilMummieTaskSSOService {
         require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         global $ilUser;
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT" , true );
+        //explanation for the various "true" arguments: last on is important because it signifies this is a plugin, the other "true"s are always "true" in the ilias documentation 
         
-        /*$values = array( "TASKURL" => $loginurl,
-        "TARGET" => $launchcontainer == 1 ? 'MumieTaskLaunchFrame' :'_blank',
-        "USER_ID" => $ilUser->getId(),
-        "TOKEN", $ssotoken->token,
-        "ORG" => ilMumieTaskAdminSettings::getInstance()->getOrg(),
-        "PROBLEMURL" => $problemurl,
-        "WIDTH" => $width,
-        "HEIGHT" => $height
-        );
-        $tpl->setValuesByArray($values); // this doesnt seem to exist*/
-
         $tpl->setVariable("TASKURL", $loginurl);
         $tpl->setVariable("TARGET", $launchcontainer == 1 ? 'MumieTaskLaunchFrame' :'_blank');
         $tpl->setVariable("USER_ID", $ilUser->getId());
@@ -104,12 +102,12 @@ class ilMummieTaskSSOService {
         $tpl->setVariable("HEIGHT", $height);
 
         if($launchcontainer == 1){
-            $tpl->setVariable("BUTTONTYPE", "hidden");
+            $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the ifram and launch it immediately via $script
             $script = "<script>
             document.forms['mumie_sso_form'].submit();
             </script>";
             $tpl->setVariable("EMBED",$script);
-        } else $tpl->setVariable("BUTTONTYPE", "submit");
+        } else $tpl->setVariable("BUTTONTYPE", "submit"); // otherwise leave a button to launch in a new tab
     
         $html = $tpl->get();
         return $html;
