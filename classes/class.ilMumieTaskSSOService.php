@@ -106,22 +106,6 @@ class ilMumieTaskSSOService {
             $this->insertToken($rec, $ssotoken);
         }
 	
-	$cookie_domain = $_SERVER['SERVER_NAME'];
-        $cookie_path = dirname( $_SERVER['PHP_SELF'] );
-
-        /* if ilias is called directly within the docroot $cookie_path
-        is set to '/' expecting on servers running under windows..
-        here it is set to '\'.
-        in both cases a further '/' won't be appended due to the following regex
-        */
-        $cookie_path .= (!preg_match("/[\/|\\\\]$/", $cookie_path)) ? "/" : "";
-
-        if($cookie_path == "\\") $cookie_path = '/';
-
-        $cookie_domain = ''; // Temporary Fix
-        
-        setcookie('ilMumieTaskSSO',$_COOKIE['ilClientId'], $cookie_path, $cookie_domain);
-
         return $this->getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl);
     }
 
@@ -174,9 +158,5 @@ class ilMumieTaskSSOService {
     
         $html = $tpl->get();
         return $html;
-    }
-
-    private function getTokenTableName() {
-        return "xmum_sso_tokens";
     }
 }
