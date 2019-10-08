@@ -91,7 +91,7 @@ class ilMummieTaskSSOService {
         global $ilUser;
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT" , true );
         //explanation for the various "true" arguments: last on is important because it signifies this is a plugin, the other "true"s are always "true" in the ilias documentation 
-        
+        //debug_to_console("PROBLEM");
         $tpl->setVariable("TASKURL", $loginurl);
         $tpl->setVariable("TARGET", $launchcontainer == 1 ? 'MumieTaskLaunchFrame' :'_blank');
         $tpl->setVariable("USER_ID", $ilUser->getId());

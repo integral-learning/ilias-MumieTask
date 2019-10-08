@@ -82,10 +82,12 @@ class ilMumieTaskAdminSettings {
     }
 
     public function getOrg() {
+        //debug_to_console($this->org);
         return $this->org;
     }
 
     public function setOrg($org) {
+        //var_dump($this->org);
         $this->org = $org;
 
         return $this;
