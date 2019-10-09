@@ -309,7 +309,7 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
      */
 
     public function getContent(){
-        $ssoService = new ilMummieTaskSSOService;
+        $ssoService = new ilMumieTaskSSOService;
         return $ssoService->setUpTokenAndLaunchForm($this->getLoginUrl(), $this->launchcontainer, $this->getProblemUrl());
     }
 
