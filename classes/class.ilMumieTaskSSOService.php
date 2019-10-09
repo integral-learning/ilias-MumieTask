@@ -95,9 +95,8 @@ class ilMumieTaskSSOService {
         $ssotoken->token = $this->getToken(30);
         $ssotoken->user = $ilUser->getId();
         $ssotoken->timecreated = time();
-        $tokentable =  self::MUMIETOKENS_TABLE_NAME;
         
-        $query = 'SELECT * FROM ' . $tokentable . ' WHERE user = ' . $ilDB->quote($ilUser->getId(), "integer");
+        $query = 'SELECT * FROM ' . self::MUMIETOKENS_TABLE_NAME . ' WHERE user = ' . $ilDB->quote($ilUser->getId(), "integer");
         $result = $ilDB->query($query);
         $rec = $ilDB->fetchAssoc($result);
         if (!is_null($rec)) {
@@ -129,7 +128,7 @@ class ilMumieTaskSSOService {
                 'id' => array('integer', $DIC->database()->nextID($tokentable)),
                 'token' => array('text', $ssotoken->token), 
                 'timecreated' => array('integer', $ssotoken->timecreated) , 
-                'user' => array('integer', $ilUser->getId()))); //(array) $ssotoken );
+                'user' => array('integer', $ilUser->getId())));
     }
 
     private function getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $width = 800, $height = 600) {
@@ -151,6 +150,12 @@ class ilMumieTaskSSOService {
         if($launchcontainer == 1){
             $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the iframe and launch it immediately via $script
             $script = "<script>
+            var iframe = document.getElementById('basicMumieTaskLaunchFrame');
+            var height = window.screen.height * 0.8;
+            var width = window.screen.width * 0.6;
+            console.log(window.screen.height,window.screen.width,height,width);
+            iframe.width = width;
+            iframe.height = height;
             document.forms['mumie_sso_form'].submit();
             </script>";
             $tpl->setVariable("EMBED",$script);
