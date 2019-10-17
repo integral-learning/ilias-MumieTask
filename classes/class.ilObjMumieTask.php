@@ -336,6 +336,10 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->server . $this->taskurl . '?lang=' . $this->language;
     }
 
+    public function getGradeSyncURL() {
+        return $this->server . 'public/xapi';
+    }
+
     /**
      * Get the value of lp_modus
      */

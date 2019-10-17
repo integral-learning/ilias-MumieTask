@@ -157,3 +157,26 @@ if ($ilDB->numRows($result) < 1) {
     );
 }
 ?>
+<#6>
+<?php
+$set = $ilDB->query("SELECT obj_id FROM object_data WHERE type='typ' AND title = 'xmum'");
+$rec = $ilDB->fetchAssoc($set);
+$typ_id = $rec["obj_id"];
+
+/**
+ * Add new RBAC operations
+ */
+$operations = array('read_learning_progress');
+foreach ($operations as $operation) {
+    $query = "SELECT ops_id FROM rbac_operations WHERE operation = " . $ilDB->quote($operation, 'text');
+    $res = $ilDB->query($query);
+    $row = $ilDB->fetchObject($res);
+    $ops_id = $row->ops_id;
+
+    $query = "INSERT INTO rbac_ta (typ_id, ops_id) VALUES ("
+    . $ilDB->quote($typ_id, 'integer') . ","
+    . $ilDB->quote($ops_id, 'integer') . ")";
+    $ilDB->manipulate($query);
+}
+
+?>

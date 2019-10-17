@@ -39,9 +39,9 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
 
     public static function updateGrades($userId, $task) {
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-        //debug_to_console('updateGrades is called, userid: ' . json_encode($userid) . ' task ' . json_encode($task));
         //TEMP result!!!!
         $response = self::getXapiGradeForUser($task, $userId);
+        debug_to_console('response: ' . json_encode($response));
         $rawGrade = $response->result->score->scaled * 100;
         self::updateResult($userId, (string) $task->getId(), $rawGrade >= $task->getPassing_grade(), $rawGrade);
 
@@ -67,41 +67,52 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         curl_close($curl);
          */
         //TEMP
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
-        $response = json_decode('[
-                {
-                    "id": "3e78f83a-3d29-4332-b204-e34fd9c881d0",
-                    "actor": {
-                        "account": {
-                            "homePage": "https://test.mumie.net/gwt",
-                            "name": "GSSO_mi2_12"
-                        },
-                        "objectType": "Agent"
-                    },
-                    "verb": {
-                        "id": "https://www.mumie.net/xapi/verbs/submitted",
-                        "display": {
-                            "de": "abgegeben",
-                            "en": "submitted"
-                        }
-                    },
-                    "object": {
-                        "id": "OnlineMathemBrueckPlus/ElemenRechne/Schlus"
-                    },
-                    "result": {
-                        "success": false,
-                        "score": {
-                            "scaled": 0.69,
-                            "raw": 0.99,
-                            "min": 0.0,
-                            "max": 1.0
-                        }
-                    },
-                    "timestamp": "2019-05-21T14:32:17+02"
-                }
-            ]');
-        //END TEMP
-        return $response[0];
+        $curl = curl_init($task->getGradeSyncURL());
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_USERAGENT => 'Codular Sample cURL Request',
+        ]);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        return $response;
+        /*
+    $response = json_decode('[
+    {
+    "id": "3e78f83a-3d29-4332-b204-e34fd9c881d0",
+    "actor": {
+    "account": {
+    "homePage": "https://test.mumie.net/gwt",
+    "name": "GSSO_mi2_12"
+    },
+    "objectType": "Agent"
+    },
+    "verb": {
+    "id": "https://www.mumie.net/xapi/verbs/submitted",
+    "display": {
+    "de": "abgegeben",
+    "en": "submitted"
+    }
+    },
+    "object": {
+    "id": "OnlineMathemBrueckPlus/ElemenRechne/Schlus"
+    },
+    "result": {
+    "success": false,
+    "score": {
+    "scaled": 0.69,
+    "raw": 0.99,
+    "min": 0.0,
+    "max": 1.0
+    }
+    },
+    "timestamp": "2019-05-21T14:32:17+02"
+    }
+    ]');
+    //END TEMP
+    return $response[0];
+     */
     }
 }
 

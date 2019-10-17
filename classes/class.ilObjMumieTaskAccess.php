@@ -52,6 +52,20 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
     return (boolean) $rec["is_online"];
      */
     }
+    static function _getCommands() {
+        $commands = array
+            (
+            array("permission" => "write", "cmd" => "questionsTabGateway", "lang_var" => "tst_edit_questions"),
+            array("permission" => "write", "cmd" => "ilObjTestSettingsGeneralGUI::showForm", "lang_var" => "settings"),
+            array("permission" => "read", "cmd" => "infoScreen", "lang_var" => "tst_run",
+                "default" => true),
+            //array("permission" => "write", "cmd" => "", "lang_var" => "edit"),
+            array("permission" => "tst_statistics", "cmd" => "outEvaluation", "lang_var" => "tst_statistical_evaluation"),
+            array("permission" => "read", "cmd" => "userResultsGateway", "lang_var" => "tst_test_results"),
+        );
+
+        return $commands;
+    }
 }
 
 ?>

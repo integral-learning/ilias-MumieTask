@@ -60,15 +60,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
                 $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
             }
 
-            $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary'));
-            //$ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI')));
-
-            if ($this->checkPermissionBool("read_learning_progress")) {
-            } else {
-            }
-
-            //$ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
-            //$this->tabs->addTab("learning_progress", "asdasd", $ilCtrl->getLinkTargetByClass('ilMumieTaskLPGUI', 'displayPersonalResults'));
+            //$ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary'));
+            $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
 
             $this->addPermissionTab();
         }
@@ -270,10 +263,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         global $ilUser, $ilCtrl, $ilTabs;
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
 
-        //debug_to_console("Userid: " . $ilUser->getId())
+        //debug_to_console("Userid: " . $ilUser->getId());
         require_once ('Services/User/classes/class.ilObjUser.php');
         ilMumieTaskLPStatus::updateGrades($ilUser->getId(), $this->object);
-        $this->displayLPOverview();
+        if ($this->checkPermissionBool('read_learning_progress')) {
+            $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
+        } else {
+        }
+        //
     }
 
     function displayLPPersonal() {
