@@ -39,7 +39,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
 
     public static function updateGrades($userId, $task) {
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-
+        //debug_to_console('updateGrades is called, userid: ' . json_encode($userid) . ' task ' . json_encode($task));
         //TEMP result!!!!
         $response = self::getXapiGradeForUser($task, $userId);
         $rawGrade = $response->result->score->scaled * 100;
@@ -91,8 +91,8 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
                     "result": {
                         "success": false,
                         "score": {
-                            "scaled": 0.193846,
-                            "raw": 0.193846,
+                            "scaled": 0.69,
+                            "raw": 0.99,
                             "min": 0.0,
                             "max": 1.0
                         }

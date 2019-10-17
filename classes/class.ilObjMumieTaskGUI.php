@@ -3,7 +3,8 @@ require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject
 
 /**
  * @ilCtrl_isCalledBy ilObjMumieTaskGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
- * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI, ilLearningProgressGUI, ilLPListOfObjectsGUI,ilObjPluginDispatchGUI
+ * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI, ilLearningProgressGUI, ilLPListOfObjectsGUI,ilObjPluginDispatchGUI, ilLPListOfSettingsGui, ilMumieTaskLPGUI
+ * @ilCtrl_Calls ilObjMumieTaskGUI: ilMumieTaskLPTableGUI
  */
 
 include_once ('./Services/Repository/classes/class.ilObjectPluginGUI.php');
@@ -40,6 +41,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'submitLPSettings':
             case "viewContent":
             case "displayLearningProgress":
+            case 'displayLPPersonal':
+            case 'displayLPOverview':
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
                 $this->$cmd();
@@ -47,7 +50,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         }
     }
     function setTabs() {
-        global $ilCtrl, $ilAccess, $ilTabs, $lng;
+        global $ilCtrl, $ilAccess, $ilTabs, $lng, $DIC;
         $this->tabs->clearTargets();
         $this->object->read();
         if ($this->isCreationMode()) {
@@ -56,13 +59,17 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
                 $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
             }
-            /*
-            if ($this->checkPermissionBool("read_learning_progress")) {
-            $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'illplistofprogressgui')));
-            } else {
+
             $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary'));
-            }*/
-            $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
+            //$ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI')));
+
+            if ($this->checkPermissionBool("read_learning_progress")) {
+            } else {
+            }
+
+            //$ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
+            //$this->tabs->addTab("learning_progress", "asdasd", $ilCtrl->getLinkTargetByClass('ilMumieTaskLPGUI', 'displayPersonalResults'));
+
             $this->addPermissionTab();
         }
     }
@@ -76,6 +83,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
                 $ilTabs->addSubTab("lp_settings", $lng->txt('rep_robj_xmum_tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
                 $ilTabs->addSubTab("add_server", $lng->txt('rep_robj_xmum_add_server'), $ilCtrl->getLinkTarget($this, "addServer"));
                 break;
+            case 'learning_progress':
+                $ilTabs->addSubTab('lp_personal', 'lp_personal', $ilCtrl->getLinkTarget($this, "displayLPPersonal"));
+                $ilTabs->addSubTab('lp_overview', 'lp_overview', $ilCtrl->getLinkTarget($this, "displayLPOverview"));
         }
     }
 
@@ -257,18 +267,32 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function displayLearningProgress() {
-        global $ilUser, $ilCtrl;
+        global $ilUser, $ilCtrl, $ilTabs;
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
 
+        //debug_to_console("Userid: " . $ilUser->getId())
+        require_once ('Services/User/classes/class.ilObjUser.php');
         ilMumieTaskLPStatus::updateGrades($ilUser->getId(), $this->object);
-
-        if ($this->checkPermissionBool("read_learning_progress")) {
-            $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'illplistofprogressgui'));
-        } else {
-            $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
-        }
+        $this->displayLPOverview();
     }
 
+    function displayLPPersonal() {
+        global $ilTabs, $tpl;
+        $ilTabs->activateTab('learning_progress');
+        $this->setSubTabs('learning_progress');
+        $ilTabs->activateSubTab('lp_personal');
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPTableGUI.php');
+        $server_gui = new ilMumieTaskLPTableGUI($this);
+        $server_gui->init($this);
+        $tpl->setContent($server_gui->getHTML());
+    }
+
+    function displayLPOverview() {
+        global $ilTabs;
+        $ilTabs->activateTab('learning_progress');
+        $this->setSubTabs('learning_progress');
+        $ilTabs->activateSubTab('lp_overview');
+    }
     /**
      * After object has been created -> jump to this command
      */
@@ -288,8 +312,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     protected function viewContent() {
-        global $ilCtrl, $DIC, $ilTabs;
+        global $ilCtrl, $DIC, $ilTabs, $ilUser;
         $ilTabs->activateTab('viewContent');
+        global $ilUser;
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        require_once ('Services/User/classes/class.ilObjUser.php');
+        //debug_to_console("view content is called, uid is" . $ilUser->getId());
+        ilMumieTaskLPStatus::updateGrades($ilUser->getId(), $this->object);
         $this->object->updateAccess();
         //$this->object->update
         $this->tpl->setContent($this->object->getContent());
