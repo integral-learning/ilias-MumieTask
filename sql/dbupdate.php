@@ -159,9 +159,23 @@ if ($ilDB->numRows($result) < 1) {
 ?>
 <#6>
 <?php
+
 $set = $ilDB->query("SELECT obj_id FROM object_data WHERE type='typ' AND title = 'xmum'");
-$rec = $ilDB->fetchAssoc($set);
-$typ_id = $rec["obj_id"];
+if ($rec = $ilDB->fetchAssoc($set)) {
+    $typ_id = $rec["obj_id"];
+} else {
+    $typ_id = $ilDB->nextId("object_data");
+    $ilDB->manipulate("INSERT INTO object_data " .
+        "(obj_id, type, title, description, owner, create_date, last_update) VALUES (" .
+        $ilDB->quote($typ_id, "integer") . "," .
+        $ilDB->quote("typ", "text") . "," .
+        $ilDB->quote("xmum", "text") . "," .
+        $ilDB->quote("Plugin MumieTask", "text") . "," .
+        $ilDB->quote(-1, "integer") . "," .
+        $ilDB->quote(ilUtil::now(), "timestamp") . "," .
+        $ilDB->quote(ilUtil::now(), "timestamp") .
+        ")");
+}
 
 /**
  * Add new RBAC operations
