@@ -41,7 +41,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         //TEMP result!!!!
         $response = self::getXapiGradeForUser($task, $userId);
-        debug_to_console('response: ' . json_encode($response));
         $rawGrade = $response->result->score->scaled * 100;
         self::updateResult($userId, (string) $task->getId(), $rawGrade >= $task->getPassing_grade(), $rawGrade);
 
@@ -67,16 +66,32 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         curl_close($curl);
          */
         //TEMP
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+        $adminSettings = ilMumieTaskAdminSettings::getInstance();
+        $payload = json_encode(array(
+            "users" => "GSSO_" . $adminSettings->getOrg() . "_" . $userId,
+            "course" => $task->getMumie_coursefile(),
+            "objectIds" => self::get_mumie_id($task),
+            'lastSync' => 0,
+        ));
 
+        //debug_to_console($payload);
         $curl = curl_init($task->getGradeSyncURL());
-        curl_setopt_array($curl, [
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_USERAGENT => 'Codular Sample cURL Request',
-        ]);
+
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_USERAGENT, "My User Agent Name");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($payload),
+            "X-API-Key: " . $adminSettings->getApiKey(),
+        )
+        );
+
         $response = curl_exec($curl);
         curl_close($curl);
-        return $response;
+        return json_decode($response);
         /*
     $response = json_decode('[
     {
@@ -113,6 +128,17 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
     //END TEMP
     return $response[0];
      */
+    }
+
+    /**
+     * Get the unique identifier for a MUMIE task
+     *
+     * @param stdClass $mumietask
+     * @return string id for MUMIE task on MUMIE server
+     */
+    private static function get_mumie_id($mumietask) {
+        $id = substr($mumietask->getTaskurl(), strlen("link/"));
+        return $id;
     }
 }
 
