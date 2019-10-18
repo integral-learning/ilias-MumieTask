@@ -1,19 +1,75 @@
 <?php
 
 /**
- * Class to generate SSO Tokens, insert them in database and generate the
- * form fields to launch a mumie task
+ * Class for SSO Token services : 
+ * Generate SSO Tokens 
+ * Insert them in database andhidden html form for SSO post requests to a mumie server
+ * Verify Tokens
  */
 
-class ilMummieTaskSSOService {
+class ilMumieTaskSSOService {
 
-    private $TOKEN_TABLE_NAME = "xmum_sso_tokens";
+    const MUMIETOKENS_TABLE_NAME = "xmum_sso_tokens";
+    
+    /**
+     * Verifies MUMIE tokens for SSO 
+     * 
+     * @return json object $response containing the field status: valid or invalid
+     * and any user data that the admin has selected for sharing (user_id,firstname,lastname,email)
+     */
+
+    public static function verifyToken(){ 
+
+	global $ilDB;
+        $token = $_POST['token'];
+        $userid = $_POST['userId'];
+
+        $table = self::MUMIETOKENS_TABLE_NAME;
+
+        $mumietoken = new \stdClass();
+
+        $tokenQuery = $ilDB->query('SELECT * FROM ' . $table . ' WHERE user = ' . $ilDB->quote($userid, "integer"));
+        $rec = $ilDB->fetchAssoc($tokenQuery);
+        $mumietoken->token = $rec['token'];
+        $mumietoken->timecreated = $rec['timecreated'];
+        $userQuery = $ilDB->query('SELECT * FROM usr_data WHERE usr_id = ' . $ilDB->quote($userid, "integer"));
+        $user_rec = $ilDB->fetchAssoc($userQuery);
+        $response = new stdClass();
+        require_once (__DIR__ . "/class.ilMumieTaskAdminSettings.php");
+        $configSettings = ilMumieTaskAdminSettings::getInstance();
+
+
+        if ($mumietoken != null && $user_rec != null) {
+            $current = time();
+            if (($current - $mumietoken->timecreated) >= 60) {
+                $response->status = "invalid";
+            } else {
+                $response->status = "valid";
+                $response->userid = $user_rec['usr_id'];
+
+                if ($configSettings->getShareFirstName()) {
+                    $response->firstname = $user_rec['firstname'];
+                }
+                if ($configSettings->getShareLastName()) {
+                    $response->lastname = $user_rec['lastname'];
+                }
+                if ($configSettings->getShareEmail()) {
+                $response->email = $user_rec['email'];
+                }
+            }
+        } else {
+            $response->status = "invalid";
+        }
+        return $response;
+    }
+
     /**
      * Generate a randomized token for single sign in to MUMIE servers
      *
      * @param int $length word length of the token
      * @return string token
      */
+
     public function getToken($length) {
         $token = "";
         $codealphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -30,7 +86,7 @@ class ilMummieTaskSSOService {
 
     /**
      * Generates an sso Token and the html for a form with hidden fields
-     * containing the urls and sso tokens
+     * containing the login and logout urls, sso token and other infos
      */
 
     public function setUpTokenAndLaunchForm($loginurl, $launchcontainer, $problemurl) {
@@ -39,8 +95,8 @@ class ilMummieTaskSSOService {
         $ssotoken->token = $this->getToken(30);
         $ssotoken->user = $ilUser->getId();
         $ssotoken->timecreated = time();
-
-        $query = 'SELECT * FROM ' . $this->TOKEN_TABLE_NAME . ' WHERE user = ' . $ilDB->quote($ilUser->getId(), "integer");
+        
+        $query = 'SELECT * FROM ' . self::MUMIETOKENS_TABLE_NAME . ' WHERE user = ' . $ilDB->quote($ilUser->getId(), "integer");
         $result = $ilDB->query($query);
         $rec = $ilDB->fetchAssoc($result);
         if (!is_null($rec)) {
@@ -48,14 +104,14 @@ class ilMummieTaskSSOService {
         } else {
             $this->insertToken($rec, $ssotoken);
         }
-
+	
         return $this->getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl);
     }
 
     private function updateToken($rec, $ssotoken) {
         global $DIC, $ilUser;
         $ssotoken->id = $rec['user'];
-        $DIC->database()->update($this->TOKEN_TABLE_NAME,
+        $DIC->database()->update(self::MUMIETOKENS_TABLE_NAME,
             array(
                 'token' => array('text', $ssotoken->token),
                 'timecreated' => array('integer', $ssotoken->timecreated),
@@ -67,20 +123,21 @@ class ilMummieTaskSSOService {
 
     private function insertToken($rec, $ssotoken) {
         global $DIC, $ilUser;
-        $DIC->database()->insert($this->TOKEN_TABLE_NAME,
+        $DIC->database()->insert(self::MUMIETOKENS_TABLE_NAME,
             array(
-                'id' => array('integer', $DIC->database()->nextID($this->TOKEN_TABLE_NAME)),
-                'token' => array('text', $ssotoken->token),
-                'timecreated' => array('integer', $ssotoken->timecreated),
-                'user' => array('integer', $ilUser->getId()))); //(array) $ssotoken);
+                'id' => array('integer', $DIC->database()->nextID($tokentable)),
+                'token' => array('text', $ssotoken->token), 
+                'timecreated' => array('integer', $ssotoken->timecreated) , 
+                'user' => array('integer', $ilUser->getId())));
     }
 
     private function getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $width = 800, $height = 600) {
         require_once ("./Services/UICore/classes/class.ilTemplate.php");
         require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         global $ilUser;
-        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
-
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT" , true );
+        // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
+        // the other "true"s should always be set that way according to the ilias documentation 
         $tpl->setVariable("TASKURL", $loginurl);
         $tpl->setVariable("TARGET", $launchcontainer == 1 ? 'MumieTaskLaunchFrame' : '_blank');
         $tpl->setVariable("USER_ID", $ilUser->getId());
@@ -90,21 +147,21 @@ class ilMummieTaskSSOService {
         $tpl->setVariable("WIDTH", $width);
         $tpl->setVariable("HEIGHT", $height);
 
-        if ($launchcontainer == 1) {
-            $tpl->setVariable("BUTTONTYPE", "hidden");
+        if($launchcontainer == 1){
+            $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the iframe and launch it immediately via $script
             $script = "<script>
+            var iframe = document.getElementById('basicMumieTaskLaunchFrame');
+            var height = window.screen.height * 0.8;
+            var width = window.screen.width * 0.6;
+            console.log(window.screen.height,window.screen.width,height,width);
+            iframe.width = width;
+            iframe.height = height;
             document.forms['mumie_sso_form'].submit();
             </script>";
-            $tpl->setVariable("EMBED", $script);
-        } else {
-            $tpl->setVariable("BUTTONTYPE", "submit");
-        }
-
+            $tpl->setVariable("EMBED",$script);
+        } else $tpl->setVariable("BUTTONTYPE", "submit"); // otherwise leave a button to launch in a new tab
+    
         $html = $tpl->get();
         return $html;
-    }
-
-    private function getTokenTableName() {
-        return "xmum_sso_tokens";
     }
 }
