@@ -4,11 +4,12 @@ include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/M
 include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilMumieTaskGradeSync {
-    private $userIds, $task, $adminSettings;
+    private $userIds, $task, $adminSettings, $forceUpdate;
 
-    public function __construct($task){
+    public function __construct($task, $forceUpdate){
         $this->adminSettings = ilMumieTaskAdminSettings::getInstance();
         $this->task = $task;
+        $this->forceUpdate = $forceUpdate;
         $this->userIds = $this->getAllUsers($task);
     }
 
@@ -44,8 +45,10 @@ class ilMumieTaskGradeSync {
         curl_close($ch);
 
         $gradesByUser = array();
-        foreach($response as $xapiGrade) {
-            $gradesByUser[$this->getIliasId($xapiGrade)] = $xapiGrade;
+        if($response) {
+            foreach($response as $xapiGrade) {
+                $gradesByUser[$this->getIliasId($xapiGrade)] = $xapiGrade;
+            }
         }
         return $gradesByUser;
     }
@@ -64,6 +67,10 @@ class ilMumieTaskGradeSync {
 
     private function getLastSync() {
         global $ilDB;
+        if($this->forceUpdate) {
+            return 1;
+        }
+
         $oldestTimestamp = PHP_INT_MAX;
         $result = $ilDB->query("SELECT usr_id, obj_id, status_changed".
             " FROM ut_lp_marks".

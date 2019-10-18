@@ -186,7 +186,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function updateAccess() {
         global $ilUser;
-        if ($ilUser->getId() != ANONYMOUS_USER_ID && $this->getLP_modus()) {
+        if ($ilUser->getId() != ANONYMOUS_USER_ID) {
             $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
             ilMumieTaskLPStatus::updateAccess($ilUser->getId(), $this->getId(), $this->getRefId());
         }

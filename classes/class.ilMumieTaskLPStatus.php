@@ -33,23 +33,29 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
 
     private static function updateResult($userId, $taskId, $succeded, $percentage) {
         $status = $succeded ? self::LP_STATUS_COMPLETED_NUM : self::LP_STATUS_FAILED_NUM;
+        //debug_to_console("update result with status: " . $status);
         self::writeStatus($taskId, $userId, $status, $percentage, true);
         self::raiseEvent($taskId, $userId, $status, $percentage);
     }
 
-    public static function updateGrades($task) {
+    public static function updateGrades($task, $forceUpdate = false) {
+        if (!$task->getLp_modus()) {
+            return;
+        }
+        //debug_to_console("update grades for task: " . $task->getId());
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        $gradeSync = new ilMumieTaskGradeSync($task);
+        $gradeSync = new ilMumieTaskGradeSync($task, $forceUpdate);
         $gradesByUser = $gradeSync->getXapiGradesByUser();
         foreach (array_keys($gradesByUser) as $userId) {
             $xapiGrade = $gradesByUser[$userId];
             $percentage = round($xapiGrade->result->score->scaled * 100);
+            //debug_to_console("updating grade for user at timestamp " . date("Y-m-d H:i:s", strtotime($xapiGrade->timestamp)) . " timestamp from response is: " . $xapiGrade->timestamp);
             self::updateResult($userId, (string) $task->getId(), $percentage >= $task->getPassing_grade(), $percentage);
             global $DIC;
             $DIC->database()->update('ut_lp_marks',
                 array(
-                    "status_changed" => array('text', date("Y-m-d H:i:s", strtotime($response->timestamp))),
+                    "status_changed" => array('text', date("Y-m-d H:i:s", strtotime($xapiGrade->timestamp))),
                 ),
                 array(
                     'obj_id' => array('int', $task->getId()),
