@@ -265,7 +265,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
         //debug_to_console("Userid: " . $ilUser->getId());
         require_once ('Services/User/classes/class.ilObjUser.php');
-        ilMumieTaskLPStatus::updateGrades($ilUser->getId(), $this->object);
+        ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
             $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
         } else {
@@ -278,10 +278,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $ilTabs->activateTab('learning_progress');
         $this->setSubTabs('learning_progress');
         $ilTabs->activateSubTab('lp_personal');
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPTableGUI.php');
-        $server_gui = new ilMumieTaskLPTableGUI($this);
-        $server_gui->init($this);
-        $tpl->setContent($server_gui->getHTML());
     }
 
     function displayLPOverview() {
@@ -315,7 +311,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         require_once ('Services/User/classes/class.ilObjUser.php');
         //debug_to_console("view content is called, uid is" . $ilUser->getId());
-        ilMumieTaskLPStatus::updateGrades($ilUser->getId(), $this->object);
+        ilMumieTaskLPStatus::updateGrades($this->object);
         $this->object->updateAccess();
         //$this->object->update
         $this->tpl->setContent($this->object->getContent());
