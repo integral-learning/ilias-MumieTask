@@ -143,17 +143,22 @@ class ilMumieTaskSSOService {
         $tpl->setVariable("TOKEN", $ssotoken->token);
         $tpl->setVariable("ORG", ilMumieTaskAdminSettings::getInstance()->getOrg());
         $tpl->setVariable("PROBLEMURL", $problemurl);
-        $tpl->setVariable("WIDTH", $width);
+        $tpl->setVariable("WIDTH",'100%');
         $tpl->setVariable("HEIGHT", $height);
 
         if ($launchcontainer == 1) {
             $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the iframe and launch it immediately via $script
             $script = "<script>
             var iframe = document.getElementById('basicMumieTaskLaunchFrame');
-            var height = window.screen.height * 0.8;
-            var width = window.screen.width * 0.6;
-            console.log(window.screen.height,window.screen.width,height,width);
-            iframe.width = width;
+            var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            
+            var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            var height = height * 0.8;
+            var width = width * 0.6;
+
+            console.log(window.screen.height, window.screen.width, window.innerHeight, window.innerHeight, height, width);
+
+            //iframe.width = width;
             iframe.height = height;
             document.forms['mumie_sso_form'].submit();
             </script>";
