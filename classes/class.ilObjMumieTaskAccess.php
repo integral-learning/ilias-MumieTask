@@ -1,4 +1,5 @@
 <?php
+require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilObjMumieTaskAccess extends ilObjectPluginAccess {
 
@@ -18,53 +19,39 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
      * @return    boolean        true, if everything is ok
      */
     function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "") {
-        global $ilUser, $ilAccess;
-        return true; /*
-
-    if ($a_user_id == "") {
-    $a_user_id = $ilUser->getId();
-    }
-
-    switch ($a_permission) {
-    case "read":
-    if (!ilObjExampleAccess::checkOnline($a_obj_id) &&
-    !$ilAccess->checkAccessOfUser($a_user_id, "write", "", $a_ref_id)) {
-    return false;
-    }
-    break;
-    }
-
-    return true;*/
-    }
-
-    /**
-     * Check online status of example object
-     */
-    static function checkOnline($a_id) {
-        global $ilDB;
-
-        return true;
-        /*
-    $set = $ilDB->query("SELECT is_online FROM rep_robj_xexo_data " .
-    " WHERE id = " . $ilDB->quote($a_id, "integer")
-    );
-    $rec = $ilDB->fetchAssoc($set);
-    return (boolean) $rec["is_online"];
-     */
-    }
-    static function _getCommands() {
-        $commands = array
-            (
-            array("permission" => "write", "cmd" => "questionsTabGateway", "lang_var" => "tst_edit_questions"),
-            array("permission" => "write", "cmd" => "ilObjTestSettingsGeneralGUI::showForm", "lang_var" => "settings"),
-            array("permission" => "read", "cmd" => "infoScreen", "lang_var" => "tst_run",
-                "default" => true),
-            //array("permission" => "write", "cmd" => "", "lang_var" => "edit"),
-            array("permission" => "tst_statistics", "cmd" => "outEvaluation", "lang_var" => "tst_statistical_evaluation"),
-            array("permission" => "read", "cmd" => "userResultsGateway", "lang_var" => "tst_test_results"),
-        );
-
-        return $commands;
+        global $ilUser, $ilAccess, $ilCtrl;
+        if (!isset($a_cmd) || trim($a_cmd) === '') {
+            $a_cmd = $ilCtrl->getCmd();
+        }
+        $rbacsystem = $DIC['rbacsystem'];
+        switch ($a_cmd) {
+            case "editProperties":
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case 'createObject':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case "submitMumieTaskUpdate":
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case "submitMumieTaskCreate":
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case 'cancelServer':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case 'cancelCreate':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case 'addServer':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case 'submitServer':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case 'editLPSettings':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case 'submitLPSettings':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case "viewContent":
+                return $ilAccess->checkAccess("read", "", $a_ref_id);
+            case "displayLearningProgress":
+                return $ilAccess->checkAccess("read", "", $a_ref_id);
+            default:
+                return true;
+        }
     }
 }
 
