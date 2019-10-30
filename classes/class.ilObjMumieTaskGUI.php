@@ -41,8 +41,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'submitLPSettings':
             case "viewContent":
             case "displayLearningProgress":
-            case 'displayLPPersonal':
-            case 'displayLPOverview':
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
                 $this->$cmd();
@@ -64,7 +62,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         if ($this->object->getLP_modus()) {
             $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
         }
-        //$ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary'));
 
         $this->addPermissionTab();
     }
@@ -104,7 +101,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
         $tpl->setContent($this->form->getHTML());
-        //$tpl->setVariable('ADM_CONTENT', $this->form->getHTML());*/
     }
 
     function editPropertiesObject() {
@@ -262,31 +258,58 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function displayLearningProgress() {
-        global $ilUser, $ilCtrl, $ilTabs;
+        global $ilUser, $ilCtrl, $ilTabs, $ilDB, $lng;
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
 
-        //debug_to_console("Userid: " . $ilUser->getId());
         require_once ('Services/User/classes/class.ilObjUser.php');
         ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
             $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
         } else {
+            $this->setProgressInfo();
+            $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI'));
         }
-        //
     }
 
-    function displayLPPersonal() {
-        global $ilTabs, $tpl;
-        $ilTabs->activateTab('learning_progress');
-        $this->setSubTabs('learning_progress');
-        $ilTabs->activateSubTab('lp_personal');
+    function setProgressInfo() {
+        global $ilUser, $lng;
+        $status = ilMumieTaskLPStatus::getLPStatusForUser($this->object, $ilUser->getId());
+        $status_path = ilLearningProgressBaseGUI::_getImagePathForStatus($status);
+        $lng->loadLanguageModule('trac');
+
+        switch ($status) {
+            case ilLPStatus::LP_STATUS_COMPLETED_NUM:
+                $status_text = $lng->txt(ilLPStatus::LP_STATUS_COMPLETED);
+                ilUtil::sendSuccess($this->getLPMessageString($status_text, $status_path), true);
+                break;
+            case ilLPStatus::LP_STATUS_FAILED_NUM:
+                $status_text = $lng->txt(ilLPStatus::LP_STATUS_FAILED);
+                ilUtil::sendFailure($this->getLPMessageString($status_text, $status_path), true);
+                break;
+            case ilLPStatus::LP_STATUS_IN_PROGRESS_NUM:
+                $status_text = $lng->txt(ilLPStatus::LP_STATUS_IN_PROGRESS);
+                ilUtil::sendQuestion($this->getLPMessageString($status_text, $status_path), true);
+                break;
+            case ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM:
+                $status_text = $lng->txt(ilLPStatus::LP_STATUS_NOT_ATTEMPTED);
+                ilUtil::sendQuestion($this->getLPMessageString($status_text, $status_path), true);
+                break;
+            default:
+                ilUtil::sendQuestion($this->getLPMessageString($status_text, $status_path), true);
+        }
     }
 
-    function displayLPOverview() {
-        global $ilTabs;
-        $ilTabs->activateTab('learning_progress');
-        $this->setSubTabs('learning_progress');
-        $ilTabs->activateSubTab('lp_overview');
+    function getLPMessageString($status_text, $status_path) {
+        global $lng;
+        $lng->loadLanguageModule('trac');
+
+        $htmlString =
+        '<span style:"padding:15px"><i> '
+        . $lng->txt('status')
+            . ':</i></span>'
+            . "<img style='margin-left: 30px; margin-right: 10px' src='" . $status_path . "'>"
+            . $status_text;
+        return $htmlString;
     }
     /**
      * After object has been created -> jump to this command

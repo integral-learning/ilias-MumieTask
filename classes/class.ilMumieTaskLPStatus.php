@@ -56,12 +56,17 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
             $DIC->database()->update('ut_lp_marks',
                 array(
                     "status_changed" => array('text', date("Y-m-d H:i:s", strtotime($xapiGrade->timestamp))),
+                    "mark" => array('int', $percentage),
                 ),
                 array(
                     'obj_id' => array('int', $task->getId()),
                     'usr_id' => array('int', $userId),
                 ));
         }
+    }
+
+    public static function getLPStatusForUser($task, $userId) {
+        return self::getLPDataForUser($task->getId(), $userId);
     }
 }
 
