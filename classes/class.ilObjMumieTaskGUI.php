@@ -301,11 +301,26 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $lng->loadLanguageModule('trac');
 
         $htmlString =
-        '<span style:"padding:15px"><i> '
+
+        '<table style= "padding:15px">'
+        . ' <tr style="line-height:30px">
+            <td><i>'
+        . $lng->txt('rep_robj_xmum_frm_passing_grade')
+        . ':</i></td>'
+        . '<td style="padding-left:50px">'
+        . $this->object->getPassing_grade()
+        . '</td>'
+        . '</tr>'
+        . '<tr style="line-height:30px">'
+        . '<td><i>'
         . $lng->txt('status')
-            . ':</i></span>'
-            . "<img style='margin-left: 30px; margin-right: 10px' src='" . $status_path . "'>"
-            . $status_text;
+            . ':</i></td>'
+            . '<td style="padding-left:50px">'
+            . "<img style='margin-right: 10px' src='" . $status_path . "'>"
+            . $status_text
+            . '</td></tr>'
+
+            . '</table>';
         return $htmlString;
     }
     /**
