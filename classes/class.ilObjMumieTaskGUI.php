@@ -75,9 +75,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
                 $ilTabs->addSubTab("lp_settings", $lng->txt('rep_robj_xmum_tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
                 $ilTabs->addSubTab("add_server", $lng->txt('rep_robj_xmum_add_server'), $ilCtrl->getLinkTarget($this, "addServer"));
                 break;
-            case 'learning_progress':
-                $ilTabs->addSubTab('lp_personal', 'lp_personal', $ilCtrl->getLinkTarget($this, "displayLPPersonal"));
-                $ilTabs->addSubTab('lp_overview', 'lp_overview', $ilCtrl->getLinkTarget($this, "displayLPOverview"));
         }
     }
 
@@ -330,15 +327,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     protected function viewContent() {
-        global $ilCtrl, $DIC, $ilTabs, $ilUser;
+        global $ilTabs;
         $ilTabs->activateTab('viewContent');
-        global $ilUser;
-        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-        require_once ('Services/User/classes/class.ilObjUser.php');
-        //debug_to_console("view content is called, uid is" . $ilUser->getId());
-        ilMumieTaskLPStatus::updateGrades($this->object);
         $this->object->updateAccess();
-        //$this->object->update
         $this->tpl->setContent($this->object->getContent());
     }
 
