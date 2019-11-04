@@ -6,13 +6,15 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
 
     private $courses;
     private $languages = array();
-    private $tags = array();
+    private $keys = array();
+    private $values = array();
 
     /**
      * Get the value of courses
      */
     public function getCourses() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+        //debug_to_console($this->course);
         return $this->courses;
     }
 
@@ -28,6 +30,7 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
     }
     protected function loadStructure($coursesAndTasks) {
         $this->courses = [];
+        //debug_to_console(json_encode($coursesAndTasks));
         foreach ($coursesAndTasks->courses as $course) {
             array_push($this->courses, new ilMumieTaskCourseStructure($course));
         }
@@ -44,11 +47,16 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
     }
 
     private function collectTags() {
-        $tags = [];
+        $keys = [];
+        $values = [];
         foreach ($this->courses as $course) {
-            array_push($tags, ...$course->getTags());
+            array_push($keys, ...$course->getKeys());
+            array_push($values, ...$course->getValues());
+            
         }
-        $this->tags = array_values(array_unique($tags));
+        $this->keys = array_values(array_unique($keys));
+        $this->values = array_values(array_unique($values));
+        
     }
 
     public function jsonSerialize() {
@@ -76,10 +84,17 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
     }
 
     /**
-     * Get the value of tags
+     * Get the keys of tags
      */
-    public function getTags() {
-        return $this->tags;
+    public function getKeys() {
+        return $this->keys;
+    }
+    
+    /**
+     * Get the values of the tags
+     */
+    public function getValues() {
+        return $this->values;
     }
 
     public function getCoursebyName($name) {

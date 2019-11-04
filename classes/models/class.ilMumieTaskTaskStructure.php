@@ -24,12 +24,13 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
 
     function __construct($task) {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+        //debug_to_console($task); // not using "json_encode" causes an error that lets us see the stack trace on 
         $this->link = $task->link;
         $this->headline = $task->headline;
         if (isset($task->tags)) {
             $this->tags = $task->tags;
         }
-
+        //debug_to_console("next task");
         $this->collectLanguages();
     }
 

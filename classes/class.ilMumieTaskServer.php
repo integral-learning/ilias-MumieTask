@@ -120,6 +120,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         //MOCK START
 
         if ($this->getUrlPrefix() == "test/") {
+          //debug_to_console("foo");
             $res = json_decode('
             {
               "courses":[
@@ -129,8 +130,20 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
                     {
                       "link":"link/OHMintIntern/BEDiffer/Ableit/DieProduk/Traini",
                       "tags":[
-                        "easy",
-                        "short"
+                        {
+                          "key":"Chapter",
+                          "values":[
+                            "Chapt1",
+                            "Chapt2"
+                          ]
+                        },
+                        {
+                          "key":"type",
+                          "values":[
+                            "type1",
+                            "type2"
+                          ]
+                        }
                       ],
                       "headline":[
                         {
@@ -151,8 +164,13 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
                     {
                       "link":"link/OHMintIntern/BEDiffer/Ableit/DieKetten/Traini",
                       "tags":[
-                        "easy",
-                        "green"
+                        {
+                          "key":"Chapter",
+                          "values":[
+                            "Chapt1",
+                            "Chapt2"
+                          ]
+                        }
                       ],
                       "headline":[
                         {
@@ -164,7 +182,13 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
                     {
                       "link":"link/OHMintIntern/BEDiffer/DieAbleitEinerFunkti/Selbst/AbleitAlsTangen",
                       "tags":[
-                        "green"
+                        {
+                          "key":"type",
+                          "values":[
+                            "type1",
+                            "type2"
+                          ]
+                        }
                       ],
                       "headline":[
                         {
@@ -175,6 +199,14 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
                     },
                     {
                       "link":"link/OHMintIntern/BEDiffer/DieAbleitEinerFunkti/Selbst/LinearApprox",
+                      "tags":[
+                        {
+                          "key":"key3",
+                          "values":[
+                            "value3"
+                          ]
+                        }
+                      ],
                       "headline":[
                         {
                           "language":"de",
@@ -188,10 +220,12 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
               ]
             }
             ');
+            
+            //debug_to_console(json_encode($res));
 
             return $res;
         }
-
+        
         //MOCK END
         $curl = curl_init($this->getCoursesAndTasksURL());
         curl_setopt_array($curl, [

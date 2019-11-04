@@ -5,8 +5,11 @@
     var server_data;
 
 
+    console.log("Mumie JS loaded/IFE'd");
+    // throw Error("dont js");
     $(document).ready(function () {
         server_data = JSON.parse(document.getElementById('server_data').getAttribute('value'));
+        console.log(server_data);
         init();
 
         serverController.setOnclickListeners();
@@ -302,23 +305,51 @@
     })();
 
     var filterController = (function() {
-        var filterElem;
-        var selectedTags;
-        function getAvailableTags() {
-            return courseController.getSelectedCourse()['tags'];
+        var keyElem;
+        var valueElem;
+        var selectedKeys;
+        var selectedValues;
+
+        function getAvailableKeys() {
+            var temp = courseController.getSelectedCourse()['keys'];
+            // console.log(courseController.getSelectedCourse());
+            // console.log("key value pairs",temp,courseController.getSelectedCourse()['values']);
+            console.log("getting avail keys");
+            // getKeyValuePairs();
+            return temp;
         }
 
-        function createTagOption(tag, id, checked) {
+        function getKeyValuePairs(){
+            var course = courseController.getSelectedCourse();
+            var tasks = course['tasks'];
+            var keys = [];
+            course['keys'].forEach( key => {
+                var k = {};
+                var values = [];
+                tasks.forEach( task => {
+                    task.tags.forEach(tag => {
+                        if (tag.key === key){
+                            k.key = key;
+                            values = values.concat(tag.values);
+                            k.values = values.filter((v,i) => values.indexOf(v) === i ); //remove duplicates
+                        }
+                    })
+                });
+                if(k.values) keys.push(k);
+            });
+            return keys;
+        }
+
+        function createTagOption(tag, id, checked, showCount) {
             var option = document.createElement('input');
             option.setAttribute('type', 'checkbox');
             option.setAttribute('name', "xmum_filter[]");
-            option.setAttribute('value', tag);
             option.setAttribute('id', id);
             option.checked = checked;
 
             var label = document.createElement('label');
             label.setAttribute('for', id);
-            label.textContent = tag + (checked ? "" : ' (' + getFilteredCount(tag) + ')');
+            label.textContent = tag + (checked || !showCount ? "" : ' (' + getFilteredCount(tag) + ')');
 
             var wrapper = document.createElement('div');
             wrapper.style = 'white-space:nowrap';
@@ -329,22 +360,26 @@
         }
 
         function getFilteredCount(tag) {
-            var tags = [tag, ...selectedTags];
+            var tags = [tag, ...selectedValues];
             return getFilteredTasks(tags).length;
         }
 
-        function filterTask(task, selectedTags) {
-            return selectedTags.every(function(tag) {
-                return task.tags.includes(tag);
+        function filterTask(task, values, keys) {
+            var taskValues = [];
+            task.tags.forEach( tag => { if(keys.includes(tag.key)) taskValues = taskValues.concat(tag.values)});
+            console.log(taskValues, values);
+            return values.every(function(value) {
+                return taskValues.includes(value);
             });
         }
 
-        function getFilteredTasks(tags) {
+        function getFilteredTasks(values) {
             var availableTasks = taskController.getAvailableTasks();
-            var filteredTasks = []
+            var keys = getSelectedKeys();
+            var filteredTasks = [];
             for(var i = 0; i < availableTasks.length; i++){
                 var task = availableTasks[i];
-                if(filterTask(task, tags)) {
+                if(filterTask(task, values, keys)) {
                     filteredTasks.push(task);
                 }
             }
@@ -352,62 +387,95 @@
         }
 
 
-        function getSelectedTags() {
-            var selectedTags = [];
+        function getSelectedKeys() {
+            var keys = [];
 
-            for(var i = 0; i < filterElem.children.length; i++) {
-                var input =  filterElem.children[i].children[0];
+            for(var i = 0; i < keyElem.children.length; i++) {
+                var input =  keyElem.children[i].children[0];
                 if(input.checked) {
-                    selectedTags.push(input.getAttribute('value'));
+                    keys.push(input.getAttribute('value'));
                 }
             }
 
-            return selectedTags;
+            return keys;
         }
 
-        function getInputId(index) {
-            return 'xmum_filter_'+index;
+        function getSelectedValues() {
+            var values = [];
+
+            for(var i = 0; i < valueElem.children.length; i++) {
+                var input =  valueElem.children[i].children[0];
+                if(input.checked) {
+                    values.push(input.getAttribute('value'));
+                }
+            }
+            return values;
         }
 
-        function setEventListener(id) {
+        function getInputId(index, offset) {
+            return 'xmum_filter_' +
+                (offset !== -1 ? 'value_' + index.toString() + offset.toString() : 'key_' + index);
+        }
+
+        function setValueEventListener(id) {
             $('#' + id).change(function() {
                 taskController.setTaskOptions();
                 filterController.setFilterOptions();
                 taskController.updateDefaultName();
             })
         }
-        
+
+        function setKeyEventListener(id, key){
+            $('#' + id).change(function() {
+                taskController.setTaskOptions();
+                filterController.setFilterOptions();
+                // taskController.updateDefaultName();
+            })
+        }
+
         function hideEmptyFilter(hide) {
-            wrapper = document.getElementById('il_prop_cont_xmum_filter');
+            var keyWrapper = document.getElementById('il_prop_cont_xmum_keys');
+            var valueWrapper = document.getElementById('il_prop_cont_xmum_keys');
             if(hide) {
-                wrapper.style = 'display:none';
+                valueWrapper.style = 'display:block';
+                keyWrapper.style = 'display:none';
             } else {
-                wrapper.style = 'display:block';
+                valueWrapper.style = 'display:block';
+                keyWrapper.style = 'display:block';
             }
         }
+
         return {
             init: function() {
-                filterElem = document.getElementById("xmum_filter");
-                optionWrapper = filterElem.children[0];
+                keyElem = document.getElementById("xmum_keys");
+                valueElem = document.getElementById("xmum_values");
+                optionWrapper = keyElem.children[0];
                 this.setFilterOptions();
             },
             setFilterOptions: function() {
-                var availableTags = getAvailableTags();
-                selectedTags = getSelectedTags();
-                removeAllChildElements(filterElem);
-
-                for(var i = 0; i < availableTags.length; i++) {
-                    var tag = availableTags[i]
-                    var tagOption = createTagOption(tag, getInputId(i), selectedTags.includes(tag));
-
-                    filterElem.appendChild(tagOption);
-                    setEventListener(getInputId(i));
+                var availableKeys = getKeyValuePairs();
+                selectedValues = getSelectedValues();
+                selectedKeys = getSelectedKeys();
+                removeAllChildElements(keyElem);
+                removeAllChildElements(valueElem);
+                for(var i = 0; i < availableKeys.length; i++) {
+                    var k  = availableKeys[i];
+                    var selected = selectedKeys.includes(k.key);
+                    keyElem.appendChild(createTagOption(k.key,getInputId(i,-1),selected, false));
+                    setKeyEventListener(getInputId(i,-1));
+                    if(selected){
+                        k.values.forEach( (val,j) => {
+                            selected = selectedValues.includes(val);
+                            valueElem.appendChild((createTagOption(val, getInputId(i,j), selected, true)));
+                            setValueEventListener(getInputId(i,j));
+                        })
+                    }
                 }
 
-                hideEmptyFilter(availableTags.length < 1);
+                hideEmptyFilter(availableKeys.length < 1);
             },
             getFilteredTasks: function() {
-                return getFilteredTasks(getSelectedTags());
+                return getFilteredTasks(getSelectedValues());
             }
 
         }
