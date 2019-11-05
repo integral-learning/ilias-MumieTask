@@ -5,7 +5,7 @@
     var server_data;
 
 
-    console.log("Mumie JS loaded/IFE'd");
+    console.log("ilMumieTaskForm JS loaded/IFE'd");
     // throw Error("dont js");
     $(document).ready(function () {
         server_data = JSON.parse(document.getElementById('server_data').getAttribute('value'));
@@ -345,6 +345,7 @@
             option.setAttribute('type', 'checkbox');
             option.setAttribute('name', "xmum_filter[]");
             option.setAttribute('id', id);
+            option.setAttribute('value', tag);
             option.checked = checked;
 
             var label = document.createElement('label');
@@ -366,8 +367,7 @@
 
         function filterTask(task, values, keys) {
             var taskValues = [];
-            task.tags.forEach( tag => { if(keys.includes(tag.key)) taskValues = taskValues.concat(tag.values)});
-            console.log(taskValues, values);
+            task.tags.forEach( tag => { /*if(keys.includes(tag.key))*/ taskValues = taskValues.concat(tag.values)});
             return values.every(function(value) {
                 return taskValues.includes(value);
             });
