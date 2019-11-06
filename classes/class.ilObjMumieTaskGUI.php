@@ -59,7 +59,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
         }
 
-        if ($this->object->getLP_modus()) {
+        include_once ("Services/Tracking/classes/class.ilObjUserTracking.php");
+        if ($this->object->getLP_modus() && ilObjUserTracking::_enabledLearningProgress()) {
             $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
         }
 

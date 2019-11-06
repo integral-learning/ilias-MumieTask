@@ -39,7 +39,9 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
     }
 
     public static function updateGrades($task, $forceUpdate = false) {
-        if (!$task->getLp_modus()) {
+        include_once ("Services/Tracking/classes/class.ilObjUserTracking.php");
+
+        if (!$task->getLp_modus() && ilObjUserTracking::_enabledLearningProgress()) {
             return;
         }
         //debug_to_console("update grades for task: " . $task->getId());
