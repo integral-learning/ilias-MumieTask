@@ -379,7 +379,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function submitLPSettings() {
-        //debug_to_console("submitting lp settings");
         $this->initLPSettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();

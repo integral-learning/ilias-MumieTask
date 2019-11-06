@@ -33,7 +33,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
 
     private static function updateResult($userId, $taskId, $succeded, $percentage) {
         $status = $succeded ? self::LP_STATUS_COMPLETED_NUM : self::LP_STATUS_FAILED_NUM;
-        //debug_to_console("update result with status: " . $status);
         self::writeStatus($taskId, $userId, $status, $percentage, true);
         self::raiseEvent($taskId, $userId, $status, $percentage);
     }
@@ -44,7 +43,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         if (!$task->getLp_modus() && ilObjUserTracking::_enabledLearningProgress()) {
             return;
         }
-        //debug_to_console("update grades for task: " . $task->getId());
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         $gradeSync = new ilMumieTaskGradeSync($task, $forceUpdate);
@@ -52,7 +50,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         foreach (array_keys($gradesByUser) as $userId) {
             $xapiGrade = $gradesByUser[$userId];
             $percentage = round($xapiGrade->result->score->scaled * 100);
-            //debug_to_console("updating grade for user at timestamp " . date("Y-m-d H:i:s", strtotime($xapiGrade->timestamp)) . " timestamp from response is: " . $xapiGrade->timestamp);
             self::updateResult($userId, (string) $task->getId(), $percentage >= $task->getPassing_grade(), $percentage);
             global $DIC;
             $DIC->database()->update('ut_lp_marks',
