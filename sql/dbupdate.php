@@ -65,12 +65,12 @@ if (!$ilDB->tableExists("xmum_mumie_task")) {
         'passing_grade' => array(
             'type' => 'integer',
             'length' => '4',
-            'default' => '60',
+            'default' => 60,
         ),
         'lp_modus' => array(
             'type' => 'integer',
             'length' => '2',
-            'default' => '0',
+            'default' => '1',
         ),
     );
     $ilDB->createTable("xmum_mumie_task", $fieldsMumie);

@@ -11,7 +11,7 @@ include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/M
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface {
 
     private static $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
-    private $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile, $lp_modus, $passing_grade; /**
+    private $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile, $lp_modus = 1, $passing_grade = 60; /**
      * Constructor
      *
      * @access        public
@@ -80,12 +80,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             array(
                 'id' => array("int", $this->getId()),
             ));
-        /*
-    $ilDB->manipulate($up = "UPDATE rep_robj_xtst_data SET " .
-    " is_online = " . $ilDB->quote($this->isOnline(), "integer") . "" .
-    " WHERE id = " . $ilDB->quote($this->getId(), "integer")
-    );
-     */
     }
 
     /**
