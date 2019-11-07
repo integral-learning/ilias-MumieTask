@@ -76,7 +76,6 @@ class ilMumieTaskGradeSync {
             " FROM ut_lp_marks".
             " WHERE obj_id = ".$ilDB->quote($this->task->getId(), "integer"));
         while ($record = $ilDB->fetchAssoc($result)) {
-            //debug_to_console("TIMESTAMP: " . json_encode(strtotime($record['status_changed'])));
             if(in_array($record['usr_id'], $this->userIds) && strtotime($record['status_changed'])<$oldestTimestamp) {
                 $oldestTimestamp = strtotime($record['status_changed']);
             }

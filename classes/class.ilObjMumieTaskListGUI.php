@@ -12,7 +12,11 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI {
     }
 
     function initCommands() {
-        global $lng;
+        global $lng, $ctrl;
+        include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
+
+        //Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
+        ilMumieTaskLPStatus::updateGradesForIlContainer($_GET["ref_id"]);
         return array
             (
             array(

@@ -64,6 +64,24 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         }
     }
 
+    public static function updateGradesForIlContainer($refId) {
+        global $ilDB;
+        include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+        $result = $ilDB->query(
+            "SELECT o.ref_id, m.id
+            FROM tree t
+            JOIN object_reference o ON t.child = o.ref_id
+            JOIN xmum_mumie_task m ON m.id = o.obj_id
+            WHERE t.parent = " . $ilDB->quote($refId, "integer")
+        );
+
+        while ($record = $ilDB->fetchAssoc($result)) {
+            $mumieTask = new ilObjMumieTask($record["ref_id"]);
+            $mumieTask->read();
+            self::updateGrades($mumieTask);
+        }
+    }
+
     public static function getLPStatusForUser($task, $userId) {
         return self::getLPDataForUser($task->getId(), $userId);
     }
