@@ -5,6 +5,7 @@ require_once ("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
 require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
 include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
 /**
  */
@@ -200,7 +201,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function setServer($server) {
         $this->server = $server;
-
         return $this;
     }
 
@@ -309,7 +309,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @return string login url
      */
     public function getLoginUrl() {
-        return $this->server . 'public/xapi/auth/sso/login';
+        return ilMumieTaskServer::fromUrl($this->server)->getLoginUrl();
+        //return $this->server . 'public/xapi/auth/sso/login';
     }
 
     /**
@@ -318,7 +319,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @return string logout url
      */
     public function getLogoutUrl() {
-        return $this->server . 'public/xapi/auth/sso/logout';
+        //return $this->server . 'public/xapi/auth/sso/logout';
+        ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
     }
 
     /**
@@ -331,7 +333,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     }
 
     public function getGradeSyncURL() {
-        return $this->server . 'public/xapi';
+        return ilMumieTaskServer::fromUrl($this->server)->getGradeSyncURL();
     }
 
     /**

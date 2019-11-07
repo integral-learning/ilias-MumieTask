@@ -12,6 +12,12 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         $this->server_id = $id;
     }
 
+    public static function fromUrl($url) {
+        $server = new ilMumieTaskServer();
+        $server->setUrlPrefix($url);
+        return $server;
+    }
+
     private function create() {
         global $ilDB, $DIC;
         $this->server_id = $ilDB->nextId(ilMumieTaskServer::$SERVER_TABLE_NAME);
@@ -224,5 +230,16 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
                 return $server->getUrlPrefix();
             }, ilMumieTaskServer::getAllServers())
         );
+    }
+
+    public function getLoginUrl() {
+        return $this->url_prefix . 'public/xapi/auth/sso/login';
+    }
+    public function getLogoutUrl() {
+        require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+        return $this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg();
+    }
+    public function getGradeSyncURL() {
+        return $this->url_prefix . 'public/xapi';
     }
 }

@@ -50,6 +50,13 @@ class ilMumieTaskServerTest extends TestCase {
         $this->assertTrue(count($server->getTags()) > 0);
     }
 
+    public function testDerivedUrls() {
+        $server = ilMumieTaskServer::fromUrl("https://test.mumie.net/gwt");
+        $this->assertEquals($server->getLoginUrl(), "https://test.mumie.net/gwt/public/xapi/auth/sso/login");
+        $this->assertEquals($server->getLogoutUrl(), "https://test.mumie.net/gwt/public/xapi/auth/sso/logout");
+        $this->assertEquals($server->getGradeSyncURL(), "https://test.mumie.net/gwt/public/xapi");
+    }
+
 }
 
 ?>
