@@ -18,19 +18,12 @@ class ilMumieTaskSSOService {
 
     public static function verifyToken() {
         $logger = ilLoggerFactory::getLogger('xmum');
-        $logger->info("---------------------------------------------____________________-------------verifyToken is called");
-
         global $ilDB;
         $token = $_POST['token'];
         $userid = $_POST['userId'];
 
         $mumietoken = new ilMumieTaskSSOToken($userid);
         $mumietoken->read();
-        $logger->info("---------------------------------------------Saved token is: " . $mumietoken->getToken());
-        $logger->info("---------------------------------------------request token is: " . $token);
-        $logger->info("---------------------------------------------tokens are equal " . json_encode($mumietoken->getToken() == $token));
-        $logger->info("---------------------------------------------saved token is not null? " . json_encode(($mumietoken->getToken() != null));
-
 
         $userQuery = $ilDB->query('SELECT * FROM usr_data WHERE usr_id = ' . $ilDB->quote($userid, "integer"));
         $user_rec = $ilDB->fetchAssoc($userQuery);
@@ -40,7 +33,7 @@ class ilMumieTaskSSOService {
 
         if (!is_null($mumietoken->getToken()) && $mumietoken->getToken() == $token && $user_rec != null) {
             $current = time();
-            if (($current - $mumietoken->timecreated) >= 60) {
+            if (($current - $mumietoken->getTimecreated()) >= 1000) {
                 $response->status = "invalid";
             } else {
                 $response->status = "valid";

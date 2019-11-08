@@ -57,7 +57,7 @@ class ilMumieTaskSSOToken {
                 'timecreated' => array('integer', time()),
             ),
             array(
-                'user' => array('integer', $user),
+                'user' => array('integer', $this->user),
             ));
     }
 
