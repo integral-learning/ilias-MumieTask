@@ -17,6 +17,8 @@ class ilMumieTaskSSOService {
      */
 
     public static function verifyToken() {
+        $logger = ilLoggerFactory::getLogger('xmum');
+        $logger->info("---------------------------------------------____________________-------------verifyToken is called");
 
         global $ilDB;
         $token = $_POST['token'];
@@ -24,6 +26,10 @@ class ilMumieTaskSSOService {
 
         $mumietoken = new ilMumieTaskSSOToken($userid);
         $mumietoken->read();
+        $logger->info("---------------------------------------------Saved token is: " . $mumietoken->getToken());
+        $logger->info("---------------------------------------------request token is: " . $token);
+        $logger->info("---------------------------------------------tokens are equal " . json_encode($mumietoken->getToken() == $token));
+
         $userQuery = $ilDB->query('SELECT * FROM usr_data WHERE usr_id = ' . $ilDB->quote($userid, "integer"));
         $user_rec = $ilDB->fetchAssoc($userQuery);
         $response = new stdClass();
