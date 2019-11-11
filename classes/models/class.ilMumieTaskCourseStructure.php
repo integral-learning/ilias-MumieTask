@@ -66,10 +66,13 @@ class ilMumieTaskCourseStructure implements \JsonSerializable {
         $this->name = $courseAndTasks->name;
         $this->pathToCourseFile = $courseAndTasks->pathToCourseFile;
         $this->tasks = [];
-        foreach ($courseAndTasks->tasks as $task) {
-            $taskObj = new ilMumieTaskTaskStructure($task);
-            array_push($this->tasks, $taskObj);
-        }
+        if($courseAndTasks->tasks){
+            // debug_to_console(json_encode());
+            foreach ($courseAndTasks->tasks as $task) {
+                $taskObj = new ilMumieTaskTaskStructure($task);
+                array_push($this->tasks, $taskObj);
+            }
+        }  
         $this->collectLanguages();
         $this->collectTags();
     }
@@ -87,7 +90,7 @@ class ilMumieTaskCourseStructure implements \JsonSerializable {
         $values = array();
         foreach ($this->tasks as $task) {
             foreach($task->getTags() as $tag){
-                array_push($keys,$tag->key);
+                array_push($keys,$tag->name);
                 array_push($values,...$tag->values);
             }
         }

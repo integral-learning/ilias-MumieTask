@@ -5,8 +5,6 @@
     var server_data;
 
 
-    console.log("ilMumieTaskForm JS loaded/IFE'd");
-    // throw Error("dont js");
     $(document).ready(function () {
         server_data = JSON.parse(document.getElementById('server_data').getAttribute('value'));
         console.log(server_data);
@@ -16,7 +14,7 @@
         languageController.setOnclickListeners();
         courseController.setOnclickListeners();
         taskController.setOnclickListeners();
-    })
+    });
 
     function init() {
         serverController.init();
@@ -216,7 +214,7 @@
                 .flatMap(server => server.courses)
                 .flatMap(course => course.tasks)
                 .flatMap(task => task.headline)
-                .map(headline => headline.name)
+                .map(headline => headline ? headline.name : "null headline")
                 .includes(name);            
         }
         function getSelectedTask() {
@@ -238,7 +236,7 @@
         }
 
         function getHeadlineForLang(task, lang) {
-            var headlines = task.headline
+            var headlines = task.headline;
             for(var i = 0; i< headlines.length; i++) {
                 var headline = headlines[i];
                 if(headline.language == lang) {
@@ -314,14 +312,14 @@
                 var values = [];
                 tasks.forEach( task => {
                     task.tags.forEach(tag => {
-                        if (tag.key === key){
+                        if (tag.name === key){
                             k.key = key;
                             values = values.concat(tag.values);
                             k.values = values.filter((v,i) => values.indexOf(v) === i ); //remove duplicates
                         }
                     })
                 });
-                if(k.values) keys.push(k);
+                if (k.values) keys.push(k);
             });
             return keys;
         }
@@ -347,7 +345,7 @@
         }
 
         function getFilteredCount(tag,values) {
-            var tags = [tag, ...values];
+            var tags = values ? [tag, ...values] : [tag];
             return getFilteredTasks(tags).length;
         }
 
@@ -358,7 +356,7 @@
                     var container = keyEl.children[i];
                     var value = $(keyEl.children[i].firstElementChild).val();
                     var label = $(container).find("label");
-                    label.html(value + ' (' +getFilteredCount(value,selectedValues) + ')');
+                    label.html(value + ' (' + getFilteredCount(value,selectedValues) + ')');
                 }
             });
         }
@@ -373,7 +371,6 @@
 
         function getFilteredTasks(values) {
             var availableTasks = taskController.getAvailableTasks();
-            // var keys = getSelectedKeys();
             var filteredTasks = [];
             for(var i = 0; i < availableTasks.length; i++){
                 var task = availableTasks[i];
@@ -397,28 +394,8 @@
             return values;
         }
 
-        function getInputId(index, value) {
+        function getInputId(value,index) {
             return 'xmum_filter_value_' + index.toString() + value;
-        }
-
-        function setValueEventListener(id) {
-            $('#' + id).change(function() {
-                taskController.setTaskOptions();
-                taskController.updateDefaultName();
-                updateFilterCount();
-            })
-        }
-
-        function hideEmptyFilter(hide) {
-            var keyWrapper = document.getElementById('il_prop_cont_xmum_keys');
-            var valueWrapper = document.getElementById('il_prop_cont_xmum_keys');
-            if(hide) {
-                valueWrapper.style = 'display:block';
-                keyWrapper.style = 'display:none';
-            } else {
-                valueWrapper.style = 'display:block';
-                keyWrapper.style = 'display:block';
-            }
         }
 
         function fillOptionsWithValues (element, values){
@@ -426,9 +403,23 @@
                 var option = document.createElement('option');
                 option.setAttribute('value', val);
                 option.text = val;
-                element.appendChild(createTagOption(val,getInputId(i,val),false,true));
-                setValueEventListener(getInputId(i,val));
+                element.appendChild(createTagOption(val,getInputId(val,i),false,true));
             }  );
+
+            var childCount = element.children.length;
+            var height = Number.parseFloat(element.style.width.replace("px",""));
+            var width = Number.parseFloat(element.style.width.replace("px",""));
+            element.style.width = (2 * width).toString()+'px';
+            if (childCount > 4) element.style.height = (height * 1.5).toString()+'px';
+            // set event listeners on children
+            for(var i = 0; i < childCount ; i++){
+                var child = $(element.children[i]);
+                child.change(function() {
+                    taskController.setTaskOptions();
+                    taskController.updateDefaultName();
+                    updateFilterCount();
+                })
+            }
         }
 
         function createKeyElement(keyEl,valueEl,key){
@@ -437,14 +428,14 @@
             keyEl.style.cursor = "pointer";
             $(keyEl).hover(
                 function() {
-                    this.style.backgroundColor = "#ccc"; //#708bae
+                    this.style.backgroundColor = "#ccc";
 
                 }, function() {
                     this.style.backgroundColor = 'inherit';
                 }
             );
 
-            $(keyEl).click( () => {
+            $(keyEl).click( function () {
                 if (valueEl.style.display === "block") {
                     valueEl.style.display = "none";
                 } else {
@@ -466,6 +457,29 @@
             keyElements.push(clone);
         }
 
+        function makeParentCollapsible(keys){
+            var title = $(".ilFormHeader")[1];
+
+            $(title).hover(
+                function() {
+                    this.style.backgroundColor = "#ccc";
+                }, function() {
+                    this.style.backgroundColor = '#f0f0f0'; //copied from ilias' style
+                }
+            );
+
+            $(title).click( function() {
+                keys.forEach( keyEl => {
+                    if (keyEl.style.display === "block") {
+                        keyEl.style.display = "none";
+                    } else {
+                        keyEl.style.display = "block";
+                    }
+                });
+
+            });
+        }
+
         return {
             init: function() {
                 parentEl = document.getElementById("il_prop_cont_xmum_values");
@@ -473,21 +487,23 @@
             },
             setFilterOptions: function() {
                 var tags = getKeyValuePairs();
-                // selectedValues = getSelectedValues();
+                selectedValues = getSelectedValues();
                 for(var i = 0; i < tags.length; i++) {
                     var tag  = tags[i];
                     addKeyValueCheckboxes(tag);
                 }
                 parentEl.style.display = "none";
                 // hideEmptyFilter(tags.length < 1);
+                makeParentCollapsible(keyElements);
             },
             getFilteredTasks: function() {
                 return getFilteredTasks(getSelectedValues());
             },
             resetFilters: function () {
-                var i = 0;
                 keyElements.forEach( el => el.remove());
+                keyElements = [];
                 valueElements.forEach(el => el.remove());
+                valueElements = [];
                 parentEl.style.display = "block";
                 this.setFilterOptions();
             }

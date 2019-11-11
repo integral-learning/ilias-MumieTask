@@ -6,7 +6,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function __construct() {
         parent::__construct();
     }
-    private $titleItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem, $filterItem, $keyFilter,$valuePairs;
+    private $titleItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem, $filterItem, $selectTaskHeader;
 
     private $serverOptions = array();
     private $courseOptions = array();
@@ -32,13 +32,17 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->courseItem->setRequired(true);
         $this->addItem($this->courseItem);
 
-        $filerTitle = new ilFormSectionHeaderGUI();
-        $filerTitle->setTitle("Filter");
-        $filerTitle->
-        $this->addItem($filerTitle);
-
+        $filterTitle = new ilFormSectionHeaderGUI();
+        $filterTitle->setTitle("Filter tasks");
+        $filterTitle->setInfo("click to collapse/expand");
+        $this->addItem($filterTitle);
+        
         $this->valuePairs = new ilMultiSelectInputGUI("Values", "xmum_values");
         $this->addItem($this->valuePairs);
+        
+        $selectTaskHeader = new ilFormSectionHeaderGUI();
+        $selectTaskHeader->setTitle("Select Task");
+        $this->addItem($selectTaskHeader);
 
         $this->taskItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_task'), 'xmum_task');
         $this->taskItem->setInfo($lng->txt('rep_robj_xmum_mumie_task_desc'));
