@@ -32,11 +32,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->courseItem->setRequired(true);
         $this->addItem($this->courseItem);
 
-        // $this->filterItem = new ilMultiSelectInputGUI($lng->txt("rep_robj_xmum_filter"), "xmum_filter");
-        // $this->addItem($this->filterItem);
-        
-        $this->keyFilter = new ilMultiSelectInputGUI("Keys", "xmum_keys");
-        $this->addItem($this->keyFilter);
+        $filerTitle = new ilFormSectionHeaderGUI();
+        $filerTitle->setTitle("Filter");
+        $filerTitle->
+        $this->addItem($filerTitle);
 
         $this->valuePairs = new ilMultiSelectInputGUI("Values", "xmum_values");
         $this->addItem($this->valuePairs);
@@ -154,5 +153,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->courseItem->setDisabled(true);
         $this->taskItem->setDisabled(true);
         $this->languageItem->setDisabled(true);
+        $this->keyFilter->setDisabled(true);
     }
 }

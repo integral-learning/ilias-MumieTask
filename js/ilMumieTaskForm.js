@@ -45,7 +45,7 @@
                 serverDropDown.addEventListener('change', function(){
                     languageController.setLanguageOptions();
                     courseController.setCourseOptions();
-                    filterController.setFilterOptions();
+                    filterController.resetFilters();
                     taskController.setTaskOptions();
                     taskController.updateDefaultName();
                 })
@@ -133,12 +133,7 @@
 
         function getSelectedCourse() {
             var potentialCourses = serverController.getSelectedServer().courses;
-            for(var i = 0; i < potentialCourses.length; i++) {
-                var course = potentialCourses[i]
-                if(course.pathToCourseFile == courseFileElem.getAttribute('value')){
-                    return course;
-                }
-            }
+            return potentialCourses[courseDropDown.selectedIndex];
         }
 
         function createCourseOption(course) {
@@ -168,15 +163,14 @@
             },
             setOnclickListeners: function () {
                 courseDropDown.addEventListener('change', function () {
-                    
                     setCoursefile(courseController.getSelectedCourse());
                     taskController.setTaskOptions();
-                    filterController.setFilterOptions();
+                    filterController.resetFilters();
                 })
             },
             setCourseOptions: function () {
                 var availableCourses = getAvailableCourses();
-                selectedCourse = getSelectedCourse()
+                selectedCourse = getSelectedCourse();
                 courseDropDown.selectedIndex = 0;
                 removeAllChildElements(courseDropDown);
                 for (var i = 0; i < availableCourses.length; i++) {
@@ -305,19 +299,11 @@
     })();
 
     var filterController = (function() {
-        var keyElem;
-        var valueElem;
-        var selectedKeys;
+        var keyElements = [];
         var selectedValues;
+        var parentEl;
+        var valueElements = [];
 
-        function getAvailableKeys() {
-            var temp = courseController.getSelectedCourse()['keys'];
-            // console.log(courseController.getSelectedCourse());
-            // console.log("key value pairs",temp,courseController.getSelectedCourse()['values']);
-            console.log("getting avail keys");
-            // getKeyValuePairs();
-            return temp;
-        }
 
         function getKeyValuePairs(){
             var course = courseController.getSelectedCourse();
@@ -350,7 +336,7 @@
 
             var label = document.createElement('label');
             label.setAttribute('for', id);
-            label.textContent = tag + (checked || !showCount ? "" : ' (' + getFilteredCount(tag) + ')');
+            label.textContent = tag + (checked || !showCount ? "" : ' (' + getFilteredCount(tag, selectedValues) + ')');
 
             var wrapper = document.createElement('div');
             wrapper.style = 'white-space:nowrap';
@@ -360,12 +346,24 @@
             return wrapper;
         }
 
-        function getFilteredCount(tag) {
-            var tags = [tag, ...selectedValues];
+        function getFilteredCount(tag,values) {
+            var tags = [tag, ...values];
             return getFilteredTasks(tags).length;
         }
 
-        function filterTask(task, values, keys) {
+        function updateFilterCount(){
+            selectedValues = getSelectedValues();
+            valueElements.forEach( keyEl => {
+                for(var i = 0 ; i < keyEl.children.length ; i++){
+                    var container = keyEl.children[i];
+                    var value = $(keyEl.children[i].firstElementChild).val();
+                    var label = $(container).find("label");
+                    label.html(value + ' (' +getFilteredCount(value,selectedValues) + ')');
+                }
+            });
+        }
+
+        function filterTask(task, values) {
             var taskValues = [];
             task.tags.forEach( tag => { /*if(keys.includes(tag.key))*/ taskValues = taskValues.concat(tag.values)});
             return values.every(function(value) {
@@ -375,61 +373,39 @@
 
         function getFilteredTasks(values) {
             var availableTasks = taskController.getAvailableTasks();
-            var keys = getSelectedKeys();
+            // var keys = getSelectedKeys();
             var filteredTasks = [];
             for(var i = 0; i < availableTasks.length; i++){
                 var task = availableTasks[i];
-                if(filterTask(task, values, keys)) {
+                if(filterTask(task, values)) {
                     filteredTasks.push(task);
                 }
             }
             return filteredTasks;
         }
 
-
-        function getSelectedKeys() {
-            var keys = [];
-
-            for(var i = 0; i < keyElem.children.length; i++) {
-                var input =  keyElem.children[i].children[0];
-                if(input.checked) {
-                    keys.push(input.getAttribute('value'));
-                }
-            }
-
-            return keys;
-        }
-
         function getSelectedValues() {
             var values = [];
-
-            for(var i = 0; i < valueElem.children.length; i++) {
-                var input =  valueElem.children[i].children[0];
-                if(input.checked) {
-                    values.push(input.getAttribute('value'));
+            valueElements.forEach( keyEl => {
+                for(var i = 0 ; i < keyEl.children.length ; i++){
+                    var input = keyEl.children[i].firstElementChild;
+                    if(input.checked){
+                        values.push(input.getAttribute("value"));
+                    }
                 }
-            }
+            });
             return values;
         }
 
-        function getInputId(index, offset) {
-            return 'xmum_filter_' +
-                (offset !== -1 ? 'value_' + index.toString() + offset.toString() : 'key_' + index);
+        function getInputId(index, value) {
+            return 'xmum_filter_value_' + index.toString() + value;
         }
 
         function setValueEventListener(id) {
             $('#' + id).change(function() {
                 taskController.setTaskOptions();
-                filterController.setFilterOptions();
                 taskController.updateDefaultName();
-            })
-        }
-
-        function setKeyEventListener(id, key){
-            $('#' + id).change(function() {
-                taskController.setTaskOptions();
-                filterController.setFilterOptions();
-                // taskController.updateDefaultName();
+                updateFilterCount();
             })
         }
 
@@ -445,37 +421,75 @@
             }
         }
 
+        function fillOptionsWithValues (element, values){
+            values.forEach( (val,i) => {
+                var option = document.createElement('option');
+                option.setAttribute('value', val);
+                option.text = val;
+                element.appendChild(createTagOption(val,getInputId(i,val),false,true));
+                setValueEventListener(getInputId(i,val));
+            }  );
+        }
+
+        function createKeyElement(keyEl,valueEl,key){
+            keyEl.setAttribute("for",key);
+            keyEl.innerHTML = "Filter by " + key;
+            keyEl.style.cursor = "pointer";
+            $(keyEl).hover(
+                function() {
+                    this.style.backgroundColor = "#ccc"; //#708bae
+
+                }, function() {
+                    this.style.backgroundColor = 'inherit';
+                }
+            );
+
+            $(keyEl).click( () => {
+                if (valueEl.style.display === "block") {
+                    valueEl.style.display = "none";
+                } else {
+                    valueEl.style.display = "block";
+                }
+            });
+        }
+
+        function addKeyValueCheckboxes(tag){
+            var clone = parentEl.cloneNode(true);
+            clone.setAttribute("id","il_prop_cont_xmum_key_"+tag.key);
+            parentEl.parentElement.insertBefore(clone,parentEl);
+            var keyBox = clone.children[0];
+            var valuesBox = clone.children[1].firstElementChild;
+            createKeyElement(keyBox,valuesBox,tag.key);
+            valuesBox.setAttribute("id","xmum_key_" + tag.key);
+            fillOptionsWithValues(valuesBox,tag.values);
+            valueElements.push(valuesBox);
+            keyElements.push(clone);
+        }
+
         return {
             init: function() {
-                keyElem = document.getElementById("xmum_keys");
-                valueElem = document.getElementById("xmum_values");
-                optionWrapper = keyElem.children[0];
+                parentEl = document.getElementById("il_prop_cont_xmum_values");
                 this.setFilterOptions();
             },
             setFilterOptions: function() {
-                var availableKeys = getKeyValuePairs();
-                selectedValues = getSelectedValues();
-                selectedKeys = getSelectedKeys();
-                removeAllChildElements(keyElem);
-                removeAllChildElements(valueElem);
-                for(var i = 0; i < availableKeys.length; i++) {
-                    var k  = availableKeys[i];
-                    var selected = selectedKeys.includes(k.key);
-                    keyElem.appendChild(createTagOption(k.key,getInputId(i,-1),selected, false));
-                    setKeyEventListener(getInputId(i,-1));
-                    if(selected){
-                        k.values.forEach( (val,j) => {
-                            selected = selectedValues.includes(val);
-                            valueElem.appendChild((createTagOption(val, getInputId(i,j), selected, true)));
-                            setValueEventListener(getInputId(i,j));
-                        })
-                    }
+                var tags = getKeyValuePairs();
+                // selectedValues = getSelectedValues();
+                for(var i = 0; i < tags.length; i++) {
+                    var tag  = tags[i];
+                    addKeyValueCheckboxes(tag);
                 }
-
-                hideEmptyFilter(availableKeys.length < 1);
+                parentEl.style.display = "none";
+                // hideEmptyFilter(tags.length < 1);
             },
             getFilteredTasks: function() {
                 return getFilteredTasks(getSelectedValues());
+            },
+            resetFilters: function () {
+                var i = 0;
+                keyElements.forEach( el => el.remove());
+                valueElements.forEach(el => el.remove());
+                parentEl.style.display = "block";
+                this.setFilterOptions();
             }
 
         }

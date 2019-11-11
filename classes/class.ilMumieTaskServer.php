@@ -216,6 +216,56 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
                     }
                   ],
                   "pathToCourseFile":"org/HM_INT/Course/crs_oHMint_intern.meta.xml"
+                },
+                {
+                  "name":"Online Mathematik Brückenkurs (OMB+)",
+                  "tasks":[
+                    {
+                      "link": "link/OnlineMathemBrueckPlus/ElemenRechne/Schlus",
+                      "tags":[{
+                        "key":"Quiz",
+                        "values":[
+                          "Pop",
+                          "Rechnen"
+                        ]
+                      },{
+                        "key":"Final Exam",
+                        "values":[
+                          "Elementary Calculus",
+                          "Probably lots of math"
+                        ]
+                      }
+                      ],
+                      "headline": [
+                        {
+                          "language":"en",
+                          "name":"Final Exam Elementary Calculus"
+                        },
+                        {
+                          "language":"de",
+                          "name":"Schlussprüfung Elementares Rechnen"
+                        }
+                      ]
+                    },
+                    {
+                      "link": "link/OnlineMathemBrueckPlus/ElemenRechne/Zahlen/RechneMitNatuerGanzenRat/Traini/Gen",
+                      "tags":[
+                        { "key" : "Training",
+                        "values" : ["Elementary Calculus"]}
+                      ],
+                      "headline": [
+                        {
+                          "language":"en",
+                          "name":"[Training] Computing with Natural Numbers, Integers, and Rational Numbers"
+                        },
+                        {
+                          "language":"de",
+                          "name":"[Training] Rechnen mit natürlichen, ganzen, rationalen Zahlen"
+                        }
+                      ]
+                    }
+                  ],
+                  "pathToCourseFile":"org/TU9/omb_plus/crs_omb_plus.meta.xml"
                 }
               ]
             }
