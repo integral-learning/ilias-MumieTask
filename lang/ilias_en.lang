@@ -51,7 +51,7 @@ frm_sync_lp#:#Grade synchronization
 frm_enable#:#Enabled
 frm_disable#:#Disabled
 frm_passing_grade#:#Passing grade
-frm_passing_grade#:#Whenever the passing threshold is changed, all learning progress for this MUMIE Task will be deleted and then once again synchronized with MUMIE servers. 
+frm_passing_grade_desc#:#Whenever the passing threshold is changed, all learning progress for this MUMIE Task will be deleted and then once again synchronized with MUMIE servers. 
 frm_force_update#:#Force new grade synchronization
 frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. 
 frm_force_update_btn#:#Force update
