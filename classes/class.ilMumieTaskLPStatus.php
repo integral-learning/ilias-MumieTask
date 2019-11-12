@@ -43,6 +43,10 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         if (!$task->getLp_modus() && ilObjUserTracking::_enabledLearningProgress()) {
             return;
         }
+
+        if ($forceUpdate) {
+            self::deleteLPForTask($task);
+        }
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         $gradeSync = new ilMumieTaskGradeSync($task, $forceUpdate);
@@ -84,6 +88,13 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
 
     public static function getLPStatusForUser($task, $userId) {
         return self::getLPDataForUser($task->getId(), $userId);
+    }
+
+    private static function deleteLPForTask($task) {
+        require_once ('Services/Tracking/classes/class.ilChangeEvent.php');
+        ilChangeEvent::_deleteReadEvents($task->getId());
+        global $ilDB;
+        $ilDB->manipulate("DELETE FROM ut_lp_marks WHERE obj_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 }
 

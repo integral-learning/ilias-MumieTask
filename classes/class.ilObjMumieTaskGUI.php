@@ -41,6 +41,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'submitLPSettings':
             case "viewContent":
             case "displayLearningProgress":
+            case 'forceGradeUpdate':
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
                 $this->$cmd();
@@ -373,6 +374,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $form = new ilMumieTaskLPSettingsFormGUI();
         $form->setFields();
         $form->setTitle($this->lng->txt('rep_robj_xmum_tab_lp_settings'));
+
+        require_once ("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
+        $forceSyncButton = new ilMumieTaskFormButtonGUI($this->lng->txt('rep_robj_xmum_frm_force_update'));
+        $forceSyncButton->setButtonLabel($this->lng->txt('rep_robj_xmum_frm_force_update_btn'));
+        $forceSyncButton->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'forceGradeUpdate'));
+        $forceSyncButton->setInfo($this->lng->txt('rep_robj_xmum_frm_force_update_desc'));
+        $form->addItem($forceSyncButton);
+
         $form->addCommandButton('submitLPSettings', $this->lng->txt('save'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
@@ -395,6 +404,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         }
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
+        $cmd = 'editLPSettings';
+        $this->performCommand($cmd);
+    }
+
+    function forceGradeUpdate() {
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        ilMumieTaskLPStatus::updateGrades($this->object, true);
+        ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
         $cmd = 'editLPSettings';
         $this->performCommand($cmd);
     }

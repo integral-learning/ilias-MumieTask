@@ -21,6 +21,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI {
         $this->passingThresholdItem->setMaxValue(100);
         $this->passingThresholdItem->setDecimals(0);
         $this->addItem($this->passingThresholdItem);
+        $this->passingThresholdItem->setInfo($lng->txt('rep_robj_xmum_frm_passing_grade'));
 
     }
 }

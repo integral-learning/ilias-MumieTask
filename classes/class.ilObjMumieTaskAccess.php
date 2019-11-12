@@ -45,6 +45,8 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
                 return $ilAccess->checkAccess("write", "", $a_ref_id);
             case 'submitLPSettings':
                 return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case "forceGradeUpdate":
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
             case "viewContent":
                 return $ilAccess->checkAccess("read", "", $a_ref_id);
             case "displayLearningProgress":
