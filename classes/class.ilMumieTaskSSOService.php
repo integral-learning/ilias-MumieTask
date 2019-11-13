@@ -66,7 +66,7 @@ class ilMumieTaskSSOService {
     public function setUpTokenAndLaunchForm($loginurl, $launchcontainer, $problemurl) {
         global $ilUser, $ilDB, $DIC;
         $hashedUser = ilMumieTaskIdHashingService::getHashForUser($ilUser->getId());
-        $ssotoken = new ilMumieTaskSSOToken($ilUser->getId());
+        $ssotoken = new ilMumieTaskSSOToken($hashedUser);
         $ssotoken->insertOrRefreshToken();
 
         return $this->getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $hashedUser);
