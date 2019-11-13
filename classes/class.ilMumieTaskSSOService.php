@@ -69,7 +69,7 @@ class ilMumieTaskSSOService {
         $ssotoken = new ilMumieTaskSSOToken($ilUser->getId());
         $ssotoken->insertOrRefreshToken();
 
-        return $this->getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl);
+        return $this->getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $hashedUser);
     }
 
     private function getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $hashedUser, $width = 800, $height = 600) {
