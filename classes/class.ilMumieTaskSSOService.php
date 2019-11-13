@@ -1,5 +1,6 @@
 <?php
 require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOToken.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 /**
  * Class for SSO Token services :
  * Generate SSO Tokens
@@ -20,12 +21,14 @@ class ilMumieTaskSSOService {
         $logger = ilLoggerFactory::getLogger('xmum');
         global $ilDB;
         $token = $_POST['token'];
-        $userid = $_POST['userId'];
+        $hashedId = $_POST['userId'];
 
-        $mumietoken = new ilMumieTaskSSOToken($userid);
+        $ilUserId = ilMumieTaskIdHashingService::getUserFromHash($hashedId);
+
+        $mumietoken = new ilMumieTaskSSOToken($hashedId);
         $mumietoken->read();
 
-        $userQuery = $ilDB->query('SELECT * FROM usr_data WHERE usr_id = ' . $ilDB->quote($userid, "integer"));
+        $userQuery = $ilDB->query('SELECT * FROM usr_data WHERE usr_id = ' . $ilDB->quote($ilUserId, "integer"));
         $user_rec = $ilDB->fetchAssoc($userQuery);
         $response = new stdClass();
         require_once (__DIR__ . "/class.ilMumieTaskAdminSettings.php");
@@ -37,7 +40,7 @@ class ilMumieTaskSSOService {
                 $response->status = "invalid";
             } else {
                 $response->status = "valid";
-                $response->userid = $user_rec['usr_id'];
+                $response->userid = $hashedId;
 
                 if ($configSettings->getShareFirstName()) {
                     $response->firstname = $user_rec['firstname'];
@@ -62,22 +65,22 @@ class ilMumieTaskSSOService {
 
     public function setUpTokenAndLaunchForm($loginurl, $launchcontainer, $problemurl) {
         global $ilUser, $ilDB, $DIC;
+        $hashedUser = ilMumieTaskIdHashingService::getHashForUser($ilUser->getId());
         $ssotoken = new ilMumieTaskSSOToken($ilUser->getId());
         $ssotoken->insertOrRefreshToken();
 
         return $this->getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl);
     }
 
-    private function getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $width = 800, $height = 600) {
+    private function getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $hashedUser, $width = 800, $height = 600) {
         require_once ("./Services/UICore/classes/class.ilTemplate.php");
         require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
-        global $ilUser;
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
         // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
         // the other "true"s should always be set that way according to the ilias documentation
         $tpl->setVariable("TASKURL", $loginurl);
         $tpl->setVariable("TARGET", $launchcontainer == 1 ? 'MumieTaskLaunchFrame' : '_blank');
-        $tpl->setVariable("USER_ID", $ilUser->getId());
+        $tpl->setVariable("USER_ID", $hashedUser);
         $tpl->setVariable("TOKEN", $ssotoken->getToken());
         $tpl->setVariable("ORG", ilMumieTaskAdminSettings::getInstance()->getOrg());
         $tpl->setVariable("PROBLEMURL", $problemurl);

@@ -12,10 +12,10 @@ if (!$ilDB->tableExists("xmum_sso_tokens")) {
             'length' => 30,
             'notnull' => true,
         ),
-        // user id
+        // hashed user id
         'user' => array(
-            'type' => 'integer',
-            'length' => 8,
+            'type' => 'text',
+            'length' => 128,
             'notnull' => true,
         ),
         'timecreated' => array(
@@ -191,6 +191,25 @@ foreach ($operations as $operation) {
     . $ilDB->quote($typ_id, 'integer') . ","
     . $ilDB->quote($ops_id, 'integer') . ")";
     $ilDB->manipulate($query);
+}
+
+?>
+<?php
+if (!$ilDB->tableExists('xmum_id_hashes')) {
+    $fieldsHashes = array(
+        'usr_id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'hash' => array(
+            'type' => 'text',
+            'length' => '128',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_id_hashes", $fieldsHashes);
+    $ilDB->addPrimaryKey("xmum_id_hashes", array("usr_id"));
 }
 
 ?>
