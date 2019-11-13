@@ -2,6 +2,7 @@
 require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
 include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 
 class ilMumieTaskGradeSync {
     private $userIds, $task, $adminSettings, $forceUpdate;
@@ -15,12 +16,14 @@ class ilMumieTaskGradeSync {
 
     private function getSyncIds($userIds) {
         return array_map(function($userId) {
-            return "GSSO_" . $this->adminSettings->getOrg() . "_" . $userId;
+            $hashedUser = ilMumieTaskIdHashingService::getHashForUser($userId);
+            return "GSSO_" . $this->adminSettings->getOrg() . "_" . $hashedUser;
         }, $userIds);
     }
 
     private function getIliasId($xapiGrade) {
-        return substr(strrchr($xapiGrade->actor->account->name, "_"), 1);
+        $hashedUser = substr(strrchr($xapiGrade->actor->account->name, "_"), 1);
+        return ilMumieTaskIdHashingService::getUserFromHash($hashedUser);
     }
 
     public function getXapiGradesByUser() {
