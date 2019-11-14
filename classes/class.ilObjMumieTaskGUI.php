@@ -32,8 +32,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
                 $this->$cmd();
             case 'createObject':
             case "submitMumieTask":
-            case 'cancelServer':
-            case 'cancelCreate':
+            case 'cancelDummy':
             case 'addServer':
             case 'submitServer':
             case 'editLPSettings':
@@ -145,10 +144,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         global $ilCtrl, $lng;
 
         $form = new ilMumieTaskFormGUI();
-        $form->setFields($this->isCreationMode());
+        $form->setFields();
         $form->setTitle($lng->txt('rep_robj_xmum_obj_xmum'));
         $form->addCommandButton("submitMumieTask", $lng->txt('save'));
-        $form->addCommandButton($this->object->isDummy() ? 'cancelCreate' : 'viewContent', $lng->txt('cancel'));
+        $form->addCommandButton($this->object->isDummy() ? 'cancelDummy' : 'viewContent', $lng->txt('cancel'));
 
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
@@ -200,7 +199,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     function addServer() {
 
         global $ilTabs, $lng;
-        $this->setSubTabs($this->getCreationMode() ? 'create' : 'properties');
+        $this->setSubTabs('properties');
         $ilTabs->activateTab('properties');
         $this->initServerForm();
         $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
@@ -215,7 +214,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $form->setFields();
         $form->setFormAction($ilCtrl->getFormAction($this));
         $form->addCommandButton('submitServer', $lng->txt('save'));
-        $form->addCommandButton('cancelServer', $lng->txt('cancel'));
+        $form->addCommandButton('editProperties', $lng->txt('cancel'));
 
         $this->form = $form;
     }
@@ -236,20 +235,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             $mumieServer->setUrlPrefix($inputUrlPrefix);
             $mumieServer->upsert();
             ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
-            if ($this->isCreationMode()) {
-                $this->create();
-            } else {
-                $cmd = 'editProperties';
 
-                $this->performCommand($cmd);
-            }
-        }
-    }
-
-    function cancelServer() {
-        if ($this->isCreationMode()) {
-            $this->cancelCreate();
-        } else {
             $cmd = 'editProperties';
             $this->performCommand($cmd);
         }
@@ -338,7 +324,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         return "viewContent";
     }
 
-    function cancelCreate() {
+    function cancelDummy() {
         $this->ctrl->returnToParent($this);
     }
 
@@ -350,10 +336,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
         $this->tpl->setContent($this->object->getContent());
-    }
-
-    function isCreationMode() {
-        return $this->getCreationMode() == true || !($this->object instanceof ilObjMumieTask);
     }
 
     function editLPSettings() {
