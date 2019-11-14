@@ -11,6 +11,7 @@ require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/M
  */
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface {
 
+    const DUMMY_TITLE = "-- Empty MumieTask --";
     private static $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
     private $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile, $lp_modus = 1, $passing_grade = 60; /**
      * Constructor
@@ -20,6 +21,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     function __construct($a_ref_id = 0) {
         parent::__construct($a_ref_id);
+    }
+
+    public static function constructDummy() {
+        $task = new ilObjMumieTask();
+        $task->setTitle(self::DUMMY_TITLE);
+        return $task;
     }
 
     /**
@@ -185,6 +192,10 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
             ilMumieTaskLPStatus::updateAccess($ilUser->getId(), $this->getId(), $this->getRefId());
         }
+    }
+
+    public function isDummy() {
+        return $this->title == self::DUMMY_TITLE;
     }
 
     /**

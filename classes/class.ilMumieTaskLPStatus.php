@@ -45,6 +45,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         }
 
         if ($forceUpdate) {
+            ilLoggerFactory::getLogger('xmum')->info("MumieTask: Changes triggered forced grade update");
             self::deleteLPForTask($task);
         }
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');

@@ -76,7 +76,11 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $server = new ilMumieTaskServer();
         $server->setUrlPrefix($this->getInput('xmum_server'));
         $server->buildStructure();
-
+        $isDummy = $this->getInput('title') == ilObjMumieTask::DUMMY_TITLE;
+        if ($isDummy) {
+            $ok = false;
+            $this->titleItem->setAlert($lng->txt('rep_robj_xmum_title_not_valid'));
+        }
         if (!$server->isValidMumieServer()) {
             $ok = false;
             $this->serverItem->setAlert($lng->txt('rep_robj_xmum_server_not_valid'));
@@ -92,7 +96,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
             $ok = false;
             $this->taskItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_task_not_found'));
         }
-        if (!in_array($this->getInput("xmum_language"), $task->getLanguages())) {
+        if (!$isDummy && !in_array($this->getInput("xmum_language"), $task->getLanguages())) {
             $ok = false;
             $this->languageItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_lang_not_found'));
         }
