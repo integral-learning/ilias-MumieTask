@@ -30,6 +30,8 @@ properties#:#Properties
 mumie_server#:#MUMIE server
 mumie_course#:#MUMIE course
 mumie_task#:#MUMIE task
+mumie_filter#:#Filter Tasks <span class="caret"></span>
+mumie_select_task#:#Select a Task
 mumie_task_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE tasks
 frm_tsk_course_not_found#:#This course doesn't exist on the choosen server
 frm_tsk_task_not_found#:#This task doesn't exist in the selected course

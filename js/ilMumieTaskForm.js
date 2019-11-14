@@ -85,7 +85,7 @@
             },
             setOnclickListeners: function () {
                 languageDropDown.addEventListener('change', function() {
-                    courseController.setCourseOptions()
+                    courseController.setCourseOptions();
                     taskController.setTaskOptions();
                     taskController.updateDefaultName();
                 });
@@ -298,7 +298,6 @@
 
     var filterController = (function() {
         var keyElements = [];
-        var selectedValues;
         var parentEl;
         var valueElements = [];
 
@@ -324,17 +323,18 @@
             return keys;
         }
 
-        function createTagOption(tag, id, checked, showCount) {
+        function createTagOption(val, id, key) {
             var option = document.createElement('input');
             option.setAttribute('type', 'checkbox');
             option.setAttribute('name', "xmum_filter[]");
             option.setAttribute('id', id);
-            option.setAttribute('value', tag);
-            option.checked = checked;
+            option.setAttribute('value', val);
+            // option.checked = false;
 
             var label = document.createElement('label');
+            label.style.paddingLeft = "5px";
             label.setAttribute('for', id);
-            label.textContent = tag + (checked || !showCount ? "" : ' (' + getFilteredCount(tag, selectedValues) + ')');
+            label.textContent = val + ' (' + getFilteredCount({name:key,value:val}, getSelections()) + ')';
 
             var wrapper = document.createElement('div');
             wrapper.style = 'white-space:nowrap';
@@ -345,28 +345,41 @@
         }
 
         function getFilteredCount(tag,values) {
-            var tags = values ? [tag, ...values] : [tag];
-            return getFilteredTasks(tags).length;
+            if(values[tag.name]) values[tag.name].push(tag.value);
+            else values[tag.name] = [tag.value];
+            return getFilteredTasks(values).length;
         }
 
         function updateFilterCount(){
-            selectedValues = getSelectedValues();
+            var selections = getSelections();
             valueElements.forEach( keyEl => {
                 for(var i = 0 ; i < keyEl.children.length ; i++){
                     var container = keyEl.children[i];
-                    var value = $(keyEl.children[i].firstElementChild).val();
+                    var key = keyEl.parentElement.previousElementSibling.getAttribute("for");
+                    var value = keyEl.children[i].firstElementChild.getAttribute("value");
                     var label = $(container).find("label");
-                    label.html(value + ' (' + getFilteredCount(value,selectedValues) + ')');
+                    var tag = {};
+                    tag.name = key;
+                    tag.value = value;
+                    var clone = JSON.parse(JSON.stringify(selections)); // deep clone
+                    var count = getFilteredCount(tag,clone);
+                    label.html(value + ' (' + count + ')');
+                    container.firstElementChild.disabled = !count;
                 }
             });
         }
 
         function filterTask(task, values) {
-            var taskValues = [];
-            task.tags.forEach( tag => { /*if(keys.includes(tag.key))*/ taskValues = taskValues.concat(tag.values)});
-            return values.every(function(value) {
-                return taskValues.includes(value);
+            var obj = {};
+            task.tags.forEach(tag => {
+                obj[tag.name] = tag.values;
             });
+            // console.log("task",obj,"vs sel obj",values);
+            for (var key in values){
+               if(!obj[key]) return false;
+               if(!crossReferenceArrays(obj[key],values[key])) return false;
+            }
+            return true;
         }
 
         function getFilteredTasks(values) {
@@ -381,39 +394,56 @@
             return filteredTasks;
         }
 
-        function getSelectedValues() {
-            var values = [];
-            valueElements.forEach( keyEl => {
-                for(var i = 0 ; i < keyEl.children.length ; i++){
-                    var input = keyEl.children[i].firstElementChild;
+        function crossReferenceArrays (array1,array2) {
+            if(!Array.isArray(array1) || !Array.isArray(array2)) return false;
+            for(var i = 0 ; i < array1.length ; i++){
+                if(array2.includes(array1[i])) return true;
+            }
+            return false;
+        }
+
+        function getSelections() {
+            var selectedKeyValuesMap = {};
+            valueElements.forEach( valueEL => {
+                for(var i = 0 ; i < valueEL.children.length ; i++){
+                    var input = valueEL.children[i].firstElementChild;
                     if(input.checked){
-                        values.push(input.getAttribute("value"));
+                        var key = valueEL.parentElement.previousElementSibling.getAttribute("for");
+                        // keys.push(key);
+                        var val = input.getAttribute("value");
+                        // keys = keys.filter((k,i) => keys.indexOf(k) === i ); // avoid duplicate keys
+                        // values.push(val);
+                        if(selectedKeyValuesMap[key]) {
+                            selectedKeyValuesMap[key].push(val);
+                        } else selectedKeyValuesMap[key] = [val];
                     }
                 }
             });
-            return values;
+            return selectedKeyValuesMap;
         }
 
         function getInputId(value,index) {
             return 'xmum_filter_value_' + index.toString() + value;
         }
 
-        function fillOptionsWithValues (element, values){
+        function fillOptionsWithValues (valueElement, tag){
+            var values = tag.values;
             values.forEach( (val,i) => {
                 var option = document.createElement('option');
+                option.paddingRight = "2";
                 option.setAttribute('value', val);
                 option.text = val;
-                element.appendChild(createTagOption(val,getInputId(val,i),false,true));
+                valueElement.appendChild(createTagOption(val,getInputId(val,i),tag.key));
             }  );
 
-            var childCount = element.children.length;
-            var height = Number.parseFloat(element.style.width.replace("px",""));
-            var width = Number.parseFloat(element.style.width.replace("px",""));
-            element.style.width = (2 * width).toString()+'px';
-            if (childCount > 4) element.style.height = (height * 1.5).toString()+'px';
+            var childCount = valueElement.children.length;
+            var height = Number.parseFloat(valueElement.style.width.replace("px",""));
+            var width = Number.parseFloat(valueElement.style.width.replace("px",""));
+            valueElement.style.width = (2 * width).toString()+'px';
+            if(childCount > 4) valueElement.style.height = (height * 1.5).toString()+'px';
             // set event listeners on children
             for(var i = 0; i < childCount ; i++){
-                var child = $(element.children[i]);
+                var child = $(valueElement.children[i]);
                 child.change(function() {
                     taskController.setTaskOptions();
                     taskController.updateDefaultName();
@@ -452,14 +482,19 @@
             var valuesBox = clone.children[1].firstElementChild;
             createKeyElement(keyBox,valuesBox,tag.key);
             valuesBox.setAttribute("id","xmum_key_" + tag.key);
-            fillOptionsWithValues(valuesBox,tag.values);
+            fillOptionsWithValues(valuesBox,tag);
             valueElements.push(valuesBox);
             keyElements.push(clone);
         }
 
+        function hideEmptyFilters(hide){
+            var title = $(".ilFormHeader")[1];
+            $(title).css("display", hide ? "none" : "block");
+        }
+
         function makeParentCollapsible(keys){
             var title = $(".ilFormHeader")[1];
-
+            $(title).css("cursor","pointer");
             $(title).hover(
                 function() {
                     this.style.backgroundColor = "#ccc";
@@ -487,17 +522,16 @@
             },
             setFilterOptions: function() {
                 var tags = getKeyValuePairs();
-                selectedValues = getSelectedValues();
                 for(var i = 0; i < tags.length; i++) {
                     var tag  = tags[i];
                     addKeyValueCheckboxes(tag);
                 }
                 parentEl.style.display = "none";
-                // hideEmptyFilter(tags.length < 1);
+                hideEmptyFilters(tags.length < 1);
                 makeParentCollapsible(keyElements);
             },
             getFilteredTasks: function() {
-                return getFilteredTasks(getSelectedValues());
+                return getFilteredTasks(getSelections());
             },
             resetFilters: function () {
                 keyElements.forEach( el => el.remove());

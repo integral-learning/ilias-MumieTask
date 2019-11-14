@@ -33,15 +33,14 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->addItem($this->courseItem);
 
         $filterTitle = new ilFormSectionHeaderGUI();
-        $filterTitle->setTitle("Filter tasks");
-        $filterTitle->setInfo("click to collapse/expand");
+        $filterTitle->setTitle($lng->txt('rep_robj_xmum_mumie_filter'));
         $this->addItem($filterTitle);
         
         $this->valuePairs = new ilMultiSelectInputGUI("Values", "xmum_values");
         $this->addItem($this->valuePairs);
         
         $selectTaskHeader = new ilFormSectionHeaderGUI();
-        $selectTaskHeader->setTitle("Select Task");
+        $selectTaskHeader->setTitle($lng->txt("rep_robj_xmum_mumie_select_task"));
         $this->addItem($selectTaskHeader);
 
         $this->taskItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_task'), 'xmum_task');
@@ -157,6 +156,5 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->courseItem->setDisabled(true);
         $this->taskItem->setDisabled(true);
         $this->languageItem->setDisabled(true);
-        $this->keyFilter->setDisabled(true);
     }
 }
