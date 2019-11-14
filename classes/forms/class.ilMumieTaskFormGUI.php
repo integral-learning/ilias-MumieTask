@@ -13,8 +13,8 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     private $taskOptions = array();
     private $langOptions = array();
 
-    function setFields() {
-        global $lng;
+    function setFields($isCreationMode = false) {
+        global $lng, $ilCtrl;
 
         $this->titleItem = new ilTextInputGUI($lng->txt('title'), 'title');
         $this->titleItem->setRequired(true);
@@ -23,6 +23,15 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->serverItem = new ilSelectInputGui($lng->txt('rep_robj_xmum_mumie_server'), 'xmum_server');
         $this->serverItem->setRequired(true);
         $this->addItem($this->serverItem);
+
+        if (!$isCreationMode) {
+            require_once ("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
+            $addServerButton = new ilMumieTaskFormButtonGUI("");
+            $addServerButton->setButtonLabel($this->lng->txt('rep_robj_xmum_add_server'));
+            $addServerButton->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'addServer'));
+            $addServerButton->setInfo($this->lng->txt('rep_robj_xmum_add_server_desc'));
+            $this->addItem($addServerButton);
+        }
 
         $this->languageItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_language'), 'xmum_language');
         $this->languageItem->setRequired(true);

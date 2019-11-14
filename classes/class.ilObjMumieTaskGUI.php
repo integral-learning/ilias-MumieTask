@@ -75,7 +75,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'properties':
                 $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_tab_gen_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
                 $ilTabs->addSubTab("lp_settings", $lng->txt('rep_robj_xmum_tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
-                $ilTabs->addSubTab("add_server", $lng->txt('rep_robj_xmum_add_server'), $ilCtrl->getLinkTarget($this, "addServer"));
                 break;
         }
     }
@@ -136,7 +135,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         global $ilCtrl, $lng;
 
         $form = new ilMumieTaskFormGUI();
-        $form->setFields();
+        $form->setFields($this->isCreationMode());
         $form->setTitle($lng->txt('rep_robj_xmum_obj_xmum'));
         $form->addCommandButton($this->isCreationMode() ? 'submitMumieTaskCreate' : "submitMumieTaskUpdate", $lng->txt('save'));
         $form->addCommandButton($this->isCreationMode() ? 'cancelCreate' : 'viewContent', $lng->txt('cancel'));
@@ -202,7 +201,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         global $ilTabs, $lng;
         $this->setSubTabs($this->getCreationMode() ? 'create' : 'properties');
         $ilTabs->activateTab('properties');
-        $ilTabs->activateSubTab('add_server');
         $this->initServerForm();
         $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
         $this->tpl->setContent($this->form->getHTML());
