@@ -19,6 +19,7 @@ frm_shared_data_description#:#Choose which user data other than the id should be
 frm_server_description#:# TODO
 url_prefix#:#Server URL
 server_not_valid#:#There is no MUMIE server for this URL
+title_not_valid#:#Please choose a different title for your MumieTask
 name_exists#:#There is already a MumieServer configuration for this name!
 url_exists#:#There is already a MumieServer configuration for this URL!
 xmum_new#:#Add new MumieTask

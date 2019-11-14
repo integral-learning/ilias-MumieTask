@@ -73,11 +73,14 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function checkInput() {
         global $lng;
         $ok = parent::checkInput();
+        $isDummy = $this->getInput('title') == ilObjMumieTask::DUMMY_TITLE;
         $server = new ilMumieTaskServer();
         $server->setUrlPrefix($this->getInput('xmum_server'));
         $server->buildStructure();
-        $isDummy = $this->getInput('title') == ilObjMumieTask::DUMMY_TITLE;
-        if ($isDummy) {
+        $course = $server->getCoursebyName($this->getInput('xmum_course'));
+        $task = $course->getTaskByLink($this->getInput('xmum_task'));
+
+        if ($isDummy && $task != null) {
             $ok = false;
             $this->titleItem->setAlert($lng->txt('rep_robj_xmum_title_not_valid'));
         }
@@ -85,14 +88,15 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
             $ok = false;
             $this->serverItem->setAlert($lng->txt('rep_robj_xmum_server_not_valid'));
         }
-        $course = $server->getCoursebyName($this->getInput('xmum_course'));
         if ($course == null) {
             $ok = false;
             $this->courseItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_course_not_found'));
         }
 
-        $task = $course->getTaskByLink($this->getInput('xmum_task'));
-        if ($task == null) {
+        if ($task == null && $isDummy) {
+            $ok = false;
+            $this->taskItem->setAlert($lng->txt('required_field'));
+        } else if ($task == null) {
             $ok = false;
             $this->taskItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_task_not_found'));
         }

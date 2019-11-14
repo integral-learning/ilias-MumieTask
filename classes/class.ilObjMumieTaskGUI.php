@@ -39,11 +39,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'editLPSettings':
             case 'submitLPSettings':
             case "viewContent":
-                if ($this->object->isDummy()) {
-                    $this->editPropertiesObject();
-                } else {
-                    $this->viewContent();
-                }
             case "displayLearningProgress":
             case 'forceGradeUpdate':
             case "setStatusToNotAttempted":
@@ -68,6 +63,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         if ($this->object->getLP_modus() && ilObjUserTracking::_enabledLearningProgress()) {
             $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
         }
+        $ilTabs->addTab("infoScreen", $this->lng->txt("info_short"), $ilCtrl->getLinkTarget($this, "infoScreen"));
 
         $this->addPermissionTab();
     }
@@ -347,7 +343,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     protected function viewContent() {
-        global $ilTabs;
+        global $ilTabs, $ilCtrl;
+        if ($this->object->isDummy()) {
+            $ilCtrl->redirect($this, 'editProperties');
+        }
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
         $this->tpl->setContent($this->object->getContent());
@@ -358,6 +357,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     }
 
     function editLPSettings() {
+        if ($this->object->isDummy()) {
+            return;
+        }
         global $ilTabs;
         $ilTabs->activateTab('properties');
         $this->setSubTabs("properties");

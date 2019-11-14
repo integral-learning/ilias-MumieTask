@@ -29,9 +29,7 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
                 return $ilAccess->checkAccess("write", "", $a_ref_id);
             case 'createObject':
                 return $ilAccess->checkAccess("write", "", $a_ref_id);
-            case "submitMumieTaskUpdate":
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
-            case "submitMumieTaskCreate":
+            case "submitMumieTask":
                 return $ilAccess->checkAccess("write", "", $a_ref_id);
             case 'cancelServer':
                 return $ilAccess->checkAccess("write", "", $a_ref_id);
