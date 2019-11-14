@@ -2,7 +2,7 @@
 <?php
 if (!$ilDB->tableExists("xmum_sso_tokens")) {
     $fieldsToken = array(
-        'id' => array( 
+        'id' => array(
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
@@ -12,10 +12,10 @@ if (!$ilDB->tableExists("xmum_sso_tokens")) {
             'length' => 30,
             'notnull' => true,
         ),
-        // user id
-        'user' => array( 
-            'type' => 'integer',
-            'length' => 8,
+        // hashed user id
+        'user' => array(
+            'type' => 'text',
+            'length' => 128,
             'notnull' => true,
         ),
         'timecreated' => array(
@@ -28,7 +28,6 @@ if (!$ilDB->tableExists("xmum_sso_tokens")) {
     $ilDB->createTable("xmum_sso_tokens", $fieldsToken);
     $ilDB->addPrimaryKey("xmum_sso_tokens", array("id"));
     $ilDB->createSequence("xmum_sso_tokens");
-
 }
 ?>
 <#2>
@@ -39,10 +38,6 @@ if (!$ilDB->tableExists("xmum_mumie_task")) {
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-        'name' => array(
-            'type' => 'text',
-            'length' => 255,
         ),
         'taskurl' => array(
             'type' => 'text',
@@ -66,6 +61,16 @@ if (!$ilDB->tableExists("xmum_mumie_task")) {
         'mumie_coursefile' => array(
             'type' => 'text',
             'length' => '255',
+        ),
+        'passing_grade' => array(
+            'type' => 'integer',
+            'length' => '4',
+            'default' => 60,
+        ),
+        'lp_modus' => array(
+            'type' => 'integer',
+            'length' => '2',
+            'default' => '1',
         ),
     );
     $ilDB->createTable("xmum_mumie_task", $fieldsMumie);
@@ -151,4 +156,60 @@ if ($ilDB->numRows($result) < 1) {
         . ')'
     );
 }
+?>
+<#6>
+<?php
+
+$set = $ilDB->query("SELECT obj_id FROM object_data WHERE type='typ' AND title = 'xmum'");
+if ($rec = $ilDB->fetchAssoc($set)) {
+    $typ_id = $rec["obj_id"];
+} else {
+    $typ_id = $ilDB->nextId("object_data");
+    $ilDB->manipulate("INSERT INTO object_data " .
+        "(obj_id, type, title, description, owner, create_date, last_update) VALUES (" .
+        $ilDB->quote($typ_id, "integer") . "," .
+        $ilDB->quote("typ", "text") . "," .
+        $ilDB->quote("xmum", "text") . "," .
+        $ilDB->quote("Plugin MumieTask", "text") . "," .
+        $ilDB->quote(-1, "integer") . "," .
+        $ilDB->quote(ilUtil::now(), "timestamp") . "," .
+        $ilDB->quote(ilUtil::now(), "timestamp") .
+        ")");
+}
+
+/**
+ * Add new RBAC operations
+ */
+$operations = array('read_learning_progress');
+foreach ($operations as $operation) {
+    $query = "SELECT ops_id FROM rbac_operations WHERE operation = " . $ilDB->quote($operation, 'text');
+    $res = $ilDB->query($query);
+    $row = $ilDB->fetchObject($res);
+    $ops_id = $row->ops_id;
+
+    $query = "INSERT INTO rbac_ta (typ_id, ops_id) VALUES ("
+    . $ilDB->quote($typ_id, 'integer') . ","
+    . $ilDB->quote($ops_id, 'integer') . ")";
+    $ilDB->manipulate($query);
+}
+
+?>
+<?php
+if (!$ilDB->tableExists('xmum_id_hashes')) {
+    $fieldsHashes = array(
+        'usr_id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'hash' => array(
+            'type' => 'text',
+            'length' => '128',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_id_hashes", $fieldsHashes);
+    $ilDB->addPrimaryKey("xmum_id_hashes", array("usr_id"));
+}
+
 ?>

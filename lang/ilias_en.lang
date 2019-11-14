@@ -1,5 +1,6 @@
 <!-- language file start -->
 add_server#:#Add MUMIE server
+add_server_desc#:#Click here to add a new MUMIE server to ILIAS
 id#:#ID
 frm_share_first_name#:#First name 
 frm_share_first_name_desc#:#Choose, whether a users first name should be share with MUMIE servers
@@ -40,10 +41,21 @@ launchcontainer#:#Launch container
 window#:#New window
 embedded#:#Embedded
 language#:#Language
-edit_task#:#Settings
+tab_gen_settings#:#General
+tab_lp_settings#:#Grades
 filter#:#Filter MUMIE Tasks
 msg_suc_saved#:#Changes successfully saved
 msg_suc_server_add#:#Added MUMIE server successfully
 msg_suc_deleted#:#Deletion successful
 msg_no_server_found#:#No MUMIE server configuration found! <br><br> Please add a new MUMIE server before continuing.
 msg_server_missing#:#This MumieTask uses a server configuration that has been deleted! <br><br>Some options cannot be changed until a MUMIE server is added for the following url prefix: <br><br>
+grades#:#Grades
+frm_sync_lp#:#Grade synchronization
+frm_enable#:#Enabled
+frm_disable#:#Disabled
+frm_passing_grade#:#Passing grade
+frm_passing_grade_desc#:#Whenever the passing threshold is changed, all learning progress for this MUMIE Task will be deleted and then once again synchronized with MUMIE servers. 
+frm_force_update#:#Force new grade synchronization
+frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. 
+frm_force_update_btn#:#Force update
+edit_task#:#Edit

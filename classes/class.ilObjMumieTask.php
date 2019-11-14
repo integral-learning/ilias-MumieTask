@@ -4,13 +4,15 @@ include_once ("./Services/Repository/classes/class.ilObjectPlugin.php");
 require_once ("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
 require_once ("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
+include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
 /**
  */
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface {
 
     private static $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
-    private $name, $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile; /**
+    private $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile, $lp_modus = 1, $passing_grade = 60; /**
      * Constructor
      *
      * @access        public
@@ -48,13 +50,14 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         );
         if (!is_null($result)) {
             $rec = $ilDB->fetchAssoc($result);
-            $this->setName($rec['name']);
             $this->setTaskurl($rec['taskurl']);
             $this->setLaunchcontainer($rec['launchcontainer']);
             $this->setMumie_course($rec['mumie_course']);
             $this->setMumie_coursefile($rec['mumie_coursefile']);
             $this->setLanguage($rec['language']);
             $this->setServer($rec['server']);
+            $this->setLp_modus($rec['lp_modus']);
+            $this->setPassing_grade($rec['passing_grade']);
         }
     }
 
@@ -66,23 +69,18 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
         $DIC->database()->update(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
             array(
-                'name' => array('text', $this->getName()),
                 'taskurl' => array('text', $this->getTaskurl()),
                 'launchcontainer' => array('integer', $this->getLaunchcontainer()),
                 'mumie_course' => array('text', $this->getMumie_course()),
                 'language' => array('text', $this->getLanguage()),
                 'server' => array('text', $this->getServer()),
                 'mumie_coursefile' => array('text', $this->getMumie_coursefile()),
+                'passing_grade' => array('integer', $this->getPassing_grade()),
+                'lp_modus' => array('integer', $this->getLp_modus()),
             ),
             array(
                 'id' => array("int", $this->getId()),
             ));
-        /*
-    $ilDB->manipulate($up = "UPDATE rep_robj_xtst_data SET " .
-    " is_online = " . $ilDB->quote($this->isOnline(), "integer") . "" .
-    " WHERE id = " . $ilDB->quote($this->getId(), "integer")
-    );
-     */
     }
 
     /**
@@ -90,11 +88,10 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     function doDelete() {
         global $ilDB;
-/*
-$ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
-" id = " . $ilDB->quote($this->getId(), "integer")
-);
- */
+
+        $ilDB->manipulate("DELETE FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME . " WHERE " .
+            " id = " . $ilDB->quote($this->getId(), "integer")
+        );
     }
 
     /**
@@ -133,7 +130,8 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
      * @return array
      */
     public function getLPCompleted() {
-        return array();
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        return ilMumieTaskLPStatus::getLPCompletedForMumieTask($this->getId());
     }
 
     /**
@@ -142,7 +140,8 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
      * @return array
      */
     public function getLPNotAttempted() {
-        return array();
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        return ilMumieTaskLPStatus::getLPNotAttemptedForMumieTask($this->getId());
     }
 
     /**
@@ -151,7 +150,8 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
      * @return array
      */
     public function getLPFailed() {
-        return array(6);
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        return ilMumieTaskLPStatus::getLPFailedForMumieTask($this->getId());
     }
 
     /**
@@ -160,7 +160,8 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
      * @return array
      */
     public function getLPInProgress() {
-        return array();
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        return ilMumieTaskLPStatus::getLPInProgressForMumieTask($this->getId());
     }
 
     /**
@@ -178,22 +179,12 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
         }
     }
 
-    /**
-     * Get the value of name
-     */
-    public function getName() {
-        return $this->name;
-    }
-
-    /**
-     * Set the value of name
-     *
-     * @return  self
-     */
-    public function setName($name) {
-        $this->name = $name;
-
-        return $this;
+    public function updateAccess() {
+        global $ilUser;
+        if ($ilUser->getId() != ANONYMOUS_USER_ID) {
+            $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+            ilMumieTaskLPStatus::updateAccess($ilUser->getId(), $this->getId(), $this->getRefId());
+        }
     }
 
     /**
@@ -210,7 +201,6 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
      */
     public function setServer($server) {
         $this->server = $server;
-
         return $this;
     }
 
@@ -305,10 +295,10 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
     }
 
     /**
-     * Generates the html code for launching the mumietask 
+     * Generates the html code for launching the mumietask
      */
 
-    public function getContent(){
+    public function getContent() {
         $ssoService = new ilMumieTaskSSOService;
         return $ssoService->setUpTokenAndLaunchForm($this->getLoginUrl(), $this->launchcontainer, $this->getProblemUrl());
     }
@@ -319,7 +309,8 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
      * @return string login url
      */
     public function getLoginUrl() {
-        return $this->server . 'public/xapi/auth/sso/login' ;
+        return ilMumieTaskServer::fromUrl($this->server)->getLoginUrl();
+        //return $this->server . 'public/xapi/auth/sso/login';
     }
 
     /**
@@ -328,7 +319,8 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
      * @return string logout url
      */
     public function getLogoutUrl() {
-        return $this->server . 'public/xapi/auth/sso/logout' ;
+        //return $this->server . 'public/xapi/auth/sso/logout';
+        ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
     }
 
     /**
@@ -340,5 +332,44 @@ $ilDB->manipulate("DELETE FROM rep_robj_xtst_data WHERE " .
         return $this->server . $this->taskurl . '?lang=' . $this->language;
     }
 
+    public function getGradeSyncURL() {
+        return ilMumieTaskServer::fromUrl($this->server)->getGradeSyncURL();
+    }
+
+    /**
+     * Get the value of lp_modus
+     */
+    public function getLp_modus() {
+        return $this->lp_modus;
+    }
+
+    /**
+     * Set the value of lp_modus
+     *
+     * @return  self
+     */
+    public function setLp_modus($lp_modus) {
+        $this->lp_modus = $lp_modus;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of passing_grade
+     */
+    public function getPassing_grade() {
+        return $this->passing_grade;
+    }
+
+    /**
+     * Set the value of passing_grade
+     *
+     * @return  self
+     */
+    public function setPassing_grade($passing_grade) {
+        $this->passing_grade = $passing_grade;
+
+        return $this;
+    }
 }
 ?>
