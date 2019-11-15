@@ -19,30 +19,34 @@ frm_shared_data_description#:#Choose which user data other than the id should be
 frm_server_description#:# TODO
 url_prefix#:#Server URL
 server_not_valid#:#There is no MUMIE server for this URL
-title_not_valid#:#Please choose a different title for your MumieTask
+title_not_valid#:#Please choose a different title for your Mumie Task
 name_exists#:#There is already a MumieServer configuration for this name!
 url_exists#:#There is already a MumieServer configuration for this URL!
-xmum_new#:#Add new MumieTask
-xmum_add#:#Add MumieTask
+xmum_new#:#Add new Mumie Task
+xmum_add#:#Add Mumie Task
 frm_server_add_title#:#Add a new MUMIE server to ILIAS
 frm_server_edit_title#:#Edit MUMIE server
 obj_xmum#:#MumieTask
 objs_xmum#:#MumieTasks
 properties#:#Properties
 mumie_server#:#MUMIE server
+mumie_server_desc#:#Please select a MUMIE server to get an updated list of available tasks and courses.
 mumie_course#:#MUMIE course
-mumie_task#:#MUMIE task
-mumie_task_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE tasks
+mumie_task#:#MUMIE Task
+mumie_problem#:#MUMIE problem
+mumie_problem_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE tasks! <br><br>A MUMIE problem is a single graded exercise on MUMIE
 frm_tsk_course_not_found#:#This course doesn't exist on the choosen server
-frm_tsk_task_not_found#:#This task doesn't exist in the selected course
-frm_tsk_lang_not_found#:#There is no translation in this langauge for the selected task
+frm_tsk_problem_not_found#:#This problem doesn't exist in the selected course
+frm_tsk_lang_not_found#:#There is no translation in this langauge for the selected problem
 launchcontainer#:#Launch container
+launchcontainer_desc#:#Please select whether the activity should be openend in a new browser tab or embedded into the ILIAS environment
 window#:#New window
 embedded#:#Embedded
 language#:#Language
+language_desc#:#Please select the language in which the MUMIE Task should be displayed.
 tab_gen_settings#:#General
 tab_lp_settings#:#Grades
-filter#:#Filter MUMIE Tasks
+filter#:#Filter MUMIE problems
 msg_suc_saved#:#Changes successfully saved
 msg_suc_server_add#:#Added MUMIE server successfully
 msg_suc_deleted#:#Deletion successful
@@ -50,6 +54,7 @@ msg_no_server_found#:#No MUMIE server configuration found! <br><br> Please add a
 msg_server_missing#:#This MumieTask uses a server configuration that has been deleted! <br><br>Some options cannot be changed until a MUMIE server is added for the following url prefix: <br><br>
 grades#:#Grades
 frm_sync_lp#:#Grade synchronization
+frm_sync_lp_desc#:#Choose whether to automatically load grades from the MUMIE server into ILIAS for this MUMIE Task
 frm_enable#:#Enabled
 frm_disable#:#Disabled
 frm_passing_grade#:#Passing grade

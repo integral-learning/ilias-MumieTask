@@ -129,6 +129,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
     function setPropertyValues() {
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $values["title"] = $this->object->getTitle();
+        $values["description"] = $this->object->getDescription();
         $values["xmum_task"] = $this->object->getTaskurl();
         $values["xmum_launchcontainer"] = $this->object->getLaunchcontainer();
         $values["xmum_course"] = $this->object->getMumie_course();
@@ -194,6 +195,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $mumieTask->setLaunchcontainer($this->form->getInput('xmum_launchcontainer'));
         $mumieTask->setMumie_coursefile($this->form->getInput('xmum_coursefile'));
 
+        $mumieTask->setDescription($this->form->getInput('description'));
         $mumieTask->update();
     }
     function addServer() {
