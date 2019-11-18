@@ -63,3 +63,4 @@ frm_force_update#:#Force new grade synchronization
 frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. 
 frm_force_update_btn#:#Force update
 edit_task#:#Edit
+activation_limited_visibility_info#:#Users can see this MUMIE task outside of the choosen availability period, but cannot work on it

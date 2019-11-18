@@ -13,7 +13,10 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     const DUMMY_TITLE = "-- Empty MumieTask --";
     private static $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
-    private $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile, $lp_modus = 1, $passing_grade = 60; /**
+    private $server, $mumie_course, $taskurl, $launchcontainer, $language, $mumie_coursefile, $lp_modus = 1, $passing_grade = 60;
+    private $online, $activationLimited, $activationStartingTime, $activationEndingTime, $activationVisibility;
+
+    /**
      * Constructor
      *
      * @access        public
@@ -66,6 +69,26 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setLp_modus($rec['lp_modus']);
             $this->setPassing_grade($rec['passing_grade']);
         }
+
+        /**
+         * Snippet taken from ilObjTask->loadFromDb
+         */
+        if ($this->ref_id) {
+            include_once "./Services/Object/classes/class.ilObjectActivation.php";
+            $activation = ilObjectActivation::getItem($this->ref_id);
+            switch ($activation["timing_type"]) {
+                case ilObjectActivation::TIMINGS_ACTIVATION:
+                    $this->setActivationLimited(true);
+                    $this->setActivationStartingTime($activation["timing_start"]);
+                    $this->setActivationEndingTime($activation["timing_end"]);
+                    $this->setActivationVisibility($activation["visible"]);
+                    break;
+
+                default:
+                    $this->setActivationLimited(false);
+                    break;
+            }
+        }
     }
 
     /**
@@ -88,6 +111,26 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             array(
                 'id' => array("int", $this->getId()),
             ));
+
+        /**
+         * Sinppet taken from ilObjTest->saveToDb()
+         */
+        if ($this->ref_id) {
+            include_once "./Services/Object/classes/class.ilObjectActivation.php";
+            ilObjectActivation::getItem($this->ref_id);
+
+            $item = new ilObjectActivation;
+            if (!$this->getActivationLimited()) {
+                $item->setTimingType(ilObjectActivation::TIMINGS_DEACTIVATED);
+            } else {
+                $item->setTimingType(ilObjectActivation::TIMINGS_ACTIVATION);
+                $item->setTimingStart($this->getActivationStartingTime());
+                $item->setTimingEnd($this->getActivationEndingTime());
+                $item->toggleVisible($this->getActivationVisibility());
+            }
+
+            $item->update($this->ref_id);
+        }
     }
 
     /**
@@ -379,6 +422,46 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function setPassing_grade($passing_grade) {
         $this->passing_grade = $passing_grade;
+
+        return $this;
+    }
+
+    public function getActivationLimited() {
+        return $this->activationLimited;
+    }
+
+    public function setActivationLimited($activationLimited) {
+        $this->activationLimited = $activationLimited;
+
+        return $this;
+    }
+
+    public function getActivationStartingTime() {
+        return $this->activationStartingTime;
+    }
+
+    public function setActivationStartingTime($activationStartingTime) {
+        $this->activationStartingTime = $activationStartingTime;
+
+        return $this;
+    }
+
+    public function getActivationEndingTime() {
+        return $this->activationEndingTime;
+    }
+
+    public function setActivationEndingTime($activationEndingTime) {
+        $this->activationEndingTime = $activationEndingTime;
+
+        return $this;
+    }
+
+    public function getActivationVisibility() {
+        return $this->activationVisibility;
+    }
+
+    public function setActivationVisibility($activationVisibility) {
+        $this->activationVisibility = $activationVisibility;
 
         return $this;
     }
