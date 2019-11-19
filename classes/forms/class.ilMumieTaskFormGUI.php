@@ -6,7 +6,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function __construct() {
         parent::__construct();
     }
-    private $titleItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem, $filterItem, $selectTaskHeader;
+    private $titleItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem;
 
     private $serverOptions = array();
     private $courseOptions = array();
@@ -45,8 +45,8 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $filterTitle->setTitle($lng->txt('rep_robj_xmum_mumie_filter'));
         $this->addItem($filterTitle);
         
-        $this->valuePairs = new ilMultiSelectInputGUI("Values", "xmum_values");
-        $this->addItem($this->valuePairs);
+        $valuePairs = new ilMultiSelectInputGUI("Values", "xmum_values"); // no need for $lng here this field will be hidden by the js
+        $this->addItem($valuePairs);
         
         $selectTaskHeader = new ilFormSectionHeaderGUI();
         $selectTaskHeader->setTitle($lng->txt("rep_robj_xmum_mumie_select_task"));
@@ -88,17 +88,20 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         if (!$server->isValidMumieServer()) {
             $ok = false;
             $this->serverItem->setAlert($lng->txt('rep_robj_xmum_server_not_valid'));
+            return $ok;
         }
         $course = $server->getCoursebyName($this->getInput('xmum_course'));
         if ($course == null) {
             $ok = false;
             $this->courseItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_course_not_found'));
+            return $ok;
         }
 
         $task = $course->getTaskByLink($this->getInput('xmum_task'));
         if ($task == null) {
             $ok = false;
             $this->taskItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_task_not_found'));
+            return $ok;
         }
         if (!in_array($this->getInput("xmum_language"), $task->getLanguages())) {
             $ok = false;
@@ -165,5 +168,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->courseItem->setDisabled(true);
         $this->taskItem->setDisabled(true);
         $this->languageItem->setDisabled(true);
+        $this->va
     }
 }

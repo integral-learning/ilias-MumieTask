@@ -32,8 +32,10 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
         $this->courses = [];
         // debug_to_console(json_encode($coursesAndTasks));
         // debug_to_console(json_encode($coursesAndTasks->courses));
-        foreach ($coursesAndTasks->courses as $course) {
-            array_push($this->courses, new ilMumieTaskCourseStructure($course));
+        if($coursesAndTasks){
+            foreach ($coursesAndTasks->courses as $course) {
+                array_push($this->courses, new ilMumieTaskCourseStructure($course));
+            }
         }
         $this->collectLanguages();
         $this->collectTags();
