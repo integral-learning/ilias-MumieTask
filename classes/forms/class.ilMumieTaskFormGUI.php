@@ -168,6 +168,5 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->courseItem->setDisabled(true);
         $this->taskItem->setDisabled(true);
         $this->languageItem->setDisabled(true);
-        $this->va
     }
 }
