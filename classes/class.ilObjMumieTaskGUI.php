@@ -85,15 +85,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
         $this->setCreationMode(true);
         global $$ilTabs, $ilCtrl, $lng;
-        if (empty(ilMumieTaskServer::getAllServers())) {
-            $this->addServer();
-            ilUtil::sendInfo($lng->txt("rep_robj_xmum_msg_no_server_found"), true);
-        } else {
-            $this->createObject();
-        }
-    }
 
-    function createObject() {
         require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         $task = ilObjMumieTask::constructDummy();
         $task->setType($this->type);
@@ -111,6 +103,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
     function editPropertiesObject() {
         global $tpl, $ilTabs, $lng;
+        if (empty(ilMumieTaskServer::getAllServers())) {
+            $this->addServer();
+            ilUtil::sendInfo($lng->txt("rep_robj_xmum_msg_no_server_found"), true);
+            return;
+        }
         require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $ilTabs->activateTab('properties');
         $ilTabs->activateSubTab("edit_task");
