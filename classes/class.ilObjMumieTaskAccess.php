@@ -54,6 +54,10 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
                 return $ilAccess->checkAccess("read", "", $a_ref_id);
             case "displayLearningProgress":
                 return $ilAccess->checkAccess("read", "", $a_ref_id);
+            case 'editAvailabilitySettings':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case 'submitAvailabilitySettings':
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
         }
 
         $rbacsystem = $DIC['rbacsystem'];

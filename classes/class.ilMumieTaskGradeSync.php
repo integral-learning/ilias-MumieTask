@@ -27,12 +27,18 @@ class ilMumieTaskGradeSync {
     }
 
     public function getXapiGradesByUser() {
-        $payload = json_encode(array(
+        $params = array(
             "users" => $this->getSyncIds($this->userIds),
             "course" => $this->task->getMumie_coursefile(),
             "objectIds" => array(self::getMumieId($this->task)),
             'lastSync' => $this->getLastSync(),
-        ));
+        );
+
+        if($this->task->getActivationLimited() == 1) {
+            $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
+        }
+
+        $payload = json_encode($params);
         $ch = curl_init($this->task->getGradeSyncURL());
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_USERAGENT, "My User Agent Name");
@@ -83,7 +89,7 @@ class ilMumieTaskGradeSync {
                 $oldestTimestamp = strtotime($record['status_changed']);
             }
         }
-        return $oldestTimestamp;
+        return $oldestTimestamp * 1000;
     }
 
     private function getAllUsers($task) {

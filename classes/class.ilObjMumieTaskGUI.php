@@ -455,15 +455,23 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             $this->tpl->setContent($this->form->getHTML());
             return;
         }
-
         $mumieTask = $this->object;
         $mumieTask->setOnline($this->form->getInput('online'));
+
+        $forceGradeUpdate = false;
+
+        if ($this->form->getInput('activation_type') != $mumieTask->getActivationLimited()) {
+            $forceGradeUpdate = true;
+        }
         if ($this->form->getInput('activation_type')) {
             $mumieTask->setActivationLimited(true);
-
             $mumieTask->setActivationVisibility($this->form->getInput('activation_visibility'));
-
             $period = $this->form->getItemByPostVar("access_period");
+
+            if ($mumieTask->getActivationEndingTime() != $period->getEnd()->get(IL_CAL_UNIX)) {
+                $forceGradeUpdate = true;
+            }
+
             $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
             $mumieTask->setActivationEndingTime($period->getEnd()->get(IL_CAL_UNIX));
         } else {
@@ -471,6 +479,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         }
 
         $mumieTask->doUpdate();
+
+        if ($forceGradeUpdate) {
+            $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+            ilMumieTaskLPStatus::updateGrades($this->object, $forceGradeUpdate);
+        }
 
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
