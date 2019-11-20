@@ -37,6 +37,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'submitServer':
             case 'editLPSettings':
             case 'submitLPSettings':
+            case 'editAvailabilitySettings':
+            case 'submitAvailabilitySettings':
             case "viewContent":
             case "displayLearningProgress":
             case 'forceGradeUpdate':
@@ -77,6 +79,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
             case 'properties':
                 $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_tab_gen_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
                 $ilTabs->addSubTab("lp_settings", $lng->txt('rep_robj_xmum_tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
+                $this->lng->loadLanguageModule('rep');
+                $ilTabs->addSubTab("availability_settings", $this->lng->txt('rep_activation_availability'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
+
                 break;
         }
     }
@@ -92,8 +97,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $task->create();
         $task->createReference();
         $task->putInTree($_GET["ref_id"]);
-        $task->update();
         $this->object = $task;
+        global $DIC;
+
+        $tree = $DIC['tree'];
+        $parent_ref = $tree->getParentId($this->object->getRefId());
+        $task->setParentRolePermissions($parent_ref);
+
+        $task->update();
 
         $this->ctrl->setParameter($this, "ref_id", $this->object->getRefId());
         $this->afterSave($this->object);
@@ -369,6 +380,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $form->addItem($forceSyncButton);
 
         $form->addCommandButton('submitLPSettings', $this->lng->txt('save'));
+        $form->addCommandButton('editProperties', $this->lng->txt('cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
@@ -391,6 +403,88 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
         $cmd = 'editLPSettings';
+        $this->performCommand($cmd);
+    }
+
+    function editAvailabilitySettings() {
+        if ($this->object->isDummy()) {
+            return;
+        }
+        global $ilTabs;
+        $ilTabs->activateTab('properties');
+        $this->setSubTabs("properties");
+
+        $ilTabs->activateSubTab('availability_settings');
+        $this->lng->loadLanguageModule('rep');
+
+        $this->initAvailabilitySettingsForm();
+        $values = array();
+        $values['activation_type'] = $this->object->getActivationLimited();
+        $values['activation_visibility'] = $this->object->getActivationVisibility();
+        $values['online'] = $this->object->getOnline();
+        $period = new stdClass();
+        $period->startingTime = $this->object->getActivationStartingTime();
+        $period->endingTime = $this->object->getActivationEndingTime();
+        $values['period'] = $period;
+
+        $this->form->setValuesByArray($values);
+
+        $this->form->setTitle($this->lng->txt('rep_activation_availability'));
+        $this->tpl->setContent($this->form->getHTML());
+    }
+
+    function initAvailabilitySettingsForm() {
+        global $ilCtrl;
+        require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormAvailabilityGUI.php');
+        $form = new ilMumieTaskFormAvailabilityGUI();
+        $form->setFields();
+        $form->addCommandButton('submitAvailabilitySettings', $this->lng->txt('save'));
+        $form->addCommandButton('editProperties', $this->lng->txt('cancel'));
+        $form->setFormAction($ilCtrl->getFormAction($this));
+
+        $this->form = $form;
+    }
+
+    function submitAvailabilitySettings() {
+        $this->initAvailabilitySettingsForm();
+        if (!$this->form->checkInput()) {
+            $this->form->setValuesByPost();
+            $this->tpl->setContent($this->form->getHTML());
+            return;
+        }
+        $mumieTask = $this->object;
+        $mumieTask->setOnline($this->form->getInput('online'));
+
+        $forceGradeUpdate = false;
+
+        if ($this->form->getInput('activation_type') != $mumieTask->getActivationLimited()) {
+            $forceGradeUpdate = true;
+        }
+        if ($this->form->getInput('activation_type')) {
+            $mumieTask->setActivationLimited(true);
+            $mumieTask->setActivationVisibility($this->form->getInput('activation_visibility'));
+            $period = $this->form->getItemByPostVar("access_period");
+
+            if ($mumieTask->getActivationEndingTime() != $period->getEnd()->get(IL_CAL_UNIX)) {
+                $forceGradeUpdate = true;
+            }
+
+            $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
+            $mumieTask->setActivationEndingTime($period->getEnd()->get(IL_CAL_UNIX));
+        } else {
+            $mumieTask->setActivationLimited(false);
+        }
+
+        $mumieTask->doUpdate();
+
+        if ($forceGradeUpdate) {
+            $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+            ilMumieTaskLPStatus::updateGrades($this->object, $forceGradeUpdate);
+        }
+
+        ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
+
+        $cmd = 'editProperties';
         $this->performCommand($cmd);
     }
 
