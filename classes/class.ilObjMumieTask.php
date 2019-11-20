@@ -68,6 +68,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setServer($rec['server']);
             $this->setLp_modus($rec['lp_modus']);
             $this->setPassing_grade($rec['passing_grade']);
+            $this->setOnline($rec['online']);
         }
 
         /**
@@ -107,6 +108,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'mumie_coursefile' => array('text', $this->getMumie_coursefile()),
                 'passing_grade' => array('integer', $this->getPassing_grade()),
                 'lp_modus' => array('integer', $this->getLp_modus()),
+                'online' => array('integer', $this->getOnline()),
             ),
             array(
                 'id' => array("int", $this->getId()),
@@ -170,7 +172,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return        boolean                online
      */
-    function isOnline() {
+    function getOnline() {
         return $this->online;
     }
 

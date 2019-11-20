@@ -19,10 +19,15 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
      * @return    boolean        true, if everything is ok
      */
     function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "") {
-        global $ilUser, $ilAccess, $ilCtrl;
+        global $ilUser, $ilAccess, $ilCtrl, $DIC, $lng;
         if (!isset($a_cmd) || trim($a_cmd) === '') {
             $a_cmd = $ilCtrl->getCmd();
         }
+
+        if ($a_user_id == "") {
+            $a_user_id = $ilUser->getId();
+        }
+
         $rbacsystem = $DIC['rbacsystem'];
         switch ($a_cmd) {
             case "editProperties":
@@ -49,9 +54,35 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
                 return $ilAccess->checkAccess("read", "", $a_ref_id);
             case "displayLearningProgress":
                 return $ilAccess->checkAccess("read", "", $a_ref_id);
-            default:
-                return true;
         }
+
+        $rbacsystem = $DIC['rbacsystem'];
+        $ilAccess = $DIC['ilAccess'];
+
+        switch ($a_permission) {
+            case "read":
+            case "visible":
+                if (!self::_lookupOnline($a_obj_id)
+                    && (!$rbacsystem->checkAccessOfUser($a_user_id, 'write', $a_ref_id))
+                ) {
+                    $ilAccess->addInfoItem(IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
+
+                    return false;
+                }
+                break;
+        }
+        return true;
+    }
+
+    static function _lookupOnline($objId) {
+        global $ilDB;
+
+        $query = "SELECT online FROM xmum_mumie_task where id = " . $ilDB->quote($objId, 'integer');
+
+        if ($row = $ilDB->fetchAssoc($ilDB->query($query))) {
+            return $row["online"] == 1;
+        }
+        return false;
     }
 }
 

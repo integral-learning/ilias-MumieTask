@@ -4,9 +4,9 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI {
 
     private $onlineItem, $actTypeItem, $durationItem;
     public function setFields() {
-
+        global $lng;
         $onlineItem = new ilCheckboxInputGUI($this->lng->txt('rep_activation_online'), 'online');
-        $onlineItem->setInfo("is onlin?!?)");
+        $onlineItem->setInfo($lng->txt('rep_robj_xmum_frm_online_info'));
         $this->addItem($onlineItem);
         $this->onlineItem = $onlineItem;
 
@@ -37,11 +37,11 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI {
         return $ok;
     }
 
-    public function setValuesByArray($values) {
+    public function setValuesByArray($values, $a_restrict_to_value_keys = false) {
         $period = $values['period'];
         $this->durationItem->setStart(new ilDateTime($period->startingTime ?? time(), IL_CAL_UNIX));
         $this->durationItem->setEnd(new ilDateTime($period->endingTime ?? time(), IL_CAL_UNIX));
-        parent::setValuesByArray($values);
+        parent::setValuesByArray($values, $a_restrict_to_value_keys);
     }
 
 }

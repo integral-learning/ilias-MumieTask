@@ -105,8 +105,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $task->create();
         $task->createReference();
         $task->putInTree($_GET["ref_id"]);
-        $task->update();
         $this->object = $task;
+        global $DIC;
+
+        $tree = $DIC['tree'];
+        $parent_ref = $tree->getParentId($this->object->getRefId());
+        $task->setParentRolePermissions($parent_ref);
+
+        $task->update();
 
         $this->ctrl->setParameter($this, "ref_id", $this->object->getRefId());
         $this->afterSave($this->object);
@@ -418,7 +424,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $values = array();
         $values['activation_type'] = $this->object->getActivationLimited();
         $values['activation_visibility'] = $this->object->getActivationVisibility();
-        $values['online'] = $this->object->isOnline();
+        $values['online'] = $this->object->getOnline();
         $period = new stdClass();
         $period->startingTime = $this->object->getActivationStartingTime();
         $period->endingTime = $this->object->getActivationEndingTime();
@@ -451,11 +457,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         }
 
         $mumieTask = $this->object;
-
+        $mumieTask->setOnline($this->form->getInput('online'));
         if ($this->form->getInput('activation_type')) {
             $mumieTask->setActivationLimited(true);
 
-            $mumieTask->setActivationVisibility($this->form->getItemByPostVar('activation_visibility')->getChecked());
+            $mumieTask->setActivationVisibility($this->form->getInput('activation_visibility'));
 
             $period = $this->form->getItemByPostVar("access_period");
             $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
@@ -468,7 +474,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
 
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
-        $cmd = 'editLPSettings';
+        $cmd = 'editProperties';
         $this->performCommand($cmd);
     }
 
