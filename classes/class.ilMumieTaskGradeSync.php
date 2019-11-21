@@ -78,11 +78,15 @@ class ilMumieTaskGradeSync {
         $oldestTimestamp = PHP_INT_MAX;
         $result = $ilDB->query("SELECT usr_id, obj_id, status_changed".
             " FROM ut_lp_marks".
-            " WHERE obj_id = ".$ilDB->quote($this->task->getId(), "integer"));
+            " WHERE obj_id = ".$ilDB->quote($this->task->getId(), "integer") . 
+            " AND mark IS NOT NULL");
         while ($record = $ilDB->fetchAssoc($result)) {
             if(in_array($record['usr_id'], $this->userIds) && strtotime($record['status_changed'])<$oldestTimestamp) {
                 $oldestTimestamp = strtotime($record['status_changed']);
             }
+        }
+        if($oldestTimestamp == PHP_INT_MAX) {
+            $oldestTimestamp = 1;
         }
         return $oldestTimestamp * 1000;
     }

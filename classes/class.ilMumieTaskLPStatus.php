@@ -43,14 +43,14 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin {
         if (!$task->getLp_modus() && ilObjUserTracking::_enabledLearningProgress()) {
             return;
         }
+        include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        $gradeSync = new ilMumieTaskGradeSync($task, $forceUpdate);
 
         if ($forceUpdate) {
             ilLoggerFactory::getLogger('xmum')->info("MumieTask: Changes triggered forced grade update");
             self::deleteLPForTask($task);
         }
         include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-        include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        $gradeSync = new ilMumieTaskGradeSync($task, $forceUpdate);
         $gradesByUser = $gradeSync->getXapiGradesByUser();
         foreach (array_keys($gradesByUser) as $userId) {
             $xapiGrade = $gradesByUser[$userId];
