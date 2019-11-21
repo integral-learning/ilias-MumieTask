@@ -32,6 +32,8 @@ properties#:#Eigenschaften
 mumie_server#:#MUMIE-Server
 mumie_server_desc#:#Bitte wählen sie einen MUMIE-Server um eine aktuelle Liste an verfügbaren Kursen und MumieTasks zu erhalten.
 mumie_course#:#MUMIE-Kurs
+mumie_filter#:#MUMIE-Probleme filtern <span class="caret"></span>
+mumie_select_problem#:#Wählen Sie ein MUMIE-Problem
 mumie_problem#:#MUMIE-Problem
 mumie_problem_desc#:#Wählen Sie aus <b><span id='xmum_task_count'></span></b> MUMIE-Problemen! <br><br>Ein MUMIE-Problem ist eine benotete Übung auf der MUMIE-Plattform
 frm_tsk_course_not_found#:#Dieser Kurs konnte auf dem ausgewählten server nicht gefunden werden.
@@ -62,3 +64,5 @@ frm_force_update#:#Notensychnonisierung erzwingen
 frm_force_update_desc#:#Wenn Sie diesen Knopf drücken, werden erst alle bestehenden Noten für diese MumieTask gelöscht und dann neu synchronisiert
 frm_force_update_btn#:#Update erzwingen
 edit_task#:#Bearbeiten
+activation_limited_visibility_info#:#Nutzer können diese MUMIE-Task außerhalb des gewählten Zeitraums sehen, aber nicht bearbeiten
+frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MUMIE-Task sehen und bearbeiten

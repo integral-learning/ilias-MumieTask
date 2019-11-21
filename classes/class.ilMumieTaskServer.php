@@ -122,16 +122,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     }
 
     public function getCoursesAndTasks() {
-        //TODO: REMOVE THIS BEFORE PUBLISH
-        //MOCK START
 
-        if ($this->getUrlPrefix() == "test/") {           
-            $largeJSON = file_get_contents("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/newest.json");
-            $tester = json_decode($largeJSON,true);
-            return json_decode($largeJSON);
-        }
-        
-        //MOCK END
         $curl = curl_init($this->getCoursesAndTasksURL());
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,

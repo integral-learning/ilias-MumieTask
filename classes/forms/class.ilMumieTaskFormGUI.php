@@ -53,7 +53,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->addItem($valuePairs);
         
         $selectTaskHeader = new ilFormSectionHeaderGUI();
-        $selectTaskHeader->setTitle($lng->txt("rep_robj_xmum_mumie_select_problem"));
+        $selectTaskHeader->setTitle($lng->txt("rep_robj_xmum_mumie_select_task"));
         $this->addItem($selectTaskHeader);
 
         $this->problemItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_problem'), 'xmum_task');
@@ -111,6 +111,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         if ($task == null && $isDummy) {
             $ok = false;
             $this->problemItem->setAlert($lng->txt('required_field'));
+            return $ok;
         } else if ($task == null) {
             $ok = false;
             $this->problemItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_problem_not_found'));

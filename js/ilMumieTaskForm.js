@@ -4,7 +4,6 @@
 
     $(document).ready(function () {
         server_data = JSON.parse(document.getElementById('server_data').getAttribute('value'));
-        // console.log(server_data);
         init();
 
         serverController.setOnclickListeners();
@@ -309,8 +308,8 @@
     })();
 
     var filterController = (function() {
-        var nameElements = [];
-        var template;
+        var filterElements = [];
+        var filterWrapperTemplate;
         var valueBoxes = [];
 
 
@@ -374,7 +373,11 @@
                     tag.value = value;
                     var clone = JSON.parse(JSON.stringify(selections)); // deep clone
                     var count = getFilteredCount(tag,clone);
-                    label.html(value + ' (' + count + ')');
+                    if($(wrapper).find("input")[0].checked) {
+                        label.html(value);
+                    } else {
+                        label.html(value + ' (' + count + ')');
+                    }
                     wrapper.firstElementChild.disabled = !count;
                 }
             });
@@ -414,11 +417,11 @@
 
         function getSelections() {
             var selectedNamesAndValuesMap = {};
-            valueBoxes.forEach( valueEL => {
-                for(var i = 0 ; i < valueEL.children.length ; i++){
-                    var input = valueEL.children[i].firstElementChild;
+            valueBoxes.forEach( optionWrapper => {
+                for(var i = 0 ; i < optionWrapper.children.length ; i++){
+                    var input = optionWrapper.children[i].firstElementChild;
                     if(input.checked){
-                        var name = valueEL.parentElement.previousElementSibling.getAttribute("for");
+                        var name = optionWrapper.parentElement.previousElementSibling.getAttribute("for");
                         var val = input.getAttribute("value");
                         if(selectedNamesAndValuesMap[name]) {
                             selectedNamesAndValuesMap[name].push(val);
@@ -433,7 +436,7 @@
             return 'xmum_filter_value_' + index.toString() + value;
         }
 
-        function fillOptionsWithValues (valueElement, tag){
+        function addFilterOptions (valueElement, tag){
             var values = tag.values;
             values.forEach( (val,i) => {
                 var option = document.createElement('option');
@@ -459,7 +462,7 @@
             }
         }
 
-        function createNameElement(element,valuesBox,name){
+        function setFilterLabelElement(element,filterOptionWrapper,name){
             element.setAttribute("for",name);
             element.innerHTML = "Filter by " + name;
             element.style.cursor = "pointer";
@@ -473,26 +476,26 @@
             );
 
             $(element).click( function () {
-                if (valuesBox.style.display === "block") {
-                    valuesBox.style.display = "none";
+                if (filterOptionWrapper.style.display === "block") {
+                    filterOptionWrapper.style.display = "none";
                 } else {
-                    valuesBox.style.display = "block";
+                    filterOptionWrapper.style.display = "block";
                 }
             });
         }
 
-        function addNameValueCheckboxes(tag){
-            var clone = template.cloneNode(true);
+        function addFilterElem(tag){
+            var clone = filterWrapperTemplate.cloneNode(true);
             clone.style.display = "block";
             clone.setAttribute("id","il_prop_cont_xmum_name_"+tag.name);
-            template.parentElement.insertBefore(clone,template);
-            var filterName = clone.children[0];
-            var valuesBox = clone.children[1].firstElementChild;
-            createNameElement(filterName,valuesBox,tag.name);
-            valuesBox.setAttribute("id","xmum_name_" + tag.name);
-            fillOptionsWithValues(valuesBox,tag);
-            valueBoxes.push(valuesBox);
-            nameElements.push(clone);
+            filterWrapperTemplate.parentElement.insertBefore(clone,filterWrapperTemplate);
+            var filterLabel = clone.children[0];
+            var filterOptionWrapper = clone.children[1].firstElementChild;
+            setFilterLabelElement(filterLabel,filterOptionWrapper,tag.name);
+            filterOptionWrapper.setAttribute("id","xmum_name_" + tag.name);
+            addFilterOptions(filterOptionWrapper,tag);
+            valueBoxes.push(filterOptionWrapper);
+            filterElements.push(clone);
         }
 
         function hideEmptyFilters(hide){
@@ -525,25 +528,25 @@
 
         return {
             init: function() {
-                template = document.getElementById("il_prop_cont_xmum_values");
-                template.style.display = "none";
+                filterWrapperTemplate = document.getElementById("il_prop_cont_xmum_values");
+                filterWrapperTemplate.style.display = "none";
                 this.setFilterOptions();
             },
             setFilterOptions: function() {
                 var tags = getNameValuePairs();
                 for(var i = 0; i < tags.length; i++) {
                     var tag  = tags[i];
-                    addNameValueCheckboxes(tag);
+                    addFilterElem(tag);
                 }
                 hideEmptyFilters(tags.length < 1);
-                makeParentCollapsible(nameElements);
+                makeParentCollapsible(filterElements);
             },
             getFilteredTasks: function() {
                 return getFilteredTasks(getSelections());
             },
             resetFilters: function () {
-                nameElements.forEach( el => el.remove());
-                nameElements = [];
+                filterElements.forEach( el => el.remove());
+                filterElements = [];
                 valueBoxes.forEach(el => el.remove());
                 valueBoxes = [];
                 this.setFilterOptions();

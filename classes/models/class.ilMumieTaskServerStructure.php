@@ -6,8 +6,6 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
 
     private $courses;
     private $languages = array();
-    // private $names = array(); // these dont seem necessary anymore, 
-    // private $values = array(); // if you do need them comment them in here but also comment them in in collectTags in loadStrucutre (~line 37)
 
     /**
      * Get the value of courses
@@ -34,7 +32,6 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
             }
         }
         $this->collectLanguages();
-        // $this->collectTags();
     }
 
     private function collectLanguages() {
@@ -45,18 +42,6 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
         $this->languages = array_values(array_unique($langs));
     }
 
-    private function collectTags() {
-        $nmaes = [];
-        $values = [];
-        foreach ($this->courses as $course) {
-            array_push($names, ...$course->getNames());
-            array_push($values, ...$course->getValues());
-            
-        }
-        $this->names = array_values(array_unique($names));
-        $this->values = array_values(array_unique($values));
-        
-    }
 
     public function jsonSerialize() {
         $vars = get_object_vars($this);
@@ -82,19 +67,6 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
         return $this;
     }
 
-    /**
-     * Get the names of tags
-     */
-    public function getNames() {
-        return $this->names;
-    }
-    
-    /**
-     * Get the values of the tags
-     */
-    public function getValues() {
-        return $this->values;
-    }
 
     public function getCoursebyName($name) {
         foreach ($this->courses as $course) {
