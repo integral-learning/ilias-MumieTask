@@ -49,11 +49,11 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $filterTitle->setTitle($lng->txt('rep_robj_xmum_mumie_filter'));
         $this->addItem($filterTitle);
         
-        $valuePairs = new ilMultiSelectInputGUI("Values", "xmum_values"); // no need for $lng here this field will be hidden by the js
-        $this->addItem($valuePairs);
+        $filterItem = new ilMultiSelectInputGUI("Values", "xmum_values"); // no need for $lng here this field will be hidden by the js
+        $this->addItem($filterItem);
         
         $selectTaskHeader = new ilFormSectionHeaderGUI();
-        $selectTaskHeader->setTitle($lng->txt("rep_robj_xmum_mumie_select_task"));
+        $selectTaskHeader->setTitle($lng->txt("rep_robj_xmum_mumie_select_problem"));
         $this->addItem($selectTaskHeader);
 
         $this->problemItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_problem'), 'xmum_task');
