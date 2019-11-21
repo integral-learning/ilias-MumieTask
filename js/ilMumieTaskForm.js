@@ -7,7 +7,7 @@
 
     $(document).ready(function () {
         server_data = JSON.parse(document.getElementById('server_data').getAttribute('value'));
-        console.log(server_data);
+        // console.log(server_data);
         init();
 
         serverController.setOnclickListeners();
@@ -297,44 +297,43 @@
     })();
 
     var filterController = (function() {
-        var keyElements = [];
-        var parentEl;
-        var valueElements = [];
+        var nameElements = [];
+        var template;
+        var valueBoxes = [];
 
 
-        function getKeyValuePairs(){
+        function getNameValuePairs(){
             var course = courseController.getSelectedCourse();
             var tasks = course['tasks'];
-            var keys = [];
-            course['keys'].forEach( key => {
-                var k = {};
+            var nameValuePairs = [];
+            course['names'].forEach( name => {
+                var tagObj = {};
                 var values = [];
                 tasks.forEach( task => {
                     task.tags.forEach(tag => {
-                        if (tag.name === key){
-                            k.key = key;
+                        if (tag.name === name){
+                            tagObj.name = name;
                             values = values.concat(tag.values);
-                            k.values = values.filter((v,i) => values.indexOf(v) === i ); //remove duplicates
+                            tagObj.values = values.filter((v,i) => values.indexOf(v) === i ); //remove duplicates
                         }
                     })
                 });
-                if (k.values) keys.push(k);
+                if (tagObj.values) nameValuePairs.push(tagObj);
             });
-            return keys;
+            return nameValuePairs;
         }
 
-        function createTagOption(val, id, key) {
+        function createTagOption(value, id, name) {
             var option = document.createElement('input');
             option.setAttribute('type', 'checkbox');
             option.setAttribute('name', "xmum_filter[]");
             option.setAttribute('id', id);
-            option.setAttribute('value', val);
-            // option.checked = false;
+            option.setAttribute('value', value);
 
             var label = document.createElement('label');
             label.style.paddingLeft = "5px";
             label.setAttribute('for', id);
-            label.textContent = val + ' (' + getFilteredCount({name:key,value:val}, getSelections()) + ')';
+            label.textContent = value + ' (' + getFilteredCount({name,value}, getSelections()) + ')';
 
             var wrapper = document.createElement('div');
             wrapper.style = 'white-space:nowrap';
@@ -344,57 +343,56 @@
             return wrapper;
         }
 
-        function getFilteredCount(tag,values) {
-            if(values[tag.name]) values[tag.name].push(tag.value);
-            else values[tag.name] = [tag.value];
-            return getFilteredTasks(values).length;
+        function getFilteredCount(tag,selections) {
+            if(selections[tag.name]) selections[tag.name].push(tag.value);
+            else selections[tag.name] = [tag.value];
+            return getFilteredTasks(selections).length;
         }
 
         function updateFilterCount(){
             var selections = getSelections();
-            valueElements.forEach( keyEl => {
-                for(var i = 0 ; i < keyEl.children.length ; i++){
-                    var container = keyEl.children[i];
-                    var key = keyEl.parentElement.previousElementSibling.getAttribute("for");
-                    var value = keyEl.children[i].firstElementChild.getAttribute("value");
-                    var label = $(container).find("label");
+            valueBoxes.forEach( valueBox => {
+                for(var i = 0 ; i < valueBox.children.length ; i++){
+                    var wrapper = valueBox.children[i];
+                    var name = valueBox.parentElement.previousElementSibling.getAttribute("for");
+                    var value = valueBox.children[i].firstElementChild.getAttribute("value");
+                    var label = $(wrapper).find("label");
                     var tag = {};
-                    tag.name = key;
+                    tag.name = name;
                     tag.value = value;
                     var clone = JSON.parse(JSON.stringify(selections)); // deep clone
                     var count = getFilteredCount(tag,clone);
                     label.html(value + ' (' + count + ')');
-                    container.firstElementChild.disabled = !count;
+                    wrapper.firstElementChild.disabled = !count;
                 }
             });
         }
 
-        function filterTask(task, values) {
+        function filterTask(task, selections) {
             var obj = {};
             task.tags.forEach(tag => {
                 obj[tag.name] = tag.values;
             });
-            // console.log("task",obj,"vs sel obj",values);
-            for (var key in values){
+            for (var key in selections){
                if(!obj[key]) return false;
-               if(!crossReferenceArrays(obj[key],values[key])) return false;
+               if(!haveCommonEntry(obj[key],selections[key])) return false;
             }
             return true;
         }
 
-        function getFilteredTasks(values) {
+        function getFilteredTasks(selections) {
             var availableTasks = taskController.getAvailableTasks();
             var filteredTasks = [];
             for(var i = 0; i < availableTasks.length; i++){
                 var task = availableTasks[i];
-                if(filterTask(task, values)) {
+                if(filterTask(task, selections)) {
                     filteredTasks.push(task);
                 }
             }
             return filteredTasks;
         }
 
-        function crossReferenceArrays (array1,array2) {
+        function haveCommonEntry (array1,array2) {
             if(!Array.isArray(array1) || !Array.isArray(array2)) return false;
             for(var i = 0 ; i < array1.length ; i++){
                 if(array2.includes(array1[i])) return true;
@@ -403,23 +401,20 @@
         }
 
         function getSelections() {
-            var selectedKeyValuesMap = {};
-            valueElements.forEach( valueEL => {
+            var selectedNamesAndValuesMap = {};
+            valueBoxes.forEach( valueEL => {
                 for(var i = 0 ; i < valueEL.children.length ; i++){
                     var input = valueEL.children[i].firstElementChild;
                     if(input.checked){
-                        var key = valueEL.parentElement.previousElementSibling.getAttribute("for");
-                        // keys.push(key);
+                        var name = valueEL.parentElement.previousElementSibling.getAttribute("for");
                         var val = input.getAttribute("value");
-                        // keys = keys.filter((k,i) => keys.indexOf(k) === i ); // avoid duplicate keys
-                        // values.push(val);
-                        if(selectedKeyValuesMap[key]) {
-                            selectedKeyValuesMap[key].push(val);
-                        } else selectedKeyValuesMap[key] = [val];
+                        if(selectedNamesAndValuesMap[name]) {
+                            selectedNamesAndValuesMap[name].push(val);
+                        } else selectedNamesAndValuesMap[name] = [val];
                     }
                 }
             });
-            return selectedKeyValuesMap;
+            return selectedNamesAndValuesMap;
         }
 
         function getInputId(value,index) {
@@ -433,7 +428,7 @@
                 option.paddingRight = "2";
                 option.setAttribute('value', val);
                 option.text = val;
-                valueElement.appendChild(createTagOption(val,getInputId(val,i),tag.key));
+                valueElement.appendChild(createTagOption(val,getInputId(val,i),tag.name));
             }  );
 
             var childCount = valueElement.children.length;
@@ -452,11 +447,11 @@
             }
         }
 
-        function createKeyElement(keyEl,valueEl,key){
-            keyEl.setAttribute("for",key);
-            keyEl.innerHTML = "Filter by " + key;
-            keyEl.style.cursor = "pointer";
-            $(keyEl).hover(
+        function createNameElement(element,valuesBox,name){
+            element.setAttribute("for",name);
+            element.innerHTML = "Filter by " + name;
+            element.style.cursor = "pointer";
+            $(element).hover(
                 function() {
                     this.style.backgroundColor = "#ccc";
 
@@ -465,26 +460,27 @@
                 }
             );
 
-            $(keyEl).click( function () {
-                if (valueEl.style.display === "block") {
-                    valueEl.style.display = "none";
+            $(element).click( function () {
+                if (valuesBox.style.display === "block") {
+                    valuesBox.style.display = "none";
                 } else {
-                    valueEl.style.display = "block";
+                    valuesBox.style.display = "block";
                 }
             });
         }
 
-        function addKeyValueCheckboxes(tag){
-            var clone = parentEl.cloneNode(true);
-            clone.setAttribute("id","il_prop_cont_xmum_key_"+tag.key);
-            parentEl.parentElement.insertBefore(clone,parentEl);
-            var keyBox = clone.children[0];
+        function addNameValueCheckboxes(tag){
+            var clone = template.cloneNode(true);
+            clone.style.display = "block";
+            clone.setAttribute("id","il_prop_cont_xmum_name_"+tag.name);
+            template.parentElement.insertBefore(clone,template);
+            var filterName = clone.children[0];
             var valuesBox = clone.children[1].firstElementChild;
-            createKeyElement(keyBox,valuesBox,tag.key);
-            valuesBox.setAttribute("id","xmum_key_" + tag.key);
+            createNameElement(filterName,valuesBox,tag.name);
+            valuesBox.setAttribute("id","xmum_name_" + tag.name);
             fillOptionsWithValues(valuesBox,tag);
-            valueElements.push(valuesBox);
-            keyElements.push(clone);
+            valueBoxes.push(valuesBox);
+            nameElements.push(clone);
         }
 
         function hideEmptyFilters(hide){
@@ -492,23 +488,23 @@
             $(title).css("display", hide ? "none" : "block");
         }
 
-        function makeParentCollapsible(keys){
+        function makeParentCollapsible(names){
             var title = $(".ilFormHeader")[1];
             $(title).css("cursor","pointer");
             $(title).hover(
                 function() {
                     this.style.backgroundColor = "#ccc";
                 }, function() {
-                    this.style.backgroundColor = '#f0f0f0'; //copied from ilias' style
+                    this.style.backgroundColor = '#f0f0f0'; // original color
                 }
             );
 
             $(title).click( function() {
-                keys.forEach( keyEl => {
-                    if (keyEl.style.display === "block") {
-                        keyEl.style.display = "none";
+                names.forEach( name => {
+                    if (name.style.display === "block") {
+                        name.style.display = "none";
                     } else {
-                        keyEl.style.display = "block";
+                        name.style.display = "block";
                     }
                 });
 
@@ -517,28 +513,27 @@
 
         return {
             init: function() {
-                parentEl = document.getElementById("il_prop_cont_xmum_values");
+                template = document.getElementById("il_prop_cont_xmum_values");
+                template.style.display = "none";
                 this.setFilterOptions();
             },
             setFilterOptions: function() {
-                var tags = getKeyValuePairs();
+                var tags = getNameValuePairs();
                 for(var i = 0; i < tags.length; i++) {
                     var tag  = tags[i];
-                    addKeyValueCheckboxes(tag);
+                    addNameValueCheckboxes(tag);
                 }
-                parentEl.style.display = "none";
                 hideEmptyFilters(tags.length < 1);
-                makeParentCollapsible(keyElements);
+                makeParentCollapsible(nameElements);
             },
             getFilteredTasks: function() {
                 return getFilteredTasks(getSelections());
             },
             resetFilters: function () {
-                keyElements.forEach( el => el.remove());
-                keyElements = [];
-                valueElements.forEach(el => el.remove());
-                valueElements = [];
-                parentEl.style.display = "block";
+                nameElements.forEach( el => el.remove());
+                nameElements = [];
+                valueBoxes.forEach(el => el.remove());
+                valueBoxes = [];
                 this.setFilterOptions();
             }
 

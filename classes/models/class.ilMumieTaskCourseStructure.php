@@ -4,7 +4,7 @@ include_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject
 class ilMumieTaskCourseStructure implements \JsonSerializable {
     private $name, $tasks, $pathToCourseFile;
     private $languages = array();
-    private $keys = array();
+    private $names = array();
     private $values = array();
 
     /**
@@ -67,7 +67,6 @@ class ilMumieTaskCourseStructure implements \JsonSerializable {
         $this->pathToCourseFile = $courseAndTasks->pathToCourseFile;
         $this->tasks = [];
         if($courseAndTasks->tasks){
-            // debug_to_console(json_encode());
             foreach ($courseAndTasks->tasks as $task) {
                 $taskObj = new ilMumieTaskTaskStructure($task);
                 array_push($this->tasks, $taskObj);
@@ -86,15 +85,15 @@ class ilMumieTaskCourseStructure implements \JsonSerializable {
     }
 
     function collectTags() {
-        $keys = array();
+        $names = array();
         $values = array();
         foreach ($this->tasks as $task) {
             foreach($task->getTags() as $tag){
-                array_push($keys,$tag->name);
+                array_push($names, $tag->name);
                 array_push($values,...$tag->values);
             }
         }
-        $this->keys = array_values(array_unique($keys));
+        $this->names = array_values(array_unique($names));
         $this->values = array_values(array_unique($values));
 
     }
@@ -131,10 +130,10 @@ class ilMumieTaskCourseStructure implements \JsonSerializable {
     }
 
      /**
-     * Get the keys of the tags
+     * Get the names of the tags
      */
-    public function getKeys() {
-        return $this->keys;
+    public function getNames() {
+        return $this->names;
     }
 
     public function getTaskByLink($link) {

@@ -82,7 +82,7 @@ class ilMumieTaskSSOService {
         $tpl->setVariable("TARGET", $launchcontainer == 1 ? 'MumieTaskLaunchFrame' : '_blank');
         $tpl->setVariable("USER_ID", $hashedUser);
         $tpl->setVariable("TOKEN", $ssotoken->getToken());
-        $tpl->setVariable("ORG", ilMumieTaskAdminSettings::getInstance()->getOrg());
+        $tpl->setVariable("ORG", htmlspecialchars(ilMumieTaskAdminSettings::getInstance()->getOrg()));
         $tpl->setVariable("PROBLEMURL", $problemurl);
         $tpl->setVariable("WIDTH", '100%');
         $tpl->setVariable("HEIGHT", $height);

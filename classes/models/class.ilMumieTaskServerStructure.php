@@ -6,15 +6,13 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
 
     private $courses;
     private $languages = array();
-    private $keys = array();
-    private $values = array();
+    // private $names = array(); // these dont seem necessary anymore, 
+    // private $values = array(); // if you do need them comment them in here but also comment them in in collectTags in loadStrucutre (~line 37)
 
     /**
      * Get the value of courses
      */
     public function getCourses() {
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
-        //debug_to_console($this->course);
         return $this->courses;
     }
 
@@ -30,15 +28,13 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
     }
     protected function loadStructure($coursesAndTasks) {
         $this->courses = [];
-        // debug_to_console(json_encode($coursesAndTasks));
-        // debug_to_console(json_encode($coursesAndTasks->courses));
         if($coursesAndTasks){
             foreach ($coursesAndTasks->courses as $course) {
                 array_push($this->courses, new ilMumieTaskCourseStructure($course));
             }
         }
         $this->collectLanguages();
-        $this->collectTags();
+        // $this->collectTags();
     }
 
     private function collectLanguages() {
@@ -50,14 +46,14 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
     }
 
     private function collectTags() {
-        $keys = [];
+        $nmaes = [];
         $values = [];
         foreach ($this->courses as $course) {
-            array_push($keys, ...$course->getKeys());
+            array_push($names, ...$course->getNames());
             array_push($values, ...$course->getValues());
             
         }
-        $this->keys = array_values(array_unique($keys));
+        $this->names = array_values(array_unique($names));
         $this->values = array_values(array_unique($values));
         
     }
@@ -87,10 +83,10 @@ class ilMumieTaskServerStructure implements \JsonSerializable {
     }
 
     /**
-     * Get the keys of tags
+     * Get the names of tags
      */
-    public function getKeys() {
-        return $this->keys;
+    public function getNames() {
+        return $this->names;
     }
     
     /**
