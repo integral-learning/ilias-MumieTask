@@ -27,12 +27,19 @@ class ilMumieTaskGradeSync {
     }
 
     public function getXapiGradesByUser() {
-        $payload = json_encode(array(
+        $params = array(
             "users" => $this->getSyncIds($this->userIds),
             "course" => $this->task->getMumie_coursefile(),
             "objectIds" => array(self::getMumieId($this->task)),
             'lastSync' => $this->getLastSync(),
-        ));
+            'includeAll' => true
+        );
+
+        if($this->task->getActivationLimited() == 1) {
+            $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
+        }
+
+        $payload = json_encode($params);
         $ch = curl_init($this->task->getGradeSyncURL());
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_USERAGENT, "My User Agent Name");
@@ -47,15 +54,9 @@ class ilMumieTaskGradeSync {
         $response = json_decode(curl_exec($ch));
         curl_close($ch);
 
-        $gradesByUser = array();
-        if($response) {
-            foreach($response as $xapiGrade) {
-                $gradesByUser[$this->getIliasId($xapiGrade)] = $xapiGrade;
-            }
-        }
-        return $gradesByUser;
+        return $this->getValidGradeByUser($response);
     }
-
+    
     /**
      * Get the unique identifier for a MUMIE task
      *
@@ -83,7 +84,7 @@ class ilMumieTaskGradeSync {
                 $oldestTimestamp = strtotime($record['status_changed']);
             }
         }
-        return $oldestTimestamp;
+        return $oldestTimestamp * 1000;
     }
 
     private function getAllUsers($task) {
@@ -99,6 +100,47 @@ class ilMumieTaskGradeSync {
         return $users;
     }
 
+    private function getValidGradeByUser($response) {
+        $gradesByUser = new stdClass();
+        if($response) {
+            foreach($response as $xapiGrade) {                
+                if(!is_array($gradesByUser->{$this->getIliasId($xapiGrade)})){
+                    $gradesByUser->{$this->getIliasId($xapiGrade)} = array();
+                }
+                array_push($gradesByUser->{$this->getIliasId($xapiGrade)}, $xapiGrade);
+            }
+        }
+        
+        $validGradeByUser = array();
+        foreach($gradesByUser as $userId => $xapiGrades) {
+            $latestGrade;
+            $xapiGrades = array_filter($xapiGrades, array($this, "isGradeBeforeDueDate"));
+            $validGradeByUser[$userId] = $this->getLatestGrade($xapiGrades);
+        }
 
+        return array_filter($validGradeByUser);
+    }
+    
+    private function isGradeBeforeDueDate($grade) {
+        if(!$this->task->getActivationLimited()){
+            return true;
+        }
+
+        return strtotime($grade->timestamp) <= $this->task->getActivationEndingTime();
+    }
+
+    private function getLatestGrade($xapiGrades) {
+        if(empty($xapiGrades)) {
+            return null;
+        }
+        $latestGrade = $xapiGrades[0];
+
+        foreach($xapiGrades as $grade) {
+            if(strtotime($grade->timestamp)> strtotime($latestGrade->timestamp)){
+                $latestGrade = $grade;
+            }
+        }
+        return $latestGrade;
+    }
 }
 ?>

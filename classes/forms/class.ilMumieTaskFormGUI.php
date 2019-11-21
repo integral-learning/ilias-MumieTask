@@ -6,7 +6,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function __construct() {
         parent::__construct();
     }
-    private $titleItem, $serverItem, $courseItem, $taskItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem;
+    private $titleItem, $descriptionItem, $serverItem, $courseItem, $problemItem, $launchcontainerItem, $languageItem, $serverDataItem, $courseFileItem, $filterItem;
 
     private $serverOptions = array();
     private $courseOptions = array();
@@ -19,6 +19,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->titleItem = new ilTextInputGUI($lng->txt('title'), 'title');
         $this->titleItem->setRequired(true);
         $this->addItem($this->titleItem);
+
+        $this->descriptionItem = new ilTextInputGUI($lng->txt('description'), 'description');
+        $this->addItem($this->descriptionItem);
 
         $this->serverItem = new ilSelectInputGui($lng->txt('rep_robj_xmum_mumie_server'), 'xmum_server');
         $this->serverItem->setRequired(true);
@@ -34,6 +37,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         }
 
         $this->languageItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_language'), 'xmum_language');
+        $this->languageItem->setInfo($lng->txt('rep_robj_xmum_language_desc'));
         $this->languageItem->setRequired(true);
         $this->addItem($this->languageItem);
 
@@ -49,14 +53,14 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->addItem($valuePairs);
         
         $selectTaskHeader = new ilFormSectionHeaderGUI();
-        $selectTaskHeader->setTitle($lng->txt("rep_robj_xmum_mumie_select_task"));
+        $selectTaskHeader->setTitle($lng->txt("rep_robj_xmum_mumie_select_problem"));
         $this->addItem($selectTaskHeader);
 
-        $this->taskItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_task'), 'xmum_task');
-        $this->taskItem->setInfo($lng->txt('rep_robj_xmum_mumie_task_desc'));
-        $this->taskItem->setRequired(true);
+        $this->problemItem = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_problem'), 'xmum_task');
+        $this->problemItem->setInfo($lng->txt('rep_robj_xmum_mumie_problem_desc'));
+        $this->problemItem->setRequired(true);
 
-        $this->addItem($this->taskItem);
+        $this->addItem($this->problemItem);
 
         $this->launchcontainerItem = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_launchcontainer'), 'xmum_launchcontainer');
         $optWindow = new ilRadioOption($lng->txt('rep_robj_xmum_window'), '0');
@@ -64,6 +68,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         $this->launchcontainerItem->setRequired(true);
         $this->launchcontainerItem->addOption($optWindow);
         $this->launchcontainerItem->addOption($optEmbedded);
+        $this->launchcontainerItem->setInfo($lng->txt('rep_robj_xmum_launchcontainer_desc'));
         $this->addItem($this->launchcontainerItem);
 
         $servers = ilMumieTaskServer::getAllServers();
@@ -81,29 +86,37 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function checkInput() {
         global $lng;
         $ok = parent::checkInput();
+        $isDummy = $this->getInput('title') == ilObjMumieTask::DUMMY_TITLE;
         $server = new ilMumieTaskServer();
         $server->setUrlPrefix($this->getInput('xmum_server'));
         $server->buildStructure();
+        $course = $server->getCoursebyName($this->getInput('xmum_course'));
+        $task = $course->getTaskByLink($this->getInput('xmum_task'));
 
+        if ($isDummy && $task != null) {
+            $ok = false;
+            $this->titleItem->setAlert($lng->txt('rep_robj_xmum_title_not_valid'));
+        }
         if (!$server->isValidMumieServer()) {
             $ok = false;
             $this->serverItem->setAlert($lng->txt('rep_robj_xmum_server_not_valid'));
             return $ok;
         }
-        $course = $server->getCoursebyName($this->getInput('xmum_course'));
         if ($course == null) {
             $ok = false;
             $this->courseItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_course_not_found'));
             return $ok;
         }
 
-        $task = $course->getTaskByLink($this->getInput('xmum_task'));
-        if ($task == null) {
+        if ($task == null && $isDummy) {
             $ok = false;
-            $this->taskItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_task_not_found'));
+            $this->problemItem->setAlert($lng->txt('required_field'));
+        } else if ($task == null) {
+            $ok = false;
+            $this->problemItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_problem_not_found'));
             return $ok;
         }
-        if (!in_array($this->getInput("xmum_language"), $task->getLanguages())) {
+        if (!$isDummy && !in_array($this->getInput("xmum_language"), $task->getLanguages())) {
             $ok = false;
             $this->languageItem->setAlert($lng->txt('rep_robj_xmum_frm_tsk_lang_not_found'));
         }
@@ -118,7 +131,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         }
         $this->serverItem->setOptions($this->serverOptions);
         $this->courseItem->setOptions($this->courseOptions);
-        $this->taskItem->setOptions($this->taskOptions);
+        $this->problemItem->setOptions($this->taskOptions);
         $this->languageItem->setOptions($this->langOptions);
     }
 
@@ -166,7 +179,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
     function disableDropdowns() {
         $this->serverItem->setDisabled(true);
         $this->courseItem->setDisabled(true);
-        $this->taskItem->setDisabled(true);
+        $this->problemItem->setDisabled(true);
         $this->languageItem->setDisabled(true);
     }
 }

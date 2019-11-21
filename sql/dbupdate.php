@@ -72,6 +72,11 @@ if (!$ilDB->tableExists("xmum_mumie_task")) {
             'length' => '2',
             'default' => '1',
         ),
+        'online' => array(
+            'type' => 'integer',
+            'length' => '2',
+            'default' => '0',
+        ),
     );
     $ilDB->createTable("xmum_mumie_task", $fieldsMumie);
     $ilDB->addPrimaryKey("xmum_mumie_task", array("id"));
@@ -194,6 +199,7 @@ foreach ($operations as $operation) {
 }
 
 ?>
+<#7>
 <?php
 if (!$ilDB->tableExists('xmum_id_hashes')) {
     $fieldsHashes = array(
@@ -212,4 +218,21 @@ if (!$ilDB->tableExists('xmum_id_hashes')) {
     $ilDB->addPrimaryKey("xmum_id_hashes", array("usr_id"));
 }
 
+?>
+<#8>
+<?php
+$query = "SELECT * FROM rbac_templates WHERE type='xmum' AND parent= " . $ilDB->quote(ROLE_FOLDER_ID, 'integer');
+if (!$ilDB->fetchAssoc($ilDB->query($query))) {
+    $query = 'SELECT * FROM rbac_templates WHERE type = "tst" and parent =' . $ilDB->quote(ROLE_FOLDER_ID, 'integer');
+    $result = $ilDB->query($query);
+    while ($row = $ilDB->fetchAssoc($result)) {
+        $query = 'INSERT INTO rbac_templates (rol_id,type,ops_id,parent) ' .
+        'VALUES (' .
+        $ilDB->quote($row['rol_id'], 'integer') . "," .
+        $ilDB->quote("xmum", 'text') . "," .
+        $ilDB->quote($row['ops_id'], 'integer') . "," .
+        $ilDB->quote($row['parent'], 'integer') . ")";
+        $ilDB->manipulate($query);
+    }
+}
 ?>

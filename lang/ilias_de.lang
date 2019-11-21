@@ -1,0 +1,64 @@
+<!-- language file start -->
+add_server#:#MUMIE-Server hinzufügen
+add_server_desc#:#Hier klicken um einen MUMIE-Server zu Ilias hinzufügen
+id#:#ID
+frm_share_first_name#:#Vorname
+frm_share_first_name_desc#:#Legen Sie fest, ob die Vornamen der Nutzer an die MUMIE-Server gesendet werden sollen
+frm_share_last_name#:#Nachname
+frm_share_last_name_desc#:#Legen Sie fest, ob die Nachnamen der Nutzer an die MUMIE-Server gesendet werden sollen
+frm_share_email#:#E-Mail
+frm_share_email_desc#:#Legen Sie fest, ob die E-Mail-Adressen der Nutzer an die MUMIE-Server gesendet werden sollen
+tab_shared_data#:#Datenschutz
+tab_servers#:#Server
+tab_authentication#:#Authentifizierung
+frm_auth_api#:#MUMIE-API-Key
+frm_auth_api_desc#:#Geben Sie den MUMIE-API-Key für die Notensychnonisierung ein
+frm_auth_org#:#MUMIE-Org
+frm_auth_org_desc#:#Geben Sie ihr Organisationskürzel ein, z.B. "rwth"
+frm_shared_data_description#:#Legen Sie fest, welche personenbezogenen Daten mit MUMIE-Servern geteilt werden sollen
+frm_server_description#:# TODO
+url_prefix#:#Server-URL
+server_not_valid#:#Es konnte für diese URL kein MUMIE-Server gefunden werden
+title_not_valid#:#Bitte wählen Sie einen anderen Namen für ihre MumieTask
+name_exists#:#Es gibt bereits einen MUMIE-Server mit diesem Namen!
+url_exists#:#Es gibt bereits einen MUMIE-Server mit dieser URL!
+xmum_new#:#Neue MumieTask hinzufügen
+xmum_add#:#MumieTask hinzufügen
+frm_server_add_title#:#Einen neuen MUMIE-Server hinzufügen
+frm_server_edit_title#:#MUMIE-Server bearbeiten
+obj_xmum#:#MumieTask
+objs_xmum#:#MumieTasks
+properties#:#Eigenschaften
+mumie_server#:#MUMIE-Server
+mumie_server_desc#:#Bitte wählen sie einen MUMIE-Server um eine aktuelle Liste an verfügbaren Kursen und MumieTasks zu erhalten.
+mumie_course#:#MUMIE-Kurs
+mumie_problem#:#MUMIE-Problem
+mumie_problem_desc#:#Wählen Sie aus <b><span id='xmum_task_count'></span></b> MUMIE-Problemen! <br><br>Ein MUMIE-Problem ist eine benotete Übung auf der MUMIE-Plattform
+frm_tsk_course_not_found#:#Dieser Kurs konnte auf dem ausgewählten server nicht gefunden werden.
+frm_tsk_problem_not_found#:#Dieser Problem konnte auf dem ausgewählten server nicht gefunden werden.
+frm_tsk_lang_not_found#:#Es gibt keine Übersetzung in die gewünschte Sprache für das ausgewählte Problem
+launchcontainer#:#Start-Container
+launchcontainer_desc#:#Bitte wählen Sie, ob diese Aktivität in einem neuen Browser-Tab geöffnet oder in die Ilias-Umgebung eingebettet werden soll.
+window#:#Neues Fenster
+embedded#:#Eingebettet
+language#:#Sprache
+language_desc#:#Bitte wählen Sie die Sprache, in der die MumieTask angezeigt werden soll.
+tab_gen_settings#:#Allgemein
+tab_lp_settings#:#Noten
+filter#:#MUMIE-Probleme filtern
+msg_suc_saved#:#Änderungen erfolgreich gespeichert
+msg_suc_server_add#:#MUMIE-Server erfolgreich hinzugefügt
+msg_suc_deleted#:#Löschen erfolgreich
+msg_no_server_found#:#Es wurde kein konfigurierter MUMIE-Server gefunden! <br><br> Bitte fügen Sie einen server hinzu um fortfahren zu können.
+msg_server_missing#:#Diese MumieTask nutzt eine Server-Konfiguration, die aus Ilias gelöscht wurde! <br><br>Einige Felder können nicht geändert werden bis eine Mumie-Server-Konfiguration für die folgende URL erstellt wurde:<br><br>
+grades#:#Noten
+frm_sync_lp#:#Noten-Synchronisation
+frm_sync_lp_desc#:#Wählen Sie, ob Noten für diese MumieTask automatisch mit Ilias synchronisiert werden sollen
+frm_enable#:#Aktiviert
+frm_disable#:#Deaktiviert
+frm_passing_grade#:#Mindestpunktzahl
+frm_passing_grade_desc#:#Tragen Sie hier die für das Bestehen notwendige Mindestpunktzahl ein.
+frm_force_update#:#Notensychnonisierung erzwingen
+frm_force_update_desc#:#Wenn Sie diesen Knopf drücken, werden erst alle bestehenden Noten für diese MumieTask gelöscht und dann neu synchronisiert
+frm_force_update_btn#:#Update erzwingen
+edit_task#:#Bearbeiten

@@ -30,6 +30,24 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI {
                 "default" => false),
         );
     }
+
+    /**
+     * get properties (offline)
+     *
+     * @access public
+     * @param
+     *
+     */
+    public function getProperties() {
+        global $lng;
+
+        $this->plugin->includeClass("class.ilObjMumieTaskAccess.php");
+        if (!ilObjMumieTaskAccess::_lookupOnline($this->obj_id)) {
+            $props[] = array("alert" => true, "property" => $lng->txt("status"),
+                "value" => $lng->txt("offline"));
+        }
+        return $props ? $props : array();
+    }
 }
 
 ?>

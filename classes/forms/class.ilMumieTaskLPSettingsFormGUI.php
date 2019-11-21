@@ -9,6 +9,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI {
     function setFields() {
         global $lng;
         $this->modusItem = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_sync_lp'), "lp_modus");
+        $this->modusItem->setInfo($lng->txt('rep_robj_xmum_frm_sync_lp_desc'));
         $modusOptionTrue = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 1);
         $modusOptionFalse = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 0);
         $this->modusItem->addOption($modusOptionTrue);
@@ -22,7 +23,6 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI {
         $this->passingThresholdItem->setDecimals(0);
         $this->addItem($this->passingThresholdItem);
         $this->passingThresholdItem->setInfo($lng->txt('rep_robj_xmum_frm_passing_grade_desc'));
-
     }
 }
 ?>

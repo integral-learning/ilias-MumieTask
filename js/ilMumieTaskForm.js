@@ -1,7 +1,4 @@
 (function ($) {
-    var addServerButton = document.getElementById("id_add_server_button");
-    var nameElem = document.getElementById("id_name");
-    var missingConfig = document.getElementsByName("xmum_missing_config")[0];
     var server_data;
 
 
@@ -192,6 +189,8 @@
         var taskCount;
         var titleElem;
 
+        var DUMMY_TITLE = "-- Empty MumieTask --";
+
         function getAvailableTasks() {
             var availableTasks = [];
             var potentialTasks = courseController.getSelectedCourse().tasks;
@@ -207,7 +206,7 @@
         }
 
         function isDefaultTaskName(name) {
-            if(name == null || name == "") {
+            if(name == null || name == ""|| name == DUMMY_TITLE) {
                 return true;
             }
             return server_data
@@ -246,7 +245,10 @@
         }
 
         function isSelectedTask(task) {
-            return selectedTask && selectedTask.link == task.link;
+            if(selectedTask && task && selectedTask.link == task.link){
+                console.log("selected task: " + selectedTask + " link: " + selectedTask.link + "task link " + task.link)
+            }
+            return selectedTask && task && selectedTask.link == task.link;
         }
 
         function setTaskCount(count) {
@@ -257,8 +259,12 @@
             if(isDefaultTaskName(titleElem.value)) {
                 var task = getSelectedTask();
                 var lang = languageController.getSelectedLanguage();
-                titleElem.value = getHeadlineForLang(task, lang);
+                titleElem.value = task ? getHeadlineForLang(task, lang) : titleElem.value;
             }
+        }
+
+        function isDummyTask() {
+            return titleElem.value === DUMMY_TITLE;
         }
         return {
             init: function() {
@@ -275,9 +281,11 @@
             setTaskOptions: function() {
                 var filteredTasks = filterController.getFilteredTasks();
                 selectedTask = getSelectedTask();
+               
                 taskDropDown.selectedIndex = 0;
+                
                 removeAllChildElements(taskDropDown);
-
+                
                 for(var i = 0; i < filteredTasks.length; i++) {
                     
                     var task = filteredTasks[i];
@@ -285,8 +293,12 @@
                     if(isSelectedTask(task)) {
                         taskDropDown.selectedIndex = i;
                     }
-
+                    
                 }
+                if(isDummyTask()){
+                    taskDropDown.selectedIndex = -1;
+                }
+
                 setTaskCount(filteredTasks.length);
 
             },
