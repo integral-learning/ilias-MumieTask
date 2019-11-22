@@ -124,12 +124,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI {
         $ilTabs->activateSubTab("edit_task");
         $this->object->doRead();
         $this->initPropertiesForm();
-        if (!$this->object->isDummy() && !ilMumieTaskServer::serverExistsForUrl($this->object->getServer())) {
-            $this->form->disableDropdowns();
+        if (!$this->object->isDummy() && !ilMumieTaskServer::serverConfigExistsForUrl($this->object->getServer())) {
+            $this->form->disable();
             ilUtil::sendFailure($lng->txt('rep_robj_xmum_msg_server_missing') . $this->object->getServer());
-        } else {
-            $this->setPropertyValues();
+        } else if(!ilMumieTaskServer::fromUrl($this->object->getServer())->isValidMumieServer()) {
+            $this->form->disable();
+            ilUtil::sendFailure($lng->txt('rep_robj_xmum_msg_no_connection_to_server') . $this->object->getServer());
         }
+        $this->setPropertyValues();
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
         $tpl->setContent($this->form->getHTML());
     }

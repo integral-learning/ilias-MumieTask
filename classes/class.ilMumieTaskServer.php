@@ -147,7 +147,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         return $vars;
     }
 
-    public static function serverExistsForUrl($url) {
+    public static function serverConfigExistsForUrl($url) {
         return in_array(
             $url,
             array_map(function ($server) {

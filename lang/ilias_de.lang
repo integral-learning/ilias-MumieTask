@@ -53,6 +53,8 @@ msg_suc_server_add#:#MUMIE-Server erfolgreich hinzugefügt
 msg_suc_deleted#:#Löschen erfolgreich
 msg_no_server_found#:#Es wurde kein konfigurierter MUMIE-Server gefunden! <br><br> Bitte fügen Sie einen server hinzu um fortfahren zu können.
 msg_server_missing#:#Diese MumieTask nutzt eine Server-Konfiguration, die aus Ilias gelöscht wurde! <br><br>Einige Felder können nicht geändert werden bis eine Mumie-Server-Konfiguration für die folgende URL erstellt wurde:<br><br>
+msg_no_connection_to_server#:#Ilias konnte keine Antwort von dem MUMIE-Server erhalten, der für die Erstellung dieser MUMIE-Task verwendet wurde. Bitte kontaktieren Sie Ihren Ilias-Administrator. <br><br>Diese MUMIE-Task kann nicht editiert werden, bis wieder eine Verbindung zu folgender URL hergestellt werden kann: <br><br>
+
 grades#:#Noten
 frm_sync_lp#:#Noten-Synchronisation
 frm_sync_lp_desc#:#Wählen Sie, ob Noten für diese MumieTask automatisch mit Ilias synchronisiert werden sollen

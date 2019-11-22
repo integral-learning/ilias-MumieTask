@@ -52,7 +52,8 @@ msg_suc_saved#:#Changes successfully saved
 msg_suc_server_add#:#Added MUMIE server successfully
 msg_suc_deleted#:#Deletion successful
 msg_no_server_found#:#No MUMIE server configuration found! <br><br> Please add a new MUMIE server before continuing.
-msg_server_missing#:#This MumieTask uses a server configuration that has been deleted! <br><br>Some options cannot be changed until a MUMIE server is added for the following url prefix: <br><br>
+msg_server_missing#:#This MumieTask uses a server configuration that has been deleted! <br><br>This task cannot be changed until a MUMIE server is added for the following url prefix: <br><br>
+msg_no_connection_to_server#:#Ilias could not connect to the MUMIE server that has been used to create this MUMIE Task. Please contact your administrator. <br><br>This MUMIE Task cannot be changed until a connection with the following url can be established : <br><br>
 grades#:#Grades
 frm_sync_lp#:#Grade synchronization
 frm_sync_lp_desc#:#Choose whether to automatically load grades from the MUMIE server into ILIAS for this MUMIE Task

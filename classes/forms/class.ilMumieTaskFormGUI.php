@@ -177,10 +177,11 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI {
         }
     }
 
-    function disableDropdowns() {
+    function disable() {
         $this->serverItem->setDisabled(true);
         $this->courseItem->setDisabled(true);
         $this->problemItem->setDisabled(true);
         $this->languageItem->setDisabled(true);
+        $this->clearCommandButtons();
     }
 }
