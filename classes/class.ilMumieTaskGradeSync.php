@@ -1,32 +1,40 @@
-<?
-require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-include_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
-require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
+<?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 
-class ilMumieTaskGradeSync {
-    private $userIds, $task, $adminSettings, $forceUpdate;
+class ilMumieTaskGradeSync
+{
+    private $userIds;
+    private $task;
+    private $adminSettings;
+    private $forceUpdate;
 
-    public function __construct($task, $forceUpdate){
+    public function __construct($task, $forceUpdate)
+    {
         $this->adminSettings = ilMumieTaskAdminSettings::getInstance();
         $this->task = $task;
         $this->forceUpdate = $forceUpdate;
         $this->userIds = $this->getAllUsers($task);
     }
 
-    private function getSyncIds($userIds) {
-        return array_map(function($userId) {
+    private function getSyncIds($userIds)
+    {
+        return array_map(function ($userId) {
             $hashedUser = ilMumieTaskIdHashingService::getHashForUser($userId);
             return "GSSO_" . $this->adminSettings->getOrg() . "_" . $hashedUser;
         }, $userIds);
     }
 
-    private function getIliasId($xapiGrade) {
+    private function getIliasId($xapiGrade)
+    {
         $hashedUser = substr(strrchr($xapiGrade->actor->account->name, "_"), 1);
         return ilMumieTaskIdHashingService::getUserFromHash($hashedUser);
     }
 
-    public function getXapiGradesByUser() {
+    public function getXapiGradesByUser()
+    {
         $params = array(
             "users" => $this->getSyncIds($this->userIds),
             "course" => $this->task->getMumie_coursefile(),
@@ -35,7 +43,7 @@ class ilMumieTaskGradeSync {
             'includeAll' => true
         );
 
-        if($this->task->getActivationLimited() == 1) {
+        if ($this->task->getActivationLimited() == 1) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
         }
 
@@ -45,7 +53,10 @@ class ilMumieTaskGradeSync {
         curl_setopt($ch, CURLOPT_USERAGENT, "My User Agent Name");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            array(
             'Content-Type: application/json',
             'Content-Length: ' . strlen($payload),
             "X-API-Key: " . $this->adminSettings->getApiKey(),
@@ -63,35 +74,38 @@ class ilMumieTaskGradeSync {
      * @param stdClass $mumietask
      * @return string id for MUMIE task on MUMIE server
      */
-    private function getMumieId($mumietask) {
+    private function getMumieId($mumietask)
+    {
         $id = substr($mumietask->getTaskurl(), strlen("link/"));
         return $id;
     }
 
 
-    private function getLastSync() {
+    private function getLastSync()
+    {
         global $ilDB;
-        if($this->forceUpdate) {
+        if ($this->forceUpdate) {
             return 1;
         }
 
         $oldestTimestamp = PHP_INT_MAX;
-        $result = $ilDB->query("SELECT usr_id, obj_id, status_changed".
-            " FROM ut_lp_marks".
-            " WHERE obj_id = ".$ilDB->quote($this->task->getId(), "integer") . 
+        $result = $ilDB->query("SELECT usr_id, obj_id, status_changed" .
+            " FROM ut_lp_marks" .
+            " WHERE obj_id = " . $ilDB->quote($this->task->getId(), "integer") .
             " AND mark IS NOT NULL");
         while ($record = $ilDB->fetchAssoc($result)) {
-            if(in_array($record['usr_id'], $this->userIds) && strtotime($record['status_changed'])<$oldestTimestamp) {
+            if (in_array($record['usr_id'], $this->userIds) && strtotime($record['status_changed'])<$oldestTimestamp) {
                 $oldestTimestamp = strtotime($record['status_changed']);
             }
         }
-        if($oldestTimestamp == PHP_INT_MAX) {
+        if ($oldestTimestamp == PHP_INT_MAX) {
             $oldestTimestamp = 1;
         }
         return $oldestTimestamp * 1000;
     }
 
-    private function getAllUsers($task) {
+    private function getAllUsers($task)
+    {
         global $ilDB;
         $users = array();
         $result = $ilDB->query("SELECT usr_id" .
@@ -104,11 +118,12 @@ class ilMumieTaskGradeSync {
         return $users;
     }
 
-    private function getValidGradeByUser($response) {
+    private function getValidGradeByUser($response)
+    {
         $gradesByUser = new stdClass();
-        if($response) {
-            foreach($response as $xapiGrade) {                
-                if(!is_array($gradesByUser->{$this->getIliasId($xapiGrade)})){
+        if ($response) {
+            foreach ($response as $xapiGrade) {
+                if (!is_array($gradesByUser->{$this->getIliasId($xapiGrade)})) {
                     $gradesByUser->{$this->getIliasId($xapiGrade)} = array();
                 }
                 array_push($gradesByUser->{$this->getIliasId($xapiGrade)}, $xapiGrade);
@@ -116,7 +131,7 @@ class ilMumieTaskGradeSync {
         }
         
         $validGradeByUser = array();
-        foreach($gradesByUser as $userId => $xapiGrades) {
+        foreach ($gradesByUser as $userId => $xapiGrades) {
             $latestGrade;
             $xapiGrades = array_filter($xapiGrades, array($this, "isGradeBeforeDueDate"));
             $validGradeByUser[$userId] = $this->getLatestGrade($xapiGrades);
@@ -125,26 +140,27 @@ class ilMumieTaskGradeSync {
         return array_filter($validGradeByUser);
     }
     
-    private function isGradeBeforeDueDate($grade) {
-        if(!$this->task->getActivationLimited()){
+    private function isGradeBeforeDueDate($grade)
+    {
+        if (!$this->task->getActivationLimited()) {
             return true;
         }
 
         return strtotime($grade->timestamp) <= $this->task->getActivationEndingTime();
     }
 
-    private function getLatestGrade($xapiGrades) {
-        if(empty($xapiGrades)) {
+    private function getLatestGrade($xapiGrades)
+    {
+        if (empty($xapiGrades)) {
             return null;
         }
         $latestGrade = $xapiGrades[0];
 
-        foreach($xapiGrades as $grade) {
-            if(strtotime($grade->timestamp)> strtotime($latestGrade->timestamp)){
+        foreach ($xapiGrades as $grade) {
+            if (strtotime($grade->timestamp)> strtotime($latestGrade->timestamp)) {
                 $latestGrade = $grade;
             }
         }
         return $latestGrade;
     }
 }
-?>

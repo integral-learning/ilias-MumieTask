@@ -1,15 +1,18 @@
 <?php
-require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
-class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
-
-    function __construct() {
+class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
+{
+    public function __construct()
+    {
         parent::__construct();
     }
 
-    private $urlItem, $nameItem;
+    private $urlItem;
+    private $nameItem;
 
-    public function setFields() {
+    public function setFields()
+    {
         global $lng;
         $this->nameItem = new ilTextInputGUI($lng->txt('name'), 'name');
         $this->nameItem->setRequired(true);
@@ -19,14 +22,15 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
         parent::addItem($this->urlItem);
     }
 
-    function checkInput() {
+    public function checkInput()
+    {
         global $DIC, $lng;
         $id = $_GET['server_id'];
         $DIC->ctrl()->setParameter($this, "server_id", $id);
 
         $ok = parent::checkInput();
         if ($ok) {
-            require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+            require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
             $server = new ilMumieTaskServer();
             $server->setName($this->getInput("name"));
@@ -65,5 +69,3 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI {
         return $ok;
     }
 }
-
-?>

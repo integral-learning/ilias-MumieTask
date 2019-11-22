@@ -1,12 +1,15 @@
 <?php
-class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI {
-
-    function __construct() {
+class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
+{
+    public function __construct()
+    {
         parent::__construct();
     }
 
-    private $modusItem, $passingThresholdItem;
-    function setFields() {
+    private $modusItem;
+    private $passingThresholdItem;
+    public function setFields()
+    {
         global $lng;
         $this->modusItem = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_sync_lp'), "lp_modus");
         $this->modusItem->setInfo($lng->txt('rep_robj_xmum_frm_sync_lp_desc'));
@@ -25,4 +28,3 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI {
         $this->passingThresholdItem->setInfo($lng->txt('rep_robj_xmum_frm_passing_grade_desc'));
     }
 }
-?>

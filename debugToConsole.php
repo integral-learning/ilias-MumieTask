@@ -1,5 +1,6 @@
 <?php
-function debug_to_console($data) {
+function debug_to_console($data)
+{
     $output = $data;
     if (is_array($output)) {
         $output = implode(',', $output);
@@ -7,4 +8,3 @@ function debug_to_console($data) {
 
     echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
-?>

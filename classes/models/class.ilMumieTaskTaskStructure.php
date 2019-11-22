@@ -1,13 +1,16 @@
 <?php
-class ilMumieTaskTaskStructure implements \JsonSerializable {
-    private $link, $headline;
+class ilMumieTaskTaskStructure implements \JsonSerializable
+{
+    private $link;
+    private $headline;
     private $languages = array();
     private $tags = array();
 
     /**
      * Get the value of headline
      */
-    public function getHeadline() {
+    public function getHeadline()
+    {
         return $this->headline;
     }
 
@@ -16,14 +19,16 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
      *
      * @return  self
      */
-    public function setHeadline($headline) {
+    public function setHeadline($headline)
+    {
         $this->headline = $headline;
 
         return $this;
     }
 
-    function __construct($task) {
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+    public function __construct($task)
+    {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
         $this->link = $task->link;
         $this->headline = $task->headline;
         if (isset($task->tags)) {
@@ -32,8 +37,9 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
         $this->collectLanguages();
     }
 
-    function collectLanguages() {
-        if($this->headline) {
+    public function collectLanguages()
+    {
+        if ($this->headline) {
             foreach ($this->headline as $langItem) {
                 array_push($this->languages, $langItem->language);
             }
@@ -42,7 +48,8 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
     /**
      * Get the value of link
      */
-    public function getLink() {
+    public function getLink()
+    {
         return $this->link;
     }
 
@@ -51,13 +58,15 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
      *
      * @return  self
      */
-    public function setLink($link) {
+    public function setLink($link)
+    {
         $this->link = $link;
 
         return $this;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         $vars = get_object_vars($this);
 
         return $vars;
@@ -66,7 +75,8 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
     /**
      * Get the value of languages
      */
-    public function getLanguages() {
+    public function getLanguages()
+    {
         return $this->languages;
     }
 
@@ -75,7 +85,8 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
      *
      * @return  self
      */
-    public function setLanguages($languages) {
+    public function setLanguages($languages)
+    {
         $this->languages = $languages;
 
         return $this;
@@ -84,8 +95,8 @@ class ilMumieTaskTaskStructure implements \JsonSerializable {
     /**
      * Get the value of tags
      */
-    public function getTags() {
+    public function getTags()
+    {
         return $this->tags;
     }
 }
-?>

@@ -150,7 +150,8 @@ if (!$ilDB->tableExists('xmum_admin_settings')) {
 $query = 'SELECT * FROM ' . 'xmum_admin_settings';
 $result = $ilDB->query($query);
 if ($ilDB->numRows($result) < 1) {
-    $ilDB->manipulate("INSERT INTO xmum_admin_settings "
+    $ilDB->manipulate(
+        "INSERT INTO xmum_admin_settings "
         . '(id, share_first_name, share_last_name, share_email, api_key, org) VALUES('
         . $ilDB->quote(1, 'integer') . ','
         . $ilDB->quote(0, 'integer') . ','

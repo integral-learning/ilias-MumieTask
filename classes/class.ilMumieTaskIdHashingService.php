@@ -1,21 +1,26 @@
 <?php
-class ilMumieTaskIdHashingService {
-    private $userid, $hash;
+class ilMumieTaskIdHashingService
+{
+    private $userid;
+    private $hash;
 
     const TABLE_NAME = 'xmum_id_hashes';
 
-    private function __construct($userid) {
+    private function __construct($userid)
+    {
         $this->userid = $userid;
         $this->hash = $hash;
     }
 
-    public static function getHashForUser($userid) {
+    public static function getHashForUser($userid)
+    {
         $service = new ilMumieTaskIdHashingService($userid);
         $service->upsertHash();
         return $service->getHash();
     }
 
-    public static function getUserFromHash($hash) {
+    public static function getUserFromHash($hash)
+    {
         global $ilDB;
         $result = $ilDB->fetchObject(
             $ilDB->query(
@@ -29,7 +34,8 @@ class ilMumieTaskIdHashingService {
         return $result->usr_id;
     }
 
-    private function upsertHash() {
+    private function upsertHash()
+    {
         global $ilDB;
         $this->hash = $this->generateHash();
         $result = $ilDB->fetchObject(
@@ -47,10 +53,12 @@ class ilMumieTaskIdHashingService {
         }
     }
 
-    private function create() {
+    private function create()
+    {
         global $ilDB;
 
-        $ilDB->insert(self::TABLE_NAME,
+        $ilDB->insert(
+            self::TABLE_NAME,
             array(
                 'usr_id' => array('integer', $this->userid),
                 'hash' => array('text', $this->hash),
@@ -58,10 +66,12 @@ class ilMumieTaskIdHashingService {
         );
     }
 
-    private function update() {
+    private function update()
+    {
         global $ilDB;
 
-        $ilDB->update(self::TABLE_NAME,
+        $ilDB->update(
+            self::TABLE_NAME,
             array(
                 'hash' => array('text', $this->hash),
             ),
@@ -71,8 +81,9 @@ class ilMumieTaskIdHashingService {
         );
     }
 
-    private function generateHash() {
-        require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+    private function generateHash()
+    {
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         $adminSettings = ilMumieTaskAdminSettings::getInstance();
         return hash("sha512", $this->userid . substr(ilMumieTaskAdminSettings::getInstance()->getApiKey(), 0, 10));
     }
@@ -80,9 +91,8 @@ class ilMumieTaskIdHashingService {
     /**
      * Get the value of hash
      */
-    public function getHash() {
+    public function getHash()
+    {
         return $this->hash;
     }
 }
-
-?>

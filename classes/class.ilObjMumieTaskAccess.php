@@ -1,7 +1,8 @@
 <?php
-require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
-class ilObjMumieTaskAccess extends ilObjectPluginAccess {
+class ilObjMumieTaskAccess extends ilObjectPluginAccess
+{
 
     /**
      * Checks wether a user may invoke a command or not
@@ -18,7 +19,8 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
      *
      * @return    boolean        true, if everything is ok
      */
-    function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "") {
+    public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "")
+    {
         global $ilUser, $ilAccess, $ilCtrl, $DIC, $lng;
         if (!isset($a_cmd) || trim($a_cmd) === '') {
             $a_cmd = $ilCtrl->getCmd();
@@ -78,7 +80,8 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
         return true;
     }
 
-    static function _lookupOnline($objId) {
+    public static function _lookupOnline($objId)
+    {
         global $ilDB;
 
         $query = "SELECT online FROM xmum_mumie_task where id = " . $ilDB->quote($objId, 'integer');
@@ -89,5 +92,3 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess {
         return false;
     }
 }
-
-?>

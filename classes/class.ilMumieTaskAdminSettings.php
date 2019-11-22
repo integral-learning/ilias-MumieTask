@@ -1,6 +1,7 @@
 <?php
 
-class ilMumieTaskAdminSettings {
+class ilMumieTaskAdminSettings
+{
     const TABLE_NAME = 'xmum_admin_settings';
 
     protected $share_first_name;
@@ -10,13 +11,15 @@ class ilMumieTaskAdminSettings {
     protected $org;
     protected $id;
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         $instance = new ilMumieTaskAdminSettings();
         $instance->load();
         return $instance;
     }
 
-    private function load() {
+    private function load()
+    {
         global $ilDB;
         $result = $ilDB->fetchObject($ilDB->query("SELECT * FROM " . ilMumieTaskAdminSettings::TABLE_NAME . " WHERE id = 1"));
         $this->id = $result->id;
@@ -27,68 +30,81 @@ class ilMumieTaskAdminSettings {
         $this->org = $result->org;
     }
 
-    public function update() {
+    public function update()
+    {
         global $ilDB;
-        $ilDB->update(ilMumieTaskAdminSettings::TABLE_NAME, array(
+        $ilDB->update(
+            ilMumieTaskAdminSettings::TABLE_NAME,
+            array(
             "share_first_name" => array("integer", $this->share_first_name),
             "share_last_name" => array("integer", $this->share_last_name),
             "share_email" => array("integer", $this->share_email),
             "api_key" => array("text", $this->api_key),
             "org" => array("text", $this->org),
-        ), array(
+        ),
+            array(
             "id" => array("int", $this->id),
         )
         );
     }
 
-    public function getShareFirstName() {
+    public function getShareFirstName()
+    {
         return $this->share_first_name;
     }
 
-    public function setShareFirstName($share_first_name) {
+    public function setShareFirstName($share_first_name)
+    {
         $this->share_first_name = $share_first_name;
 
         return $this;
     }
 
-    public function getShareLastName() {
+    public function getShareLastName()
+    {
         return $this->share_last_name;
     }
 
-    public function setShareLastName($share_last_name) {
+    public function setShareLastName($share_last_name)
+    {
         $this->share_last_name = $share_last_name;
 
         return $this;
     }
 
-    public function getShareEmail() {
+    public function getShareEmail()
+    {
         return $this->share_email;
     }
 
-    public function setShareEmail($share_email) {
+    public function setShareEmail($share_email)
+    {
         $this->share_email = $share_email;
 
         return $this;
     }
 
-    public function getApiKey() {
+    public function getApiKey()
+    {
         return $this->api_key;
     }
 
-    public function setApiKey($api_key) {
+    public function setApiKey($api_key)
+    {
         $this->api_key = $api_key;
 
         return $this;
     }
 
-    public function getOrg() {
+    public function getOrg()
+    {
         return $this->org;
     }
 
-    public function setOrg($org) {
+    public function setOrg($org)
+    {
         $this->org = $org;
 
         return $this;
     }
 }
-?>

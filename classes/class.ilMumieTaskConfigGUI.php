@@ -1,13 +1,15 @@
 <?php
 
-include_once ("./Services/Component/classes/class.ilPluginConfigGUI.php");
+include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
 
-class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
+class ilMumieTaskConfigGUI extends ilPluginConfigGUI
+{
 
     /**
      * Handles all commmands, default is "configure"
      */
-    function performCommand($cmd) {
+    public function performCommand($cmd)
+    {
         global $tree, $rbacsystem, $ilErr, $lng, $ilCtrl, $tpl;
 
         $cmd = $ilCtrl->getCmd($this);
@@ -30,7 +32,8 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         }
     }
 
-    function configure() {
+    public function configure()
+    {
         global $tpl, $ilToolbar, $ilCtrl, $ilTabs;
 
         $this->setTabs();
@@ -38,35 +41,41 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $ilTabs->activateTab("tab_servers");
     }
 
-    function setTabs() {
+    public function setTabs()
+    {
         global $ilCtrl, $ilTabs, $lng;
         $ilTabs->clearTargets();
 
-        $ilTabs->addTab("tab_servers",
+        $ilTabs->addTab(
+            "tab_servers",
             $lng->txt("rep_robj_xmum_tab_servers"),
             $ilCtrl->getLinkTarget($this, "listServers")
         );
-        $ilTabs->addTab("tab_shared_data",
+        $ilTabs->addTab(
+            "tab_shared_data",
             $lng->txt("rep_robj_xmum_tab_shared_data"),
             $ilCtrl->getLinkTarget($this, "sharedData")
         );
 
-        $ilTabs->addTab('tab_authentication',
+        $ilTabs->addTab(
+            'tab_authentication',
             $lng->txt("rep_robj_xmum_tab_authentication"),
             $ilCtrl->getLinkTarget($this, "authentication")
         );
     }
 
-    function listServers() {
+    public function listServers()
+    {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_servers");
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServerTableGUI.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServerTableGUI.php');
         $server_gui = new ilMumieTaskServerTableGUI($this, 'listServers');
         $server_gui->init($this);
         $tpl->setContent($server_gui->getHTML());
     }
 
-    function sharedData($setSavedValues = false) {
+    public function sharedData($setSavedValues = false)
+    {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_shared_data");
         $this->initShareDataForm();
@@ -74,9 +83,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $tpl->setContent($this->form->getHTML());
     }
 
-    function initShareDataForm($loadSavedValues = true) {
+    public function initShareDataForm($loadSavedValues = true)
+    {
         global $lng, $tpl, $ilTabs, $ilCtrl;
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         $adminSettings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -111,8 +121,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $this->form = $form;
     }
 
-    private function submitSharedData() {
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+    private function submitSharedData()
+    {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         global $tpl, $ilCtrl, $lng;
         $this->initShareDataForm(false);
         if (!$this->form->checkInput()) {
@@ -131,16 +142,18 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $this->$cmd();
     }
 
-    function authentication() {
+    public function authentication()
+    {
         global $lng, $tpl, $ilTabs;
         $ilTabs->activateTab("tab_authentication");
         $this->initAuthForm();
         $tpl->setContent($this->form->getHTML());
     }
 
-    function initAuthForm($loadSavedValues = true) {
+    public function initAuthForm($loadSavedValues = true)
+    {
         global $lng, $tpl, $ilTabs, $ilCtrl;
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         $adminSettings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -161,8 +174,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $this->form = $form;
     }
 
-    function submitAuthForm() {
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+    public function submitAuthForm()
+    {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         global $tpl, $ilCtrl, $lng;
         $this->initAuthForm(false);
         if (!$this->form->checkInput()) {
@@ -180,16 +194,18 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $this->$cmd();
     }
 
-    function addServer() {
+    public function addServer()
+    {
         global $tpl, $lng;
         $this->initServerForm();
         $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
         $tpl->setContent($this->form->getHTML());
     }
 
-    private function initServerForm() {
+    private function initServerForm()
+    {
         global $ilCtrl, $lng;
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
         $form->addCommandButton('submitServer', $lng->txt('save'));
@@ -197,8 +213,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $this->form = $form;
     }
 
-    function submitServer() {
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+    public function submitServer()
+    {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         global $tpl, $lng;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
@@ -220,9 +237,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $this->listServers();
     }
 
-    function deleteServer() {
+    public function deleteServer()
+    {
         global $lng;
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $server = new ilMumieTaskServer($_GET['server_id']);
         $server->delete();
         $cmd = "configure";
@@ -230,7 +248,8 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $this->$cmd();
     }
 
-    function editServer() {
+    public function editServer()
+    {
         global $tpl, $DIC, $lng, $ilCtrl;
         $id = $_GET['server_id'];
         $DIC->ctrl()->setParameter($this, "server_id", $id);
@@ -241,8 +260,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         $tpl->setContent($this->form->getHTML());
     }
 
-    protected function loadServerSettings($id) {
-        require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+    protected function loadServerSettings($id)
+    {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $values = array();
         $server = new ilMumieTaskServer($id);
         $server->load();
@@ -251,8 +271,8 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI {
         return $values;
     }
 
-    function cancelServer() {
+    public function cancelServer()
+    {
         $this->listServers();
     }
 }
-?>

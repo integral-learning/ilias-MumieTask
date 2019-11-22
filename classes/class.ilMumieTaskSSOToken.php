@@ -1,17 +1,22 @@
 <?php
 
-class ilMumieTaskSSOToken {
+class ilMumieTaskSSOToken
+{
     const MUMIETOKENS_TABLE_NAME = "xmum_sso_tokens";
     const TOKEN_LENGTH = 30;
     private $logger;
-    private $token, $user, $timecreated;
+    private $token;
+    private $user;
+    private $timecreated;
 
-    function __construct($user) {
+    public function __construct($user)
+    {
         $this->user = $user;
         $this->logger = ilLoggerFactory::getLogger('xmum');
     }
 
-    private function generateToken() {
+    private function generateToken()
+    {
         $token = "";
         $codealphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $codealphabet .= "abcdefghijklmnopqrstuvwxyz";
@@ -25,19 +30,23 @@ class ilMumieTaskSSOToken {
         return $token;
     }
 
-    private function create() {
+    private function create()
+    {
 
         //$this->logger->info('__________creating token and my userId is: ' . $user);
         global $ilDB;
-        $ilDB->insert(self::MUMIETOKENS_TABLE_NAME,
+        $ilDB->insert(
+            self::MUMIETOKENS_TABLE_NAME,
             array(
                 'id' => array('integer', $ilDB->nextID(self::MUMIETOKENS_TABLE_NAME)),
                 'token' => array('text', $this->token),
                 'timecreated' => array('integer', time()),
-                'user' => array('integer', $this->user)));
+                'user' => array('integer', $this->user))
+        );
     }
 
-    public function read() {
+    public function read()
+    {
         global $ilDB;
         $query = "SELECT * FROM "
         . self::MUMIETOKENS_TABLE_NAME
@@ -49,28 +58,34 @@ class ilMumieTaskSSOToken {
         $this->setTimecreated($result["timecreated"]);
     }
 
-    private function update() {
+    private function update()
+    {
         global $ilDB;
-        $ilDB->update(self::MUMIETOKENS_TABLE_NAME,
+        $ilDB->update(
+            self::MUMIETOKENS_TABLE_NAME,
             array(
                 'token' => array('text', $this->token),
                 'timecreated' => array('integer', time()),
             ),
             array(
                 'user' => array('integer', $this->user),
-            ));
+            )
+        );
     }
 
-    public function delete() {
+    public function delete()
+    {
         global $ilDB;
-        $ilDB->manipulate("DELETE FROM "
+        $ilDB->manipulate(
+            "DELETE FROM "
             . self::MUMIETOKENS_TABLE_NAME
             . " WHERE user = "
             . $ilDB->quote($this->user, 'integer')
         );
     }
 
-    public function insertOrRefreshToken() {
+    public function insertOrRefreshToken()
+    {
         $this->read();
         $this->token = $this->generateToken();
         if (!$this->tokenExistsForUser($this->user)) {
@@ -80,13 +95,15 @@ class ilMumieTaskSSOToken {
         }
     }
 
-    public static function tokenExistsForUser($userId) {
+    public static function tokenExistsForUser($userId)
+    {
         $mumieToken = new ilMumieTaskSSOToken($userId);
         $mumieToken->read();
         return !is_null($mumieToken->timecreated) && !is_null($mumieToken->token);
     }
 
-    public static function invalidateTokenForUser($userId) {
+    public static function invalidateTokenForUser($userId)
+    {
         $mumieToken = new ilMumieTaskSSOToken($userId);
         $mumieToken->delete();
     }
@@ -94,7 +111,8 @@ class ilMumieTaskSSOToken {
     /**
      * Get the value of timecreated
      */
-    public function getTimecreated() {
+    public function getTimecreated()
+    {
         return $this->timecreated;
     }
 
@@ -103,7 +121,8 @@ class ilMumieTaskSSOToken {
      *
      * @return  self
      */
-    public function setTimecreated($timecreated) {
+    public function setTimecreated($timecreated)
+    {
         $this->timecreated = $timecreated;
 
         return $this;
@@ -112,7 +131,8 @@ class ilMumieTaskSSOToken {
     /**
      * Get the value of token
      */
-    public function getToken() {
+    public function getToken()
+    {
         return $this->token;
     }
 
@@ -121,7 +141,8 @@ class ilMumieTaskSSOToken {
      *
      * @return  self
      */
-    public function setToken($token) {
+    public function setToken($token)
+    {
         $this->token = $token;
 
         return $this;
@@ -130,7 +151,8 @@ class ilMumieTaskSSOToken {
     /**
      * Get the value of user
      */
-    public function getUser() {
+    public function getUser()
+    {
         return $this->user;
     }
 
@@ -139,11 +161,10 @@ class ilMumieTaskSSOToken {
      *
      * @return  self
      */
-    public function setUser($user) {
+    public function setUser($user)
+    {
         $this->user = $user;
 
         return $this;
     }
 }
-
-?>

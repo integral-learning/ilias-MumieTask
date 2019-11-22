@@ -15,4 +15,3 @@ $responsible_mail = "contact@integral-learning.de";
 
 // Enable learning progress
 $learning_progress = true;
-?>

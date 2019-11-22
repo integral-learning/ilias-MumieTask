@@ -1,8 +1,10 @@
 <?php
-include_once ('./Services/Table/classes/class.ilTable2GUI.php');
+include_once('./Services/Table/classes/class.ilTable2GUI.php');
 
-class ilMumieTaskServerTableGUI extends ilTable2GUI {
-    function __construct($a_parent_obj, $a_parent_cmd = '', $a_template_context = '') {
+class ilMumieTaskServerTableGUI extends ilTable2GUI
+{
+    public function __construct($a_parent_obj, $a_parent_cmd = '', $a_template_context = '')
+    {
         // this uses the cached plugin object
         $this->plugin_object = ilPlugin::getPluginObject(IL_COMP_SERVICE, 'Repository', 'robj', 'MumieTask');
 
@@ -15,7 +17,8 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI {
      *
      * @access public
      */
-    public function init($a_parent_obj) {
+    public function init($a_parent_obj)
+    {
         global $ilCtrl, $lng;
 
         $this->setTitle($lng->txt("rep_robj_xmum_tab_servers"));
@@ -29,12 +32,14 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI {
         $this->getServerData();
     }
 
-    private function getServerData() {
+    private function getServerData()
+    {
         $this->plugin_object->includeClass('class.ilMumieTaskServer.php');
         $this->setData(ilMumieTaskServer::getAllServerData());
     }
 
-    protected function fillRow($set) {
+    protected function fillRow($set)
+    {
         global $lng, $ilCtrl;
 
         $ilCtrl->setParameter($this->parent_obj, 'server_id', $set['server_id']);
@@ -48,8 +53,5 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI {
 
         $this->tpl->setVariable("TXT_EDIT", "EDIT");
         $this->tpl->setVariable("LINK_EDIT", $ilCtrl->getLinkTarget($this->parent_obj, 'editServer'));
-
     }
 }
-
-?>
