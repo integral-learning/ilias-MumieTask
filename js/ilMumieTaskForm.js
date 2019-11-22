@@ -244,9 +244,6 @@
         }
 
         function isSelectedTask(task) {
-            if(selectedTask && task && selectedTask.link == task.link){
-                console.log("selected task: " + selectedTask + " link: " + selectedTask.link + "task link " + task.link)
-            }
             return selectedTask && task && selectedTask.link == task.link;
         }
 
@@ -317,7 +314,7 @@
             var course = courseController.getSelectedCourse();
             var tasks = course['tasks'];
             var nameValuePairs = [];
-            course['names'].forEach( name => {
+            course['tag_names'].forEach( name => {
                 var tagObj = {};
                 var values = [];
                 tasks.forEach( task => {

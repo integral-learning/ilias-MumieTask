@@ -4,7 +4,6 @@ include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
-include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
 /**
@@ -22,10 +21,10 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $lp_modus = 1;
     private $passing_grade = 60;
     private $online;
-    private $activationLimited;
-    private $activationStartingTime;
-    private $activationEndingTime;
-    private $activationVisibility;
+    private $activation_limited;
+    private $activation_starting_time;
+    private $activation_ending_time;
+    private $activation_visibility;
 
     /**
      * Constructor
@@ -79,12 +78,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $rec = $ilDB->fetchAssoc($result);
             $this->setTaskurl($rec['taskurl']);
             $this->setLaunchcontainer($rec['launchcontainer']);
-            $this->setMumie_course($rec['mumie_course']);
-            $this->setMumie_coursefile($rec['mumie_coursefile']);
+            $this->setMumieCourse($rec['mumie_course']);
+            $this->setMumieCoursefile($rec['mumie_coursefile']);
             $this->setLanguage($rec['language']);
             $this->setServer($rec['server']);
-            $this->setLp_modus($rec['lp_modus']);
-            $this->setPassing_grade($rec['passing_grade']);
+            $this->setLpModus($rec['lp_modus']);
+            $this->setPassingGrade($rec['passing_grade']);
             $this->setOnline($rec['online']);
         }
 
@@ -121,12 +120,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             array(
                 'taskurl' => array('text', $this->getTaskurl()),
                 'launchcontainer' => array('integer', $this->getLaunchcontainer()),
-                'mumie_course' => array('text', $this->getMumie_course()),
+                'mumie_course' => array('text', $this->getMumieCourse()),
                 'language' => array('text', $this->getLanguage()),
                 'server' => array('text', $this->getServer()),
-                'mumie_coursefile' => array('text', $this->getMumie_coursefile()),
-                'passing_grade' => array('integer', $this->getPassing_grade()),
-                'lp_modus' => array('integer', $this->getLp_modus()),
+                'mumie_coursefile' => array('text', $this->getMumieCoursefile()),
+                'passing_grade' => array('integer', $this->getPassingGrade()),
+                'lp_modus' => array('integer', $this->getLpModus()),
                 'online' => array('integer', $this->getOnline()),
             ),
             array(
@@ -297,7 +296,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Get the value of mumie_course
      */
-    public function getMumie_course()
+    public function getMumieCourse()
     {
         return $this->mumie_course;
     }
@@ -307,7 +306,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return  self
      */
-    public function setMumie_course($mumie_course)
+    public function setMumieCourse($mumie_course)
     {
         $this->mumie_course = $mumie_course;
 
@@ -377,7 +376,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Get the value of mumie_coursefile
      */
-    public function getMumie_coursefile()
+    public function getMumieCoursefile()
     {
         return $this->mumie_coursefile;
     }
@@ -387,7 +386,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return  self
      */
-    public function setMumie_coursefile($mumie_coursefile)
+    public function setMumieCoursefile($mumie_coursefile)
     {
         $this->mumie_coursefile = $mumie_coursefile;
 
@@ -444,7 +443,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Get the value of lp_modus
      */
-    public function getLp_modus()
+    public function getLpModus()
     {
         return $this->lp_modus;
     }
@@ -454,7 +453,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return  self
      */
-    public function setLp_modus($lp_modus)
+    public function setLpModus($lp_modus)
     {
         $this->lp_modus = $lp_modus;
 
@@ -464,7 +463,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Get the value of passing_grade
      */
-    public function getPassing_grade()
+    public function getPassingGrade()
     {
         return $this->passing_grade;
     }
@@ -474,7 +473,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return  self
      */
-    public function setPassing_grade($passing_grade)
+    public function setPassingGrade($passing_grade)
     {
         $this->passing_grade = $passing_grade;
 
@@ -483,48 +482,48 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function getActivationLimited()
     {
-        return $this->activationLimited;
+        return $this->activation_limited;
     }
 
-    public function setActivationLimited($activationLimited)
+    public function setActivationLimited($activation_limited)
     {
-        $this->activationLimited = $activationLimited;
+        $this->activation_limited = $activation_limited;
 
         return $this;
     }
 
     public function getActivationStartingTime()
     {
-        return $this->activationStartingTime;
+        return $this->activation_starting_time;
     }
 
-    public function setActivationStartingTime($activationStartingTime)
+    public function setActivationStartingTime($activation_starting_time)
     {
-        $this->activationStartingTime = $activationStartingTime;
+        $this->activation_starting_time = $activation_starting_time;
 
         return $this;
     }
 
     public function getActivationEndingTime()
     {
-        return $this->activationEndingTime;
+        return $this->activation_ending_time;
     }
 
-    public function setActivationEndingTime($activationEndingTime)
+    public function setActivationEndingTime($activation_ending_time)
     {
-        $this->activationEndingTime = $activationEndingTime;
+        $this->activation_ending_time = $activation_ending_time;
 
         return $this;
     }
 
     public function getActivationVisibility()
     {
-        return $this->activationVisibility;
+        return $this->activation_visibility;
     }
 
-    public function setActivationVisibility($activationVisibility)
+    public function setActivationVisibility($activation_visibility)
     {
-        $this->activationVisibility = $activationVisibility;
+        $this->activation_visibility = $activation_visibility;
 
         return $this;
     }

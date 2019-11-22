@@ -1,20 +1,20 @@
 <?php
 class ilMumieTaskIdHashingService
 {
-    private $userid;
+    private $user_id;
     private $hash;
 
     const TABLE_NAME = 'xmum_id_hashes';
 
-    private function __construct($userid)
+    private function __construct($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
         $this->hash = $hash;
     }
 
-    public static function getHashForUser($userid)
+    public static function getHashForUser($user_id)
     {
-        $service = new ilMumieTaskIdHashingService($userid);
+        $service = new ilMumieTaskIdHashingService($user_id);
         $service->upsertHash();
         return $service->getHash();
     }
@@ -43,7 +43,7 @@ class ilMumieTaskIdHashingService
                 'SELECT * FROM '
                 . SELF::TABLE_NAME
                 . " WHERE usr_id = "
-                . $ilDB->quote($this->userid, "integer")
+                . $ilDB->quote($this->user_id, "integer")
             )
         );
         if (!is_null($result) && !is_null($result->hash)) {
@@ -60,7 +60,7 @@ class ilMumieTaskIdHashingService
         $ilDB->insert(
             self::TABLE_NAME,
             array(
-                'usr_id' => array('integer', $this->userid),
+                'usr_id' => array('integer', $this->user_id),
                 'hash' => array('text', $this->hash),
             )
         );
@@ -76,7 +76,7 @@ class ilMumieTaskIdHashingService
                 'hash' => array('text', $this->hash),
             ),
             array(
-                "usr_id" => array('integer', $this->userid),
+                "usr_id" => array('integer', $this->user_id),
             )
         );
     }
@@ -85,7 +85,7 @@ class ilMumieTaskIdHashingService
     {
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         $adminSettings = ilMumieTaskAdminSettings::getInstance();
-        return hash("sha512", $this->userid . substr(ilMumieTaskAdminSettings::getInstance()->getApiKey(), 0, 10));
+        return hash("sha512", $this->user_id . substr(ilMumieTaskAdminSettings::getInstance()->getApiKey(), 0, 10));
     }
 
     /**

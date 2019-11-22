@@ -1,5 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 {
@@ -8,18 +7,18 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
         parent::__construct();
     }
 
-    private $urlItem;
-    private $nameItem;
+    private $url_item;
+    private $name_item;
 
     public function setFields()
     {
         global $lng;
-        $this->nameItem = new ilTextInputGUI($lng->txt('name'), 'name');
-        $this->nameItem->setRequired(true);
-        parent::addItem($this->nameItem);
-        $this->urlItem = new ilTextInputGUI($lng->txt('rep_robj_xmum_url_prefix'), 'url_prefix');
-        $this->urlItem->setRequired(true);
-        parent::addItem($this->urlItem);
+        $this->name_item = new ilTextInputGUI($lng->txt('name'), 'name');
+        $this->name_item->setRequired(true);
+        parent::addItem($this->name_item);
+        $this->url_item = new ilTextInputGUI($lng->txt('rep_robj_xmum_url_prefix'), 'url_prefix');
+        $this->url_item->setRequired(true);
+        parent::addItem($this->url_item);
     }
 
     public function checkInput()
@@ -36,33 +35,33 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
             $server->setName($this->getInput("name"));
             $server->setUrlPrefix($this->getInput("url_prefix"));
 
-            $nameExists = $server->nameExistsInDb();
-            $urlPrefixExists = $server->urlPrefixExistsInDb();
+            $name_exists = $server->nameExistsInDb();
+            $url_prefix_exists = $server->urlPrefixExistsInDb();
             if (!$server->isValidMumieServer()) {
                 $ok = false;
-                $this->urlItem->setAlert($lng->txt("rep_robj_xmum_server_not_valid"));
+                $this->url_item->setAlert($lng->txt("rep_robj_xmum_server_not_valid"));
             }
 
             if (!isset($id)) {
-                if ($nameExists) {
+                if ($name_exists) {
                     $ok = false;
-                    $this->nameItem->setAlert($lng->txt("rep_robj_xmum_name_exists"));
+                    $this->name_item->setAlert($lng->txt("rep_robj_xmum_name_exists"));
                 }
-                if ($urlPrefixExists) {
+                if ($url_prefix_exists) {
                     $ok = false;
-                    $this->urlItem->setAlert($lng->txt("rep_robj_xmum_url_exists"));
+                    $this->url_item->setAlert($lng->txt("rep_robj_xmum_url_exists"));
                 }
             } else {
-                $oldServer = new ilMumieTaskServer($id);
-                $oldServer->load();
+                $old_server = new ilMumieTaskServer($id);
+                $old_server->load();
 
-                if ($nameExists && $oldServer->getName() != $server->getName()) {
+                if ($name_exists && $old_server->getName() != $server->getName()) {
                     $ok = false;
-                    $this->nameItem->setAlert($lng->txt("rep_robj_xmum_name_exists"));
+                    $this->name_item->setAlert($lng->txt("rep_robj_xmum_name_exists"));
                 }
-                if ($urlPrefixExists && $oldServer->getUrlPrefix() != $server->getUrlPrefix()) {
+                if ($url_prefix_exists && $old_server->getUrlPrefix() != $server->getUrlPrefix()) {
                     $ok = false;
-                    $this->urlItem->setAlert($lng->txt("rep_robj_xmum_url_exists"));
+                    $this->url_item->setAlert($lng->txt("rep_robj_xmum_url_exists"));
                 }
             }
         }

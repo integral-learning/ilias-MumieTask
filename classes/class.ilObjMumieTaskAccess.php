@@ -1,5 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilObjMumieTaskAccess extends ilObjectPluginAccess
 {

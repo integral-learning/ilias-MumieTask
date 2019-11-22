@@ -4,7 +4,6 @@ class ilMumieTaskSSOToken
 {
     const MUMIETOKENS_TABLE_NAME = "xmum_sso_tokens";
     const TOKEN_LENGTH = 30;
-    private $logger;
     private $token;
     private $user;
     private $timecreated;
@@ -12,7 +11,6 @@ class ilMumieTaskSSOToken
     public function __construct($user)
     {
         $this->user = $user;
-        $this->logger = ilLoggerFactory::getLogger('xmum');
     }
 
     private function generateToken()
@@ -32,8 +30,6 @@ class ilMumieTaskSSOToken
 
     private function create()
     {
-
-        //$this->logger->info('__________creating token and my userId is: ' . $user);
         global $ilDB;
         $ilDB->insert(
             self::MUMIETOKENS_TABLE_NAME,
@@ -97,15 +93,15 @@ class ilMumieTaskSSOToken
 
     public static function tokenExistsForUser($userId)
     {
-        $mumieToken = new ilMumieTaskSSOToken($userId);
-        $mumieToken->read();
-        return !is_null($mumieToken->timecreated) && !is_null($mumieToken->token);
+        $mumie_token = new ilMumieTaskSSOToken($userId);
+        $mumie_token->read();
+        return !is_null($mumie_token->timecreated) && !is_null($mumie_token->token);
     }
 
     public static function invalidateTokenForUser($userId)
     {
-        $mumieToken = new ilMumieTaskSSOToken($userId);
-        $mumieToken->delete();
+        $mumie_token = new ilMumieTaskSSOToken($userId);
+        $mumie_token->delete();
     }
 
     /**

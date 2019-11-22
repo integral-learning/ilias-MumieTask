@@ -1,6 +1,5 @@
 <?php
 include_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskCourseStructure.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilMumieTaskServerStructure implements \JsonSerializable
 {
@@ -26,11 +25,11 @@ class ilMumieTaskServerStructure implements \JsonSerializable
 
         return $this;
     }
-    protected function loadStructure($coursesAndTasks)
+    protected function loadStructure($courses_and_tasks)
     {
         $this->courses = [];
-        if ($coursesAndTasks) {
-            foreach ($coursesAndTasks->courses as $course) {
+        if ($courses_and_tasks) {
+            foreach ($courses_and_tasks->courses as $course) {
                 array_push($this->courses, new ilMumieTaskCourseStructure($course));
             }
         }

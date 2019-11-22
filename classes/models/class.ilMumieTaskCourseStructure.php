@@ -5,27 +5,27 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
 {
     private $name;
     private $tasks;
-    private $pathToCourseFile;
+    private $path_to_course_file;
     private $languages = array();
-    private $names = array();
-    private $values = array();
+    private $tag_names = array();
+    private $tag_values = array();
 
     /**
-     * Get the value of pathToCourseFile
+     * Get the value of path_to_course_file
      */
     public function getPathToCourseFile()
     {
-        return $this->pathToCourseFile;
+        return $this->path_to_course_file;
     }
 
     /**
-     * Set the value of pathToCourseFile
+     * Set the value of path_to_course_file
      *
      * @return  self
      */
-    public function setPathToCourseFile($pathToCourseFile)
+    public function setPathToCourseFile($path_to_course_file)
     {
-        $this->pathToCourseFile = $pathToCourseFile;
+        $this->path_to_course_file = $path_to_course_file;
 
         return $this;
     }
@@ -70,16 +70,15 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
         return $this;
     }
 
-    public function __construct($courseAndTasks)
+    public function __construct($course_and_tasks)
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
-        $this->name = $courseAndTasks->name;
-        $this->pathToCourseFile = $courseAndTasks->pathToCourseFile;
+        $this->name = $course_and_tasks->name;
+        $this->path_to_course_file = $course_and_tasks->path_to_course_file;
         $this->tasks = [];
-        if ($courseAndTasks->tasks) {
-            foreach ($courseAndTasks->tasks as $task) {
-                $taskObj = new ilMumieTaskTaskStructure($task);
-                array_push($this->tasks, $taskObj);
+        if ($course_and_tasks->tasks) {
+            foreach ($course_and_tasks->tasks as $task) {
+                $task_obj = new ilMumieTaskTaskStructure($task);
+                array_push($this->tasks, $task_obj);
             }
         }
         $this->collectLanguages();
@@ -97,16 +96,16 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
 
     public function collectTags()
     {
-        $names = array();
-        $values = array();
+        $tag_names = array();
+        $tag_values = array();
         foreach ($this->tasks as $task) {
             foreach ($task->getTags() as $tag) {
-                array_push($names, $tag->name);
-                array_push($values, ...$tag->values);
+                array_push($tag_names, $tag->name);
+                array_push($tag_values, ...$tag->values);
             }
         }
-        $this->names = array_values(array_unique($names));
-        $this->values = array_values(array_unique($values));
+        $this->tag_names = array_values(array_unique($tag_names));
+        $this->values = array_values(array_unique($tag_values));
     }
 
     public function jsonSerialize()
@@ -145,11 +144,11 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-    * Get the names of the tags
+    * Get the tag_names of the tags
     */
-    public function getNames()
+    public function getTagNames()
     {
-        return $this->names;
+        return $this->tag_names;
     }
 
     public function getTaskByLink($link)

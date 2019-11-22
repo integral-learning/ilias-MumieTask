@@ -3,7 +3,7 @@ require_once('Services/Form/classes/class.ilCustomInputGUI.php');
 class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
 {
     protected $link;
-    protected $buttonLabel;
+    protected $button_label;
 
     public function __construct($a_title = "")
     {
@@ -21,7 +21,7 @@ class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
     {
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/tpl.mumie_form_button.html", true, true, true, "DEFAULT", true);
         $tpl->setVariable("COMMAND_LINK", $this->link);
-        $tpl->setVariable("BUTTON_LABEL", $this->buttonLabel);
+        $tpl->setVariable("BUTTON_LABEL", $this->button_label);
 
         return $tpl->get();
     }
@@ -39,13 +39,13 @@ class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
     }
 
     /**
-     * Set the value of buttonLabel
+     * Set the value of button_label
      *
      * @return  self
      */
-    public function setButtonLabel($buttonLabel)
+    public function setButtonLabel($button_label)
     {
-        $this->buttonLabel = $buttonLabel;
+        $this->button_label = $button_label;
 
         return $this;
     }

@@ -28,7 +28,7 @@ frm_server_add_title#:#Add a new MUMIE server to ILIAS
 frm_server_edit_title#:#Edit MUMIE server
 obj_xmum#:#MumieTask
 objs_xmum#:#MumieTasks
-properties#:#Properties
+properties#:#Settings
 mumie_server#:#MUMIE server
 mumie_server_desc#:#Please select a MUMIE server to get an updated list of available tasks and courses.
 mumie_course#:#MUMIE course

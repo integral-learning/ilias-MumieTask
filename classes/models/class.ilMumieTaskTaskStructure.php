@@ -28,7 +28,6 @@ class ilMumieTaskTaskStructure implements \JsonSerializable
 
     public function __construct($task)
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
         $this->link = $task->link;
         $this->headline = $task->headline;
         if (isset($task->tags)) {

@@ -1,5 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 /**
  * @ilCtrl_isCalledBy ilObjMumieTaskGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
@@ -8,7 +7,6 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
  */
 
 include_once('./Services/Repository/classes/class.ilObjectPluginGUI.php');
-include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
@@ -66,7 +64,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
 
         include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
-        if ($this->object->getLP_modus() && ilObjUserTracking::_enabledLearningProgress()) {
+        if ($this->object->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
             $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
         }
         $ilTabs->addTab("infoScreen", $this->lng->txt("info_short"), $ilCtrl->getLinkTarget($this, "infoScreen"));
@@ -134,7 +132,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if (!$this->object->isDummy() && !ilMumieTaskServer::serverConfigExistsForUrl($this->object->getServer())) {
             $this->form->disable();
             ilUtil::sendFailure($lng->txt('rep_robj_xmum_msg_server_missing') . $this->object->getServer());
-        } elseif (!ilMumieTaskServer::fromUrl($this->object->getServer())->isValidMumieServer()) {
+        } elseif (!$this->object->isDummy() && !ilMumieTaskServer::fromUrl($this->object->getServer())->isValidMumieServer()) {
             $this->form->disable();
             ilUtil::sendFailure($lng->txt('rep_robj_xmum_msg_no_connection_to_server') . $this->object->getServer());
         }
@@ -150,10 +148,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $values["description"] = $this->object->getDescription();
         $values["xmum_task"] = $this->object->getTaskurl();
         $values["xmum_launchcontainer"] = $this->object->getLaunchcontainer();
-        $values["xmum_course"] = $this->object->getMumie_course();
+        $values["xmum_course"] = $this->object->getMumieCourse();
         $values["xmum_language"] = $this->object->getLanguage();
         $values["xmum_server"] = $this->object->getServer();
-        $values["xmum_mumie_coursefile"] = $this->object->getMumie_coursefile();
+        $values["xmum_mumie_coursefile"] = $this->object->getMumieCoursefile();
         $this->form->setValuesByArray($values);
     }
 
@@ -186,22 +184,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             return;
         }
         $mumieTask = $this->object;
-        $forceGradeUpdate = $this->form->getInput('xmum_task') != $mumieTask->getTaskurl()
-        || $this->form->getInput('xmum_course') != $mumieTask->getMumie_course()
+        $force_grade_update = $this->form->getInput('xmum_task') != $mumieTask->getTaskurl()
+        || $this->form->getInput('xmum_course') != $mumieTask->getMumieCourse()
         || $this->form->getInput('xmum_server') != $mumieTask->getServer();
 
         $this->saveFormValues();
 
-        if ($forceGradeUpdate) {
+        if ($force_grade_update) {
             $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-            ilMumieTaskLPStatus::updateGrades($this->object, $forceGradeUpdate);
+            ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
         ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         $cmd = 'editProperties';
 
         $ilCtrl->redirect($this, 'editProperties');
-
-        //$this->performCommand($cmd);
     }
 
     public function saveFormValues()
@@ -210,11 +206,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $mumieTask->setTitle($this->form->getInput('title'));
         $mumieTask->setServer($this->form->getInput('xmum_server'));
-        $mumieTask->setMumie_course($this->form->getInput('xmum_course'));
+        $mumieTask->setMumieCourse($this->form->getInput('xmum_course'));
         $mumieTask->setTaskurl($this->form->getInput('xmum_task'));
         $mumieTask->setLanguage($this->form->getInput('xmum_language'));
         $mumieTask->setLaunchcontainer($this->form->getInput('xmum_launchcontainer'));
-        $mumieTask->setMumie_coursefile($this->form->getInput('xmum_coursefile'));
+        $mumieTask->setMumieCoursefile($this->form->getInput('xmum_coursefile'));
 
         $mumieTask->setDescription($this->form->getInput('description'));
         $mumieTask->update();
@@ -252,13 +248,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
         } else {
-            $inputName = $this->form->getInput('name');
-            $inputUrlPrefix = $this->form->getInput("url_prefix");
+            $input_name = $this->form->getInput('name');
+            $input_url_prefix = $this->form->getInput("url_prefix");
 
-            $mumieServer = new ilMumieTaskServer();
-            $mumieServer->setName($inputName);
-            $mumieServer->setUrlPrefix($inputUrlPrefix);
-            $mumieServer->upsert();
+            $mumie_server = new ilMumieTaskServer();
+            $mumie_server->setName($input_name);
+            $mumie_server->setUrlPrefix($input_url_prefix);
+            $mumie_server->upsert();
             ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
 
             $cmd = 'editProperties';
@@ -315,7 +311,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $lng;
         $lng->loadLanguageModule('trac');
 
-        $htmlString =
+        $html_string =
 
         '<table style= "padding:15px">'
         . ' <tr style="line-height:30px">
@@ -323,7 +319,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         . $lng->txt('rep_robj_xmum_frm_passing_grade')
         . ':</i></td>'
         . '<td style="padding-left:50px">'
-        . $this->object->getPassing_grade()
+        . $this->object->getPassingGrade()
         . '</td>'
         . '</tr>'
         . '<tr style="line-height:30px">'
@@ -336,7 +332,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             . '</td></tr>'
 
             . '</table>';
-        return $htmlString;
+        return $html_string;
     }
     /**
      * After object has been created -> jump to this command
@@ -382,8 +378,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $ilTabs->activateSubTab('lp_settings');
         $this->initLPSettingsForm();
         $values = array();
-        $values['lp_modus'] = $this->object->getLp_modus();
-        $values['passing_grade'] = $this->object->getPassing_grade();
+        $values['lp_modus'] = $this->object->getLpModus();
+        $values['passing_grade'] = $this->object->getPassingGrade();
         $this->form->setValuesByArray($values);
         $this->tpl->setContent($this->form->getHTML());
     }
@@ -397,11 +393,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form->setTitle($this->lng->txt('rep_robj_xmum_tab_lp_settings'));
 
         require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
-        $forceSyncButton = new ilMumieTaskFormButtonGUI($this->lng->txt('rep_robj_xmum_frm_force_update'));
-        $forceSyncButton->setButtonLabel($this->lng->txt('rep_robj_xmum_frm_force_update_btn'));
-        $forceSyncButton->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'forceGradeUpdate'));
-        $forceSyncButton->setInfo($this->lng->txt('rep_robj_xmum_frm_force_update_desc'));
-        $form->addItem($forceSyncButton);
+        $force_sync_button = new ilMumieTaskFormButtonGUI($this->lng->txt('rep_robj_xmum_frm_force_update'));
+        $force_sync_button->setButtonLabel($this->lng->txt('rep_robj_xmum_frm_force_update_btn'));
+        $force_sync_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'force_grade_update'));
+        $force_sync_button->setInfo($this->lng->txt('rep_robj_xmum_frm_force_update_desc'));
+        $form->addItem($force_sync_button);
 
         $form->addCommandButton('submitLPSettings', $this->lng->txt('save'));
         $form->addCommandButton('editProperties', $this->lng->txt('cancel'));
@@ -417,13 +413,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->tpl->setContent($this->form->getHTML());
             return;
         }
-        $forceGradeUpdate = $this->object->getPassing_grade() !== $this->form->getInput('passing_grade');
-        $this->object->setLp_modus($this->form->getInput('lp_modus'));
-        $this->object->setPassing_grade($this->form->getInput('passing_grade'));
+        $force_grade_update = $this->object->getPassingGrade() !== $this->form->getInput('passing_grade');
+        $this->object->setLpModus($this->form->getInput('lp_modus'));
+        $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->doUpdate();
-        if ($forceGradeUpdate) {
+        if ($force_grade_update) {
             $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-            ilMumieTaskLPStatus::updateGrades($this->object, $forceGradeUpdate);
+            ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
@@ -483,10 +479,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $mumieTask = $this->object;
         $mumieTask->setOnline($this->form->getInput('online'));
 
-        $forceGradeUpdate = false;
+        $force_grade_update = false;
 
         if ($this->form->getInput('activation_type') != $mumieTask->getActivationLimited()) {
-            $forceGradeUpdate = true;
+            $force_grade_update = true;
         }
         if ($this->form->getInput('activation_type')) {
             $mumieTask->setActivationLimited(true);
@@ -494,7 +490,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $period = $this->form->getItemByPostVar("access_period");
 
             if ($mumieTask->getActivationEndingTime() != $period->getEnd()->get(IL_CAL_UNIX)) {
-                $forceGradeUpdate = true;
+                $force_grade_update = true;
             }
 
             $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
@@ -505,9 +501,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $mumieTask->doUpdate();
 
-        if ($forceGradeUpdate) {
+        if ($force_grade_update) {
             $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-            ilMumieTaskLPStatus::updateGrades($this->object, $forceGradeUpdate);
+            ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
 
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);

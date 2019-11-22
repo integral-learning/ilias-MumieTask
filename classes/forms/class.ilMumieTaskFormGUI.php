@@ -1,6 +1,5 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilMumieTaskFormGUI extends ilPropertyFormGUI
 {

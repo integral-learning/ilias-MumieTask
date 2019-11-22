@@ -28,7 +28,7 @@ frm_server_add_title#:#Einen neuen MUMIE-Server hinzufügen
 frm_server_edit_title#:#MUMIE-Server bearbeiten
 obj_xmum#:#MumieTask
 objs_xmum#:#MumieTasks
-properties#:#Eigenschaften
+properties#:#Einstellungen
 mumie_server#:#MUMIE-Server
 mumie_server_desc#:#Bitte wählen sie einen MUMIE-Server um eine aktuelle Liste an verfügbaren Kursen und MumieTasks zu erhalten.
 mumie_course#:#MUMIE-Kurs

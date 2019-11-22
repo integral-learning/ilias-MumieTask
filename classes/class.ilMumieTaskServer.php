@@ -1,6 +1,5 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskServerStructure.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/debugToConsole.php');
 
 class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSerializable
 {
