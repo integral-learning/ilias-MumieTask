@@ -1,7 +1,6 @@
 testserver:
-	url:		 https://test.mumie.net/iliasdocker/ilias.php?baseClass=ilPersonalDesktopGUI&cmd=jumpToSelectedItems
+	url:		 http://test.mumie.net:8090/
 	admin:		 root
-	password:	 4dm1n11sT?At0r (oder, wenn der nicht funktioniert, "supersicher27")
 
 
 Execute tests:
