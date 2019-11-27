@@ -151,7 +151,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $values["xmum_course"] = $this->object->getMumieCourse();
         $values["xmum_language"] = $this->object->getLanguage();
         $values["xmum_server"] = $this->object->getServer();
-        $values["xmum_mumie_coursefile"] = $this->object->getMumieCoursefile();
+        $values["xmum_coursefile"] = $this->object->getMumieCoursefile();
         $this->form->setValuesByArray($values);
     }
 

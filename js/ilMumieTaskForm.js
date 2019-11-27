@@ -138,7 +138,7 @@
         }
 
         function isSelectedCourse(course) {
-            return selectedCourse && selectedCourse.pathToCourseFile == course.pathToCourseFile;
+            return selectedCourse && selectedCourse.path_to_course_file == course.path_to_course_file;
         }
 
         function selectCourseOption(course, selectedIndex) {
@@ -147,7 +147,7 @@
         }
 
         function setCoursefile(course) {
-            courseFileElem.setAttribute('value', course.pathToCourseFile);
+            courseFileElem.setAttribute('value', course.path_to_course_file);
         }
         return {
             init: function () {

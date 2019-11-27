@@ -114,7 +114,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             $this->server_item->setAlert($lng->txt('rep_robj_xmum_server_not_valid'));
             return $ok;
         }
-        if ($course == null) {
+        if ($course == null || !$this->getInput('xmum_coursefile')) {
             $ok = false;
             $this->course_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_course_not_found'));
             return $ok;

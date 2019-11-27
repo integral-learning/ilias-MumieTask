@@ -73,7 +73,7 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     public function __construct($course_and_tasks)
     {
         $this->name = $course_and_tasks->name;
-        $this->path_to_course_file = $course_and_tasks->path_to_course_file;
+        $this->path_to_course_file = $course_and_tasks->pathToCourseFile;
         $this->tasks = [];
         if ($course_and_tasks->tasks) {
             foreach ($course_and_tasks->tasks as $task) {
