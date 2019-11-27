@@ -37,7 +37,7 @@ mumie_select_problem#:#Wählen Sie ein MUMIE-Problem
 mumie_problem#:#MUMIE-Problem
 mumie_problem_desc#:#Wählen Sie aus <b><span id='xmum_task_count'></span></b> MUMIE-Problemen! <br><br>Ein MUMIE-Problem ist eine benotete Übung auf der MUMIE-Plattform
 frm_tsk_course_not_found#:#Dieser Kurs konnte auf dem ausgewählten server nicht gefunden werden.
-frm_tsk_problem_not_found#:#Dieser Problem konnte auf dem ausgewählten server nicht gefunden werden.
+frm_tsk_problem_not_found#:#Dieses Problem konnte auf dem ausgewählten server nicht gefunden werden.
 frm_tsk_lang_not_found#:#Es gibt keine Übersetzung in die gewünschte Sprache für das ausgewählte Problem
 launchcontainer#:#Start-Container
 launchcontainer_desc#:#Bitte wählen Sie, ob diese Aktivität in einem neuen Browser-Tab geöffnet oder in die Ilias-Umgebung eingebettet werden soll.
@@ -51,10 +51,9 @@ filter#:#MUMIE-Probleme filtern
 msg_suc_saved#:#Änderungen erfolgreich gespeichert
 msg_suc_server_add#:#MUMIE-Server erfolgreich hinzugefügt
 msg_suc_deleted#:#Löschen erfolgreich
-msg_no_server_found#:#Es wurde kein konfigurierter MUMIE-Server gefunden! <br><br> Bitte fügen Sie einen server hinzu um fortfahren zu können.
+msg_no_server_found#:#Es wurde kein konfigurierter MUMIE-Server gefunden! <br><br> Bitte fügen Sie einen Server hinzu um fortfahren zu können.
 msg_server_missing#:#Diese MumieTask nutzt eine Server-Konfiguration, die aus Ilias gelöscht wurde! <br><br>Einige Felder können nicht geändert werden bis eine Mumie-Server-Konfiguration für die folgende URL erstellt wurde:<br><br>
-msg_no_connection_to_server#:#Ilias konnte keine Antwort von dem MUMIE-Server erhalten, der für die Erstellung dieser MUMIE-Task verwendet wurde. Bitte kontaktieren Sie Ihren Ilias-Administrator. <br><br>Diese MUMIE-Task kann nicht editiert werden, bis wieder eine Verbindung zu folgender URL hergestellt werden kann: <br><br>
-
+msg_no_connection_to_server#:#Ilias konnte keine Antwort von dem MUMIE-Server erhalten, der für die Erstellung dieser MumieTask verwendet wurde. Bitte kontaktieren Sie Ihren Ilias-Administrator. <br><br>Diese MumieTask kann nicht editiert werden, bis wieder eine Verbindung zu folgender URL hergestellt werden kann: <br><br>
 grades#:#Noten
 frm_sync_lp#:#Noten-Synchronisation
 frm_sync_lp_desc#:#Wählen Sie, ob Noten für diese MumieTask automatisch mit Ilias synchronisiert werden sollen
@@ -66,5 +65,5 @@ frm_force_update#:#Notensychnonisierung erzwingen
 frm_force_update_desc#:#Wenn Sie diesen Knopf drücken, werden erst alle bestehenden Noten für diese MumieTask gelöscht und dann neu synchronisiert
 frm_force_update_btn#:#Update erzwingen
 edit_task#:#Bearbeiten
-activation_limited_visibility_info#:#Nutzer können diese MUMIE-Task außerhalb des gewählten Zeitraums sehen, aber nicht bearbeiten
-frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MUMIE-Task sehen und bearbeiten
+activation_limited_visibility_info#:#Nutzer können diese MumieTask außerhalb des gewählten Zeitraums sehen, aber nicht bearbeiten
+frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MumieTask sehen und bearbeiten

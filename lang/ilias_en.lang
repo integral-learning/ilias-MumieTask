@@ -3,11 +3,11 @@ add_server#:#Add MUMIE server
 add_server_desc#:#Click here to add a new MUMIE server to ILIAS
 id#:#ID
 frm_share_first_name#:#First name 
-frm_share_first_name_desc#:#Choose, whether a users first name should be share with MUMIE servers
+frm_share_first_name_desc#:#Choose, whether a user's first name should be share with MUMIE servers
 frm_share_last_name#:#Last name
-frm_share_last_name_desc#:#Choose, whether a users last name should be share with MUMIE servers
+frm_share_last_name_desc#:#Choose, whether a user's last name should be share with MUMIE servers
 frm_share_email#:#E-Mail
-frm_share_email_desc#:#Choose, whether a users e-mail address should be share with MUMIE servers
+frm_share_email_desc#:#Choose, whether a user's e-mail address should be shared with MUMIE servers
 tab_shared_data#:#Privacy
 tab_servers#:#Servers
 tab_authentication#:#Authentication
@@ -19,9 +19,9 @@ frm_shared_data_description#:#Choose which user data should be shared with MUMIE
 frm_server_description#:# TODO
 url_prefix#:#Server URL
 server_not_valid#:#There is no MUMIE server for this URL
-title_not_valid#:#Please choose a different title for your Mumie Task
-name_exists#:#There is already a MumieServer configuration for this name!
-url_exists#:#There is already a MumieServer configuration for this URL!
+title_not_valid#:#Please choose a different title for your Mumie Task!
+name_exists#:#There is already a MUMIE server configuration for this name!
+url_exists#:#There is already a MUMIE server configuration for this URL!
 xmum_new#:#Add new Mumie Task
 xmum_add#:#Add Mumie Task
 frm_server_add_title#:#Add a new MUMIE server to ILIAS
@@ -36,11 +36,11 @@ mumie_filter#:#Filter MUMIE Problems <span class="caret"></span>
 mumie_select_problem#:#Select a MUMIE Problem
 mumie_problem#:#MUMIE problem
 mumie_problem_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE problems! <br><br>A MUMIE problem is a single graded exercise on MUMIE
-frm_tsk_course_not_found#:#This course doesn't exist on the choosen server
+frm_tsk_course_not_found#:#This course doesn't exist on the chosen server
 frm_tsk_problem_not_found#:#This problem doesn't exist in the selected course
-frm_tsk_lang_not_found#:#There is no translation in this langauge for the selected problem
+frm_tsk_lang_not_found#:#There is no translation in this language for the selected problem
 launchcontainer#:#Launch container
-launchcontainer_desc#:#Please select whether the activity should be openend in a new browser tab or embedded into the ILIAS environment
+launchcontainer_desc#:#Please select whether the activity should be opened in a new browser tab or embedded into the ILIAS environment
 window#:#New window
 embedded#:#Embedded
 language#:#Language
@@ -52,8 +52,8 @@ msg_suc_saved#:#Changes successfully saved
 msg_suc_server_add#:#Added MUMIE server successfully
 msg_suc_deleted#:#Deletion successful
 msg_no_server_found#:#No MUMIE server configuration found! <br><br> Please add a new MUMIE server before continuing.
-msg_server_missing#:#This MumieTask uses a server configuration that has been deleted! <br><br>This task cannot be changed until a MUMIE server is added for the following url prefix: <br><br>
-msg_no_connection_to_server#:#Ilias could not connect to the MUMIE server that has been used to create this MUMIE Task. Please contact your administrator. <br><br>This MUMIE Task cannot be changed until a connection with the following url can be established : <br><br>
+msg_server_missing#:#This MumieTask uses a server configuration that has been deleted! <br><br>This task cannot be changed until a MUMIE server is added for the following URL prefix: <br><br>
+msg_no_connection_to_server#:#Ilias could not connect to the MUMIE server that has been used to create this MUMIE Task. Please contact your administrator. <br><br>This MUMIE Task cannot be changed until a connection with the following URL can be established: <br><br>
 grades#:#Grades
 frm_sync_lp#:#Grade synchronization
 frm_sync_lp_desc#:#Choose whether to automatically load grades from the MUMIE server into ILIAS for this MUMIE Task
@@ -65,5 +65,5 @@ frm_force_update#:#Force new grade synchronization
 frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. 
 frm_force_update_btn#:#Force update
 edit_task#:#Edit
-activation_limited_visibility_info#:#Users can see this MUMIE task outside of the choosen availability period, but cannot work on it
+activation_limited_visibility_info#:#Users can see this MUMIE task outside of the chosen availability period, but cannot work on it
 frm_online_info#:#Make this MUMIE Task visible and usable to all users with reading permission
