@@ -1,4 +1,11 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /**
  * @ilCtrl_isCalledBy ilObjMumieTaskGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
@@ -90,6 +97,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
     }
 
+    /**
+     * Create a dummy MumieTask without any meaningful properties. The values must be set, before it can be used
+     * 
+     * We decided to do implement creation this way, because we need the option to add MUMIE servers during the creation process, but generating any kind of output during repObj creation caused ILIAS errors
+     */
     public function create()
     {
         $this->setCreationMode(true);
@@ -116,6 +128,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
     }
 
+    /**
+     * Display the general settings of a MumieTask
+     */
     public function editPropertiesObject()
     {
         global $tpl, $ilTabs, $lng;
@@ -141,6 +156,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Set values for the general settings form
+     */
     public function setPropertyValues()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
@@ -155,6 +173,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->form->setValuesByArray($values);
     }
 
+    /**
+     * initialize the general settings form and add command buttons
+     */
     public function initPropertiesForm()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormGUI.php');
@@ -171,6 +192,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->form = $form;
     }
 
+    /**
+     * submit changes made to the general settings of a MumieTask and trigger a forced grade update if necessarry
+     */
     public function submitMumieTask()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
@@ -200,6 +224,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $ilCtrl->redirect($this, 'editProperties');
     }
 
+    /**
+     * Update the MumieTask object with the given form values
+     */
     public function saveFormValues()
     {
         $mumieTask = $this->object;
@@ -215,6 +242,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $mumieTask->setDescription($this->form->getInput('description'));
         $mumieTask->update();
     }
+
+    /**
+     * Display a from to add a new MUMIE server
+     */
     public function addServer()
     {
         global $ilTabs, $lng;
@@ -225,6 +256,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * initialize the MUMIE server form and add command buttons
+     */
     private function initServerForm()
     {
         global $ilCtrl, $lng;
@@ -239,6 +273,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->form = $form;
     }
 
+    /**
+     * Submit and save a new mumie server
+     */
     public function submitServer()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
@@ -262,6 +299,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
     }
 
+    /**
+     * Display the learning progress tab, if enabled
+     * 
+     * This function als also used as a hook to trigger a grade synchronization with the MUMIE server
+     */
     public function displayLearningProgress()
     {
         global $ilUser, $ilCtrl, $ilTabs, $ilDB, $lng;
@@ -277,6 +319,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
     }
 
+    /**
+     * Display a users grade in a message box
+     * 
+     * We couldn't find (and dont believe there is) a built-in functionality to display all necessary information about learning progress in the learning progress gui.
+     * We need to use this workaround until ilias fixes this.
+     */
     public function setProgressInfo()
     {
         global $ilUser, $lng;
@@ -306,6 +354,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
     }
 
+    /**
+     * Return an html string containing information about a users learning progress
+     */
     public function getLPMessageString($status_text, $status_path)
     {
         global $lng;
@@ -355,6 +406,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->ctrl->returnToParent($this);
     }
 
+    /**
+     * Display either the embedded MUMIE Problem or a button that opens it in a new tab
+     */
     protected function viewContent()
     {
         global $ilTabs, $ilCtrl;
@@ -366,6 +420,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($this->object->getContent());
     }
 
+    /**
+     * Display the LP settings form
+     */
     public function editLPSettings()
     {
         if ($this->object->isDummy()) {
@@ -384,6 +441,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Initialize the LP settings form and add force sync button and command buttons
+     */
     public function initLPSettingsForm()
     {
         global $ilCtrl;
@@ -405,6 +465,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->form = $form;
     }
 
+    /**
+     * Submit changes to the learning progress settings
+     */
     public function submitLPSettings()
     {
         $this->initLPSettingsForm();
@@ -427,6 +490,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->performCommand($cmd);
     }
 
+    /**
+     * Display availability settings form
+     */
     public function editAvailabilitySettings()
     {
         if ($this->object->isDummy()) {
@@ -455,6 +521,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Initialize availability form and add command buttons
+     */
     public function initAvailabilitySettingsForm()
     {
         global $ilCtrl;
@@ -468,6 +537,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->form = $form;
     }
 
+    /**
+     * Submit changes made to availability settings and trigger a forced grade update if neccessarry
+     */
     public function submitAvailabilitySettings()
     {
         $this->initAvailabilitySettingsForm();
@@ -512,6 +584,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->performCommand($cmd);
     }
 
+    /**
+     * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc). 
+     * After that a new synchronization is triggered.
+     * 
+     */
     public function forceGradeUpdate()
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');

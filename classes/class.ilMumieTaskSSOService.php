@@ -1,11 +1,16 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOToken.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
+
 /**
- * Class for SSO Token services :
- * Generate SSO Tokens
- * Insert them in database andhidden html form for SSO post requests to a mumie server
- * Verify Tokens
+ * This class provides functions for SSO between MUMIE servers and ILIAS
  */
 
 class ilMumieTaskSSOService
@@ -75,6 +80,10 @@ class ilMumieTaskSSOService
         return $this->getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $hashed_user);
     }
 
+
+    /**
+     * Get html code for the MUMIE task launcher
+     */
     private function getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $hashed_user, $width = 800, $height = 600)
     {
         require_once("./Services/UICore/classes/class.ilTemplate.php");

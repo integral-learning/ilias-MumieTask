@@ -1,6 +1,16 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 
+/**
+ * This form is used to edit and validate the general settings of MumieTasks
+ */
 class ilMumieTaskFormGUI extends ilPropertyFormGUI
 {
     public function __construct()
@@ -137,6 +147,11 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         return $ok;
     }
 
+    /** 
+     * Populate the drop down menues from the server structure with all possible options. 
+     * 
+     * js/ilMumieTaskForm.js removes incorrect options for any given selection
+     */
     private function populateOptions($servers)
     {
         foreach ($servers as $server) {
@@ -179,6 +194,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->task_options[$task->getLink()] = $task->getLink();
     }
 
+    /**
+     * Save all Mumie Servers as a hidden input field. The JS file needs to know about them and their structure
+     */
     public function setValuesByArray($a_values, $a_restrict_to_value_keys = false)
     {
         parent::setValuesByArray($a_values);
@@ -195,6 +213,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         }
     }
 
+    /**
+     * Disable all drop down menues and command buttons for this form
+     */
     public function disable()
     {
         $this->server_item->setDisabled(true);

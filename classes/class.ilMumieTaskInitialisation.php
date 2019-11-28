@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Nicolas Zunker (nicolas.zunker@integral-learning.de)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 require_once("Services/Init/classes/class.ilInitialisation.php");
 
 /**

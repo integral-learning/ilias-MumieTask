@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
@@ -269,6 +277,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         }
     }
 
+
+    /**
+     * A dummy is a MumieTask without any meaningful properties.
+     * 
+     * All MumieTasks are created as dummy for technical reasons
+     */
     public function isDummy()
     {
         return $this->title == self::DUMMY_TITLE;

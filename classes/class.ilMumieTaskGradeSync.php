@@ -1,8 +1,19 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
 include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 
+/**
+ * This class pulls grades for a given task from its MUMIE server 
+ */
 class ilMumieTaskGradeSync
 {
     private $user_ids;
@@ -18,6 +29,11 @@ class ilMumieTaskGradeSync
         $this->user_ids = $this->getAllUsers($task);
     }
 
+    /**
+     * SyncIds are composed of a hashed ILIAS user id and a shorthand for the organization the oparates the ilias platfrom.
+     * 
+     * They must be a unique identifier for users on both ILIAS and MUMIE servers
+     */
     private function getSyncIds($user_ids)
     {
         return array_map(function ($user_id) {
@@ -26,12 +42,19 @@ class ilMumieTaskGradeSync
         }, $user_ids);
     }
 
+    /**
+     * Get the ilias id from a xapi grade
+     */
     private function getIliasId($xapi_grade)
     {
         $hashed_user = substr(strrchr($xapi_grade->actor->account->name, "_"), 1);
         return ilMumieTaskIdHashingService::getUserFromHash($hashed_user);
     }
 
+
+    /**
+     * get a map of xapi grades by user
+     */
     public function getXapiGradesByUser()
     {
         $params = array(
@@ -80,6 +103,9 @@ class ilMumieTaskGradeSync
     }
 
 
+    /**
+     * LastSync is used to improve performance. We don't need to check grades that were awarded before the last time we synced
+     */
     private function getLastSync()
     {
         global $ilDB;
@@ -103,6 +129,9 @@ class ilMumieTaskGradeSync
         return $oldest_timestamp * 1000;
     }
 
+    /**
+     * Get all users that can get marks for this MUMIE task
+     */
     private function getAllUsers($task)
     {
         global $ilDB;
@@ -117,6 +146,11 @@ class ilMumieTaskGradeSync
         return $users;
     }
 
+    /**
+     * A user can submit multiple solutions to MUMIE Tasks.
+     * 
+     * Filter out grades that were earned after the due date. Other than that, select always the latest grade
+     */
     private function getValidGradeByUser($response)
     {
         $grades_by_user = new stdClass();

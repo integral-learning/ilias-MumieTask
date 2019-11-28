@@ -1,5 +1,15 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+ /**
+  * This class is used to display and validate the custom availability form for MumieTask
+  */
 class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 {
     private $online_item;

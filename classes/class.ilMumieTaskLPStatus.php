@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+ /**
+  * This class provides information about LP progress and methods to synchronize it with MUMIE servers 
+  */
 class ilMumieTaskLPStatus extends ilLPStatusPlugin
 {
     public static function updateAccess($user_id, $objId, $refId)
@@ -46,6 +57,12 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         self::raiseEvent($taskId, $user_id, $status, $percentage);
     }
 
+    /**
+     * Synchronize grade for a given MumieTask
+     * 
+     * @param stdClass $task the task we want to update grades for
+     * @param boolean $force_update if true delete all saved learning progress data and then synchronize it again
+     */
     public static function updateGrades($task, $force_update = false)
     {
         include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
@@ -81,6 +98,11 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
+    /**
+     * Update grade for all MumieTasks that are found in a given ilContainer (e.g. Course)
+     * 
+     * @param int $refId RefId of the ilContainer
+     */
     public static function updateGradesForIlContainer($refId)
     {
         global $ilDB;

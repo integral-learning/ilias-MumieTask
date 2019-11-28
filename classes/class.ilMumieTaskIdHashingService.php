@@ -1,4 +1,15 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+ /**
+  * Some organizations might use personal data like matriculation numbers as user id. That's why we need a way to replace them with another unique identifier.
+  */
 class ilMumieTaskIdHashingService
 {
     private $user_id;

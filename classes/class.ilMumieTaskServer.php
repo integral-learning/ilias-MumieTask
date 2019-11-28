@@ -1,6 +1,16 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskServerStructure.php');
 
+/**
+ * A MUMIE server is an instance of the MUMIE E-Learning platform.
+ */
 class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSerializable
 {
     private $server_id;
@@ -13,6 +23,12 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         $this->server_id = $id;
     }
 
+    /**
+     * Construct server object from URL
+     * @param $url
+     * @return ilMumieTaskServer
+     * 
+     */
     public static function fromUrl($url)
     {
         $server = new ilMumieTaskServer();
@@ -40,6 +56,10 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         }
     }
 
+    /**
+     * Get a list of all saved server configurations
+     * @return array 
+     */
     public static function getAllServerData()
     {
         global $DIC;
@@ -52,6 +72,11 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         return $servers;
     }
 
+    /**
+     * Get a list of all saved server configurations including their course structure
+     * 
+     * @return array
+     */
     public static function getAllServers()
     {
         $servers = array();
@@ -134,11 +159,19 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         return $DIC->database()->numRows($result) > 0;
     }
 
+    /**
+     * Return false, if the server did not give any meaningful response
+     * @return boolean
+     */
     public function isValidMumieServer()
     {
         return $this->getCoursesAndTasks()->courses != null;
     }
 
+
+    /**
+     * Get all available courses and tasks provided by the MUMIE server
+     */
     public function getCoursesAndTasks()
     {
         $curl = curl_init($this->getCoursesAndTasksURL());
@@ -187,6 +220,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         return $this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg();
     }
+
     public function getGradeSyncURL()
     {
         return $this->url_prefix . 'public/xapi';

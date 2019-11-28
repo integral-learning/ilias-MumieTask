@@ -1,6 +1,16 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 include_once('./Services/Table/classes/class.ilTable2GUI.php');
 
+/**
+ * This GUI provides a way to list MUMIE servers with buttons to edit and delete entries
+ */
 class ilMumieTaskServerTableGUI extends ilTable2GUI
 {
     public function __construct($a_parent_obj, $a_parent_cmd = '', $a_template_context = '')

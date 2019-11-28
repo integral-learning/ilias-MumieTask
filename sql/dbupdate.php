@@ -222,6 +222,9 @@ if (!$ilDB->tableExists('xmum_id_hashes')) {
 ?>
 <#8>
 <?php
+/**
+ * We want to have permissions set to reasonable values by default for all newly create MumieTasks. We are using repobj Test as template and just copy theirs.
+ */
 $query = "SELECT * FROM rbac_templates WHERE type='xmum' AND parent= " . $ilDB->quote(ROLE_FOLDER_ID, 'integer');
 if (!$ilDB->fetchAssoc($ilDB->query($query))) {
     $query = 'SELECT * FROM rbac_templates WHERE type = "tst" and parent =' . $ilDB->quote(ROLE_FOLDER_ID, 'integer');

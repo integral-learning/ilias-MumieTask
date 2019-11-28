@@ -1,7 +1,13 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
-
 class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 {
 
@@ -32,6 +38,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         }
     }
 
+    /**
+     * Entry point for this gui
+     */
     public function configure()
     {
         global $tpl, $ilToolbar, $ilCtrl, $ilTabs;
@@ -64,6 +73,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         );
     }
 
+    /** 
+     * List all configured MUMIE servers with options to add, edit and delete
+     */
     public function listServers()
     {
         global $tpl, $ilTabs;
@@ -74,6 +86,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tpl->setContent($server_gui->getHTML());
     }
 
+    /**
+     * Display options for sharing personal data
+     */
     public function sharedData($setSavedValues = false)
     {
         global $tpl, $ilTabs;
@@ -83,6 +98,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Define and initialize the form for privacy options
+     */
     public function initShareDataForm($load_saved_values = true)
     {
         global $lng, $tpl, $ilTabs, $ilCtrl;
@@ -121,6 +139,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $this->form = $form;
     }
 
+    /**
+     * Submit changes made in the shared data form
+     */
     private function submitSharedData()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
@@ -142,6 +163,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $this->$cmd();
     }
 
+    /**
+     * Display form for authentication
+     */
     public function authentication()
     {
         global $lng, $tpl, $ilTabs;
@@ -150,6 +174,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Define and initialize the form for authentication
+     */
     public function initAuthForm($load_saved_values = true)
     {
         global $lng, $tpl, $ilTabs, $ilCtrl;
@@ -174,6 +201,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $this->form = $form;
     }
 
+    /**
+     * Submit changes made in the authentication form
+     */
     public function submitAuthForm()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
@@ -194,6 +224,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $this->$cmd();
     }
 
+    /**
+     * Display the MUMIE server form for creation or modification
+     */
     public function addServer()
     {
         global $tpl, $lng;
@@ -202,6 +235,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tpl->setContent($this->form->getHTML());
     }
 
+
+    /**
+     * Initialize and set command buttons for the MUMIE server form
+     */
     private function initServerForm()
     {
         global $ilCtrl, $lng;
@@ -213,6 +250,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $this->form = $form;
     }
 
+    /**
+     * Create a new or edit an existing MUMIE server
+     * 
+     * Params in query
+     */
     public function submitServer()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
@@ -237,6 +279,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $this->listServers();
     }
 
+    /**
+     * Delete an existing MUMIE server
+     * 
+     * Values in query
+     */
     public function deleteServer()
     {
         global $lng;
@@ -248,6 +295,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $this->$cmd();
     }
 
+    /**
+     * Display form to edit an existing MUMIE server
+     */
     public function editServer()
     {
         global $tpl, $DIC, $lng, $ilCtrl;
@@ -260,6 +310,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Return settings of a given server as array
+     */
     protected function loadServerSettings($id)
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
@@ -271,6 +324,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         return $values;
     }
 
+    /**
+     * Execute this function if cancel is pressed in the MUMIE server form
+     */
     public function cancelServer()
     {
         $this->listServers();

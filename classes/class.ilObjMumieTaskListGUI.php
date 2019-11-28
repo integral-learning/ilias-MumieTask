@@ -1,4 +1,11 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 include_once "./Services/Repository/classes/class.ilObjectPluginListGUI.php";
 
 class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
@@ -34,7 +41,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
     }
 
     /**
-     * get properties (offline)
+     * Insert an offline warning into the description field in list view, if MumieTask is not set to online
      *
      * @access public
      * @param

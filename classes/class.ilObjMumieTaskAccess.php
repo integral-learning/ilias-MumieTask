@@ -79,6 +79,10 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
         return true;
     }
 
+
+    /**
+     * Check whether a MUMIE task has been set to be visable and usable by users with reading permissions
+     */
     public static function _lookupOnline($objId)
     {
         global $ilDB;
