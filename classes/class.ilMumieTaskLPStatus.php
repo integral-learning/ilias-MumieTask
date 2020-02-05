@@ -9,7 +9,7 @@
  */
 
  /**
-  * This class provides information about LP progress and methods to synchronize it with MUMIE servers 
+  * This class provides information about LP progress and methods to synchronize it with MUMIE servers
   */
 class ilMumieTaskLPStatus extends ilLPStatusPlugin
 {
@@ -59,7 +59,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     /**
      * Synchronize grade for a given MumieTask
-     * 
+     *
      * @param stdClass $task the task we want to update grades for
      * @param boolean $force_update if true delete all saved learning progress data and then synchronize it again
      */
@@ -100,7 +100,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     /**
      * Update grade for all MumieTasks that are found in a given ilContainer (e.g. Course)
-     * 
+     *
      * @param int $refId RefId of the ilContainer
      */
     public static function updateGradesForIlContainer($refId)

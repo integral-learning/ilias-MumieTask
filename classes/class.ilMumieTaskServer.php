@@ -17,6 +17,11 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     private $name;
     private $url_prefix;
 
+    /**
+     * This is used as parameter when requesting available courses and tasks.
+     */
+    const MUMIE_JSON_FORMAT_VERSION = 2;
+
     private static $SERVER_TABLE_NAME = "xmum_mumie_servers";
     public function __construct($id = 0)
     {
@@ -27,7 +32,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
      * Construct server object from URL
      * @param $url
      * @return ilMumieTaskServer
-     * 
+     *
      */
     public static function fromUrl($url)
     {
@@ -58,7 +63,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
 
     /**
      * Get a list of all saved server configurations
-     * @return array 
+     * @return array
      */
     public static function getAllServerData()
     {
@@ -74,7 +79,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
 
     /**
      * Get a list of all saved server configurations including their course structure
-     * 
+     *
      * @return array
      */
     public static function getAllServers()
@@ -186,7 +191,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
 
     private function getCoursesAndTasksURL()
     {
-        return $this->url_prefix . 'public/courses-and-tasks';
+        return $this->url_prefix . 'public/courses-and-tasks?v=' . self::MUMIE_JSON_FORMAT_VERSION;
     }
 
     public function buildStructure()
@@ -218,11 +223,11 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     public function getLogoutUrl()
     {
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        return $this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg();
+        return urlencode($this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg());
     }
 
     public function getGradeSyncURL()
     {
-        return $this->url_prefix . 'public/xapi';
+        return $this->url_prefix . 'public/xapi?v=' . self::MUMIE_JSON_FORMAT_VERSION;
     }
 }

@@ -10,7 +10,7 @@ require_once('Services/Form/classes/class.ilCustomInputGUI.php');
 
 /**
  * A new input type for ilPropertyFormGUI.
- * 
+ *
  * Create a button that opens a link if clicked
  */
 class ilMumieTaskFormButtonGUI extends ilCustomInputGUI

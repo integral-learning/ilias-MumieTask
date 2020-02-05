@@ -147,9 +147,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         return $ok;
     }
 
-    /** 
-     * Populate the drop down menues from the server structure with all possible options. 
-     * 
+    /**
+     * Populate the drop down menues from the server structure with all possible options.
+     *
      * js/ilMumieTaskForm.js removes incorrect options for any given selection
      */
     private function populateOptions($servers)

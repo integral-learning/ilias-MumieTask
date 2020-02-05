@@ -99,7 +99,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Create a dummy MumieTask without any meaningful properties. The values must be set, before it can be used
-     * 
+     *
      * We decided to do implement creation this way, because we need the option to add MUMIE servers during the creation process, but generating any kind of output during repObj creation caused ILIAS errors
      */
     public function create()
@@ -301,7 +301,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Display the learning progress tab, if enabled
-     * 
+     *
      * This function als also used as a hook to trigger a grade synchronization with the MUMIE server
      */
     public function displayLearningProgress()
@@ -321,7 +321,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Display a users grade in a message box
-     * 
+     *
      * We couldn't find (and dont believe there is) a built-in functionality to display all necessary information about learning progress in the learning progress gui.
      * We need to use this workaround until ilias fixes this.
      */
@@ -585,9 +585,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
 
     /**
-     * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc). 
+     * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).
      * After that a new synchronization is triggered.
-     * 
+     *
      */
     public function forceGradeUpdate()
     {

@@ -12,7 +12,7 @@ include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 
 /**
- * This class pulls grades for a given task from its MUMIE server 
+ * This class pulls grades for a given task from its MUMIE server
  */
 class ilMumieTaskGradeSync
 {
@@ -31,7 +31,7 @@ class ilMumieTaskGradeSync
 
     /**
      * SyncIds are composed of a hashed ILIAS user id and a shorthand for the organization the oparates the ilias platfrom.
-     * 
+     *
      * They must be a unique identifier for users on both ILIAS and MUMIE servers
      */
     private function getSyncIds($user_ids)
@@ -148,7 +148,7 @@ class ilMumieTaskGradeSync
 
     /**
      * A user can submit multiple solutions to MUMIE Tasks.
-     * 
+     *
      * Filter out grades that were earned after the due date. Other than that, select always the latest grade
      */
     private function getValidGradeByUser($response)

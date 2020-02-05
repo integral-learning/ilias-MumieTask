@@ -280,7 +280,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     /**
      * A dummy is a MumieTask without any meaningful properties.
-     * 
+     *
      * All MumieTasks are created as dummy for technical reasons
      */
     public function isDummy()

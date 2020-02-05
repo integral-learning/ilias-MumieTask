@@ -73,7 +73,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         );
     }
 
-    /** 
+    /**
      * List all configured MUMIE servers with options to add, edit and delete
      */
     public function listServers()
@@ -252,7 +252,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Create a new or edit an existing MUMIE server
-     * 
+     *
      * Params in query
      */
     public function submitServer()
@@ -281,7 +281,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Delete an existing MUMIE server
-     * 
+     *
      * Values in query
      */
     public function deleteServer()
