@@ -8,557 +8,549 @@
  */
 
 (function ($) {
-    var server_data;
 
 
     $(document).ready(function () {
-        server_data = JSON.parse(document.getElementById('server_data').getAttribute('value'));
-        init();
+        var structure = JSON.parse(document.getElementById('server_data').getAttribute('value'));
 
-        serverController.setOnclickListeners();
-        languageController.setOnclickListeners();
-        courseController.setOnclickListeners();
-        taskController.setOnclickListeners();
-    });
+        var serverController = (function () {
+            var serverStructure;
+            var serverDropDown = document.getElementById("xmum_server");;
 
-    function init() {
-        serverController.init();
-        languageController.init();
-        courseController.init();
-        taskController.init();
-        filterController.init();
-        taskController.setTaskOptions();
-        taskController.updateDefaultName();
-    }
+            return {
+                init: function (structure) {
+                    serverStructure = structure;
+                    //serverDropDown = document.getElementById("xmum_server");
+                    serverDropDown.onchange = function () {
+                        courseController.updateOptions();
+                        langController.updateOptions();
+                        filterController.updateOptions();
+                        taskController.updateOptions();
+                    };
+                },
+                getSelectedServer: function () {
+                    var selectedServerName = serverDropDown.options[serverDropDown.selectedIndex].text;
 
-    function removeAllChildElements(elem) {
-        while (elem.firstChild) {
-            elem.removeChild(elem.firstChild);
-        }
-    }
-
-    var serverController = (function () {
-        var serverDropDown;
-
-        return {
-            init: function () {
-                serverDropDown = document.getElementById("xmum_server");
-            },
-            setOnclickListeners: function () {
-                serverDropDown.addEventListener('change', function(){
-                    languageController.setLanguageOptions();
-                    courseController.setCourseOptions();
-                    filterController.resetFilters();
-                    taskController.setTaskOptions();
-                    taskController.updateDefaultName();
-                })
-            },
-            getSelectedServerName: function () {
-                return serverDropDown.options[serverDropDown.selectedIndex].text
-            },
-            getSelectedServer: function () {
-                return server_data[serverDropDown.selectedIndex];
-            }
-        }
-    })();
-
-    var languageController = (function () {
-        var languageDropDown;
-        var selectedLang;
-
-
-
-        function createOption(language) {
-            var option = document.createElement('option');
-            option.setAttribute('value', language);
-            option.text = language;
-            return option;
-        }
-
-        function getAvailableLanguages() {
-            return serverController.getSelectedServer()["languages"]
-        }
-
-        function isSelectedLanguage(lang) {
-            return lang == selectedLang;
-
-        }
-        return {
-            init: function () {
-                languageDropDown = document.getElementById("xmum_language");
-                this.setLanguageOptions();
-            },
-            setOnclickListeners: function () {
-                languageDropDown.addEventListener('change', function() {
-                    courseController.setCourseOptions();
-                    taskController.setTaskOptions();
-                    taskController.updateDefaultName();
-                });
-            },
-            getSelectedLanguage: function () {
-                return languageDropDown.options[languageDropDown.selectedIndex].getAttribute('value');
-            },
-
-            setLanguageOptions: function () {
-                var availableLangs = getAvailableLanguages();
-                selectedLang = this.getSelectedLanguage();
-                removeAllChildElements(languageDropDown);
-
-                for (var i = 0; i < availableLangs.length; i++) {
-                    lang = availableLangs[i]
-                    languageDropDown.appendChild(createOption(lang));
-                    if (isSelectedLanguage(lang)) {
-                        languageDropDown.selectedIndex = i;
+                    for (var i in serverStructure) {
+                        var server = serverStructure[i];
+                        if (server.name == selectedServerName) {
+                            return server;
+                        }
                     }
-
+                    return null;
+                },
+                disable: function () {
+                    serverDropDown.disabled = true;
+                    removeChildElems(serverDropDown);
+                },
+                getAllServers: function () {
+                    return serverStructure;
                 }
-            }
-        }
-    })();
+            };
+        })();
 
-    var courseController = (function () {
-        var courseDropDown;
-        var courseFileElem;
-        var selectedCourse;
+        var courseController = (function () {
+            var courseDropDown = document.getElementById("xmum_course");
+            var coursefileElem = document.getElementById('xmum_coursefile');
 
-        function getAvailableCourses() {
-            var availableCourses = [];
-            var potentialCourses = serverController.getSelectedServer()['courses'];
-            var selectedLang = languageController.getSelectedLanguage();
-            for (var i = 0; i < potentialCourses.length; i++) {
-                var potentialCourse = potentialCourses[i];
-                if (potentialCourse.languages.includes(selectedLang)) {
-                    availableCourses.push(potentialCourse);
-                }
-            }
-            return availableCourses;
-        }
-
-        function getSelectedCourse() {
-            var potentialCourses = serverController.getSelectedServer().courses;
-            return potentialCourses[courseDropDown.selectedIndex];
-        }
-
-        function createCourseOption(course) {
-            var option = document.createElement('option');
-            option.setAttribute('value', course.name);
-            option.text = course.name;
-            return option;
-        }
-
-        function isSelectedCourse(course) {
-            return selectedCourse && selectedCourse.path_to_course_file == course.path_to_course_file;
-        }
-
-        function selectCourseOption(course, selectedIndex) {
-            courseDropDown.selectedIndex = selectedIndex;
-            setCoursefile(course)
-        }
-
-        function setCoursefile(course) {
-            courseFileElem.setAttribute('value', course.path_to_course_file);
-        }
-        return {
-            init: function () {
-                courseDropDown = document.getElementById('xmum_course');
-                courseFileElem = document.getElementById('xmum_coursefile');
-                this.setCourseOptions();
-            },
-            setOnclickListeners: function () {
-                courseDropDown.addEventListener('change', function () {
-                    setCoursefile(courseController.getSelectedCourse());
-                    taskController.setTaskOptions();
-                    filterController.resetFilters();
-                })
-            },
-            setCourseOptions: function () {
-                var availableCourses = getAvailableCourses();
-                selectedCourse = getSelectedCourse();
-                courseDropDown.selectedIndex = 0;
-                removeAllChildElements(courseDropDown);
-                for (var i = 0; i < availableCourses.length; i++) {
-                    var course = availableCourses[i];
-                    courseDropDown.appendChild(createCourseOption(course))
-                    if (isSelectedCourse(course)) {
-                        selectCourseOption(course, i);
+            /**
+             * Add a new option the the 'MUMIE Course' drop down menu
+             * @param {Object} course
+             */
+            function addOptionForCourse(course) {
+                var optionCourse = document.createElement("option");
+                var selectedLanguage = langController.getSelectedLanguage();
+                var name;
+                // If the currently selected server is not available on the server, we need to select another one.
+                if (!course.languages.includes(selectedLanguage)) {
+                    name = course.name[0];
+                } else {
+                    for (var i in course.name) {
+                        if (course.name[i].language == selectedLanguage) {
+                            name = course.name[i];
+                        }
                     }
                 }
-                if(!selectedCourse){
-                    selectCourseOption(availableCourses[0], 0);
+                optionCourse.setAttribute("value", name.value);
+                optionCourse.text = name.value;
+                courseDropDown.append(optionCourse);
+            }
+
+            /**
+             * Update the hidden input field with the selected course's course file path
+             */
+            function updateCoursefilePath() {
+                coursefileElem.value = courseController.getSelectedCourse().coursefile;
+            }
+
+            return {
+                init: function (isEdit) {
+                    courseDropDown = document.getElementById("xmum_course");
+                    coursefileElem = document.getElementById('xmum_coursefile');
+                    courseDropDown.onchange = function () {
+                        updateCoursefilePath();
+                        langController.updateOptions();
+                        filterController.updateOptions();
+                        taskController.updateOptions();
+                    };
+                    courseController.updateOptions(isEdit ? coursefileElem.value : false);
+                },
+                getSelectedCourse: function () {
+                    var selectedCourseName = courseDropDown.options[courseDropDown.selectedIndex].text;
+                    var courses = serverController.getSelectedServer().courses;
+                    for (var i in courses) {
+                        var course = courses[i];
+                        for (var j in course.name) {
+                            if (course.name[j].value == selectedCourseName) {
+                                return course;
+                            }
+                        }
+                    }
+                    return null;
+                },
+                disable: function () {
+                    courseDropDown.disabled = true;
+                    removeChildElems(courseDropDown);
+                },
+                updateOptions: function (selectedCourseFile) {
+                    removeChildElems(courseDropDown);
+                    courseDropDown.selectedIndex = 0;
+                    var courses = serverController.getSelectedServer().courses;
+                    for (var i in courses) {
+                        var course = courses[i];
+                        addOptionForCourse(course);
+                        if (course.coursefile == selectedCourseFile) {
+                            courseDropDown.selectedIndex = courseDropDown.childElementCount - 1;
+                        }
+                    }
+                    updateCoursefilePath();
                 }
-            },
-            getSelectedCourse: getSelectedCourse
-        }
-    })();
+            };
+        })();
 
-    var taskController = (function() {
-        var taskDropDown;
-        var selectedTask;
-        var taskCount;
-        var titleElem;
+        var langController = (function () {
+            var languageDropDown = document.getElementById("xmum_language");
 
-        var DUMMY_TITLE = "-- Empty MumieTask --";
+            /**
+             * Add a new option to the language drop down menu
+             * @param {string} lang the language to add
+             */
+            function addLanguageOption(lang) {
+                var optionLang = document.createElement("option");
+                optionLang.setAttribute("value", lang);
+                optionLang.text = lang;
+                languageDropDown.append(optionLang);
+            }
+            return {
+                init: function () {
+                    languageDropDown = document.getElementById("xmum_language");
+                    languageDropDown.onchange = function () {
+                        taskController.updateOptions();
+                        courseController.updateOptions();
+                    };
+                    langController.updateOptions();
+                },
+                getSelectedLanguage: function () {
+                    return languageDropDown.options[languageDropDown.selectedIndex].text;
+                },
+                disable: function () {
+                    languageDropDown.disabled = true;
+                    removeChildElems(languageDropDown);
+                },
+                updateOptions: function () {
+                    var currentLang = langController.getSelectedLanguage();
+                    removeChildElems(languageDropDown);
+                    languageDropDown.selectedIndex = 0;
+                    var languages = courseController.getSelectedCourse().languages;
+                    for (var i in languages) {
+                        var lang = languages[i];
+                        addLanguageOption(lang);
+                        if (lang == currentLang) {
+                            languageDropDown.selectedIndex = languageDropDown.childElementCount - 1;
+                        }
+                    }
+                }
+            };
+        })();
 
-        function getAvailableTasks() {
-            var availableTasks = [];
-            var potentialTasks = courseController.getSelectedCourse().tasks;
-            var selectedLang = languageController.getSelectedLanguage();
+        var taskController = (function () {
+            var taskDropDown = document.getElementById("xmum_task");
+            var taskCount = document.getElementById('xmum_task_count');
+            var nameElem = document.getElementById("title");
 
-            for(var i= 0; i < potentialTasks.length; i++) {
-                var potentialTask = potentialTasks[i];
-                if(potentialTask.languages.includes(selectedLang)) {
-                    availableTasks.push(potentialTask);
+            /**
+             * Update the activity's name in the input field
+             */
+            function updateName() {
+                if (!isCustomName()) {
+                    nameElem.value = getHeadline(taskController.getSelectedTask());
                 }
             }
-            return availableTasks;
-        }
 
-        function isDefaultTaskName(name) {
-            if(name == null || name == ""|| name == DUMMY_TITLE) {
+            /**
+             * Check whether the activity has a custom name
+             *
+             * @return {boolean} True, if there is no headline with that name in all tasks
+             */
+            function isCustomName() {
+                if (nameElem.value.length == 0) {
+                    return false;
+                }
+                return nameElem.value !== '-- Empty MumieTask --' && !getAllHeadlines().includes(nameElem.value);
+            }
+
+            /**
+             * Get the task's headline for the currently selected language
+             * @param {Object} task
+             * @returns  {string} the headline
+             */
+            function getHeadline(task) {
+                if (!task) {
+                    return null;
+                }
+                for (var i in task.headline) {
+                    var localHeadline = task.headline[i];
+                    if (localHeadline.language == langController.getSelectedLanguage()) {
+                        return localHeadline.name;
+                    }
+                }
+                return null;
+            }
+
+            /**
+             * Get all tasks that are available on all servers
+             *
+             * @return {Object} Array containing all available tasks
+             */
+            function getAllTasks() {
+                var tasks = [];
+                for (var i in serverController.getAllServers()) {
+                    var server = serverController.getAllServers()[i];
+                    for (var j in server.courses) {
+                        var course = server.courses[j];
+                        for (var m in course.tasks) {
+                            var task = course.tasks[m];
+                            tasks.push(task);
+                        }
+                    }
+                }
+                return tasks;
+            }
+
+            /**
+             * Get all possible headlines in all languages
+             * @returns {Object} Array containing all headlines
+             */
+            function getAllHeadlines() {
+                var headlines = [];
+                var tasks = getAllTasks();
+                tasks.push(getPseudoTaskFromCourse(courseController.getSelectedCourse()));
+                for (var i in tasks) {
+                    var task = tasks[i];
+                    for (var n in task.headline) {
+                        headlines.push(task.headline[n].name);
+                    }
+                }
+                var course = courseController.getSelectedCourse();
+                for (var j in course.name) {
+                    var name = course.name[j];
+                    headlines.push(name.value);
+                }
+                return headlines;
+            }
+
+            /**
+             * Add a new option to the 'Problem' drop down menu
+             * @param {Object} task
+             */
+            function addTaskOption(task) {
+                if (getHeadline(task) !== null) {
+                    var optionTask = document.createElement("option");
+                    optionTask.setAttribute("value", task.link);
+                    optionTask.text = getHeadline(task);
+                    taskDropDown.append(optionTask);
+                }
+            }
+
+            /**
+             * Get a task that links to a course's overview page
+             * @param {Object} course
+             * @returns {Object} task
+             */
+            function getPseudoTaskFromCourse(course) {
+                var headline = [];
+                for (var i in course.name) {
+                    var name = course.name[i];
+                    headline.push({
+                        "name": name.value,
+                        "language": name.language
+                    });
+                }
+                return {
+                    "link": course.link,
+                    "headline": headline
+                };
+            }
+
+            return {
+                init: function (isEdit) {
+                    taskDropDown = document.getElementById("xmum_task");
+                    taskCount = document.getElementById('xmum_task_count');
+                    nameElem = document.getElementById("title");
+                    updateName();
+                    taskDropDown.onchange = function () {
+                        updateName();
+                    };
+                    taskController.updateOptions(isEdit ?
+                        taskDropDown.options[taskDropDown.selectedIndex].getAttribute('value') : undefined
+                    );
+                },
+                getSelectedTask: function () {
+                    var selectedLink = taskDropDown.options[taskDropDown.selectedIndex] ==
+                        undefined ? undefined : taskDropDown.options[taskDropDown.selectedIndex].getAttribute('value');
+                    var course = courseController.getSelectedCourse();
+                    var tasks = course.tasks.slice();
+                    tasks.push(getPseudoTaskFromCourse(course));
+                    for (var i in tasks) {
+                        var task = tasks[i];
+                        if (selectedLink == task.link) {
+                            return task;
+                        }
+                    }
+                    return null;
+                },
+                disable: function () {
+                    taskDropDown.disabled = true;
+                    removeChildElems(taskDropDown);
+                },
+                updateOptions: function (selectTaskByLink) {
+                    removeChildElems(taskDropDown);
+                    taskDropDown.selectedIndex = 0;
+
+                    var tasks = filterController.filterTasks(courseController.getSelectedCourse().tasks);
+                    for (var i in tasks) {
+                        var task = tasks[i];
+                        addTaskOption(task);
+                        if (selectTaskByLink === task.link) {
+                            taskDropDown.selectedIndex = taskDropDown.childElementCount - 1;
+                        }
+                    }
+
+                    taskCount.textContent = tasks.length;
+                    updateName();
+                }
+            };
+        })();
+
+        var filterController = (function () {
+
+            var filterWrapper;
+            var filterSectionHeader = $(".ilFormHeader")[1];
+
+            var filterWrapperTemplate = document.getElementById("il_prop_cont_xmum_values");
+            var filterLabelTemplate = filterWrapperTemplate.children[0];
+            var selectionBoxTemplate = filterWrapperTemplate.children[1];
+
+
+            var selectedTags = [];
+
+            /**
+             * Add a new filter category to the form for a given tag
+             * @param {Object} tag
+             */
+            function addFilter(tag) {
+                var filter = document.createElement('div');
+                filter.classList.add(filterWrapperTemplate.classList);
+                var selectionBox = createSelectionBox(tag);
+
+                var label = document.createElement('label');
+                label.innerHTML = tag.name +  ' <span class="caret"></span>';
+                label.classList.add(...filterLabelTemplate.classList, 'mumie-collapsible');
+                label.onclick = function () {
+                    toggleVisibility(selectionBox);
+                };
+                filter.appendChild(label);
+                filter.appendChild(selectionBox);
+                filterWrapper.appendChild(filter);
+            }
+
+            /**
+             * Create an element that contains checkboxes for all tag values
+             * @param {Object} tag
+             * @returns {Object} A div containing mulitple checkboxes
+             */
+            function createSelectionBox(tag) {
+                var selectionBox = document.createElement('div');
+                selectionBox.classList.add(selectionBoxTemplate.classList);
+                var wrapper = document.createElement('div');
+                wrapper.classList.add('input');
+
+                for (var i in tag.values) {
+                    selectedTags[tag.name] = [];
+                    var inputWrapper = document.createElement('div');
+                    inputWrapper.classList.add('mumie_input_wrapper');
+
+                    var value = tag.values[i];
+                    var checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = value;
+                    setCheckboxListener(tag, checkbox);
+
+                    var label = document.createElement('label');
+                    label.innerText = value;
+                    label.style = "padding-left: 5px";
+                    inputWrapper.appendChild(checkbox);
+                    inputWrapper.appendChild(label);
+                    wrapper.insertBefore(inputWrapper, selectionBox.firstChild);
+                }
+                selectionBox.append(wrapper)
+                return selectionBox;
+            }
+
+            /**
+             * Selecting a tag value should filter the drop down menu for MUMIE problems for the chosen values
+             * @param {*} tag The tag we created the checkbox for
+             * @param {*} checkbox The checkbox containing the filter input checkboxes
+             */
+            function setCheckboxListener(tag, checkbox) {
+                checkbox.onclick = function () {
+                    if (!checkbox.checked) {
+                        var update = [];
+                        for (var i in selectedTags[tag.name]) {
+                            var value = selectedTags[tag.name][i];
+                            if (value != checkbox.value) {
+                                update.push(value);
+                            }
+                        }
+                        selectedTags[tag.name] = update;
+                    } else {
+                        selectedTags[tag.name].push(checkbox.value);
+                    }
+                    taskController.updateOptions();
+                };
+            }
+
+            /**
+             * Toggle visibility of the given object
+             * @param {Object} elem
+             */
+            function toggleVisibility(elem) {
+                elem.toggleAttribute('hidden');
+            }
+
+            /**
+             * Filter a list of tasks
+             * @param {Array} tasks the tasks to filter
+             * @param {Array} filterSelection the selection to filter with
+             * @returns {Array} the filtered tasks
+             */
+            function filterTasks(tasks, filterSelection) {
+                var filteredTasks = [];
+                for (var i in tasks) {
+                    var task = tasks[i];
+                    if (filterTask(task, filterSelection)) {
+                        filteredTasks.push(task);
+                    }
+                }
+                return filteredTasks;
+            }
+
+            /**
+             * Check if the task fullfills the requirements set by the filter selection
+             * @param {Object} task
+             * @param {Array} filterSelection
+             * @returns {boolean}
+             */
+            function filterTask(task, filterSelection) {
+                var obj = [];
+                for (var i in task.tags) {
+                    var tag = task.tags[i];
+                    obj[tag.name] = tag.values;
+                }
+
+                for (var j in Object.keys(filterSelection)) {
+                    var tagName = Object.keys(filterSelection)[j];
+                    if (filterSelection[tagName].length == 0) {
+                        continue;
+                    }
+                    if (!obj[tagName]) {
+                        return false;
+                    }
+                    if (!haveCommonEntry(filterSelection[tagName], obj[tagName])) {
+                        return false;
+                    }
+                }
                 return true;
             }
-            return server_data
-                .flatMap(server => server.courses)
-                .flatMap(course => course.tasks)
-                .flatMap(task => task.headline)
-                .map(headline => headline ? headline.name : "null headline")
-                .includes(name);            
-        }
-        function getSelectedTask() {
-            var availableTasks = getAvailableTasks();
 
-            for(var i = 0; i < availableTasks.length; i++) {
-                var task = availableTasks[i];
-                if(taskDropDown.options[taskDropDown.selectedIndex] && task.link == taskDropDown.options[taskDropDown.selectedIndex].getAttribute('value')) {
-                    return task;
+            /**
+             * Return true, of the two arrays have at least one entry in common
+             * @param {Array} array1
+             * @param {Array} array2
+             * @returns {boolean}
+             */
+            function haveCommonEntry(array1, array2) {
+                if (!Array.isArray(array1) || !Array.isArray(array2)) {
+                    return false;
                 }
-            }
-        }
-
-        function createTaskOption(task) {
-            var option = document.createElement('option');
-            option.setAttribute('value', task.link);
-            option.text = getHeadlineForLang(task, languageController.getSelectedLanguage());
-            return option;
-        }
-
-        function getHeadlineForLang(task, lang) {
-            var headlines = task.headline;
-            for(var i = 0; i< headlines.length; i++) {
-                var headline = headlines[i];
-                if(headline.language == lang) {
-                    return headline.name;
-                }
-            }
-        }
-
-        function isSelectedTask(task) {
-            return selectedTask && task && selectedTask.link == task.link;
-        }
-
-        function setTaskCount(count) {
-            taskCount.innerHTML = count;
-        }
-
-        function updateDefaultName() {
-            if(isDefaultTaskName(titleElem.value)) {
-                var task = getSelectedTask();
-                var lang = languageController.getSelectedLanguage();
-                titleElem.value = task ? getHeadlineForLang(task, lang) : titleElem.value;
-            }
-        }
-
-        function isDummyTask() {
-            return titleElem.value === DUMMY_TITLE;
-        }
-        return {
-            init: function() {
-                taskDropDown = document.getElementById('xmum_task');
-                taskCount = document.getElementById('xmum_task_count');
-                titleElem = document.getElementById('title');
-            },
-
-            setOnclickListeners: function() {
-                taskDropDown.addEventListener('change', function() {
-                    updateDefaultName();
-                })
-            },
-            setTaskOptions: function() {
-                var filteredTasks = filterController.getFilteredTasks();
-                selectedTask = getSelectedTask();
-               
-                taskDropDown.selectedIndex = 0;
-                
-                removeAllChildElements(taskDropDown);
-                
-                for(var i = 0; i < filteredTasks.length; i++) {
-                    
-                    var task = filteredTasks[i];
-                    taskDropDown.appendChild(createTaskOption(task))
-                    if(isSelectedTask(task)) {
-                        taskDropDown.selectedIndex = i;
+                for (var i = 0; i < array1.length; i++) {
+                    if (array2.includes(array1[i])) {
+                        return true;
                     }
-                    
                 }
-                if(isDummyTask()){
-                    taskDropDown.selectedIndex = -1;
-                }
+                return false;
+            }
 
-                setTaskCount(filteredTasks.length);
+            function addFilterWrapper() {
+                filterWrapper = document.createElement('div');
+                filterWrapperTemplate.parentElement.insertBefore(filterWrapper, filterWrapperTemplate);
+            }
 
-            },
-            getAvailableTasks: getAvailableTasks,
-            updateDefaultName: updateDefaultName
-        }
-
-    })();
-
-    var filterController = (function() {
-        var filterElements = [];
-        var filterWrapperTemplate;
-        var valueBoxes = [];
-
-
-        function getNameValuePairs(){
-            var course = courseController.getSelectedCourse();
-            var tasks = course['tasks'];
-            var nameValuePairs = [];
-            course['tag_names'].forEach( name => {
-                var tagObj = {};
-                var values = [];
-                tasks.forEach( task => {
-                    task.tags.forEach(tag => {
-                        if (tag.name === name){
-                            tagObj.name = name;
-                            values = values.concat(tag.values);
-                            tagObj.values = values.filter((v,i) => values.indexOf(v) === i ); //remove duplicates
-                        }
-                    })
-                });
-                if (tagObj.values) nameValuePairs.push(tagObj);
-            });
-            return nameValuePairs;
-        }
-
-        function createTagOption(value, id, name) {
-            var option = document.createElement('input');
-            option.setAttribute('type', 'checkbox');
-            option.setAttribute('name', "xmum_filter[]");
-            option.setAttribute('id', id);
-            option.setAttribute('value', value);
-
-            var label = document.createElement('label');
-            label.style.paddingLeft = "5px";
-            label.setAttribute('for', id);
-            label.textContent = value + ' (' + getFilteredCount({name,value}, getSelections()) + ')';
-
-            var wrapper = document.createElement('div');
-            wrapper.style = 'white-space:nowrap';
-            wrapper.appendChild(option);
-            wrapper.appendChild(label);
-
-            return wrapper;
-        }
-
-        function getFilteredCount(tag,selections) {
-            if(selections[tag.name]) selections[tag.name].push(tag.value);
-            else selections[tag.name] = [tag.value];
-            return getFilteredTasks(selections).length;
-        }
-
-        function updateFilterCount(){
-            var selections = getSelections();
-            valueBoxes.forEach( valueBox => {
-                for(var i = 0 ; i < valueBox.children.length ; i++){
-                    var wrapper = valueBox.children[i];
-                    var name = valueBox.parentElement.previousElementSibling.getAttribute("for");
-                    var value = valueBox.children[i].firstElementChild.getAttribute("value");
-                    var label = $(wrapper).find("label");
-                    var tag = {};
-                    tag.name = name;
-                    tag.value = value;
-                    var clone = JSON.parse(JSON.stringify(selections)); // deep clone
-                    var count = getFilteredCount(tag,clone);
-                    if($(wrapper).find("input")[0].checked) {
-                        label.html(value);
+            return {
+                init: function () {
+                    addFilterWrapper();
+                    filterWrapperTemplate.style = "display: none";
+                    filterSectionHeader.classList.add('mumie-collapsible')
+                    this.updateOptions();
+                    filterSectionHeader.onclick = function () {
+                        toggleVisibility(filterWrapper);
+                    };
+                },
+                updateOptions: function () {
+                    var tags = courseController.getSelectedCourse().tags;
+                    selectedTags = [];
+                    if (tags.length > 0) {
+                        filterWrapper.hidden = false;
                     } else {
-                        label.html(value + ' (' + count + ')');
+                        filterWrapper.hidden = true;
                     }
-                    wrapper.firstElementChild.disabled = !count;
-                }
-            });
-        }
-
-        function filterTask(task, selections) {
-            var obj = {};
-            task.tags.forEach(tag => {
-                obj[tag.name] = tag.values;
-            });
-            for (var key in selections){
-               if(!obj[key]) return false;
-               if(!haveCommonEntry(obj[key],selections[key])) return false;
-            }
-            return true;
-        }
-
-        function getFilteredTasks(selections) {
-            var availableTasks = taskController.getAvailableTasks();
-            var filteredTasks = [];
-            for(var i = 0; i < availableTasks.length; i++){
-                var task = availableTasks[i];
-                if(filterTask(task, selections)) {
-                    filteredTasks.push(task);
-                }
-            }
-            return filteredTasks;
-        }
-
-        function haveCommonEntry (array1,array2) {
-            if(!Array.isArray(array1) || !Array.isArray(array2)) return false;
-            for(var i = 0 ; i < array1.length ; i++){
-                if(array2.includes(array1[i])) return true;
-            }
-            return false;
-        }
-
-        function getSelections() {
-            var selectedNamesAndValuesMap = {};
-            valueBoxes.forEach( optionWrapper => {
-                for(var i = 0 ; i < optionWrapper.children.length ; i++){
-                    var input = optionWrapper.children[i].firstElementChild;
-                    if(input.checked){
-                        var name = optionWrapper.parentElement.previousElementSibling.getAttribute("for");
-                        var val = input.getAttribute("value");
-                        if(selectedNamesAndValuesMap[name]) {
-                            selectedNamesAndValuesMap[name].push(val);
-                        } else selectedNamesAndValuesMap[name] = [val];
+                    removeChildElems(filterWrapper);
+                    for (var i in tags) {
+                        var tag = tags[i];
+                        addFilter(tag);
                     }
+                },
+                filterTasks: function (tasks) {
+                    return filterTasks(tasks, selectedTags);
                 }
-            });
-            return selectedNamesAndValuesMap;
-        }
+            };
+        })();
 
-        function getInputId(value,index) {
-            return 'xmum_filter_value_' + index.toString() + value;
-        }
-
-        function addFilterOptions (valueElement, tag){
-            var values = tag.values;
-            values.forEach( (val,i) => {
-                var option = document.createElement('option');
-                option.paddingRight = "2";
-                option.setAttribute('value', val);
-                option.text = val;
-                valueElement.appendChild(createTagOption(val,getInputId(val,i),tag.name));
-            }  );
-
-            var childCount = valueElement.children.length;
-            var height = Number.parseFloat(valueElement.style.width.replace("px",""));
-            var width = Number.parseFloat(valueElement.style.width.replace("px",""));
-            valueElement.style.width = (2 * width).toString()+'px';
-            if(childCount > 4) valueElement.style.height = (height * 1.5).toString()+'px';
-            // set event listeners on children
-            for(var i = 0; i < childCount ; i++){
-                var child = $(valueElement.children[i]);
-                child.change(function() {
-                    taskController.setTaskOptions();
-                    taskController.updateDefaultName();
-                    updateFilterCount();
-                })
+        /**
+         * Remove all child elements of a given html element
+         * @param {Object} elem
+         */
+        function removeChildElems(elem) {
+            while (elem.firstChild) {
+                elem.removeChild(elem.firstChild);
             }
         }
 
-        function setFilterLabelElement(element,filterOptionWrapper,name){
-            element.setAttribute("for",name);
-            element.innerHTML = "Filter by " + name;
-            element.style.cursor = "pointer";
-            $(element).hover(
-                function() {
-                    this.style.backgroundColor = "#ccc";
+        serverController.init(structure);
+        courseController.init();
+        taskController.init();
+        langController.init();
+        filterController.init();
 
-                }, function() {
-                    this.style.backgroundColor = 'inherit';
-                }
-            );
-
-            $(element).click( function () {
-                if (filterOptionWrapper.style.display === "block") {
-                    filterOptionWrapper.style.display = "none";
-                } else {
-                    filterOptionWrapper.style.display = "block";
-                }
-            });
-        }
-
-        function addFilterElem(tag){
-            var clone = filterWrapperTemplate.cloneNode(true);
-            clone.style.display = "block";
-            clone.setAttribute("id","il_prop_cont_xmum_name_"+tag.name);
-            filterWrapperTemplate.parentElement.insertBefore(clone,filterWrapperTemplate);
-            var filterLabel = clone.children[0];
-            var filterOptionWrapper = clone.children[1].firstElementChild;
-            setFilterLabelElement(filterLabel,filterOptionWrapper,tag.name);
-            filterOptionWrapper.setAttribute("id","xmum_name_" + tag.name);
-            addFilterOptions(filterOptionWrapper,tag);
-            valueBoxes.push(filterOptionWrapper);
-            filterElements.push(clone);
-        }
-
-        function hideEmptyFilters(hide){
-            var title = $(".ilFormHeader")[1];
-            $(title).css("display", hide ? "none" : "block");
-        }
-
-        function makeParentCollapsible(names){
-            var title = $(".ilFormHeader")[1];
-            $(title).css("cursor","pointer");
-            $(title).hover(
-                function() {
-                    this.style.backgroundColor = "#ccc";
-                }, function() {
-                    this.style.backgroundColor = '#f0f0f0'; // original color
-                }
-            );
-
-            $(title).click( function() {
-                names.forEach( name => {
-                    if (name.style.display === "block") {
-                        name.style.display = "none";
-                    } else {
-                        name.style.display = "block";
-                    }
-                });
-
-            });
-        }
-
-        return {
-            init: function() {
-                filterWrapperTemplate = document.getElementById("il_prop_cont_xmum_values");
-                filterWrapperTemplate.style.display = "none";
-                this.setFilterOptions();
-            },
-            setFilterOptions: function() {
-                var tags = getNameValuePairs();
-                for(var i = 0; i < tags.length; i++) {
-                    var tag  = tags[i];
-                    addFilterElem(tag);
-                }
-                hideEmptyFilters(tags.length < 1);
-                makeParentCollapsible(filterElements);
-            },
-            getFilteredTasks: function() {
-                return getFilteredTasks(getSelections());
-            },
-            resetFilters: function () {
-                filterElements.forEach( el => el.remove());
-                filterElements = [];
-                valueBoxes.forEach(el => el.remove());
-                valueBoxes = [];
-                this.setFilterOptions();
-            }
-
-        }
-    })();
-
+    });
 })(jQuery)

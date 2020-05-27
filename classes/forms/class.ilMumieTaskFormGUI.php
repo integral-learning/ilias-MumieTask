@@ -182,10 +182,15 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     private function compileCourseOption($course)
     {
-        $this->course_options[$course->getName()] = $course->getName();
-
         foreach ($course->getTasks() as $task) {
             $this->compileTaskOption($task);
+        }
+        foreach ($course->getName() as $name) {
+            $this->course_options[$name->value] = $name->value;
+
+            // If a user wants to use an entire course instead of a single problem, we need to define a pseduo problem to use.
+            $languagelink = $course->getLink() . '?lang=' . $name->language;
+            $this->task_options[$languagelink] = $name->value;
         }
     }
 

@@ -8,7 +8,7 @@
  */
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOToken.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 /**
  * This class provides functions for SSO between MUMIE servers and ILIAS
  */
@@ -70,33 +70,35 @@ class ilMumieTaskSSOService
      * containing the login and logout urls, sso token and other infos
      */
 
-    public function setUpTokenAndLaunchForm($loginurl, $launchcontainer, $problemurl)
+    public function setUpTokenAndLaunchForm($taskObj)
     {
         global $ilUser, $ilDB, $DIC;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($ilUser->getId());
         $ssotoken = new ilMumieTaskSSOToken($hashed_user);
         $ssotoken->insertOrRefreshToken();
 
-        return $this->getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $hashed_user);
+        return $this->getHTMLCode($taskObj, $ssotoken, $hashed_user);
     }
 
 
     /**
      * Get html code for the MUMIE task launcher
      */
-    private function getHTMLCode($loginurl, $launchcontainer, $ssotoken, $problemurl, $hashed_user, $width = 800, $height = 600)
+    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $width = 800, $height = 600)
     {
         require_once("./Services/UICore/classes/class.ilTemplate.php");
         require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
         // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
         // the other "true"s should always be set that way according to the ilias documentation
-        $tpl->setVariable("TASKURL", $loginurl);
-        $tpl->setVariable("TARGET", $launchcontainer == 1 ? 'MumieTaskLaunchFrame' : '_blank');
+        $tpl->setVariable("TASKURL", $taskObj->getLoginUrl());
+        $tpl->setVariable("TARGET", $taskObj->getLaunchcontainer() == 1 ? 'MumieTaskLaunchFrame' : '_blank');
         $tpl->setVariable("USER_ID", $hashed_user);
         $tpl->setVariable("TOKEN", $ssotoken->getToken());
         $tpl->setVariable("ORG", htmlspecialchars(ilMumieTaskAdminSettings::getInstance()->getOrg()));
-        $tpl->setVariable("PROBLEMURL", $problemurl);
+        $tpl->setVariable("PROBLEMURL", $taskObj->getProblemUrl());
+        $tpl->setVariable("LANG", $taskObj->getLanguage());
+        $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
         $tpl->setVariable("WIDTH", '100%');
         $tpl->setVariable("HEIGHT", $height);
 

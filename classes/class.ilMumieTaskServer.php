@@ -20,7 +20,12 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     /**
      * This is used as parameter when requesting available courses and tasks.
      */
-    const MUMIE_JSON_FORMAT_VERSION = 2;
+    const MUMIE_JSON_FORMAT_VERSION = 3;
+
+    /**
+     * This is used as parameter when synchronizing grades
+     */
+    const MUMIE_GRADE_SYNC_VERSION = 2;
 
     private static $SERVER_TABLE_NAME = "xmum_mumie_servers";
     public function __construct($id = 0)
@@ -191,7 +196,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
 
     private function getCoursesAndTasksURL()
     {
-        return $this->url_prefix . 'public/courses-and-tasks?v=' . self::MUMIE_JSON_FORMAT_VERSION;
+        return $this->url_prefix . 'public/courses-and-tasks?v=' . self::MUMIE_JSON_FORMAT_VERSION . '&org=' . ilMumieTaskAdminSettings::getInstance()->getOrg();
     }
 
     public function buildStructure()
@@ -201,9 +206,9 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
 
     public function jsonSerialize()
     {
-        $vars = parent::jsonSerialize();
-        array_push($vars, ...array_values(get_object_vars($this)));
-        return $vars;
+        $parentVars = (array)parent::jsonSerialize();
+        $vars = (array) get_object_vars($this);
+        return array_merge($vars, $parentVars);
     }
 
     public static function serverConfigExistsForUrl($url)
@@ -228,6 +233,6 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
 
     public function getGradeSyncURL()
     {
-        return $this->url_prefix . 'public/xapi?v=' . self::MUMIE_JSON_FORMAT_VERSION;
+        return $this->url_prefix . 'public/xapi?v=' . self::MUMIE_GRADE_SYNC_VERSION;
     }
 }

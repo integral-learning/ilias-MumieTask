@@ -1,4 +1,6 @@
 <?php
+
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskTagStructure.php');
 /**
  * MumieTask plugin
  *
@@ -38,11 +40,18 @@ class ilMumieTaskTaskStructure implements \JsonSerializable
         $this->link = $task->link;
         $this->headline = $task->headline;
         if (isset($task->tags)) {
-            $this->tags = $task->tags;
+            foreach ($task->tags as $tag) {
+                array_push($this->tags, new ilMumieTaskTagStructure($tag->name, $tag->values));
+            }
         }
         $this->collectLanguages();
     }
 
+    /**
+     * Get all langauges used in this task
+     *
+     * @return string[]
+     */
     public function collectLanguages()
     {
         if ($this->headline) {

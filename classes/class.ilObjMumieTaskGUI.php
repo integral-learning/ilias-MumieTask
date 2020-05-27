@@ -154,6 +154,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->setPropertyValues();
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
         $tpl->setContent($this->form->getHTML());
+        $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
     }
 
     /**
