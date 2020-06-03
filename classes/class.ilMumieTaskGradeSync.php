@@ -98,7 +98,11 @@ class ilMumieTaskGradeSync
      */
     private function getMumieId($mumietask)
     {
-        $id = substr($mumietask->getTaskurl(), strlen("link/"));
+        $id = $mumietask->getTaskurl();
+        $prefix = "link/";
+        if (strpos($id, $prefix) === 0) {
+            $id = substr($id, strlen($prefix));
+        }
         return $id;
     }
 

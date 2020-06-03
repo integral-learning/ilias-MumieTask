@@ -80,7 +80,7 @@
              * Update the hidden input field with the selected course's course file path
              */
             function updateCoursefilePath() {
-                coursefileElem.value = courseController.getSelectedCourse().coursefile;
+                coursefileElem.value = courseController.getSelectedCourse().path_to_course_file;
             }
 
             return {
@@ -112,14 +112,15 @@
                     courseDropDown.disabled = true;
                     removeChildElems(courseDropDown);
                 },
-                updateOptions: function (selectedCourseFile) {
+                updateOptions: function () {
+                    var selectedCourseFile = coursefileElem.value;
                     removeChildElems(courseDropDown);
                     courseDropDown.selectedIndex = 0;
                     var courses = serverController.getSelectedServer().courses;
                     for (var i in courses) {
                         var course = courses[i];
                         addOptionForCourse(course);
-                        if (course.coursefile == selectedCourseFile) {
+                        if (course.path_to_course_file == selectedCourseFile) {
                             courseDropDown.selectedIndex = courseDropDown.childElementCount - 1;
                         }
                     }
