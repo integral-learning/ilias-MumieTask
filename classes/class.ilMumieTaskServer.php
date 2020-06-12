@@ -185,6 +185,16 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     public function getCoursesAndTasks()
     {
         $curl = curl_init($this->getCoursesAndTasksURL());
+        require_once './Services/Http/classes/class.ilProxySettings.php';
+        $proxy_settings = ilProxySettings::_getInstance();
+        if ($proxy_settings->isActive() && strlen($proxy_settings->getHost()) && strlen($proxy_settings->getPort())) {
+            ilLoggerFactory::getLogger("xmum")->info("using proxy for gradesync");
+            curl_setopt_array($curl, [
+                CURLOPT_HTTPPROXYTUNNEL => true,
+                CURLOPT_PROXY => $proxy_settings->getHost(),
+                CURLOPT_PROXYPORT => $proxy_settings->getPort()
+            ]);
+        }
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_USERAGENT => 'Codular Sample cURL Request',

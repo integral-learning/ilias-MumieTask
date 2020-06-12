@@ -64,26 +64,35 @@ class ilMumieTaskGradeSync
             'lastSync' => $this->getLastSync(),
             'includeAll' => true
         );
-
+        
         if ($this->task->getActivationLimited() == 1) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
         }
-
+        
         $payload = json_encode($params);
         $ch = curl_init($this->task->getGradeSyncURL());
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_USERAGENT, "My User Agent Name");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($payload),
-            "X-API-Key: " . $this->admin_settings->getApiKey(),
-        )
-        );
+        require_once './Services/Http/classes/class.ilProxySettings.php';
+        $proxy_settings = ilProxySettings::_getInstance();
+        if ($proxy_settings->isActive() && strlen($proxy_settings->getHost()) && strlen($proxy_settings->getPort())) {
+            ilLoggerFactor::getLogger("xmum")->info("using proxy for gradesync");
+            curl_setopt_array($ch, [
+                CURLOPT_HTTPPROXYTUNNEL => true,
+                CURLOPT_PROXY => $proxy_settings->getHost(),
+                CURLOPT_PROXYPORT => $proxy_settings->getPort()
+            ]);
+        }
+        curl_setopt_array($ch, [
+            CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_USERAGENT => "MumieTask Ilias",
+        CURLOPT_POSTFIELDS => $payload,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER =>
+        array(
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($payload),
+        "X-API-Key: " . $this->admin_settings->getApiKey(),
+    )
+        ]);
         $response = json_decode(curl_exec($ch));
         curl_close($ch);
 
