@@ -74,7 +74,7 @@ class ilMumieTaskGradeSync
         require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
         if ($proxy_settings->isActive() && strlen($proxy_settings->getHost()) && strlen($proxy_settings->getPort())) {
-            ilLoggerFactor::getLogger("xmum")->info("using proxy for gradesync");
+            ilLoggerFactory::getLogger("xmum")->info("using proxy for gradesync");
             curl_setopt_array($ch, [
                 CURLOPT_HTTPPROXYTUNNEL => true,
                 CURLOPT_PROXY => $proxy_settings->getHost(),
