@@ -2,11 +2,14 @@
 
 All important changes to this plugin will be documented in this file.
 
-## [v1.1.0] - TODO
+## [v1.1.0] - 2020-06-16
 ### Added
 - LEMON servers can now be added to MumieTask
 
-## [v1.0.1] - 2019-02-05
+### Changed
+- MumieTask now uses proxy server if configured in Ilias
+
+## [v1.0.1] - 2020-02-05
 
 ### Changed
 - The plugin now sends a versioned request for available courses and Tasks to a MUMIE server
