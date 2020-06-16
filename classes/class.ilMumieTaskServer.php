@@ -184,23 +184,23 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
      */
     public function getCoursesAndTasks()
     {
-        $curl = curl_init($this->getCoursesAndTasksURL());
         require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
-        if ($proxy_settings->isActive() && strlen($proxy_settings->getHost()) && strlen($proxy_settings->getPort())) {
-            ilLoggerFactory::getLogger("xmum")->info("using proxy for gradesync");
-            curl_setopt_array($curl, [
-                CURLOPT_HTTPPROXYTUNNEL => true,
-                CURLOPT_PROXY => $proxy_settings->getHost(),
-                CURLOPT_PROXYPORT => $proxy_settings->getPort()
-            ]);
+        ilLoggerFactory::getLogger("xmum")->info("getCoursesAndTasks: " . $this->getCoursesAndTasksURL());
+
+        $curl = new ilCurlConnection($this->getCoursesAndTasksURL());
+        $curl->init();
+
+        if (ilProxySettings::_getInstance()->isActive()) {
+            $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
+            $curl->setOpt(CURLOPT_PROXY, ilProxySettings::_getInstance()->getHost());
+            $curl->setOpt(CURLOPT_PROXYPORT, ilProxySettings::_getInstance()->getPort());
         }
-        curl_setopt_array($curl, [
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_USERAGENT => 'Codular Sample cURL Request',
-        ]);
-        $response = curl_exec($curl);
-        curl_close($curl);
+
+        $curl->setOpt(CURLOPT_RETURNTRANSFER, 1);
+        $curl->setOpt(CURLOPT_USERAGENT, 'MUMIE Task for Ilias');
+        $response = $curl->exec();
+        $curl->close();
         return json_decode($response);
     }
 

@@ -68,34 +68,30 @@ class ilMumieTaskGradeSync
         if ($this->task->getActivationLimited() == 1) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
         }
-        
         $payload = json_encode($params);
-        $ch = curl_init($this->task->getGradeSyncURL());
+
         require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
-        if ($proxy_settings->isActive() && strlen($proxy_settings->getHost()) && strlen($proxy_settings->getPort())) {
-            ilLoggerFactory::getLogger("xmum")->info("using proxy for gradesync");
-            curl_setopt_array($ch, [
-                CURLOPT_HTTPPROXYTUNNEL => true,
-                CURLOPT_PROXY => $proxy_settings->getHost(),
-                CURLOPT_PROXYPORT => $proxy_settings->getPort()
-            ]);
+        $curl = new ilCurlConnection($this->task->getGradeSyncURL());
+        $curl->init();
+        if (ilProxySettings::_getInstance()->isActive()) {
+            $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
+            $curl->setOpt(CURLOPT_PROXY, ilProxySettings::_getInstance()->getHost());
+            $curl->setOpt(CURLOPT_PROXYPORT, ilProxySettings::_getInstance()->getPort());
         }
-        curl_setopt_array($ch, [
-            CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_USERAGENT => "MumieTask Ilias",
-        CURLOPT_POSTFIELDS => $payload,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER =>
-        array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($payload),
-        "X-API-Key: " . $this->admin_settings->getApiKey(),
-    )
-        ]);
-        $response = json_decode(curl_exec($ch));
-        curl_close($ch);
-
+        $curl->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
+        $curl->setOpt(CURLOPT_USERAGENT, 'MUMIE Task for Ilias');
+        $curl->setOpt(CURLOPT_POSTFIELDS, $payload);
+        $curl->setOpt(CURLOPT_RETURNTRANSFER, 1);
+        $curl->setOpt(CURLOPT_HTTPHEADER, 
+            array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($payload),
+                "X-API-Key: " . $this->admin_settings->getApiKey(),
+            )
+        );
+        $response = json_decode($curl->exec());
+        $curl->close();
         return $this->getValidGradeByUser($response);
     }
     
