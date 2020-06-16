@@ -186,11 +186,9 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     {
         require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
-        ilLoggerFactory::getLogger("xmum")->info("getCoursesAndTasks: " . $this->getCoursesAndTasksURL());
 
         $curl = new ilCurlConnection($this->getCoursesAndTasksURL());
         $curl->init();
-
         if (ilProxySettings::_getInstance()->isActive()) {
             $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
             $curl->setOpt(CURLOPT_PROXY, ilProxySettings::_getInstance()->getHost());

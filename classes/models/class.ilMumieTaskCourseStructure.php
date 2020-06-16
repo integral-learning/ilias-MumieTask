@@ -193,7 +193,6 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
 
     public function getTaskByLink($link)
     {
-        ilLoggerFactory::getLogger('xmum')->info("________" . $link);
         foreach ($this->tasks as $task) {
             if ($task->getLink() == $link) {
                 return $task;
