@@ -83,7 +83,8 @@ class ilMumieTaskGradeSync
         $curl->setOpt(CURLOPT_USERAGENT, 'MUMIE Task for Ilias');
         $curl->setOpt(CURLOPT_POSTFIELDS, $payload);
         $curl->setOpt(CURLOPT_RETURNTRANSFER, 1);
-        $curl->setOpt(CURLOPT_HTTPHEADER, 
+        $curl->setOpt(
+            CURLOPT_HTTPHEADER,
             array(
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($payload),
