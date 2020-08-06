@@ -2,6 +2,10 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v1.1.1] - 2020-08-06
+### Fixed
+- Fixed an issue where a malformed grade sync request could cause an container to stop working.
+
 ## [v1.1.0] - 2020-06-16
 ### Added
 - LEMON servers can now be added to MumieTask

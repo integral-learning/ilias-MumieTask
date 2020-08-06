@@ -67,7 +67,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     {
         include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
 
-        if (!$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
+        if (!$task->getServer() || !$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
             return;
         }
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
@@ -118,7 +118,13 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         while ($record = $ilDB->fetchAssoc($result)) {
             $mumieTask = new ilObjMumieTask($record["ref_id"]);
             $mumieTask->read();
-            self::updateGrades($mumieTask);
+            try {
+                self::updateGrades($mumieTask);
+
+            } catch(Exception $e) {
+                ilLoggerFactory::getLogger('xmum')->info('Error when updating grades for MUMIE Task: ' . $mumieTask->id);
+                ilLoggerFactory::getLogger('xmum')->info($e);
+            }
         }
     }
 
