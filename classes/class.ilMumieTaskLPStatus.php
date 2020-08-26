@@ -13,7 +13,7 @@
   */
 class ilMumieTaskLPStatus extends ilLPStatusPlugin
 {
-    public static function updateAccess($user_id, $objId, $refId)
+    public static function updateAccess($user_id, $objId, $refId, $old_status)
     {
         require_once('Services/Tracking/classes/class.ilChangeEvent.php');
         ilChangeEvent::_recordReadEvent('xmum', $refId, $objId, $user_id);
@@ -25,6 +25,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
                 $objId,
                 $user_id,
                 self::LP_STATUS_IN_PROGRESS_NUM,
+                $old_status,
                 self::getPercentageForUser($objId, $user_id)
             );
         }
