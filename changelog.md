@@ -2,6 +2,10 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v1.1.2] - TODO
+### Changed
+- MumieTask now works with Ilias 6
+
 ## [v1.1.1] - 2020-08-06
 ### Fixed
 - Fixed an issue where a malformed grade sync request could cause an container to stop working.
