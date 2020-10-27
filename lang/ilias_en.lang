@@ -32,7 +32,6 @@ properties#:#Settings
 mumie_server#:#MUMIE server
 mumie_server_desc#:#Please select a MUMIE server to get an updated list of available tasks and courses.
 mumie_course#:#MUMIE course
-mumie_filter#:#Filter MUMIE Problems <span class="caret"></span>
 mumie_select_problem#:#Select a MUMIE Problem
 mumie_problem#:#MUMIE problem
 mumie_problem_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE problems! <br><br>A MUMIE problem is a single graded exercise on MUMIE
@@ -47,7 +46,6 @@ language#:#Language
 language_desc#:#Please select the language in which the MUMIE Task should be displayed.
 tab_gen_settings#:#General
 tab_lp_settings#:#Grades
-filter#:#Filter MUMIE problems
 msg_suc_saved#:#Changes successfully saved
 msg_suc_server_add#:#Added MUMIE server successfully
 msg_suc_deleted#:#Deletion successful
@@ -67,3 +65,4 @@ frm_force_update_btn#:#Force update
 edit_task#:#Edit
 activation_limited_visibility_info#:#Users can see this MUMIE task outside of the chosen availability period, but cannot work on it
 frm_online_info#:#Make this MUMIE Task visible and usable to all users with reading permission
+open_prb_selector#:#Open problem selector

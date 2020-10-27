@@ -32,7 +32,6 @@ properties#:#Einstellungen
 mumie_server#:#MUMIE-Server
 mumie_server_desc#:#Bitte wählen sie einen MUMIE-Server um eine aktuelle Liste an verfügbaren Kursen und MumieTasks zu erhalten.
 mumie_course#:#MUMIE-Kurs
-mumie_filter#:#MUMIE-Probleme filtern <span class="caret"></span>
 mumie_select_problem#:#Wählen Sie ein MUMIE-Problem
 mumie_problem#:#MUMIE-Problem
 mumie_problem_desc#:#Wählen Sie aus <b><span id='xmum_task_count'></span></b> MUMIE-Problemen! <br><br>Ein MUMIE-Problem ist eine benotete Übung auf der MUMIE-Plattform
@@ -47,7 +46,6 @@ language#:#Sprache
 language_desc#:#Bitte wählen Sie die Sprache, in der die MumieTask angezeigt werden soll.
 tab_gen_settings#:#Allgemein
 tab_lp_settings#:#Noten
-filter#:#MUMIE-Probleme filtern
 msg_suc_saved#:#Änderungen erfolgreich gespeichert
 msg_suc_server_add#:#MUMIE-Server erfolgreich hinzugefügt
 msg_suc_deleted#:#Löschen erfolgreich
@@ -67,3 +65,4 @@ frm_force_update_btn#:#Update erzwingen
 edit_task#:#Bearbeiten
 activation_limited_visibility_info#:#Nutzer können diese MumieTask außerhalb des gewählten Zeitraums sehen, aber nicht bearbeiten
 frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MumieTask sehen und bearbeiten
+open_prb_selector#:#Aufgabenauswahl öffnen
