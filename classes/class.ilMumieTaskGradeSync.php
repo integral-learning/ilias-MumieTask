@@ -30,7 +30,7 @@ class ilMumieTaskGradeSync
     }
 
     /**
-     * SyncIds are composed of a hashed ILIAS user id and a shorthand for the organization the oparates the ilias platfrom.
+     * SyncIds are composed of a hashed ILIAS user id and a shorthand for the organization the operates the ilias platform.
      *
      * They must be a unique identifier for users on both ILIAS and MUMIE servers
      */

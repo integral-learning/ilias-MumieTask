@@ -51,9 +51,9 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         return self::getLPStatusData($taskId, self::LP_STATUS_NOT_ATTEMPTED_NUM);
     }
 
-    private static function updateResult($user_id, $taskId, $succeded, $percentage)
+    private static function updateResult($user_id, $taskId, $succeeded, $percentage)
     {
-        $status = $succeded ? self::LP_STATUS_COMPLETED_NUM : self::LP_STATUS_FAILED_NUM;
+        $status = $succeeded ? self::LP_STATUS_COMPLETED_NUM : self::LP_STATUS_FAILED_NUM;
         self::writeStatus($taskId, $user_id, $status, $percentage, true);
         self::raiseEvent($taskId, $user_id, $status, $percentage);
     }
