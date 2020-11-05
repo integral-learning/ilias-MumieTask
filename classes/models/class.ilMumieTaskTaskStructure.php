@@ -48,7 +48,7 @@ class ilMumieTaskTaskStructure implements \JsonSerializable
     }
 
     /**
-     * Get all langauges used in this task
+     * Get all languages used in this task
      *
      * @return string[]
      */

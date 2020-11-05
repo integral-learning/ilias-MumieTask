@@ -12,7 +12,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 {
 
     /**
-     * Handles all commmands, default is "configure"
+     * Handles all commands, default is "configure"
      */
     public function performCommand($cmd)
     {
