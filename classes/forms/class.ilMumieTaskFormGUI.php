@@ -77,7 +77,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         $problem_selector_button = new ilMumieTaskFormButtonGUI("", "xmum_prb_sel");
         $problem_selector_button->setButtonLabel($this->lng->txt('rep_robj_xmum_open_prb_selector'));
-        $problem_selector_button->setInfo($this->lng->txt('rep_robj_xmum_add_server_desc'));
+        $problem_selector_button->setInfo($this->lng->txt('rep_robj_xmum_open_prb_selector_desc'));
         $this->addItem($problem_selector_button);
 
 

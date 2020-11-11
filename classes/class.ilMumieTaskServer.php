@@ -214,7 +214,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
 
     public function jsonSerialize()
     {
-        $parentVars = (array)parent::jsonSerialize();
+        $parentVars = (array) parent::jsonSerialize();
         $vars = (array) get_object_vars($this);
         return array_merge($vars, $parentVars);
     }
