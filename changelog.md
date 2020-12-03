@@ -2,6 +2,10 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v1.1.3] - TODO
+### Fixed
+- Editing a MUMIE Task no longer changes the selected problem.
+
 ## [v1.1.2] - 2020-11-05
 ### Fixed
 - Fixed a bug, where a not attempted MUMIE Task could crash a container.
