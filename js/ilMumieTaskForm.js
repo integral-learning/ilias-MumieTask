@@ -321,7 +321,7 @@
                 if (nameElem.value.length == 0) {
                     return false;
                 }
-                return nameElem.value !== '-- Empty MumieTask --' && !getAllHeadlines().includes(nameElem.value);
+                return !isDummyTask() && !getAllHeadlines().includes(nameElem.value);
             }
 
             /**
@@ -417,8 +417,16 @@
                 };
             }
 
+            /**
+             * Check whether this form is editing an existing task or creating a new one
+             * @returns {boolean} True, if it's a new MUMIE Task
+             */
+            function isDummyTask() {
+                return nameElem.value === '-- Empty MumieTask --'
+            }
+
             return {
-                init: function (isEdit) {
+                init: function () {
                     taskDropDown = document.getElementById("xmum_task");
                     taskCount = document.getElementById('xmum_task_count');
                     nameElem = document.getElementById("title");
@@ -426,7 +434,7 @@
                     taskDropDown.onchange = function () {
                         updateName();
                     };
-                    taskController.updateOptions(isEdit ?
+                    taskController.updateOptions(!isDummyTask() ?
                         taskDropDown.options[taskDropDown.selectedIndex].getAttribute('value') : undefined
                     );
                 },

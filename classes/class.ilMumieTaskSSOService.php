@@ -20,7 +20,7 @@ class ilMumieTaskSSOService
      * Verifies MUMIE tokens for SSO
      *
      * @return json object $response containing the field status: valid or invalid
-     * and any user data that the admin has selected for sharing (user_id,firstname,lastname,email)
+     * and any user data that the admin has selected for sharing (user_id, firstname, lastname,email)
      */
 
     public static function verifyToken()

@@ -2,6 +2,15 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v1.1.3] - TODO
+### Fixed
+- Editing a MUMIE Task no longer changes the selected problem.
+
+## [v1.1.2] - 2020-11-05
+### Fixed
+- Fixed a bug, where a not attempted MUMIE Task could crash a container.
+- Corrected some spelling errors
+
 ## [v1.1.1] - 2020-08-06
 ### Fixed
 - Fixed an issue where a malformed grade sync request could cause an container to stop working.

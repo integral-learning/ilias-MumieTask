@@ -18,8 +18,6 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
 {
-    const LP_SESSION_ID = 'xmum_lp_session_state';
-
     /**
      * Get type.
      */
@@ -29,7 +27,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
 
     /**
-     * Handles all commmands of this class, centralizes permission checks
+     * Handles all commands of this class, centralizes permission checks
      */
     public function performCommand($cmd)
     {
@@ -194,7 +192,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
 
     /**
-     * submit changes made to the general settings of a MumieTask and trigger a forced grade update if necessarry
+     * submit changes made to the general settings of a MumieTask and trigger a forced grade update if necessary
      */
     public function submitMumieTask()
     {
@@ -323,7 +321,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Display a users grade in a message box
      *
-     * We couldn't find (and dont believe there is) a built-in functionality to display all necessary information about learning progress in the learning progress gui.
+     * We couldn't find (and don't believe there is) a built-in functionality to display all necessary information about learning progress in the learning progress gui.
      * We need to use this workaround until ilias fixes this.
      */
     public function setProgressInfo()
@@ -539,7 +537,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
 
     /**
-     * Submit changes made to availability settings and trigger a forced grade update if neccessarry
+     * Submit changes made to availability settings and trigger a forced grade update if necessary
      */
     public function submitAvailabilitySettings()
     {

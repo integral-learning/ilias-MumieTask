@@ -149,7 +149,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     }
 
     /**
-     * Populate the drop down menues from the server structure with all possible options.
+     * Populate the drop down menus from the server structure with all possible options.
      *
      * js/ilMumieTaskForm.js removes incorrect options for any given selection
      */
@@ -189,7 +189,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         foreach ($course->getName() as $name) {
             $this->course_options[$name->value] = $name->value;
 
-            // If a user wants to use an entire course instead of a single problem, we need to define a pseduo problem to use.
+            // If a user wants to use an entire course instead of a single problem, we need to define a pseudo problem to use.
             $languagelink = $course->getLink() . '?lang=' . $name->language;
             $this->task_options[$languagelink] = $name->value;
         }
@@ -223,7 +223,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     }
 
     /**
-     * Disable all drop down menues and command buttons for this form
+     * Disable all drop down menus and command buttons for this form
      */
     public function disable()
     {
