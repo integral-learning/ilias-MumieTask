@@ -12,7 +12,7 @@
 
     $(document).ready(function () {
         var structure = JSON.parse(document.getElementById('server_data').getAttribute('value'));
-        var lmsSelectorUrl = 'http://localhost:7070';
+        var lmsSelectorUrl = 'https://pool.mumie.net';
 
         var serverController = (function () {
             var serverStructure;
@@ -228,8 +228,7 @@
              */
             function addMessageListener() {
                 window.addEventListener('message', (event) => {
-                    console.log("message received");
-                    console.log(event.data);
+                    event.preventDefault();
                     if (event.origin != lmsSelectorUrl) {
                         return;
                     }

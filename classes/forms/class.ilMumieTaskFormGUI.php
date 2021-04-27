@@ -60,6 +60,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->language_item = new ilSelectInputGUI($lng->txt('rep_robj_xmum_language'), 'xmum_language');
         $this->language_item->setInfo($lng->txt('rep_robj_xmum_language_desc'));
         $this->language_item->setRequired(true);
+        $this->language_item->setDisabled(true);
         $this->addItem($this->language_item);
 
         $this->course_item = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_course'), 'xmum_course');
@@ -73,6 +74,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->problem_item = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_problem'), 'xmum_task');
         $this->problem_item->setInfo($lng->txt('rep_robj_xmum_mumie_problem_desc'));
         $this->problem_item->setRequired(true);
+        $this->problem_item->setDisabled(true);
         $this->addItem($this->problem_item);
 
         $problem_selector_button = new ilMumieTaskFormButtonGUI("", "xmum_prb_sel");
