@@ -8,8 +8,6 @@
  */
 
 (function ($) {
-
-
     $(document).ready(function () {
         const structure = JSON.parse(document.getElementById('server_data').getAttribute('value'));
         const lmsSelectorUrl = 'https://pool.mumie.net';
@@ -29,18 +27,11 @@
                 },
                 getSelectedServer: function () {
                     const selectedServerName = serverDropDown.options[serverDropDown.selectedIndex].text;
-
-                    for (let i in serverStructure) {
-                        const server = serverStructure[i];
-                        if (server.name === selectedServerName) {
-                            return server;
-                        }
-                    }
-                    return null;
+                    return serverStructure.find(server => server.name === selectedServerName);
                 },
                 disable: function () {
                     serverDropDown.disabled = true;
-                    removeChildElems(serverDropDown);
+                    removeChildElements(serverDropDown);
                 },
                 getAllServers: function () {
                     return serverStructure;
@@ -64,11 +55,7 @@
                 if (!course.languages.includes(selectedLanguage)) {
                     name = course.name[0];
                 } else {
-                    for (let i in course.name) {
-                        if (course.name[i].language === selectedLanguage) {
-                            name = course.name[i];
-                        }
-                    }
+                    name = course.name.find(n => n.language === selectedLanguage);
                 }
                 optionCourse.setAttribute("value", name.value);
                 optionCourse.text = name.value;
@@ -94,32 +81,26 @@
                 getSelectedCourse: function () {
                     const selectedCourseName = courseDropDown.options[courseDropDown.selectedIndex].text;
                     const courses = serverController.getSelectedServer().courses;
-                    for (let i in courses) {
-                        const course = courses[i];
-                        for (let j in course.name) {
-                            if (course.name[j].value === selectedCourseName) {
-                                return course;
-                            }
-                        }
-                    }
-                    return null;
+
+                    return courses.find(course => {
+                        return course.name.some(name => name.value === selectedCourseName)
+                    })
                 },
                 disable: function () {
                     courseDropDown.disabled = true;
-                    removeChildElems(courseDropDown);
+                    removeChildElements(courseDropDown);
                 },
                 updateOptions: function () {
                     const selectedCourseFile = coursefileElem.value;
-                    removeChildElems(courseDropDown);
+                    removeChildElements(courseDropDown);
                     courseDropDown.selectedIndex = 0;
-                    const courses = serverController.getSelectedServer().courses;
-                    for (const i in courses) {
-                        const course = courses[i];
-                        addOptionForCourse(course);
-                        if (course.path_to_course_file === selectedCourseFile) {
-                            courseDropDown.selectedIndex = courseDropDown.childElementCount - 1;
-                        }
-                    }
+                    serverController.getSelectedServer().courses
+                        .forEach(course => {
+                            addOptionForCourse(course);
+                            if (course.path_to_course_file === selectedCourseFile) {
+                                courseDropDown.selectedIndex = courseDropDown.childElementCount - 1;
+                            }
+                        })
                     updateCoursefilePath();
                 }
             };
@@ -135,14 +116,14 @@
                 updateOptions: function () {
                     const availableLanguages = courseController.getSelectedCourse().languages;
                     const currentLang = langController.getSelectedLanguage();
-                    if(!availableLanguages.includes(currentLang)) {
+                    if (!availableLanguages.includes(currentLang)) {
                         langController.setLanguage(availableLanguages[0]);
                     }
                 },
                 getSelectedLanguage: function () {
                     return languageElement.value;
                 },
-                setLanguage: function(lang) {
+                setLanguage: function (lang) {
                     if (!courseController.getSelectedCourse().languages.includes(lang)) {
                         throw new Error("Selected language not available");
                     }
@@ -153,10 +134,10 @@
             };
         })();
 
-        var problemSelectorController = (function() {
-            var problemSelectorButton = document.getElementById('xmum_prb_sel');
-            var problemSelectorWindow;
-            var mumieOrg = document.getElementById('mumie_org').value;
+        const problemSelectorController = (function () {
+            const problemSelectorButton = document.getElementById('xmum_prb_sel');
+            let problemSelectorWindow;
+            const mumieOrg = document.getElementById('mumie_org').value;
 
             /**
              * Send a message to the problem selector window.
@@ -208,78 +189,59 @@
                         taskController.updateOptions(importObj.link);
                         sendSuccess();
                         window.focus();
-                        displayProblemSelectedMessage();
                     } catch (error) {
                         sendFailure(error.message);
                     }
-                  }, false);
-            }
-
-            /**
-             * Display a success message in Moodle that a problem was successfully selected.
-             */
-            function displayProblemSelectedMessage() {
-                require(['core/str', "core/notification"], function(str, notification) {
-                    str.get_strings([{
-                        'key': 'mumie_form_updated_selection',
-                        component: 'mod_mumie'
-                    }]).done(function(s) {
-                        notification.addNotification({
-                            message: s[0],
-                            type: "info"
-                        });
-                    }).fail(notification.exception);
-                });
+                }, false);
             }
 
             return {
-                init: function() {
-                    problemSelectorButton.onclick = function(e) {
+                init: function () {
+                    problemSelectorButton.onclick = function (e) {
                         e.preventDefault();
-                        var selectedTask = taskController.getSelectedTask();
-                        console.log("selectedTask", selectedTask);
+                        const selectedTask = taskController.getSelectedTask();
                         problemSelectorWindow = window.open(
                             lmsSelectorUrl
-                                + '/lms-problem-selector?'
-                                + 'org='
-                                + mumieOrg
-                                + '&serverUrl='
-                                + encodeURIComponent(serverController.getSelectedServer().url_prefix)
-                                + "&lang="
-                                + langController.getSelectedLanguage()
-                                + (selectedTask  ? "&problem=" + selectedTask.link : '')
-                                + "&origin=" + encodeURIComponent(window.location.origin)
+                            + '/lms-problem-selector?'
+                            + 'org='
+                            + mumieOrg
+                            + '&serverUrl='
+                            + encodeURIComponent(serverController.getSelectedServer().url_prefix)
+                            + "&lang="
+                            + langController.getSelectedLanguage()
+                            + (selectedTask ? "&problem=" + selectedTask.link : '')
+                            + "&origin=" + encodeURIComponent(window.location.origin)
                             , '_blank'
                         );
                     };
 
-                    window.onclose = function() {
+                    window.onclose = function () {
                         sendSuccess();
                     };
 
-                    window.addEventListener("beforeunload", function() {
+                    window.addEventListener("beforeunload", function () {
                         sendSuccess();
-                     }, false);
+                    }, false);
 
                     addMessageListener();
                 },
-                disable: function() {
+                disable: function () {
                     problemSelectorButton.disabled = true;
                 }
             };
         })();
 
-        var taskController = (function () {
-            var task_element = document.getElementById("xmum_task");
-            var display_task_element = document.getElementById("xmum_display_task");
-            var taskCount = document.getElementById('xmum_task_count');
-            var nameElem = document.getElementById("title");
+        const taskController = (function () {
+            const task_element = document.getElementById("xmum_task");
+            const display_task_element = document.getElementById("xmum_display_task");
+            const taskCount = document.getElementById('xmum_task_count');
+            const nameElem = document.getElementById("title");
 
             /**
              * Update the activity's name in the input field
              */
             function updateName() {
-                var newHeadline = getHeadline(taskController.getSelectedTask())
+                const newHeadline = getHeadline(taskController.getSelectedTask());
                 if (!isCustomName()) {
                     nameElem.value = newHeadline;
                 }
@@ -307,13 +269,9 @@
                 if (!task) {
                     return null;
                 }
-                for (var i in task.headline) {
-                    var localHeadline = task.headline[i];
-                    if (localHeadline.language === langController.getSelectedLanguage()) {
-                        return localHeadline.name;
-                    }
-                }
-                return null;
+                const selectedLanguage = langController.getSelectedLanguage();
+                const headlineWrapper = task.headline.find(localHeadline => localHeadline.language === selectedLanguage);
+                return headlineWrapper ? headlineWrapper.name : null;
             }
 
             /**
@@ -322,18 +280,9 @@
              * @return {Object} Array containing all available tasks
              */
             function getAllTasks() {
-                const tasks = [];
-                for (let i in serverController.getAllServers()) {
-                    const server = serverController.getAllServers()[i];
-                    for (const j in server.courses) {
-                        const course = server.courses[j];
-                        for (const m in course.tasks) {
-                            var task = course.tasks[m];
-                            tasks.push(task);
-                        }
-                    }
-                }
-                return tasks;
+                return serverController.getAllServers()
+                    .flatMap(server => server.courses)
+                    .flatMap(course => course.tasks);
             }
 
             /**
@@ -341,41 +290,9 @@
              * @returns {Object} Array containing all headlines
              */
             function getAllHeadlines() {
-                var headlines = [];
-                var tasks = getAllTasks();
-                tasks.push(getPseudoTaskFromCourse(courseController.getSelectedCourse()));
-                for (var i in tasks) {
-                    var task = tasks[i];
-                    for (var n in task.headline) {
-                        headlines.push(task.headline[n].name);
-                    }
-                }
-                var course = courseController.getSelectedCourse();
-                for (var j in course.name) {
-                    var name = course.name[j];
-                    headlines.push(name.value);
-                }
-                return headlines;
-            }
-
-            /**
-             * Get a task that links to a course's overview page
-             * @param {Object} course
-             * @returns {Object} task
-             */
-            function getPseudoTaskFromCourse(course) {
-                var headline = [];
-                for (var i in course.name) {
-                    var name = course.name[i];
-                    headline.push({
-                        "name": name.value,
-                        "language": name.language
-                    });
-                }
-                return {
-                    "link": course.link,
-                    "headline": headline
-                };
+                return getAllTasks().flatMap(task => task.headline)
+                    .map(headline => headline.name)
+                    .concat(courseController.getSelectedCourse().name.map(n => n.value))
             }
 
             /**
@@ -388,42 +305,30 @@
 
             return {
                 init: function () {
-                    task_element = document.getElementById("xmum_task");
-                    taskCount = document.getElementById('xmum_task_count');
-                    nameElem = document.getElementById("title");
                     taskController.updateOptions(!isDummyTask() ?
                         task_element?.value : undefined
                     );
                 },
                 getSelectedTask: function () {
-                    var selectedLink = task_element.value;
-                    var course = courseController.getSelectedCourse();
-                    var tasks = course.tasks.slice();
-                    tasks.push(getPseudoTaskFromCourse(course));
-                    for (var i in tasks) {
-                        var task = tasks[i];
-                        if (selectedLink == task.link) {
-                            return task;
-                        }
-                    }
-                    return null;
+                    const selectedLink = task_element.value
+                    return courseController.getSelectedCourse()
+                        .tasks
+                        .slice()
+                        .find(task => task.link === selectedLink);
                 },
                 updateOptions: function (selectTaskByLink) {
                     task_element.value = selectTaskByLink;
-                    var tasks = courseController.getSelectedCourse().tasks;
-
-                    taskCount.textContent = '' + tasks.length;
+                    taskCount.textContent = '' + courseController.getSelectedCourse().tasks.length;
                     updateName();
                 }
             };
         })();
 
-
         /**
          * Remove all child elements of a given html element
          * @param {Object} elem
          */
-        function removeChildElems(elem) {
+        function removeChildElements(elem) {
             while (elem.firstChild) {
                 elem.removeChild(elem.firstChild);
             }
