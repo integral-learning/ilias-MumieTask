@@ -207,7 +207,7 @@
                             + mumieOrg
                             + '&serverUrl='
                             + encodeURIComponent(serverController.getSelectedServer().url_prefix)
-                            + "&lang="
+                            + "&problemLang="
                             + langController.getSelectedLanguage()
                             + (selectedTask ? "&problem=" + selectedTask.link : '')
                             + "&origin=" + encodeURIComponent(window.location.origin)
