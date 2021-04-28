@@ -17,10 +17,12 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     {
         parent::__construct();
     }
+
     private $title_item;
     private $description_item;
     private $server_item;
     private $course_item;
+    private $problem_display_item;
     private $problem_item;
     private $launchcontainer_item;
     private $language_item;
@@ -30,8 +32,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     private $server_options = array();
     private $course_options = array();
-    private $task_options = array();
-    private $lang_options = array();
 
     public function setFields($is_creation_mode = false)
     {
@@ -57,10 +57,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             $this->addItem($add_server_button);
         }
 
-        $this->language_item = new ilSelectInputGUI($lng->txt('rep_robj_xmum_language'), 'xmum_language');
-        $this->language_item->setInfo($lng->txt('rep_robj_xmum_language_desc'));
-        $this->language_item->setRequired(true);
-        $this->language_item->setDisabled(true);
+        $this->language_item = new ilHiddenInputGUI('xmum_language');
         $this->addItem($this->language_item);
 
         $this->course_item = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_course'), 'xmum_course');
@@ -71,10 +68,12 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $select_task_header_item->setTitle($lng->txt("rep_robj_xmum_mumie_select_problem"));
         $this->addItem($select_task_header_item);
 
-        $this->problem_item = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_problem'), 'xmum_task');
-        $this->problem_item->setInfo($lng->txt('rep_robj_xmum_mumie_problem_desc'));
-        $this->problem_item->setRequired(true);
-        $this->problem_item->setDisabled(true);
+        $this->problem_display_item = new ilTextInputGUI($lng->txt('rep_robj_xmum_mumie_problem'), 'xmum_display_task');
+        $this->problem_display_item->setInfo($lng->txt('rep_robj_xmum_mumie_problem_desc'));
+        $this->problem_display_item->setDisabled(true);
+        $this->addItem($this->problem_display_item);
+
+        $this->problem_item = new ilHiddenInputGUI('xmum_task');
         $this->addItem($this->problem_item);
 
         $problem_selector_button = new ilMumieTaskFormButtonGUI("", "xmum_prb_sel");
@@ -135,11 +134,11 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         if ($task == null && $is_dummy) {
             $ok = false;
-            $this->problem_item->setAlert($lng->txt('required_field'));
+            $this->problem_display_item->setAlert($lng->txt('required_field'));
             return $ok;
         } elseif ($task == null) {
             $ok = false;
-            $this->problem_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_problem_not_found'));
+            $this->problem_display_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_problem_not_found'));
             return $ok;
         }
         if (!$is_dummy && !in_array($this->getInput("xmum_language"), $task->getLanguages())) {
@@ -159,19 +158,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     {
         foreach ($servers as $server) {
             $this->compileServerOption($server);
-            $this->compileLangOptions($server);
         }
         $this->server_item->setOptions($this->server_options);
         $this->course_item->setOptions($this->course_options);
-        $this->problem_item->setOptions($this->task_options);
-        $this->language_item->setOptions($this->lang_options);
-    }
-
-    private function compileLangOptions($server)
-    {
-        foreach ($server->getLanguages() as $lang) {
-            $this->lang_options[$lang] = $lang;
-        };
     }
 
     private function compileServerOption($server)
@@ -185,21 +174,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     private function compileCourseOption($course)
     {
-        foreach ($course->getTasks() as $task) {
-            $this->compileTaskOption($task);
-        }
         foreach ($course->getName() as $name) {
             $this->course_options[$name->value] = $name->value;
-
-            // If a user wants to use an entire course instead of a single problem, we need to define a pseudo problem to use.
-            $languagelink = $course->getLink() . '?lang=' . $name->language;
-            $this->task_options[$languagelink] = $name->value;
         }
-    }
-
-    private function compileTaskOption($task)
-    {
-        $this->task_options[$task->getLink()] = $task->getLink();
     }
 
     /**
@@ -216,12 +193,14 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     public function setDefault()
     {
+        global $ilUser;
         if ($this->launchcontainer_item->getValue() == null) {
             $this->launchcontainer_item->setValue("0");
         }
 
         include_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         $this->org_item->setValue(ilMumieTaskAdminSettings::getInstance()->getOrg());
+        $this->language_item->SetValue($ilUser->getLanguage());
     }
 
     /**
@@ -231,8 +210,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     {
         $this->server_item->setDisabled(true);
         $this->course_item->setDisabled(true);
-        $this->problem_item->setDisabled(true);
-        $this->language_item->setDisabled(true);
         $this->clearCommandButtons();
     }
 }
