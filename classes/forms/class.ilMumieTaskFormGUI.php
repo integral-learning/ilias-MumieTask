@@ -200,7 +200,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         include_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         $this->org_item->setValue(ilMumieTaskAdminSettings::getInstance()->getOrg());
-        $this->language_item->SetValue($ilUser->getLanguage());
+        if($this->language_item->getValue() == null) {
+            $this->language_item->setValue($ilUser->getLanguage());
+        }
     }
 
     /**
