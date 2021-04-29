@@ -102,17 +102,15 @@ class ilMumieTaskSSOService
         $tpl->setVariable("WIDTH", '100%');
         $tpl->setVariable("HEIGHT", $height);
 
-        if ($launchcontainer == 1) {
+        if ($taskObj->getLaunchcontainer() == 1) {
             $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the iframe and launch it immediately via $script
             $script = "<script>
-            var iframe = document.getElementById('basicMumieTaskLaunchFrame');
-            var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            const iframe = document.getElementById('basicMumieTaskLaunchFrame');
+            let width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
-            var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-            var height = height * 0.8;
-            var width = width * 0.6;
-
-            console.log(window.screen.height, window.screen.width, window.innerHeight, window.innerHeight, height, width);
+            let height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            height = height * 0.8;
+            width = width * 0.6;
 
             //iframe.width = width;
             iframe.height = height;

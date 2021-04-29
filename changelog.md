@@ -2,6 +2,14 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v1.2.0] - 2021-04-29
+### Fixed
+- Editing a MUMIE Task no longer changes the selected problem.
+- Launch container settings are no longer ignored when opening a MUMIE Task
+
+### Changed
+- Reworked UI for problem selection. Ilias now uses an external problem selector
+
 ## [v1.1.2] - 2020-11-05
 ### Fixed
 - Fixed a bug, where a not attempted MUMIE Task could crash a container.
