@@ -17,10 +17,12 @@ class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
 {
     protected $link;
     protected $button_label;
+    protected $id;
 
-    public function __construct($a_title = "")
+    public function __construct($a_title = "", $id = "")
     {
         parent::__construct($a_title, "");
+        $this->id = $id;
     }
 
     public function insert($a_tpl)
@@ -35,6 +37,7 @@ class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/tpl.mumie_form_button.html", true, true, true, "DEFAULT", true);
         $tpl->setVariable("COMMAND_LINK", $this->link);
         $tpl->setVariable("BUTTON_LABEL", $this->button_label);
+        $tpl->setVariable("ID", $this->id);
 
         return $tpl->get();
     }
