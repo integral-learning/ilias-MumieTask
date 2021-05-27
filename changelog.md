@@ -2,6 +2,10 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v1.3.0] - TODO
+### Changed
+- Adjusted plugin to work with ilias 6. MUMIE Task no longer supports Ilias versions prior to 6.0
+
 ## [v1.2.0] - 2021-04-29
 ### Fixed
 - Editing a MUMIE Task no longer changes the selected problem.
