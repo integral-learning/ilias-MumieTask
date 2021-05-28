@@ -16,7 +16,7 @@ require_once("Services/Init/classes/class.ilInitialisation.php");
  */
 class ilMumieTaskInitialisation extends ilInitialisation
 {
-    public static function initILIAS($clientId)
+    public static function init($clientId)
     {
         define('CLIENT_ID', $clientId);
         parent::initILIAS();
