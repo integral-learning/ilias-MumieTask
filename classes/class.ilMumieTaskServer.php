@@ -39,7 +39,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
      * @return ilMumieTaskServer
      *
      */
-    public static function fromUrl($url)
+    public static function fromUrl($url): ilMumieTaskServer
     {
         $server = new ilMumieTaskServer();
         $server->setUrlPrefix($url);
@@ -70,7 +70,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
      * Get a list of all saved server configurations
      * @return array
      */
-    public static function getAllServerData()
+    public static function getAllServerData(): array
     {
         global $DIC;
         $query = "SELECT * FROM " . ilMumieTaskServer::$SERVER_TABLE_NAME;
@@ -87,7 +87,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
      *
      * @return array
      */
-    public static function getAllServers()
+    public static function getAllServers(): array
     {
         $servers = array();
         foreach (ilMumieTaskServer::getAllServerData() as $data) {
@@ -111,7 +111,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
 
     public function setUrlPrefix($url_prefix)
     {
-        $url_prefix = (substr($url_prefix, -1) == '/' ? $url_prefix : $url_prefix . '/');
+        $url_prefix = (substr($url_prefix, -1) == '/' ? trim($url_prefix) : trim($url_prefix) . '/');
         $this->url_prefix = $url_prefix;
     }
 
@@ -152,7 +152,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         $this->url_prefix = $result->url_prefix;
     }
 
-    public function nameExistsInDB()
+    public function nameExistsInDB(): bool
     {
         global $DIC;
         $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE name = ' . $DIC->database()->quote($this->name, 'text');
@@ -161,7 +161,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         return $DIC->database()->numRows($result) > 0;
     }
 
-    public function urlPrefixExistsInDB()
+    public function urlPrefixExistsInDB(): bool
     {
         global $DIC;
         $query = "SELECT * FROM " . ilMumieTaskServer::$SERVER_TABLE_NAME . " WHERE url_prefix = " . $DIC->database()->quote($this->url_prefix, 'text');
@@ -173,7 +173,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
      * Return false, if the server did not give any meaningful response
      * @return boolean
      */
-    public function isValidMumieServer()
+    public function isValidMumieServer(): bool
     {
         return $this->getCoursesAndTasks()->courses != null;
     }
@@ -202,7 +202,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         return json_decode($response);
     }
 
-    private function getCoursesAndTasksURL()
+    private function getCoursesAndTasksURL(): string
     {
         return $this->url_prefix . 'public/courses-and-tasks?v=' . self::MUMIE_JSON_FORMAT_VERSION . '&org=' . ilMumieTaskAdminSettings::getInstance()->getOrg();
     }
@@ -219,7 +219,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         return array_merge($vars, $parentVars);
     }
 
-    public static function serverConfigExistsForUrl($url)
+    public static function serverConfigExistsForUrl($url): bool
     {
         return in_array(
             $url,
@@ -229,17 +229,17 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
         );
     }
 
-    public function getLoginUrl()
+    public function getLoginUrl(): string
     {
         return $this->url_prefix . 'public/xapi/auth/sso/login';
     }
-    public function getLogoutUrl()
+    public function getLogoutUrl(): string
     {
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         return urlencode($this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg());
     }
 
-    public function getGradeSyncURL()
+    public function getGradeSyncURL(): string
     {
         return $this->url_prefix . 'public/xapi?v=' . self::MUMIE_GRADE_SYNC_VERSION;
     }
