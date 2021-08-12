@@ -2,9 +2,9 @@
 
 All important changes to this plugin will be documented in this file.
 
-## [v1.3.0] - TODO
+## [v2.0.0] - 2021-08-12
 ### Changed
-- Adjusted plugin to work with ilias 6. MUMIE Task no longer supports Ilias versions prior to 6.0
+- Adjusted plugin to work with ilias 6. This version of MUMIE Task no longer supports Ilias versions prior to 6.0
 
 ### Fixed
 - Fixed an error in MUMIE server form, where whitespace around the URL prefix could cause an error
