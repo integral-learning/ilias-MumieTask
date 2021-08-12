@@ -2,6 +2,14 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v2.0.0] - 2021-08-12
+### Changed
+- Adjusted plugin to work with ilias 6. This version of MUMIE Task no longer supports Ilias versions prior to 6.0
+
+### Fixed
+- Fixed an error in MUMIE server form, where whitespace around the URL prefix could cause an error
+- Fixed a warning during verification of SSO attempts that appeared in the server logs
+
 ## [v1.2.0] - 2021-04-29
 ### Fixed
 - Editing a MUMIE Task no longer changes the selected problem.
