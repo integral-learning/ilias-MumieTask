@@ -57,6 +57,7 @@ class ilMumieTaskGradeSync
      */
     public function getXapiGradesByUser()
     {
+        $logger = ilLoggerFactory::getLogger('xmum');
         $params = array(
             "users" => $this->getSyncIds($this->user_ids),
             "course" => $this->task->getMumieCoursefile(),
@@ -64,6 +65,8 @@ class ilMumieTaskGradeSync
             'lastSync' => $this->getLastSync(),
             'includeAll' => true
         );
+
+        $logger->info("xapi params: " . json_encode($params));
 
         if ($this->task->getActivationLimited() == 1) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
@@ -92,7 +95,6 @@ class ilMumieTaskGradeSync
             )
         );
         $response = json_decode($curl->exec());
-        $logger = ilLoggerFactory::getLogger('xmum');
         $logger->info("xapi response: " . json_encode($response));
         $curl->close();
         return $this->getValidGradeByUser($response);
