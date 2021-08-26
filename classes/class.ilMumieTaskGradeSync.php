@@ -64,7 +64,7 @@ class ilMumieTaskGradeSync
             'lastSync' => $this->getLastSync(),
             'includeAll' => true
         );
-        
+
         if ($this->task->getActivationLimited() == 1) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
         }
@@ -95,7 +95,7 @@ class ilMumieTaskGradeSync
         $curl->close();
         return $this->getValidGradeByUser($response);
     }
-    
+
     /**
      * Get the unique identifier for a MUMIE task
      *
@@ -172,7 +172,7 @@ class ilMumieTaskGradeSync
                 array_push($grades_by_user->{$this->getIliasId($xapi_grade)}, $xapi_grade);
             }
         }
-        
+
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
             $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
@@ -181,7 +181,7 @@ class ilMumieTaskGradeSync
 
         return array_filter($valid_grade_by_user);
     }
-    
+
     private function isGradeBeforeDueDate($grade)
     {
         if (!$this->task->getActivationLimited()) {
