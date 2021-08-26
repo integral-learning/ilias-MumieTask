@@ -95,6 +95,12 @@ class ilMumieTaskGradeSync
             )
         );
         $response = json_decode($curl->exec());
+
+        $logger->info("xapi header: " . json_encode(array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($payload),
+                "X-API-Key: " . $this->admin_settings->getApiKey(),
+            )));
         $logger->info("xapi response: " . json_encode($response));
         $curl->close();
         return $this->getValidGradeByUser($response);
