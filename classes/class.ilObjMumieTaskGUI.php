@@ -430,9 +430,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilTabs;
         $ilTabs->activateTab('properties');
         $this->setSubTabs("properties");
-
+        $disable_grade_pool_selection = !is_null($this->object->getPrivateGradepool());
         $ilTabs->activateSubTab('lp_settings');
-        $this->initLPSettingsForm();
+        $this->initLPSettingsForm($disable_grade_pool_selection);
         $values = array();
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
@@ -444,12 +444,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Initialize the LP settings form and add force sync button and command buttons
      */
-    public function initLPSettingsForm()
+    public function initLPSettingsForm($disable_grade_pool_selection)
     {
         global $ilCtrl;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskLPSettingsFormGUI.php');
         $form = new ilMumieTaskLPSettingsFormGUI();
-        $form->setFields();
+        $form->setFields($disable_grade_pool_selection);
         $form->setTitle($this->lng->txt('rep_robj_xmum_tab_lp_settings'));
 
         require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
@@ -470,7 +470,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitLPSettings()
     {
-        $this->initLPSettingsForm();
+        $disable_grade_pool_selection = !is_null($this->object->getPrivateGradepool());
+        $this->initLPSettingsForm($disable_grade_pool_selection);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $this->tpl->setContent($this->form->getHTML());

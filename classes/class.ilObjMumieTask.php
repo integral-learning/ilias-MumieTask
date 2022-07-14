@@ -33,7 +33,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $activation_starting_time;
     private $activation_ending_time;
     private $activation_visibility;
-    private $private_gradepool = 0;
+    private $private_gradepool;
 
     /**
      * Constructor
