@@ -436,6 +436,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $values = array();
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
+        $values['privategradepool'] = $this->object->getPrivateGradepool();
         $this->form->setValuesByArray($values);
         $this->tpl->setContent($this->form->getHTML());
     }
@@ -477,6 +478,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         $force_grade_update = $this->object->getPassingGrade() !== $this->form->getInput('passing_grade');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
+        $this->object->setPrivateGradepool($this->form->getInput('privategradepool'));
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->doUpdate();
         if ($force_grade_update) {

@@ -18,6 +18,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     }
 
     private $modus_item;
+    private $gradepool_item;
     private $passing_threshold_item;
     public function setFields()
     {
@@ -29,6 +30,14 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->modus_item->addOption($modus_option_true);
         $this->modus_item->addOption($modus_option_false);
         $this->addItem($this->modus_item);
+
+        $this->gradepool_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_privategradepool'), "privategradepool");
+        $this->gradepool_item->setInfo($lng->txt('rep_robj_xmum_frm_privategradepool_desc'));
+        $gradepool_option_true = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 0);
+        $gradepool_option_false = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 1);
+        $this->gradepool_item->addOption($gradepool_option_true);
+        $this->gradepool_item->addOption($gradepool_option_false);
+        $this->addItem($this->gradepool_item);
 
         $this->passing_threshold_item = new ilNumberInputGUI($lng->txt('rep_robj_xmum_frm_passing_grade'), 'passing_grade');
         $this->passing_threshold_item->setRequired(true);

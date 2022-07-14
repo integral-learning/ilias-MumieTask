@@ -55,6 +55,10 @@ msg_no_connection_to_server#:#Ilias could not connect to the MUMIE server that h
 grades#:#Grades
 frm_sync_lp#:#Grade synchronization
 frm_sync_lp_desc#:#Choose whether to automatically load grades from the MUMIE server into ILIAS for this MUMIE Task
+frm_privategradepool#:#Share grades with other courses
+frm_privategradepool_desc#:#Choose whether to share grades with other ILIAS repositories.
+<br>If sharing is enabled, points that were earned for MUMIE problems in other repositories will be automatically synchronized with this repository\'s gradebook.
+<br>If not, this repository will neither be able to import nor to export grades.
 frm_enable#:#Enabled
 frm_disable#:#Disabled
 frm_passing_grade#:#Passing grade

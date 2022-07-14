@@ -55,6 +55,10 @@ msg_no_connection_to_server#:#Ilias konnte keine Antwort von dem MUMIE-Server er
 grades#:#Noten
 frm_sync_lp#:#Noten-Synchronisation
 frm_sync_lp_desc#:#Wählen Sie, ob Noten für diese MumieTask automatisch mit Ilias synchronisiert werden sollen
+frm_privategradepool#:#Punkte mit anderen Kursen teilen
+frm_privategradepool_desc#:#Bestimmen Sie, ob MUMIE-Punktzahlen mit anderen Kursen geteilt werden.
+<br>Falls diese Option aktiviert ist, werden Punkte, die für das Bearbeiten von MUMIE-Aufgaben in anderen ILIAS-Repositories vergeben wurden, auch in diesen Kurs übernommen.
+<br>Falls diese Option deaktiviert ist, werden weder Punkte aus anderen ILIAS-Repositories übernommen noch werden hier erziehlte Punkte mit anderen Kursen geteilt.
 frm_enable#:#Aktiviert
 frm_disable#:#Deaktiviert
 frm_passing_grade#:#Mindestpunktzahl

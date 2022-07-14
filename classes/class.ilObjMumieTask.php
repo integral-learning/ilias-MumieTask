@@ -33,6 +33,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $activation_starting_time;
     private $activation_ending_time;
     private $activation_visibility;
+    private $private_gradepool = 0;
 
     /**
      * Constructor
@@ -93,6 +94,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setLpModus($rec['lp_modus']);
             $this->setPassingGrade($rec['passing_grade']);
             $this->setOnline($rec['online']);
+            $this->setPrivateGradepool($rec['privategradepool']);
         }
 
         /**
@@ -134,6 +136,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'mumie_coursefile' => array('text', $this->getMumieCoursefile()),
                 'passing_grade' => array('integer', $this->getPassingGrade()),
                 'lp_modus' => array('integer', $this->getLpModus()),
+                'privategradepool' => array('integer', $this->getPrivateGradepool()),
                 'online' => array('integer', $this->getOnline()),
             ),
             array(
@@ -536,5 +539,15 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         $this->activation_visibility = $activation_visibility;
 
         return $this;
+    }
+
+    public function getPrivateGradepool()
+    {
+        return $this->private_gradepool;
+    }
+
+    public function setPrivateGradepool($gradepool)
+    {
+        $this->private_gradepool = $gradepool;
     }
 }

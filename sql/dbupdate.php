@@ -240,3 +240,15 @@ if (!$ilDB->fetchAssoc($ilDB->query($query))) {
     }
 }
 ?>
+<#9>
+<?php
+if(!$ilDB->tableColumnExists("xmum_mumie_task","privategradepool"))
+{
+    $ilDB->addTableColumn("xmum_mumie_task","privategradepool",
+    array(
+        'type' => 'integer',
+        'length' => '2',
+        'notnull' => false
+    ));
+}
+?>
