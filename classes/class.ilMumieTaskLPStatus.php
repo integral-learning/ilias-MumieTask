@@ -108,17 +108,10 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     {
         global $ilDB;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-        $result = $ilDB->query(
-            "SELECT o.ref_id, m.id
-            FROM tree t
-            JOIN object_reference o ON t.child = o.ref_id
-            JOIN xmum_mumie_task m ON m.id = o.obj_id
-            WHERE t.parent = " . $ilDB->quote($refId, "integer")
-        );
 
-        while ($record = $ilDB->fetchAssoc($result)) {
-            $mumieTask = new ilObjMumieTask($record["ref_id"]);
-            $mumieTask->read();
+        $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
+        foreach($mumieTasks as $mumieTask)
+        {
             try {
                 self::updateGrades($mumieTask);
 
@@ -129,10 +122,10 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
-    public static function deriveGradepoolSetting($refId)
+    private function getMumieTasksInRepository($refId)
     {
-        
         global $ilDB;
+        
         $result = $ilDB->query(
             "SELECT o.ref_id, m.id
             FROM tree t
@@ -140,13 +133,24 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             JOIN xmum_mumie_task m ON m.id = o.obj_id
             WHERE t.parent = " . $ilDB->quote($refId, "integer")
         );
-   
-        if(!empty($result))
+
+        $mumieTasks = array();
+
+        while ($record = $ilDB->fetchAssoc($result)) 
         {
-            $record = $ilDB->fetchAssoc($result);
             $mumieTask = new ilObjMumieTask($record["ref_id"]);
             $mumieTask->read();
-            return $mumieTask->getPrivateGradepool();
+            array_push($mumieTasks, $mumieTask);
+        }
+        return $mumieTasks;
+    }
+
+    public static function deriveGradepoolSetting($refId)
+    {
+        $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
+        if(!empty($mumieTasks))
+        {
+            return $mumieTasks[0]->getPrivateGradepool();
         }
     }
 
