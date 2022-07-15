@@ -129,6 +129,27 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
+    public static function deriveGradepoolSetting($refId)
+    {
+        
+        global $ilDB;
+        $result = $ilDB->query(
+            "SELECT o.ref_id, m.id
+            FROM tree t
+            JOIN object_reference o ON t.child = o.ref_id
+            JOIN xmum_mumie_task m ON m.id = o.obj_id
+            WHERE t.parent = " . $ilDB->quote($refId, "integer")
+        );
+   
+        if(!empty($result))
+        {
+            $record = $ilDB->fetchAssoc($result);
+            $mumieTask = new ilObjMumieTask($record["ref_id"]);
+            $mumieTask->read();
+            return $mumieTask->getPrivateGradepool();
+        }
+    }
+
     public static function getLPStatusForUser($task, $user_id)
     {
         return self::getLPDataForUser($task->getId(), $user_id);

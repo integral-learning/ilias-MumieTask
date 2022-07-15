@@ -102,21 +102,24 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function create()
     {
+        global $ilTabs, $ilCtrl, $lng;
         $this->setCreationMode(true);
-        global $$ilTabs, $ilCtrl, $lng;
-
+        $refId = $_GET["ref_id"];
+        
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $task = ilObjMumieTask::constructDummy();
         $task->setType($this->type);
         $task->create();
         $task->createReference();
-        $task->putInTree($_GET["ref_id"]);
+        $task->putInTree($refId);
         $this->object = $task;
         global $DIC;
-
         $tree = $DIC['tree'];
         $parent_ref = $tree->getParentId($this->object->getRefId());
         $task->setParentRolePermissions($parent_ref);
+    
+        $task->setPrivateGradepool(ilMumieTaskLPStatus::deriveGradepoolSetting($refId));
 
         $task->update();
 
