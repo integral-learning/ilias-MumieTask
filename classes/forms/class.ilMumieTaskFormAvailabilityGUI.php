@@ -15,11 +15,12 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
     private $online_item;
     private $act_type_item;
     private $duration_item;
-    public function setFields()
+    public function setFields($disable_online_selection)
     {
         global $lng;
         $online_item = new ilCheckboxInputGUI($this->lng->txt('rep_activation_online'), 'online');
         $online_item->setInfo($lng->txt('rep_robj_xmum_frm_online_info'));
+        $online_item->setDisabled($disable_online_selection);
         $this->addItem($online_item);
         $this->online_item = $online_item;
 
