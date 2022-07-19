@@ -473,6 +473,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitLPSettings()
     {
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         $disable_grade_pool_selection = !is_null($this->object->getPrivateGradepool());
         $this->initLPSettingsForm($disable_grade_pool_selection);
         if (!$this->form->checkInput()) {
@@ -481,12 +482,27 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             return;
         }
         $force_grade_update = $this->object->getPassingGrade() !== $this->form->getInput('passing_grade');
+        $is_gradepool_setting_update = $this->object->getPrivateGradepool() !== $this->form->getInput('privategradepool');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
         $this->object->setPrivateGradepool($this->form->getInput('privategradepool'));
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->doUpdate();
+
+        global $DIC;
+        $tree = $DIC['tree'];
+        $parent_ref = $tree->getParentId($this->object->getRefId());
+
+        if (true)#$is_gradepool_setting_update)
+        {
+
+            ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(
+                $parent_ref, 
+                $this->object->getPrivateGradepool()
+            );
+        }
+
         if ($force_grade_update) {
-            $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+            
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);

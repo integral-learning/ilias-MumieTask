@@ -122,7 +122,10 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
-    private function getMumieTasksInRepository($refId)
+    /**
+     *  @return ilObjMumieTask[]
+     */
+    private static function getMumieTasksInRepository($refId)
     {
         global $ilDB;
         
@@ -144,6 +147,21 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
         return $mumieTasks;
     }
+
+    public static function updateGradepoolSettingsForAllMumieTaskInRepository($refId, $privategradepool)
+    {
+        ilLoggerFactory::getLogger('xmum')->info("refId: " . $refId);
+        ilLoggerFactory::getLogger('xmum')->info("Gradepool: " . $privategradepool);
+        $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
+        foreach($mumieTasks as $mumieTask)
+        {
+            ilLoggerFactory::getLogger('xmum')->info("Tasktitel: " . $mumieTask->getTitle());
+           
+            $mumieTask->setPrivateGradepool($privategradepool);
+            $mumieTask->doUpdate();
+        }
+    }
+
 
     public static function deriveGradepoolSetting($refId)
     {
