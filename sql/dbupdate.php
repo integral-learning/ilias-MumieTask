@@ -251,4 +251,5 @@ if(!$ilDB->tableColumnExists("xmum_mumie_task","privategradepool"))
         'notnull' => false
     ));
 }
+$ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');
 ?>

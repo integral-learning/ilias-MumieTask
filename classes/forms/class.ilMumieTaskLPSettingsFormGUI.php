@@ -32,7 +32,9 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->addItem($this->modus_item);
 
         $this->gradepool_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_privategradepool'), "privategradepool");
-        $this->gradepool_item->setInfo($lng->txt('rep_robj_xmum_frm_privategradepool_desc'));
+        
+        $this->gradepool_item->setInfo($this->getGradepoolInfo($disable_grade_pool_selection));
+        $this->gradepool_item->setRequired(true);
         $gradepool_option_true = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 0);
         $gradepool_option_false = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 1);
         $gradepool_option_true->setDisabled($disable_grade_pool_selection);
@@ -48,5 +50,20 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->passing_threshold_item->setDecimals(0);
         $this->addItem($this->passing_threshold_item);
         $this->passing_threshold_item->setInfo($lng->txt('rep_robj_xmum_frm_passing_grade_desc'));
+    }
+
+    private function getGradepoolInfo($disable_grade_pool_selection)
+    {
+        global $lng;
+        $gradepool_info = $lng->txt('rep_robj_xmum_frm_privategradepool_desc') . '<br><br>';
+        if (!$disable_grade_pool_selection)
+        {
+            $gradepool_info .= $lng->txt('rep_robj_xmum_frm_privategradepool_undecided');
+        } else
+        {
+            $gradepool_info .= $lng->txt('rep_robj_xmum_frm_privategradepool_decided');
+        }
+
+        return $gradepool_info;
     }
 }
