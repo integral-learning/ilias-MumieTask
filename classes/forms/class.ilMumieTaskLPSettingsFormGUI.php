@@ -34,7 +34,6 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->gradepool_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_privategradepool'), "privategradepool");
         
         $this->gradepool_item->setInfo($this->getGradepoolInfo($disable_grade_pool_selection));
-        $this->gradepool_item->setRequired(true);
         $gradepool_option_true = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 0);
         $gradepool_option_false = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 1);
         $gradepool_option_true->setDisabled($disable_grade_pool_selection);

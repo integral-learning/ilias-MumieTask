@@ -1,5 +1,8 @@
 <#1>
 <?php
+
+use function PHPSTORM_META\type;
+
 if (!$ilDB->tableExists("xmum_sso_tokens")) {
     $fieldsToken = array(
         'id' => array(
@@ -252,4 +255,46 @@ if(!$ilDB->tableColumnExists("xmum_mumie_task","privategradepool"))
     ));
 }
 $ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');
+?>
+<#10>
+<?php
+$result;
+if ($ilDB->tableExists('xmum_id_hashes')) 
+{
+    $query = 'SELECT usr_id, hash FROM xmum_id_hashes';
+    $result = $ilDB->query($query);
+    $ilDB->dropTable('xmum_id_hashes');
+    
+}
+$fieldsHashes = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => 8,
+        'notnull' => true,
+    ),
+    'usr_id' => array(
+        'type' => 'integer',
+        'length' => 8,
+        'notnull' => true,
+    ),
+    'hash' => array(
+        'type' => 'text',
+        'length' => '143',
+        'notnull' => true,
+    ),
+);
+$ilDB->createTable("xmum_id_hashes", $fieldsHashes);
+$ilDB->addPrimaryKey("xmum_id_hashes", array("id"));
+$ilDB->createSequence("xmum_id_hashes");
+if (!is_null($result))
+{
+    while ($row = $ilDB->fetchAssoc($result)) 
+    {
+        $query = 'INSERT INTO xmum_id_hashes (id, usr_id, hash) VALUES ('.
+                $ilDB->nextID('xmum_id_hashes').
+                $ilDB->quote($row['usr_id'], 'integer') . "," .
+                $ilDB->quote($row['hash'], 'text') . ")";
+                $ilDB->manipulate($query); 
+    }
+}
 ?>
