@@ -53,11 +53,9 @@ class ilMumieTaskIdHashingService
         global $DIC;
         $tree = $DIC['tree'];
         $parent_ref = $tree->getParentId($taskObj->getRefId());
-        if ($taskObj->getPrivateGradepool())
-        {
+        if ($taskObj->getPrivateGradepool()) {
             $this->hash .= '@gradepool' . $parent_ref . '@';
-        }
-        
+        }   
         $result = $ilDB->fetchObject(
             $ilDB->query(
                 'SELECT * FROM '
@@ -77,7 +75,6 @@ class ilMumieTaskIdHashingService
     private function create()
     {
         global $ilDB;
-
         $ilDB->insert(
             self::TABLE_NAME,
             array(
