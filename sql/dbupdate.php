@@ -291,7 +291,7 @@ if (!is_null($result))
     while ($row = $ilDB->fetchAssoc($result)) 
     {
         $query = 'INSERT INTO xmum_id_hashes (id, usr_id, hash) VALUES ('.
-                $ilDB->nextID('xmum_id_hashes').
+                $ilDB->nextID('xmum_id_hashes'). "," .
                 $ilDB->quote($row['usr_id'], 'integer') . "," .
                 $ilDB->quote($row['hash'], 'text') . ")";
                 $ilDB->manipulate($query); 
