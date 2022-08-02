@@ -48,6 +48,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case 'submitAvailabilitySettings':
             case "viewContent":
             case "displayLearningProgress":
+                //$this->setSubTabs("learning_progress");
             case 'forceGradeUpdate':
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
@@ -92,6 +93,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 $ilTabs->addSubTab("availability_settings", $this->lng->txt('rep_activation_availability'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
 
                 break;
+            case 'learning_progress':
+                $ilTabs->addSubTab("user_list", "User List", $ilCtrl->getLinkTarget($this, 'displayUserList'), "displayLearningProgress");
+                break;
         }
     }
 
@@ -102,7 +106,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function create()
     {
-        global $ilTabs, $ilCtrl, $lng;
+        global $lng;
         $this->setCreationMode(true);
         $refId = $_GET["ref_id"];
         
@@ -114,11 +118,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $task->createReference();
         $task->putInTree($refId);
         $this->object = $task;
-        global $DIC;
-        $tree = $DIC['tree'];
-        $parent_ref = $tree->getParentId($this->object->getRefId());
-        $task->setParentRolePermissions($parent_ref);
-    
+        $task->setParentRolePermissions($task->getParentRef());
         $task->setPrivateGradepool(ilMumieTaskLPStatus::deriveGradepoolSetting($refId));
 
         $task->update();
@@ -310,7 +310,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilUser, $ilCtrl, $ilTabs, $ilDB, $lng;
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-
         require_once('Services/User/classes/class.ilObjUser.php');
         ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
@@ -433,7 +432,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilTabs;
         $ilTabs->activateTab('properties');
         $this->setSubTabs("properties");
-        $disable_grade_pool_selection = $this->object->isGradepoolSet();
+        $disable_grade_pool_selection = 
         $ilTabs->activateSubTab('lp_settings');
         $this->initLPSettingsForm($disable_grade_pool_selection);
         $values = array();
@@ -447,12 +446,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Initialize the LP settings form and add force sync button and command buttons
      */
-    public function initLPSettingsForm($disable_grade_pool_selection)
+    public function initLPSettingsForm()
     {
         global $ilCtrl;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskLPSettingsFormGUI.php');
         $form = new ilMumieTaskLPSettingsFormGUI();
-        $form->setFields($disable_grade_pool_selection);
+        $form->setFields($this->object->isGradepoolSet());
         $form->setTitle($this->lng->txt('rep_robj_xmum_tab_lp_settings'));
 
         require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
@@ -474,8 +473,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitLPSettings()
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-        $disable_grade_pool_selection = $this->object->isGradepoolSet();
-        $this->initLPSettingsForm($disable_grade_pool_selection);
+        $this->initLPSettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $this->tpl->setContent($this->form->getHTML());
@@ -488,18 +486,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->doUpdate();
 
-        global $DIC;
-        $tree = $DIC['tree'];
-        $parent_ref = $tree->getParentId($this->object->getRefId());
-
-        if (true)#$is_gradepool_setting_update)
-        {
-
-            ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(
-                $parent_ref, 
-                $this->object->getPrivateGradepool()
-            );
-        }
+        ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(      
+            $this->object->getParentRef(), 
+            $this->object->getPrivateGradepool()
+        );
+        
 
         if ($force_grade_update) {
             
@@ -525,10 +516,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $ilTabs->activateSubTab('availability_settings');
         $this->lng->loadLanguageModule('rep');
-
-        $disable_online_selection = !$this->object->isGradepoolSet();
-
-        $this->initAvailabilitySettingsForm($disable_online_selection);
+        $this->initAvailabilitySettingsForm();
         $values = array();
         $values['activation_type'] = $this->object->getActivationLimited();
         $values['activation_visibility'] = $this->object->getActivationVisibility();
@@ -547,12 +535,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Initialize availability form and add command buttons
      */
-    public function initAvailabilitySettingsForm($disable_online_selection)
+    public function initAvailabilitySettingsForm()
     {
         global $ilCtrl;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormAvailabilityGUI.php');
         $form = new ilMumieTaskFormAvailabilityGUI();
-        $form->setFields($disable_online_selection);
+        $form->setFields(!$this->object->isGradepoolSet());
         $form->addCommandButton('submitAvailabilitySettings', $this->lng->txt('save'));
         $form->addCommandButton('editProperties', $this->lng->txt('cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -565,8 +553,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitAvailabilitySettings()
     {
-        $disable_online_selection = !$this->object->isGradepoolSet();
-        $this->initAvailabilitySettingsForm($disable_online_selection);
+        $this->initAvailabilitySettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $this->tpl->setContent($this->form->getHTML());
@@ -606,6 +593,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $cmd = 'editProperties';
         $this->performCommand($cmd);
+    }
+
+    /**
+     * 
+     */
+    public function displayUserList() 
+    {
+        
     }
 
     /**

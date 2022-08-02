@@ -28,12 +28,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $mumie_coursefile;
     private $lp_modus = 1;
     private $passing_grade = 60;
+    private $private_gradepool;
     private $online;
     private $activation_limited;
     private $activation_starting_time;
     private $activation_ending_time;
     private $activation_visibility;
-    private $private_gradepool;
 
     /**
      * Constructor
@@ -546,13 +546,20 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->private_gradepool;
     }
 
-    public function setPrivateGradepool($gradepool)
+    public function setPrivateGradepool($private_gradepool)
     {
-        $this->private_gradepool = $gradepool;
+        $this->private_gradepool = $private_gradepool;
     }
 
     public function isGradepoolSet()
     {
         return !is_null($this->private_gradepool);
+    }
+
+    public function getParentRef() 
+    {
+        global $DIC;
+        $tree = $DIC['tree'];
+        return $tree->getParentId($this->getRefId());
     }
 }

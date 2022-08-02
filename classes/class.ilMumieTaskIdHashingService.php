@@ -15,19 +15,21 @@ class ilMumieTaskIdHashingService
     private $id;
     private $user_id;
     private $hash;
+    private $task;
 
     const TABLE_NAME = 'xmum_id_hashes';
 
-    private function __construct($user_id)
+    private function __construct($user_id, $task)
     {
         $this->user_id = $user_id;
         $this->hash = $hash;
+        $this->task = $task;
     }
 
-    public static function getHashForUser($user_id,$taskObj)
+    public static function getHashForUser($user_id, $task)
     {
-        $service = new ilMumieTaskIdHashingService($user_id);
-        $service->upsertHash($taskObj);      
+        $service = new ilMumieTaskIdHashingService($user_id, $task);
+        $service->upsertHash();      
         return $service->getHash();
     }
 
@@ -46,22 +48,21 @@ class ilMumieTaskIdHashingService
         return $result->usr_id;
     }
 
-    private function upsertHash($taskObj)
+    private function upsertHash()
     {
         global $ilDB;
         $this->hash = $this->generateHash();
-        global $DIC;
-        $tree = $DIC['tree'];
-        $parent_ref = $tree->getParentId($taskObj->getRefId());
-        if ($taskObj->getPrivateGradepool()) {
-            $this->hash .= '@gradepool' . $parent_ref . '@';
+        if ($this->task->getPrivateGradepool()) {
+            $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
         }   
         $result = $ilDB->fetchObject(
             $ilDB->query(
                 'SELECT * FROM '
                 . SELF::TABLE_NAME
                 . " WHERE usr_id = "
-                . $ilDB->quote($this->user_id, "integer") . " AND hash = " . $ilDB->quote($this->hash, 'text')
+                . $ilDB->quote($this->user_id, "integer")
+                . " AND hash = "
+                . $ilDB->quote($this->hash, 'text')
             )
         );
         if (!is_null($result)) {

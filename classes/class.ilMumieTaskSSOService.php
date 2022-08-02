@@ -70,14 +70,14 @@ class ilMumieTaskSSOService
      * containing the login and logout urls, sso token and other infos
      */
 
-    public function setUpTokenAndLaunchForm($taskObj)
+    public function setUpTokenAndLaunchForm($task)
     {
         global $ilUser, $ilDB, $DIC;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($ilUser->getId(), $taskObj);
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($ilUser->getId(), $task);
         $ssotoken = new ilMumieTaskSSOToken($hashed_user);
         $ssotoken->insertOrRefreshToken();
 
-        return $this->getHTMLCode($taskObj, $ssotoken, $hashed_user);
+        return $this->getHTMLCode($task, $ssotoken, $hashed_user);
     }
 
 

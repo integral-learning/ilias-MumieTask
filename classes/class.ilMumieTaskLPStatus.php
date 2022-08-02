@@ -150,13 +150,9 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     public static function updateGradepoolSettingsForAllMumieTaskInRepository($refId, $privategradepool)
     {
-        ilLoggerFactory::getLogger('xmum')->info("refId: " . $refId);
-        ilLoggerFactory::getLogger('xmum')->info("Gradepool: " . $privategradepool);
         $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
         foreach($mumieTasks as $mumieTask)
         {
-            ilLoggerFactory::getLogger('xmum')->info("Tasktitel: " . $mumieTask->getTitle());
-           
             $mumieTask->setPrivateGradepool($privategradepool);
             $mumieTask->doUpdate();
         }

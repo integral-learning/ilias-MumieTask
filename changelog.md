@@ -1,7 +1,9 @@
 # MumieTask - Changelog
 
 All important changes to this plugin will be documented in this file.
-
+## [v2.1.0]
+### Changed 
+- Added gradepool implementation
 ## [v2.0.1] - 2021-08-26
 ### Changed
 - Added support for Ilias 6.10

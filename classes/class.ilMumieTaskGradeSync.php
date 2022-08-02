@@ -48,7 +48,7 @@ class ilMumieTaskGradeSync
     private function getIliasId($xapi_grade)
     {
         $hashed_user = substr(strrchr($xapi_grade->actor->account->name, "_"), 1);
-        return ilMumieTaskIdHashingService::getUserFromHash($hashed_user);
+        return ilMumieTaskIdHashingService::getUserFromHash($hashed_user, $this->task);
     }
 
 

@@ -1,8 +1,6 @@
 <#1>
 <?php
 
-use function PHPSTORM_META\type;
-
 if (!$ilDB->tableExists("xmum_sso_tokens")) {
     $fieldsToken = array(
         'id' => array(
@@ -262,7 +260,7 @@ $result;
 if ($ilDB->tableExists('xmum_id_hashes')) {
     $query = 'SELECT usr_id, hash FROM xmum_id_hashes';
     $result = $ilDB->query($query);
-    $ilDB->dropTable('xmum_id_hashes');   
+    $ilDB->dropTable('xmum_id_hashes');
 }
 $fieldsHashes = array(
     'id' => array(
@@ -288,10 +286,10 @@ if (!is_null($result))
 {
     while ($row = $ilDB->fetchAssoc($result))  {
         $query = 'INSERT INTO xmum_id_hashes (id, usr_id, hash) VALUES (' .
-                $ilDB->nextID('xmum_id_hashes') . "," .
-                $ilDB->quote($row['usr_id'], 'integer') . "," .
-                $ilDB->quote($row['hash'], 'text') . ")";
-                $ilDB->manipulate($query); 
+            $ilDB->nextID('xmum_id_hashes') . "," .
+            $ilDB->quote($row['usr_id'], 'integer') . "," .
+            $ilDB->quote($row['hash'], 'text') . ")";
+            $ilDB->manipulate($query); 
     }
 }
 ?>
