@@ -47,7 +47,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case 'editAvailabilitySettings':
             case 'submitAvailabilitySettings':
             case "viewContent":
-            case "displayLearningProgress":
+            case "displayLearningProgress":         
             case 'forceGradeUpdate':     
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
@@ -72,7 +72,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($this->object->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
             $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
         }
-       
         $ilTabs->addTab("infoScreen", $this->lng->txt("info_short"), $ilCtrl->getLinkTarget($this, "infoScreen"));
 
         $this->addPermissionTab();
@@ -482,10 +481,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->doUpdate();
 
-        ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(      
-            $this->object->getParentRef(), 
-            $this->object->getPrivateGradepool()
-        );
+        if($is_gradepool_setting_update) {
+            ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(      
+                $this->object->getParentRef(), 
+                $this->object->getPrivateGradepool()
+            );
+        }
         
 
         if ($force_grade_update) {
@@ -538,7 +539,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form = new ilMumieTaskFormAvailabilityGUI();
         $form->setFields(!$this->object->isGradepoolSet());
         $form->addCommandButton('submitAvailabilitySettings', $this->lng->txt('save'));
-        $form->addCommandButton('editProperties', $this->lng->txt('cancel'));
+        $form->addCommandButton('editProperties', $this->lng->txt('cancel'));  
         $form->setFormAction($ilCtrl->getFormAction($this));
 
         $this->form = $form;
@@ -590,7 +591,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $cmd = 'editProperties';
         $this->performCommand($cmd);
     }
-
+    
     /**
      * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).
      * After that a new synchronization is triggered.

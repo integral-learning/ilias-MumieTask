@@ -2,8 +2,8 @@
 
 All important changes to this plugin will be documented in this file.
 ## [v2.1.0]
-### Changed 
-- Added gradepool implementation
+### Added 
+- Sharing grades for the same MUMIE problems with other Ilias repositories can now be disabled.
 ## [v2.0.1] - 2021-08-26
 ### Changed
 - Added support for Ilias 6.10
