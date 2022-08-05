@@ -47,7 +47,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case 'editAvailabilitySettings':
             case 'submitAvailabilitySettings':
             case "viewContent":
-            case "displayLearningProgress":         
+            case "displayLearningProgress":
             case 'forceGradeUpdate':     
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
@@ -429,7 +429,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->setSubTabs("properties");
         $disable_grade_pool_selection = 
         $ilTabs->activateSubTab('lp_settings');
-        $this->initLPSettingsForm($disable_grade_pool_selection);
+        $this->initLPSettingsForm();
         $values = array();
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
@@ -591,7 +591,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $cmd = 'editProperties';
         $this->performCommand($cmd);
     }
-    
+
     /**
      * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).
      * After that a new synchronization is triggered.
