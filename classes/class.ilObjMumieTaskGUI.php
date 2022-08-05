@@ -426,8 +426,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         global $ilTabs;
         $ilTabs->activateTab('properties');
-        $this->setSubTabs("properties");
-        $disable_grade_pool_selection = 
+        $this->setSubTabs("properties"); 
         $ilTabs->activateSubTab('lp_settings');
         $this->initLPSettingsForm();
         $values = array();
