@@ -48,6 +48,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case 'submitAvailabilitySettings':
             case "viewContent":
             case "displayLearningProgress":
+            case "displayUserList":
             case 'forceGradeUpdate':     
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
@@ -72,6 +73,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($this->object->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
             $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
         }
+        $this->tabs->addTab("userList", "User List(Tmp)", $ilCtrl->getLinkTarget($this, "displayUserList"));
+
         $ilTabs->addTab("infoScreen", $this->lng->txt("info_short"), $ilCtrl->getLinkTarget($this, "infoScreen"));
 
         $this->addPermissionTab();
@@ -589,6 +592,19 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $cmd = 'editProperties';
         $this->performCommand($cmd);
+    }
+
+    /**
+     * 
+     */
+    public function displayUserList() 
+    {
+        global $ilTabs, $ilCtrl;
+        $ilTabs->activateTab('userList');
+        $this->plugin->includeClass('class.ilMumieTaskUserListGUI.php');
+        $userList =  new ilMumieTaskUserListGUI($this);
+        //render returns html
+        $this->tpl->setContent($userList->getHTML());
     }
 
     /**
