@@ -23,18 +23,18 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
         $this->setFormName('participants');
         $this->addColumn("", "", "1", true);
-        $this->addColumn("Name(Tmp)", 'name');
+        $this->addColumn("Name(Tmp)", 'named');
         $this->addColumn("Deadline Verlängern", 'deadline');
         $this->addColumn("Noten", 'note');
         $this->setRowTemplate("tpl.show_participants_row.html", "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask");
         $tmpData = array(
             array(
-                'name' => 'peter',
+                'named' => 'peter',
                 'deadline' =>  'aaasd',
                 'note' => '50'
             ),
             array(
-                'name' => 'fasd',
+                'named' => 'fasd',
                 'deadline' =>  'dsaa',
                 'note' => '05'
             )
@@ -42,6 +42,27 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->setData($tmpData);
         $asd = $this->getData();
         ilUtil::sendSuccess("tmpData is: ". array_keys($tmpData[1])[1] . " asd is: " . array_keys($asd[1])[1], false);
+
+        $this->tpl->addBlockFile(
+            "TBL_CONTENT",
+            "tbl_content",
+            $this->row_template,
+            $this->row_template_dir
+        );
+
+        foreach ($asd as $set) {
+            $this->tpl->setCurrentBlock("tbl_content");
+            $this->css_row = ($this->css_row != "tblrow1")
+                ? "tblrow1"
+                : "tblrow2";
+            $this->tpl->setVariable("CSS_ROW", $this->css_row);
+
+            $this->fillRow($asd[0]);
+            //$this->tpl->setVariable("VAL_deadline", "ass");
+            $this->tpl->setCurrentBlock("tbl_content");
+            $this->tpl->parseCurrentBlock();
+        }
+
         $this->enable('header');
         $this->enable('sort');
         $this->setEnableHeader(true);
