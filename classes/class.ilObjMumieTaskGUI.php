@@ -447,8 +447,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilCtrl;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskLPSettingsFormGUI.php');
-        $form = new ilMumieTaskLPSettingsFormGUI();
-        $form->setFields($this->object->isGradepoolSet());
+        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet());
+        $form->setFields();
         $form->setTitle($this->lng->txt('rep_robj_xmum_tab_lp_settings'));
 
         require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
@@ -477,28 +477,37 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             return;
         }
         $force_grade_update = $this->object->getPassingGrade() !== $this->form->getInput('passing_grade');
-        $is_gradepool_setting_update = $this->object->getPrivateGradepool() !== $this->form->getInput('privategradepool');
+        $is_gradepool_setting_update = (int)$this->object->getPrivateGradepool() !== (int)$this->form->getInput('privategradepool');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
-        $this->object->setPrivateGradepool($this->form->getInput('privategradepool'));
+        if(!$this->object->isGradepoolSet())
+        {
+            $this->object->setPrivateGradepool((int)$this->form->getInput('privategradepool'));
+        }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->doUpdate();
-
         if($is_gradepool_setting_update) {
             ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(      
-                $this->object->getParentRef(), 
+                $this->object->getParentRef(),
                 $this->object->getPrivateGradepool()
             );
         }
-        
 
-        if ($force_grade_update) {
-            
+        if ($force_grade_update) {       
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
-        ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
+        ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
+      
         $cmd = 'editLPSettings';
         $this->performCommand($cmd);
+    }
+
+    function debug_to_console($data) {
+        $output = $data;
+        if (is_array($output))
+            $output = implode(',', $output);
+    
+        echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
     }
 
     /**

@@ -52,7 +52,7 @@ class ilMumieTaskIdHashingService
     {
         global $ilDB;
         $this->hash = $this->generateHash();
-        if ($this->task->getPrivateGradepool()) {
+        if ($this->task->getPrivateGradepool() === 1) {
             $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
         }   
         $result = $ilDB->fetchObject(

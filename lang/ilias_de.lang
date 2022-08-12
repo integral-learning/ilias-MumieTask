@@ -63,6 +63,7 @@ frm_privategradepool_undecided#:#<b style="color:red">Achtung:</b><br> Diese Ent
 <br>Falls diese Option deaktiviert ist, werden weder Punkte aus anderen ILIAS-Repositories übernommen noch werden hier erziehlte Punkte mit anderen Kursen geteilt.
 frm_enable#:#Aktiviert
 frm_disable#:#Deaktiviert
+frm_gradepool_pending#:#Entscheidung offen lassen
 frm_passing_grade#:#Mindestpunktzahl
 frm_passing_grade_desc#:#Tragen Sie hier die für das Bestehen notwendige Mindestpunktzahl ein.
 frm_force_update#:#Notensychnonisierung erzwingen
