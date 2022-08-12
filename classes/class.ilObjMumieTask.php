@@ -553,7 +553,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function isGradepoolSet()
     {
-        return !is_null($this->private_gradepool);
+        return !((int)$this->private_gradepool === -1);
     }
 
     public function getParentRef() 

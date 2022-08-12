@@ -12,15 +12,18 @@
   */
 class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 {
-    public function __construct()
+    public function __construct($disable_grade_pool_selection)
     {
         parent::__construct();
+        $this->disable_grade_pool_selection = $disable_grade_pool_selection;
     }
 
     private $modus_item;
     private $gradepool_item;
     private $passing_threshold_item;
-    public function setFields($disable_grade_pool_selection)
+    private $disable_grade_pool_selection;
+
+    public function setFields()
     {
         global $lng;
         $this->modus_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_sync_lp'), "lp_modus");
@@ -33,13 +36,17 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 
         $this->gradepool_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_privategradepool'), "privategradepool");
         
-        $this->gradepool_item->setInfo($this->getGradepoolInfo($disable_grade_pool_selection));
+        $this->gradepool_item->setInfo($this->getGradepoolInfo());
         $gradepool_option_true = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 0);
         $gradepool_option_false = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 1);
-        $gradepool_option_true->setDisabled($disable_grade_pool_selection);
-        $gradepool_option_false->setDisabled($disable_grade_pool_selection);
+        $gradepool_option_pending = new ilRadioOption($lng->txt('rep_robj_xmum_frm_gradepool_pending'), -1);
+        $gradepool_option_true->setDisabled($this->disable_grade_pool_selection);
+        $gradepool_option_false->setDisabled($this->disable_grade_pool_selection);
         $this->gradepool_item->addOption($gradepool_option_true);
         $this->gradepool_item->addOption($gradepool_option_false);
+        if(!$this->disable_grade_pool_selection) {
+            $this->gradepool_item->addOption($gradepool_option_pending);
+        }
         $this->addItem($this->gradepool_item);
 
         $this->passing_threshold_item = new ilNumberInputGUI($lng->txt('rep_robj_xmum_frm_passing_grade'), 'passing_grade');
@@ -51,11 +58,11 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->passing_threshold_item->setInfo($lng->txt('rep_robj_xmum_frm_passing_grade_desc'));
     }
 
-    private function getGradepoolInfo($disable_grade_pool_selection)
+    private function getGradepoolInfo()
     {
         global $lng;
         $gradepool_info = $lng->txt('rep_robj_xmum_frm_privategradepool_desc') . '<br><br>';
-        if (!$disable_grade_pool_selection)
+        if (!$this->disable_grade_pool_selection)
         {
             $gradepool_info .= $lng->txt('rep_robj_xmum_frm_privategradepool_undecided');
         } else
@@ -64,5 +71,12 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         }
 
         return $gradepool_info;
+    }
+
+
+    public function checkInput()
+    {
+        $ok = parent::checkInput();  
+        return $ok;
     }
 }

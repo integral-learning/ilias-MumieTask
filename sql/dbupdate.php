@@ -249,10 +249,11 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task","privategradepool")) {
         array(
             'type' => 'integer',
             'length' => '2',
-            'notnull' => false
+            'notnull' => true,
+            'default' => '-1'
     ));
 }
-$ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');
+$ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = -1');
 ?>
 <#10>
 <?php

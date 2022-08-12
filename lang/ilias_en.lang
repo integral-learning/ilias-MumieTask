@@ -63,6 +63,7 @@ frm_privategradepool_decided#:#<b>Note:</b><br> This decision was <b>final</b> a
 frm_privategradepool_undecided#:#<b style="color:red">Warning:</b><br> This decision is <b>final</b> and affects all other MUMIE Tasks in this course.
 frm_enable#:#Enabled
 frm_disable#:#Disabled
+frm_gradepool_pending#:#Leave decision open
 frm_passing_grade#:#Passing grade
 frm_passing_grade_desc#:#Please enter the passing threshold for this MumieTask
 frm_force_update#:#Force new grade synchronization
