@@ -49,6 +49,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "viewContent":
             case "displayLearningProgress":
             case "displayUserList":
+            case "displayGradeList":
             case 'forceGradeUpdate':     
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
@@ -608,12 +609,23 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function displayUserList() 
     {
-        global $ilTabs, $ilCtrl;
+        global $ilTabs;
         $ilTabs->activateTab('userList');
         $this->plugin->includeClass('class.ilMumieTaskUserListGUI.php');
         $userList =  new ilMumieTaskUserListGUI($this);
         //render returns html
-        $this->tpl->setContent($userList->getHTML());
+        $this->tpl->setContent($userList->render());
+    }
+
+    public function displayGradeList()
+    {
+        global $ilTabs;
+        $ilTabs->activateTab('userList');
+        //ilLoggerFactory::getLogger('xmum')->info($_GET['member_id']);
+        $this->plugin->includeClass('class.ilMumieTaskGradeListGUI.php');
+        $userList =  new ilMumieTaskGradeListGUI($this, $_GET['member_id']);
+        //render returns html
+        $this->tpl->setContent($userList->render());
     }
 
     /**

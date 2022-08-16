@@ -1,0 +1,29 @@
+<tr class="{CSS_ROW} small">
+	<td class="std">
+		<input type="checkbox" name="{VAL_POSTNAME}[]" value="{VAL_ID}" {VAL_CHECKED} />
+		<input type="hidden" name="visible_member_ids[]" value="{VAL_ID}" />		
+	</td>
+	<td class="std">
+		{VAL_NAME}
+	</td> 
+	<!-- BEGIN custom_fields -->
+	<td class="std">
+		<input type="date" name="deadline" value="{VAL_DATE}"/>
+	</td>
+	<!-- END custom_fields -->
+	<td class="std">
+		{VAL_GRADE}
+	</td> 
+	<td class="std">
+		<!-- BEGIN as_link -->
+		<div class="il_ContainerItemCommands2">
+		<!-- BEGIN link -->
+			<a class="il_ContainerItemCommand2" href="{LINK_NAME}">{LINK_TXT}</a><br />
+		<!-- END link -->
+			<!-- BEGIN as_menu -->
+			{ACTION_USER}
+		<!-- END as_menu -->
+		</div>
+		<!-- END as_link -->
+	</td>
+</tr>
