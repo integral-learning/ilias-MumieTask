@@ -106,7 +106,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
      */
     public static function updateGradesForIlContainer($refId)
     {
-        global $ilDB;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 
         $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);

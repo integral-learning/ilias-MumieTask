@@ -478,7 +478,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             return;
         }
         $force_grade_update = $this->object->getPassingGrade() !== $this->form->getInput('passing_grade');
-        $is_gradepool_setting_update = (int)$this->object->getPrivateGradepool() !== (int)$this->form->getInput('privategradepool');
+        $is_gradepool_setting_update = $this->object->getPrivateGradepool() !== $this->form->getInput('privategradepool');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
         if(!$this->object->isGradepoolSet())
         {
@@ -498,17 +498,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
 
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
-      
+
         $cmd = 'editLPSettings';
         $this->performCommand($cmd);
-    }
-
-    function debug_to_console($data) {
-        $output = $data;
-        if (is_array($output))
-            $output = implode(',', $output);
-    
-        echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
     }
 
     /**
