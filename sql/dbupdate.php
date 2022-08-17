@@ -1,6 +1,5 @@
 <#1>
 <?php
-
 if (!$ilDB->tableExists("xmum_sso_tokens")) {
     $fieldsToken = array(
         'id' => array(
@@ -253,7 +252,7 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task","privategradepool")) {
             'default' => '-1'
     ));
 }
-$ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = -1');
+$ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');
 ?>
 <#10>
 <?php
