@@ -55,8 +55,15 @@ msg_no_connection_to_server#:#Ilias konnte keine Antwort von dem MUMIE-Server er
 grades#:#Noten
 frm_sync_lp#:#Noten-Synchronisation
 frm_sync_lp_desc#:#Wählen Sie, ob Noten für diese MumieTask automatisch mit Ilias synchronisiert werden sollen
+frm_privategradepool#:#Punkte mit anderen Kursen teilen
+frm_privategradepool_desc#:#Bestimmen Sie, ob MUMIE-Punktzahlen mit anderen Kursen geteilt werden.
+frm_privategradepool_decided#:#<b>Hinweis:</b><br> Diese Entscheidung war <b>endgültig</b> und gilt auch für alle anderen MUMIE-Tasks in diesem Kurs.
+frm_privategradepool_undecided#:#<b style="color:red">Achtung:</b><br> Diese Entscheidung ist <b>endgültig</b> und gilt auch für alle anderen MUMIE-Tasks in diesem Kurs.
+<br>Falls diese Option aktiviert ist, werden Punkte, die für das Bearbeiten von MUMIE-Aufgaben in anderen ILIAS-Repositories vergeben wurden, auch in diesen Kurs übernommen.
+<br>Falls diese Option deaktiviert ist, werden weder Punkte aus anderen ILIAS-Repositories übernommen noch werden hier erziehlte Punkte mit anderen Kursen geteilt.
 frm_enable#:#Aktiviert
 frm_disable#:#Deaktiviert
+frm_gradepool_pending#:#Entscheidung offen lassen
 frm_passing_grade#:#Mindestpunktzahl
 frm_passing_grade_desc#:#Tragen Sie hier die für das Bestehen notwendige Mindestpunktzahl ein.
 frm_force_update#:#Notensychnonisierung erzwingen
@@ -65,5 +72,6 @@ frm_force_update_btn#:#Update erzwingen
 edit_task#:#Bearbeiten
 activation_limited_visibility_info#:#Nutzer können diese MumieTask außerhalb des gewählten Zeitraums sehen, aber nicht bearbeiten
 frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MumieTask sehen und bearbeiten
+frm_online_disabled_warning#:#Diese MUMIE-Task kann nicht online gestellt werden, da noch eine Entscheidung aussteht. Bitte rufen sie die Bewertungseinstellungen auf. 
 open_prb_selector#:#Aufgabenauswahl öffnen
 open_prb_selector_desc#:#Klicken Sie hier, um eine detaillierte Auswahl zu öffnen. Sie können alle verfügbaren Aufgaben nach Kategorien filtern und nach beliebigen Begriffen durchsuchen.
