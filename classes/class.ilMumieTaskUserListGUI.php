@@ -15,6 +15,8 @@
 class ilMumieTaskUserListGUI extends ilTable2GUI
 {
 
+    private $participants;
+
     public function __construct($parentObj)
     {
         global $ilDB;
@@ -26,12 +28,13 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->addColumn("Name(Tmp)", 'name');
         $this->addColumn("Deadline", 'date');
         $this->addColumn("Noten", 'note');
-
+    
+        include_once './Services/Membership/classes/class.ilParticipants.php';
+        $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
+        $members = $this->participants->getMembers(); // get user ids of every memeber(no tutor/admin, for all use get participants)
         
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
-        $result = $gradesync->getXapiGradesByUser();
-        ilLoggerFactory::getLogger('xmum')->info($result['names']);
+        
+       
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -40,16 +43,20 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
 
-        foreach ($result as $set) {
+        foreach ($members as $set) {
             $this->tpl->setCurrentBlock("tbl_content");
             $this->css_row = ($this->css_row != "tblrow1")
                 ? "tblrow1"
                 : "tblrow2";
             $this->tpl->setVariable("CSS_ROW", $this->css_row);
-            $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $set['user_id']);
+            $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $set);
             $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($this->parent_obj, 'displayGradeList'));
             $this->tpl->setVariable('LINK_TXT', "Noten Ändern(tmp)");
-            $this->fillRow($set); 
+            $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($set, "integer"));
+            $names = $ilDB->fetchAssoc($result);
+
+            $this->tpl->setVariable('VAL_NAME', $names['firstname'] . ", " . $names['lastname']);
+            //$this->fillRow($set); 
             $this->tpl->setCurrentBlock("tbl_content");
             $this->tpl->parseCurrentBlock();
         }
@@ -59,8 +66,4 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    public function fillTable()
-    {
-        
-    }
 }

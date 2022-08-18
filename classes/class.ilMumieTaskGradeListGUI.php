@@ -26,18 +26,20 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->addColumn("Deadline", 'date');
         $this->addColumn("Noten", 'note');
         
-        $tmpData = array(
-            array(
-                'user_id' => '0',
-                'grades' => array('34', '51', '52'),
-                'dates' =>  array('2018-07-22', '2018-07-22', '2018-07-23')           
-            ),
-            array(
-                'user_id' => '1',
-                'grades' => array('44', '50', '32'),
-                'dates' =>  array('2018-07-22', '2018-07-24', '2018-07-27')
-            )
-            );
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
+        $grades = $gradesync->getXapiGradesByUser();
+        foreach($grades[$user_id] as $grade) {
+            $this->tpl->setCurrentBlock("tbl_content");
+            $this->css_row = ($this->css_row != "tblrow1")
+                ? "tblrow1"
+                : "tblrow2";
+            $this->tpl->setVariable("CSS_ROW", $this->css_row);
+            $this->tpl->setVariable("VAL_GRADE", $grade->result->score * 100);
+            $this->tpl->setVariable("VAL_DATE", $gra);
+            $this->tpl->setCurrentBlock("tbl_content");
+            $this->tpl->parseCurrentBlock();
+        }
         $asd = $tmpData;
         
         $this->tpl->addBlockFile(
@@ -47,24 +49,13 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
 
-        foreach ($asd as $set) {
-            if ($set['user_id'] === $user_id) {
-                $grades = $set['grades'];
-                $dates = $set['dates'];
-                for($i = 0; $i < count($grades); $i++) {
-                    $this->tpl->setCurrentBlock("tbl_content");
-                $this->css_row = ($this->css_row != "tblrow1")
-                    ? "tblrow1"
-                    : "tblrow2";
-                $this->tpl->setVariable("CSS_ROW", $this->css_row);
-                $this->tpl->setVariable("VAL_GRADE", $grades[$i]);
-                $this->tpl->setVariable("VAL_DATE", $dates[$i]);
-                $this->tpl->setCurrentBlock("tbl_content");
-                $this->tpl->parseCurrentBlock();
-                }
+        // foreach ($asd as $set) {
+        //     if ($set['user_id'] === $user_id) {
+        //         
+        //         }
                 
-            }
-        }
+        //     }
+        // }
 
         $this->enable('header');
         $this->enable('sort');
