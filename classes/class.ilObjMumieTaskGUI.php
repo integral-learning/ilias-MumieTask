@@ -604,9 +604,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserListGUI.php');
-        $userList =  new ilMumieTaskUserListGUI($this);
-        $this->tpl->setContent($userList->render());
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
+        $form =  new ilMumieTaskUserListFormGUI($this);
+        $form->setFields($this);
+        $this->form = $form;
+        $this->tpl->setContent($this->form->getHTML());
     }
 
 

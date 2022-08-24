@@ -16,7 +16,8 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 {
 
     private $participants;
-    private $parentObj;
+    private $parent_gui;
+    private $postvar;
 
     public function __construct($parentObj)
     {
@@ -65,5 +66,91 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->enable('sort');
         $this->setEnableHeader(true);
     }
+
+    //Alle funktionen notwendig damit die Liste in eine Form eingefügt werden kann
+    public function insert($a_tpl)
+    {
+        $a_tpl->setCurrentBlock("prop_custom");
+        $a_tpl->setVariable("CUSTOM_CONTENT", $this->render());
+        $a_tpl->parseCurrentBlock();
+    }
+
+    public function getHiddenTitle()
+    {
+        return "";
+    }
+
+    public function getTitle()
+    {
+        return "";
+    }
+
+
+    public function getFormLabelFor()
+    {
+        return "";
+    }
+
+    public function getType()
+    {
+        return "";
+    }
+
+    public function getSubForm()
+    {
+        return "";
+    }
+
+    public function hideSubForm()
+    {
+        return true;
+    }
+
+    public function getAlert()
+    {
+        return "";
+    }
+
+    
+
+    public function getPostVar()
+    {
+        return $this->postvar;
+    }
+
+    /**
+    * Get Post Variable.
+    *
+    * @return	string	Post Variable
+    */
+    public function getFieldId()
+    {
+        $id = str_replace("[", "__", $this->getPostVar());
+        $id = str_replace("]", "__", $id);
+        
+        return $id;
+    }
+
+    public function setParentForm($a_parentform)
+    {
+        $this->setParent($a_parentform);
+    }
+
+    public function setParent($a_val)
+    {
+        $this->parent_gui = $a_val;
+    }
+
+    public function getInfo()
+    {
+        return "";
+    }
+
+    public function getRequired()
+    {
+        return "";
+    }
+
+
 
 }

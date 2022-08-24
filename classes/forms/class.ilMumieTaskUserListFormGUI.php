@@ -17,10 +17,14 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
         parent::__construct();
     }
 
-    public function setFields()
+    public function setFields($parentObj)
     {
         $textField = new ilTextInputGUI("User Suche(tmp)");
         $this->addItem($textField);
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserListGUI.php');
+        $userList = new ilMumieTaskUserListGUI($parentObj);
+        
+        $this->addItem($userList);
     }
 
    
