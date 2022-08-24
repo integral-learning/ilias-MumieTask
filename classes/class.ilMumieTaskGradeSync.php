@@ -34,7 +34,7 @@ class ilMumieTaskGradeSync
      *
      * They must be a unique identifier for users on both ILIAS and MUMIE servers
      */
-    private function getSyncIds($user_ids)
+    public function getSyncIds($user_ids)
     {
         return array_map(function ($user_id) {
             $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
@@ -51,11 +51,7 @@ class ilMumieTaskGradeSync
         return ilMumieTaskIdHashingService::getUserFromHash($hashed_user);
     }
 
-
-    /**
-     * get a map of xapi grades by user
-     */
-    public function getXapiGradesByUser()
+    public function getAllXapiGradesByUser()
     {
         $params = array(
             "users" => $this->getSyncIds($this->user_ids),
@@ -64,7 +60,6 @@ class ilMumieTaskGradeSync
             'lastSync' => $this->getLastSync(),
             'includeAll' => true
         );
-
         if ($this->task->getActivationLimited() == 1) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
         }
@@ -91,9 +86,18 @@ class ilMumieTaskGradeSync
                 "X-API-Key: " . $this->admin_settings->getApiKey(),
             )
         );
-        $response = json_decode($curl->exec());
+        //$response = json_decode($curl->exec());
+        $response = json_decode($this->mockgraderesponse);
         $curl->close();
-        return $this->getValidGradeByUser($response);
+        return($response);
+    }
+
+    /**
+     * get a map of xapi grades by user
+     */
+    public function getValidXapiGradesByUser()
+    {
+        return $this->getValidGradeByUser($this->getAllXapiGradesByUser());
     }
 
     /**
@@ -205,4 +209,97 @@ class ilMumieTaskGradeSync
         }
         return $latest_grade;
     }
+
+    private $mockgraderesponse = '[
+        {
+            "id": "0aee17a1-fdad-44b4-b57b-11ec256fe42a",
+            "actor": {
+                "account": {
+                    "homePage": "https://test.mumie.net/ombplus",
+                    "name": "GSSO_mi3_226073fb06340be81b1cee4fa020dbbc5cb1c917a37ca25235a9a24610f771d2162c03d753b79422426f0712d5cfd365c84bdedc881b2a780103793a921a2529"
+                },
+                "objectType": "Agent"
+            },
+            "verb": {
+                "id": "https://www.mumie.net/xapi/verbs/submitted",
+                "display": {
+                    "de": "abgegeben",
+                    "en": "submitted"
+                }
+            },
+            "object": {
+                "id": "OnlineMathemBrueckPlus/ElemenRechneMengenZahlen/Schlus"
+            },
+            "result": {
+                "success": false,
+                "score": {
+                    "scaled": 0.305556,
+                    "raw": 0.305556,
+                    "min": 0.0,
+                    "max": 1.0
+                }
+            },
+            "timestamp": "2022-08-17T19:45:37+02"
+        },
+        {
+            "id": "6e7861c6-a430-4145-879b-f75cad80ef77",
+            "actor": {
+                "account": {
+                    "homePage": "https://test.mumie.net/ombplus",
+                    "name": "GSSO_mi3_57cb77701c4e0c2329460137d14ce80b4eb06d6686c7d4558baacabc1b1a9b9c3c95a1e10439c8bb6261ab51e06a7986219da95502b5c307d56674e1f42fa228"
+                },
+                "objectType": "Agent"
+            },
+            "verb": {
+                "id": "https://www.mumie.net/xapi/verbs/submitted",
+                "display": {
+                    "de": "abgegeben",
+                    "en": "submitted"
+                }
+            },
+            "object": {
+                "id": "OnlineMathemBrueckPlus/ElemenRechneMengenZahlen/Schlus"
+            },
+            "result": {
+                "success": false,
+                "score": {
+                    "scaled": 0.305556,
+                    "raw": 0.305556,
+                    "min": 0.0,
+                    "max": 1.0
+                }
+            },
+            "timestamp": "2022-08-18T11:28:43+02"
+        },
+        {
+            "id": "6e7861c6-a430-4145-879b-f75cad80ef77",
+            "actor": {
+                "account": {
+                    "homePage": "https://test.mumie.net/ombplus",
+                    "name": "GSSO_mi3_57cb77701c4e0c2329460137d14ce80b4eb06d6686c7d4558baacabc1b1a9b9c3c95a1e10439c8bb6261ab51e06a7986219da95502b5c307d56674e1f42fa228"
+                },
+                "objectType": "Agent"
+            },
+            "verb": {
+                "id": "https://www.mumie.net/xapi/verbs/submitted",
+                "display": {
+                    "de": "abgegeben",
+                    "en": "submitted"
+                }
+            },
+            "object": {
+                "id": "OnlineMathemBrueckPlus/ElemenRechneMengenZahlen/Schlus"
+            },
+            "result": {
+                "success": false,
+                "score": {
+                    "scaled": 0.35,
+                    "raw": 0.35,
+                    "min": 0.0,
+                    "max": 1.0
+                }
+            },
+            "timestamp": "2022-08-19T11:28:43+02"
+        }
+    ]';
 }

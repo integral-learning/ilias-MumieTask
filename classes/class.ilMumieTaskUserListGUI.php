@@ -16,6 +16,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 {
 
     private $participants;
+    private $parentObj;
 
     public function __construct($parentObj)
     {
@@ -28,13 +29,13 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->addColumn("Name(Tmp)", 'name');
         $this->addColumn("Deadline", 'date');
         $this->addColumn("Noten", 'note');
-    
+        $this->setDefaultFilterVisiblity(true);
+
+        $this->parentObj = $parentObj;
+
         include_once './Services/Membership/classes/class.ilParticipants.php';
         $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
         $members = $this->participants->getMembers(); // get user ids of every memeber(no tutor/admin, for all use get participants)
-        
-        
-       
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -50,17 +51,16 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
                 : "tblrow2";
             $this->tpl->setVariable("CSS_ROW", $this->css_row);
             $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $set);
-            $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($this->parent_obj, 'displayGradeList'));
+            $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
             $this->tpl->setVariable('LINK_TXT', "Noten Ändern(tmp)");
             $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($set, "integer"));
             $names = $ilDB->fetchAssoc($result);
 
-            $this->tpl->setVariable('VAL_NAME', $names['firstname'] . ", " . $names['lastname']);
-            //$this->fillRow($set); 
+            $this->tpl->setVariable('VAL_NAME', $names['lastname'] . ", " . $names['lastname']);
+            //$this->fillRow($set);
             $this->tpl->setCurrentBlock("tbl_content");
             $this->tpl->parseCurrentBlock();
         }
-
         $this->enable('header');
         $this->enable('sort');
         $this->setEnableHeader(true);

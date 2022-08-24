@@ -133,6 +133,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function editPropertiesObject()
     {
+        ilLoggerFactory::getLogger('xmum')->info("EDIT PROIERTIERS");
         global $tpl, $ilTabs, $lng;
         if (empty(ilMumieTaskServer::getAllServers())) {
             $this->addServer();
@@ -603,22 +604,21 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
-        $this->plugin->includeClass('class.ilMumieTaskUserListGUI.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserListGUI.php');
         $userList =  new ilMumieTaskUserListGUI($this);
-        //render returns html
         $this->tpl->setContent($userList->render());
     }
+
 
     public function displayGradeList()
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
-        //ilLoggerFactory::getLogger('xmum')->info($_GET['member_id']);
         $this->plugin->includeClass('class.ilMumieTaskGradeListGUI.php');
-        $userList =  new ilMumieTaskGradeListGUI($this, $_GET['member_id']);
-        //render returns html
-        $this->tpl->setContent($userList->render());
+        $gradeList =  new ilMumieTaskGradeListGUI($this, $_GET['member_id']);
+        $this->tpl->setContent($gradeList->render());
     }
+
 
     /**
      * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).
