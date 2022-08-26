@@ -179,8 +179,10 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-            $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
-            $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
+            if (!$this->wasGradeOverriden($user_id)) {
+                $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
+                $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
+            }
         }
 
         return array_filter($valid_grade_by_user);
@@ -208,6 +210,21 @@ class ilMumieTaskGradeSync
             }
         }
         return $latest_grade;
+    }
+    
+    public function wasGradeOverriden($user_id)
+    {
+        global $ilDB;
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
+        $query = "SELECT usr_id
+        FROM xmum_grade_override
+        WHERE " .
+        "task_id = " . $ilDB->quote($this->task->getId(), "integer") .
+        " AND " .
+        "usr_id = " . $ilDB->quote($hashed_user, "text");
+        $result = $ilDB->query($query);
+        ilLoggerFactory::getLogger('xmum')->info("checked " . $query);
+        return !empty($ilDB->fetchAssoc($result));
     }
 
     private $mockgraderesponse = '[
@@ -242,7 +259,7 @@ class ilMumieTaskGradeSync
             "timestamp": "2022-08-17T19:45:37+02"
         },
         {
-            "id": "6e7861c6-a430-4145-879b-f75cad80ef77",
+            "id": "6e7861c6-a430-4145-879b-f75cad80ef76",
             "actor": {
                 "account": {
                     "homePage": "https://test.mumie.net/ombplus",

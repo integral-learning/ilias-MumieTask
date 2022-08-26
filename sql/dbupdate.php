@@ -293,3 +293,40 @@ if (!is_null($result))
     }
 }
 ?>
+<#11>
+<?php
+if (!$ilDB->tableExists('xmum_grade_override')) {
+    $fieldsAminSettings = array(
+        'task_id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'usr_id' => array(
+            'type' => 'text',
+            'length' => '143',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_grade_override", $fieldsAminSettings);
+}
+?>
+<#12>
+<?php
+$ilDB->dropTable('xmum_grade_override');
+if (!$ilDB->tableExists('xmum_grade_override')) {
+    $fieldsAminSettings = array(
+        'task_id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'usr_id' => array(
+            'type' => 'text',
+            'length' => '143',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_grade_override", $fieldsAminSettings);
+}
+?>
