@@ -23,8 +23,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     public function __construct($parentObj, $form)
     {
-        ilLoggerFactory::getLogger('xmum')->info("gradelist construct");
-        global $ilDB;
+        global $ilDB, $lng;
         $this->form = $form; 
         $user_id = $_GET['member_id'];
         $this->parentObj = $parentObj;
@@ -38,8 +37,9 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
         $this->setFormName('participants');
 
-        $this->addColumn("Submission Date(tmp)", 'date');
-        $this->addColumn("Noten(tmp)", 'grade');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submission_date'), 'date');
+        $this->addColumn("", 'gradeswitch');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'grade');
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -71,7 +71,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                 
                 $this->tpl->setVariable("LINK_NAME" , $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
                 
-                $this->tpl->setVariable("LINK_TXT", "Note nutzen(tmp)");
+                $this->tpl->setVariable("LINK_TXT", $lng->txt('rep_robj_xmum_frm_list_use_grade'));
                 $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10));
                 $this->tpl->setCurrentBlock("tbl_content");
                 $this->tpl->parseCurrentBlock();
@@ -85,7 +85,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     private function overrideGrade($xapi_grade, $user_id)
     {
-        ilLoggerFactory::getLogger('xmum')->info("gradeOverride");
         global $ilDB, $DIC;
         $percentage = round($xapi_grade->result->score->scaled * 100);
         $DIC->database()->update(

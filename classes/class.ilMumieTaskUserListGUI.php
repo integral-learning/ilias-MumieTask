@@ -21,15 +21,14 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
     public function __construct($parentObj)
     {
-        global $ilDB, $DIC;
+        global $ilDB, $lng;
         $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayUserList');
 
         $this->setFormName('participants');
         $this->addColumn("", "", "1", true);
-        $this->addColumn("Name(Tmp)", 'name');
-        $this->addColumn("Deadline", 'date');
-        $this->addColumn("Noten", 'note');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->setDefaultFilterVisiblity(true);
 
         include_once './Services/Membership/classes/class.ilParticipants.php';
@@ -51,6 +50,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             $this->tpl->setVariable("CSS_ROW", $this->css_row);
             $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $set);
             $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+            $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
 
             $result = $ilDB->query("SELECT mark 
             FROM ut_lp_marks 
@@ -61,7 +61,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
             $grade = $ilDB->fetchAssoc($result);
             $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
-            $this->tpl->setVariable('LINK_TXT', "Noten Ändern(tmp)");
+            
             $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($set, "integer"));
             $names = $ilDB->fetchAssoc($result);
 

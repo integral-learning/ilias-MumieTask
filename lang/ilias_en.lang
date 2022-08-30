@@ -75,3 +75,10 @@ frm_online_info#:#Make this MUMIE Task visible and usable to all users with read
 frm_online_disabled_warning#:#This MUMIE Task cannot be set online because a decision is still pending. Please go to grading settings.
 open_prb_selector#:#Open problem selector
 open_prb_selector_desc#:#Click here to open a more detailed selection screen. You can filter all problems by category and enter search terms.
+frm_list_grade#:#Grade
+frm_list_name#:#Name
+frm_list_change_grade#:#Change Grade
+frm_list_submission_date#:#Submission Date
+frm_list_use_grade#:#Use this Grade
+frm_list_used_grade#:#Used Grade
+frm_list_back#:#Back

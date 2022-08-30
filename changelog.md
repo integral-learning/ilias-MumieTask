@@ -1,6 +1,8 @@
 # MumieTask - Changelog
 
 All important changes to this plugin will be documented in this file.
+## [v2.2.0] 
+- Added Participant List
 ## [v2.1.0]
 ### Added 
 - Sharing grades for the same MUMIE problems with other Ilias repositories can now be disabled.

@@ -21,8 +21,9 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
     public function setFields($parentObj)
     {
+        global $lng;
         $this->parentObj = $parentObj;
-        $textField = new ilTextInputGUI("Aktuelle Note(tmp)");
+        $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_used_grade'));
         $textField->setDisabled(true);
         $this->textField = $textField;
         $this->addItem($this->textField);
