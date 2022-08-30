@@ -223,7 +223,6 @@ class ilMumieTaskGradeSync
         " AND " .
         "usr_id = " . $ilDB->quote($hashed_user, "text");
         $result = $ilDB->query($query);
-        ilLoggerFactory::getLogger('xmum')->info("checked " . $query);
         return !empty($ilDB->fetchAssoc($result));
     }
 

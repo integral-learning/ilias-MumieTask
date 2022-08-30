@@ -12,18 +12,38 @@
   */
 class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
+    private $parentObj;
+    private $textField;
     public function __construct()
     {
         parent::__construct();
     }
 
-    public function setFields($parentObj, $user_id, $updateGradeId)
+    public function setFields($parentObj)
     {
+        $this->parentObj = $parentObj;
+        $textField = new ilTextInputGUI("Aktuelle Note(tmp)");
+        $textField->setDisabled(true);
+        $this->textField = $textField;
+        $this->addItem($this->textField);
+        $this->updateTextField();
+
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
-        $userList = new ilMumieTaskGradeListGUI($parentObj, $user_id, $updateGradeId);
-        
+        $userList = new ilMumieTaskGradeListGUI($parentObj, $this);
         $this->addItem($userList);
     }
 
+    public function updateTextField()
+    {
+        global $ilDB;
+        $result = $ilDB->query("SELECT mark 
+            FROM ut_lp_marks 
+            WHERE usr_id = " . $ilDB->quote($_GET['member_id'], "integer") .
+            " AND " .
+            "obj_id = " . $ilDB->quote($this->parentObj->object->getId() , "integer")
+            );
+        $grade = $ilDB->fetchAssoc($result);
+        $this->textField->setValue($grade["mark"]);
+    }
    
 }                                                                           

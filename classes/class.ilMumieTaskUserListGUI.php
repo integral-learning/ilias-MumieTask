@@ -66,7 +66,6 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             $names = $ilDB->fetchAssoc($result);
 
             $this->tpl->setVariable('VAL_NAME', $names['lastname'] . ", " . $names['lastname']);
-            //$this->fillRow($set);
             $this->tpl->setCurrentBlock("tbl_content");
             $this->tpl->parseCurrentBlock();
         }
