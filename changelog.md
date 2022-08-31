@@ -2,6 +2,7 @@
 
 All important changes to this plugin will be documented in this file.
 ## [v2.1.1] 
+### Added
 - Teachers can now open a new overview page in MUMIE Tasks
 - Teachers can now open a grade overview page with all the submissions and submission dates from a user
 - Teachers can now choose which grade should be used when grading this task
