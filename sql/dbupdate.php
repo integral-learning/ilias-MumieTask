@@ -293,3 +293,14 @@ if (!is_null($result))
     }
 }
 ?>
+<#11>
+<?php
+$ilDB->dropTableColumn("xmum_sso_tokens", "user");
+$ilDB->addTableColumn(
+    "xmum_sso_tokens" , "user",
+    array(
+        'type' => 'text',
+        'length' => 143,
+        'notnull' => true,
+    ));
+?>

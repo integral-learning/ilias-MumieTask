@@ -48,7 +48,7 @@ class ilMumieTaskSSOToken
                 'id' => array('integer', $ilDB->nextID(self::MUMIETOKENS_TABLE_NAME)),
                 'token' => array('text', $this->token),
                 'timecreated' => array('integer', time()),
-                'user' => array('integer', $this->user))
+                'user' => array('text',  $this->user))
         );
     }
 
@@ -58,7 +58,7 @@ class ilMumieTaskSSOToken
         $query = "SELECT * FROM "
         . self::MUMIETOKENS_TABLE_NAME
         . " WHERE user = "
-        . $ilDB->quote($this->user, 'integer');
+        . $ilDB->quote($this->user, 'text');
 
         $result = $ilDB->fetchAssoc($ilDB->query($query));
         $this->setToken($result["token"]);
@@ -75,7 +75,7 @@ class ilMumieTaskSSOToken
                 'timecreated' => array('integer', time()),
             ),
             array(
-                'user' => array('integer', $this->user),
+                'user' => array('text', $this->user),
             )
         );
     }
@@ -87,7 +87,7 @@ class ilMumieTaskSSOToken
             "DELETE FROM "
             . self::MUMIETOKENS_TABLE_NAME
             . " WHERE user = "
-            . $ilDB->quote($this->user, 'integer')
+            . $ilDB->quote($this->user, 'text')
         );
     }
 
@@ -113,6 +113,26 @@ class ilMumieTaskSSOToken
     {
         $mumie_token = new ilMumieTaskSSOToken($userId);
         $mumie_token->delete();
+    }
+
+    public static function invalidateAllTokenForUser($userId)
+    {
+        global $ilDB;
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
+        $hashedId = ilMumieTaskIdHashingService::getHashForUser($userId);
+        $query = "SELECT * FROM "
+        . self::MUMIETOKENS_TABLE_NAME
+        . " WHERE user LIKE "
+        . $ilDB->quote($hashedId . "%", 'text');
+        $result = $ilDB->fetchAssoc($ilDB->query($query));
+        if (!is_null($result["timecreated"]) && !is_null($result["token"])) {
+            while($result = $ilDB->fetchAssoc($ilDB->query($query))) {
+                $mumie_token = new ilMumieTaskSSOToken($result["user"]);
+                $mumie_token->delete();
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
