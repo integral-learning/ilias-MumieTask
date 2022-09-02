@@ -124,6 +124,7 @@ class ilMumieTaskSSOToken
         . self::MUMIETOKENS_TABLE_NAME
         . " WHERE user LIKE "
         . $ilDB->quote($hashedId . "%", 'text');
+        
         $result = $ilDB->fetchAssoc($ilDB->query($query));
         if (!is_null($result["timecreated"]) && !is_null($result["token"])) {
             while($result = $ilDB->fetchAssoc($ilDB->query($query))) {
