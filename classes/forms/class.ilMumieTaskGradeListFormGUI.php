@@ -19,7 +19,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         parent::__construct();
     }
 
-    public function setFields($parentObj)
+    public function setFields($parentObj, $form)
     {
         global $lng;
         $this->parentObj = $parentObj;
