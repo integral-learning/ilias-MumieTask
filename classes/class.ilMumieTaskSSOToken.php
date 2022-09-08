@@ -8,13 +8,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This class represents SSO tokens used to validate a user's access to the MUMIE platform
-  */
+/**
+ * This class represents SSO tokens used to validate a user's access to the MUMIE platform
+ */
 class ilMumieTaskSSOToken
 {
-    const MUMIETOKENS_TABLE_NAME = "xmum_sso_tokens";
-    const TOKEN_LENGTH = 30;
+    public const MUMIETOKENS_TABLE_NAME = "xmum_sso_tokens";
+    public const TOKEN_LENGTH = 30;
     private $token;
     private $user;
     private $timecreated;
@@ -109,31 +109,21 @@ class ilMumieTaskSSOToken
         return !is_null($mumie_token->timecreated) && !is_null($mumie_token->token);
     }
 
-    public static function invalidateTokenForUser($userId)
-    {
-        $mumie_token = new ilMumieTaskSSOToken($userId);
-        $mumie_token->delete();
-    }
-
-    public static function invalidateAllTokenForUser($userId)
+    public static function invalidateAllTokensForUser($userId)
     {
         global $ilDB;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
         $hashedId = ilMumieTaskIdHashingService::getHashForUser($userId);
         $query = "SELECT * FROM "
         . self::MUMIETOKENS_TABLE_NAME
-        . " WHERE user LIKE "
-        . $ilDB->quote($hashedId . "%", 'text');
-        
+        . " WHERE " . $ilDB->like("user", "text", $hashedId . "%");
+
         $result = $ilDB->fetchAssoc($ilDB->query($query));
-        if (!is_null($result["timecreated"]) && !is_null($result["token"])) {
-            while($result = $ilDB->fetchAssoc($ilDB->query($query))) {
-                $mumie_token = new ilMumieTaskSSOToken($result["user"]);
-                $mumie_token->delete();
-            }
-            return true;
+
+        while ($result = $ilDB->fetchAssoc($ilDB->query($query))) {
+            $mumie_token = new ilMumieTaskSSOToken($result["user"]);
+            $mumie_token->delete();
         }
-        return false;
     }
 
     /**
