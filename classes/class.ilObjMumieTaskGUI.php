@@ -50,6 +50,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "displayLearningProgress":
             case "displayUserList":
             case "displayGradeList":
+            case "displaySearchedUserList":
             case 'forceGradeUpdate':     
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
@@ -602,22 +603,33 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function displayUserList() 
     {
-        global $ilTabs;
+        global $ilTabs, $ilCtrl, $lng;
         $ilTabs->activateTab('userList');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
-        $form =  new ilMumieTaskUserListFormGUI($this);
-        $form->addCommandButton('displaySearchedUserList', "Search(tmp)");
+        $form =  new ilMumieTaskUserListFormGUI();
+        $form->addCommandButton('displaySearchedUserList', $lng->txt('rep_robj_xmum_frm_list_search'));
         $form->setFields($this);
+        $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
         $this->tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * 
+     */
     public function displaySearchedUserList()
     {
+        global $ilCtrl, $lng;
+        $this->displayUserList();
+        global $ilTabs;
+        $ilTabs->activateTab('userList');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
-        $form =  new ilMumieTaskUserListFormGUI($this);
-        $form->addCommandButton('displaySearchedUserList', "Search(tmp)");
+        $form =  new ilMumieTaskUserListFormGUI();
+        $form->addCommandButton('displaySearchedUserList', $lng->txt('rep_robj_xmum_frm_list_search'));
+        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_back'));
+        $this->form->checkInput();
         $form->setFields($this, $this->form);
+        $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
         $this->tpl->setContent($this->form->getHTML());
     }

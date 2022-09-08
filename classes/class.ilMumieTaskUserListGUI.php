@@ -8,13 +8,12 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This form is used to add, edit and validate MUMIE Server configurations
-  * 
-  */
+/**
+ * This form is used to add, edit and validate MUMIE Server configurations
+ *
+ */
 class ilMumieTaskUserListGUI extends ilTable2GUI
 {
-
     private $participants;
     private $parent_gui;
     private $postvar;
@@ -28,16 +27,14 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->setFormName('participants');
         $this->addColumn("", "", "1", true);
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_deadline'), 'deadline');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
+        $this->addColumn("");
         $this->setDefaultFilterVisiblity(true);
 
         include_once './Services/Membership/classes/class.ilParticipants.php';
         $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
-        $members = $this->participants->getMembers(); // get user ids of every memeber(no tutor/admin, for all use get participants)
-
-        if(!is_null($form)) {
-            $members = $this->getSearchedIds($form, $members);
-        }
+        $members = $this->getSearchedIds($form);
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -46,70 +43,89 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
 
-        foreach ($members as $user_id) {   
-                $this->tpl->setCurrentBlock("tbl_content");
-                $this->css_row = ($this->css_row != "tblrow1")
-                ? "tblrow1"
-                : "tblrow2";
-                $this->tpl->setVariable("CSS_ROW", $this->css_row);
-                $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
-                $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-                $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
-
-                $result = $ilDB->query("SELECT mark 
+        foreach ($members as $user_id) {
+            $this->tpl->setCurrentBlock("tbl_content");
+            $this->css_row = ($this->css_row != "tblrow1")
+            ? "tblrow1"
+            : "tblrow2";
+            $this->tpl->setVariable("CSS_ROW", $this->css_row);
+            $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
+            $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+            $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
+            $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
+            $this->tpl->setVariable('VAL_DATE', $dateTime->get(IL_CAL_DATE));
+            $result = $ilDB->query(
+                "SELECT mark 
                 FROM ut_lp_marks 
                 WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
-                " AND " .
-                "obj_id = " . $ilDB->quote($parentObj->object->getId() , "integer")
-                );
+            " AND " .
+            "obj_id = " . $ilDB->quote($parentObj->object->getId(), "integer")
+            );
 
-                $grade = $ilDB->fetchAssoc($result);
-                $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
-            
-                $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
-                $names = $ilDB->fetchAssoc($result);
+            $grade = $ilDB->fetchAssoc($result);
+            $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
 
-                $this->tpl->setVariable('VAL_NAME', $names['lastname'] . ", " . $names['lastname']);
-                $this->tpl->setCurrentBlock("tbl_content");
-                $this->tpl->parseCurrentBlock();
+            $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
+            $names = $ilDB->fetchAssoc($result);
+
+            $this->tpl->setVariable('VAL_NAME', $names['firstname'] . ", " . $names['lastname']);
+            $this->tpl->setCurrentBlock("tbl_content");
+            $this->tpl->parseCurrentBlock();
         }
         $this->enable('header');
         $this->enable('sort');
         $this->setEnableHeader(true);
     }
 
-    private function getSearchedIds($form, $members)
+    private function getSearchedIds($form)
     {
         global $ilDB;
-        $search = $form->getInput("searchfield");
-        $name = explode(" ", $search);
-        $searchedMembers = array();
-        foreach($members as $user_id) {
-            $result = $ilDB->query("SELECT usr_id FROM usr_data 
-            WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
-            " AND " .
-            "(firstname LIKE " . $ilDB->quote($name[0] . "%", "text") .
-            " OR " .
-            "lastname LIKE " . $ilDB->quote($name[1] . "%", "text") . ")"
-            );
-            $id = $ilDB->fetchAssoc($result);
+        $members = $this->participants->getMembers();
+        if (empty($form)) {
+            return $members;
+        }
 
-            if(!empty($id)) {
-                array_push($searchedMembers, $id);
+        $searchedMembers = array();
+        foreach ($members as $user_id) {
+            $id = $this->checkIfFirstNameInList($user_id, $form->getInput("firstnamefield"));
+            if (!empty($id) && !empty($form->getInput("firstnamefield"))) {
+                array_push($searchedMembers, $id["usr_id"]);
+            }
+            ilLoggerFactory::getLogger('xmum')->info("first name " . $form->getInput("firstnamefield"));
+            $id = $this->checkIfLastNameInList($user_id, $form->getInput("lastnamefield"));
+            if (!empty($id) && !in_array($id["usr_id"], $searchedMembers) && !empty($form->getInput("lastnamefield"))) {
+                array_push($searchedMembers, $id["usr_id"]);
             }
         }
-        
-        return $searchedMembers();
+        return $searchedMembers;
     }
 
-    private function checkSearchIds($user_id, $searchIds)
+    private function checkIfFirstNameInList($user_id, $name)
     {
-        foreach($searchIds as $id) {
-            if($id == $user_id) {
-                return true;
-            }
-        }
-        return false;
+        global $ilDB;
+        $result = $ilDB->query(
+            "SELECT usr_id FROM usr_data 
+        WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
+        " AND " .
+        $ilDB->like("firstname", "text", $name . "%", false)
+        );
+        return $ilDB->fetchAssoc($result);
+    }
+
+    private function checkIfLastNameInList($user_id, $name)
+    {
+        global $ilDB;
+        $result = $ilDB->query(
+            "SELECT usr_id FROM usr_data 
+        WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
+        " AND " .
+        $ilDB->like("lastname", "text", $name . "%", false)
+        );
+        return $ilDB->fetchAssoc($result);
+    }
+
+    public function checkInput()
+    {
     }
 
     //All functions are necessary for the list to be implemented into a form
@@ -156,7 +172,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         return "";
     }
 
-    
+
 
     public function getPostVar()
     {
@@ -172,7 +188,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
     {
         $id = str_replace("[", "__", $this->getPostVar());
         $id = str_replace("]", "__", $id);
-        
+
         return $id;
     }
 
@@ -195,7 +211,4 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
     {
         return "";
     }
-
-
-
 }

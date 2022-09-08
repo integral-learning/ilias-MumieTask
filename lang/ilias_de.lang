@@ -82,3 +82,7 @@ frm_list_submission_date#:#
 frm_list_use_grade#:#Diese Note nutzen
 frm_list_used_grade#:#Aktuelle Note
 frm_list_back#:#Zurück
+frm_list_search#:#Suchen
+frm_list_firstname_search#:#Teilnehmer Suchen: Vorname
+frm_list_lastname_search#:#Nachname
+frm_list_deadline#:#Abgabe

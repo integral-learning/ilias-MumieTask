@@ -82,3 +82,7 @@ frm_list_submission_date#:#Submission Date
 frm_list_use_grade#:#Use this Grade
 frm_list_used_grade#:#Used Grade
 frm_list_back#:#Back
+frm_list_search#:#Search
+frm_list_firstname_search#:#Search Participant: Firstname
+frm_list_lastname_search#:#Lastname
+frm_list_deadline#:#Deadline
