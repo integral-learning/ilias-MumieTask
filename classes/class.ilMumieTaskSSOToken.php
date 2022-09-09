@@ -95,29 +95,41 @@ class ilMumieTaskSSOToken
     {
         $this->read();
         $this->token = $this->generateToken();
-        if (!$this->tokenExistsForUser($this->user)) {
+        if (!$this->tokenExistsForHashedUser($this->user)) {
             $this->create();
         } else {
             $this->update();
         }
     }
 
-    public static function tokenExistsForUser($userId)
+    private static function tokenExistsForHashedUser($hashedUser)
     {
-        $mumie_token = new ilMumieTaskSSOToken($userId);
+        $mumie_token = new ilMumieTaskSSOToken($hashedUser);
         $mumie_token->read();
         return !is_null($mumie_token->timecreated) && !is_null($mumie_token->token);
     }
 
-    public static function invalidateAllTokensForUser($userId)
+    public static function tokenExistsForIliasUser($iliasUserId)
+    {
+        global $ilDB;
+        $query = self::getAllTokensForIliasUserQuery($iliasUserId);
+        return !is_null($ilDB->fetchAssoc($ilDB->query($query)));
+    }
+
+    private static function getAllTokensForIliasUserQuery($iliasUserId)
     {
         global $ilDB;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-        $hashedId = ilMumieTaskIdHashingService::getHashForUser($userId);
-        $query = "SELECT * FROM "
-        . self::MUMIETOKENS_TABLE_NAME
-        . " WHERE " . $ilDB->like("user", "text", $hashedId . "%");
+        $hashedId = ilMumieTaskIdHashingService::getHashForUser($iliasUserId);
+        return "SELECT * FROM "
+            . self::MUMIETOKENS_TABLE_NAME
+            . " WHERE " . $ilDB->like("user", "text", $hashedId . "%");
+    }
 
+    public static function invalidateAllTokensForUser($iliasUserId)
+    {
+        global $ilDB;
+        $query = self::getAllTokensForIliasUserQuery($iliasUserId);
         while ($result = $ilDB->fetchAssoc($ilDB->query($query))) {
             $mumie_token = new ilMumieTaskSSOToken($result["user"]);
             $mumie_token->delete();
