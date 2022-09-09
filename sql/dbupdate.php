@@ -242,15 +242,17 @@ if (!$ilDB->fetchAssoc($ilDB->query($query))) {
 ?>
 <#9>
 <?php
-if (!$ilDB->tableColumnExists("xmum_mumie_task","privategradepool")) {
+if (!$ilDB->tableColumnExists("xmum_mumie_task", "privategradepool")) {
     $ilDB->addTableColumn(
-        "xmum_mumie_task" , "privategradepool",
+        "xmum_mumie_task",
+        "privategradepool",
         array(
             'type' => 'integer',
             'length' => '2',
             'notnull' => true,
             'default' => '-1'
-    ));
+    )
+    );
 }
 $ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');
 ?>
@@ -282,18 +284,29 @@ $fieldsHashes = array(
 $ilDB->createTable("xmum_id_hashes", $fieldsHashes);
 $ilDB->addPrimaryKey("xmum_id_hashes", array("id"));
 $ilDB->createSequence("xmum_id_hashes");
-if (!is_null($result))
-{
-    while ($row = $ilDB->fetchAssoc($result))  {
+if (!is_null($result)) {
+    while ($row = $ilDB->fetchAssoc($result)) {
         $query = 'INSERT INTO xmum_id_hashes (id, usr_id, hash) VALUES (' .
             $ilDB->nextID('xmum_id_hashes') . "," .
             $ilDB->quote($row['usr_id'], 'integer') . "," .
             $ilDB->quote($row['hash'], 'text') . ")";
-            $ilDB->manipulate($query); 
+        $ilDB->manipulate($query);
     }
 }
 ?>
 <#11>
+<?php
+$ilDB->modifyTableColumn(
+    "xmum_sso_tokens",
+    "user",
+    array(
+        'type' => 'text',
+        'length' => 143,
+        'notnull' => true,
+    )
+);
+?>
+<#12>
 <?php
 if (!$ilDB->tableExists('xmum_grade_override')) {
     $fieldsAminSettings = array(
@@ -311,7 +324,7 @@ if (!$ilDB->tableExists('xmum_grade_override')) {
     $ilDB->createTable("xmum_grade_override", $fieldsAminSettings);
 }
 ?>
-<#12>
+<#13>
 <?php
 $ilDB->dropTable('xmum_grade_override');
 if (!$ilDB->tableExists('xmum_grade_override')) {
