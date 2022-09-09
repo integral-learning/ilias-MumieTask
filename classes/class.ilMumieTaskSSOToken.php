@@ -118,8 +118,6 @@ class ilMumieTaskSSOToken
         . self::MUMIETOKENS_TABLE_NAME
         . " WHERE " . $ilDB->like("user", "text", $hashedId . "%");
 
-        $result = $ilDB->fetchAssoc($ilDB->query($query));
-
         while ($result = $ilDB->fetchAssoc($ilDB->query($query))) {
             $mumie_token = new ilMumieTaskSSOToken($result["user"]);
             $mumie_token->delete();
