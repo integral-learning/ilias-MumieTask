@@ -11,6 +11,7 @@ frm_share_email_desc#:#Legen Sie fest, ob die E-Mail-Adressen der Nutzer an die 
 tab_shared_data#:#Datenschutz
 tab_servers#:#Server
 tab_authentication#:#Authentifizierung
+tab_userlist#:#Bewertungsübersicht
 frm_auth_api#:#MUMIE-API-Key
 frm_auth_api_desc#:#Geben Sie den MUMIE-API-Key für die Notensychnonisierung ein
 frm_auth_org#:#MUMIE-Org
@@ -83,6 +84,8 @@ frm_list_use_grade#:#Diese Note nutzen
 frm_list_used_grade#:#Aktuelle Note
 frm_list_back#:#Zurück
 frm_list_search#:#Suchen
-frm_list_firstname_search#:#Teilnehmer Suchen: Vorname
+frm_list_firstname_search#:#Vorname
 frm_list_lastname_search#:#Nachname
-frm_list_deadline#:#Abgabe
+frm_list_deadline#:#Abgabefrist
+frm_search_title#:#Teilnehmer Suche
+frm_list_general_dealine#:#Allgemeine Abgabefrist:

@@ -27,7 +27,6 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->setFormName('participants');
         $this->addColumn("", "", "1", true);
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_deadline'), 'deadline');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn("");
         $this->setDefaultFilterVisiblity(true);
@@ -52,8 +51,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
             $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
             $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
-            $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
-            $this->tpl->setVariable('VAL_DATE', $dateTime->get(IL_CAL_DATE));
+            
             $result = $ilDB->query(
                 "SELECT mark 
                 FROM ut_lp_marks 
@@ -81,7 +79,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
     {
         global $ilDB;
         $members = $this->participants->getMembers();
-        if (empty($form)) {
+        if (empty($form) || (empty($form->getInput("firstnamefield")) && empty($form->getInput("lastnamefield")))) {
             return $members;
         }
 

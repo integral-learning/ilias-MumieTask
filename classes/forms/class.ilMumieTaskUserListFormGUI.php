@@ -7,9 +7,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This form is used to edit the Learning Progress settings of MumieTasks
-  */
+/**
+ * This form is used to edit the Learning Progress settings of MumieTasks
+ */
 class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
 {
     public function __construct()
@@ -18,19 +18,31 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
         $this->setDisableStandardMessage(true);
     }
 
-    public function setFields($parentObj, $form = null)
+    public function setFields($parentObj)
     {
         global $lng;
+        
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserListGUI.php');
         $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_firstname_search'), "firstnamefield");
         $this->addItem($textField);
         $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_lastname_search'), "lastnamefield");
         $this->addItem($textField);
-        
-        $userList = new ilMumieTaskUserListGUI($parentObj, $form);
-        
-        $this->addItem($userList);
+
+        $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
+        ilUtil::sendInfo('<span>
+        <b>' . $lng->txt('rep_robj_xmum_frm_list_general_dealine') . '</b>
+        <span style="margin-left:50px"> ' . $dateTime->get(IL_CAL_DATETIME) . '</span>
+        </span>' );
     }
 
-   
-}                                                                           
+    public function setFields2($parentObj, $form = null)
+    {
+        global $lng;
+        $select_task_header_item = new ilFormSectionHeaderGUI();
+        $select_task_header_item->setTitle($lng->txt('rep_robj_xmum_tab_userlist'));
+        $this->addItem($select_task_header_item);
+
+        $userList = new ilMumieTaskUserListGUI($parentObj, $form);
+        $this->addItem($userList);
+    }
+}

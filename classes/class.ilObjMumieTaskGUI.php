@@ -69,13 +69,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tabs->addTab("viewContent", $this->lng->txt("content"), $ilCtrl->getLinkTarget($this, "viewContent"));
         if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
             $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
+            $this->tabs->addTab("userList", $lng->txt('rep_robj_xmum_tab_userlist'), $ilCtrl->getLinkTarget($this, "displayUserList"));
         }
 
         include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
         if ($this->object->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
             $ilTabs->addTab("learning_progress", $lng->txt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
         }
-        $this->tabs->addTab("userList", "User List(Tmp)", $ilCtrl->getLinkTarget($this, "displayUserList"));
 
         $ilTabs->addTab("infoScreen", $this->lng->txt("info_short"), $ilCtrl->getLinkTarget($this, "infoScreen"));
 
@@ -607,8 +607,16 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $ilTabs->activateTab('userList');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
         $form =  new ilMumieTaskUserListFormGUI();
-        $form->addCommandButton('displaySearchedUserList', $lng->txt('rep_robj_xmum_frm_list_search'));
+        $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
         $form->setFields($this);
+
+        require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
+        $search_button = new ilMumieTaskFormButtonGUI();
+        $search_button->setButtonLabel($lng->txt('rep_robj_xmum_frm_list_search'));
+        $search_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'displaySearchedUserList'));
+        
+        $form->addItem($search_button);
+        $form->setFields2($this);
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
         $this->tpl->setContent($this->form->getHTML());
@@ -628,7 +636,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form->addCommandButton('displaySearchedUserList', $lng->txt('rep_robj_xmum_frm_list_search'));
         $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_back'));
         $this->form->checkInput();
-        $form->setFields($this, $this->form);
+        
+        $form->setFields2($this, $this->form);
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
         $this->tpl->setContent($this->form->getHTML());

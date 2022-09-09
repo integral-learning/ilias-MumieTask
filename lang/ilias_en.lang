@@ -11,6 +11,7 @@ frm_share_email_desc#:#Choose, whether a user's e-mail address should be shared 
 tab_shared_data#:#Privacy
 tab_servers#:#Servers
 tab_authentication#:#Authentication
+tab_userlist#:#Grade Overview
 frm_auth_api#:#MUMIE API Key
 frm_auth_api_desc#:#Specify the MUMIE API key for grade synchronization
 frm_auth_org#:#MUMIE Org
@@ -83,6 +84,8 @@ frm_list_use_grade#:#Use this Grade
 frm_list_used_grade#:#Used Grade
 frm_list_back#:#Back
 frm_list_search#:#Search
-frm_list_firstname_search#:#Search Participant: Firstname
+frm_list_firstname_search#:#Firstname
 frm_list_lastname_search#:#Lastname
-frm_list_deadline#:#Deadline
+frm_list_deadline#:#Due Date
+frm_search_title#:#Search Participants
+frm_list_general_dealine#:#General due date:
