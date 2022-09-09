@@ -26,10 +26,10 @@ class ilMumieTaskIdHashingService
         $this->task = $task;
     }
 
-    public static function getHashForUser($user_id, $task)
+    public static function getHashForUser($user_id, $task = null)
     {
         $service = new ilMumieTaskIdHashingService($user_id, $task);
-        $service->upsertHash();      
+        $service->upsertHash();
         return $service->getHash();
     }
 
@@ -52,7 +52,7 @@ class ilMumieTaskIdHashingService
     {
         global $ilDB;
         $this->hash = $this->generateHash();
-        if ($this->task->getPrivateGradepool() == 1) {
+        if ($this->task != null && $this->task->getPrivateGradepool() == 1) {
             $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
         }   
         $result = $ilDB->fetchObject(

@@ -293,3 +293,12 @@ if (!is_null($result))
     }
 }
 ?>
+<#11>
+<?php
+$ilDB->modifyTableColumn("xmum_sso_tokens" , "user",
+array(
+    'type' => 'text',
+    'length' => 143,
+    'notnull' => true,
+));
+?>
