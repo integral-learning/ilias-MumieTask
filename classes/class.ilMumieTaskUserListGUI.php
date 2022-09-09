@@ -28,7 +28,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->addColumn("", "", "1", true);
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
-        $this->addColumn("");
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
         include_once './Services/Membership/classes/class.ilParticipants.php';

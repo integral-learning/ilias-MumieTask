@@ -79,7 +79,8 @@ open_prb_selector_desc#:#Klicken Sie hier, um eine detaillierte Auswahl zu öffn
 frm_list_grade#:#Note
 frm_list_name#:#Name
 frm_list_change_grade#:#Note ändern
-frm_list_submission_date#:#
+frm_list_submissions#:#Abgaben
+frm_list_submission_date#:#Abgabe Datum
 frm_list_use_grade#:#Diese Note nutzen
 frm_list_used_grade#:#Aktuelle Note
 frm_list_back#:#Zurück

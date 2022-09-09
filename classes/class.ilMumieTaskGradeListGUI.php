@@ -8,10 +8,10 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This form is used to add, edit and validate MUMIE Server configurations
-  * @ilCtrl_isCalledBy ilBarGUI: ilFooGUI (multiple classes can be separated by comma)
-  */
+/**
+ * This form is used to add, edit and validate MUMIE Server configurations
+ * @ilCtrl_isCalledBy ilBarGUI: ilFooGUI (multiple classes can be separated by comma)
+ */
 
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
 class ilMumieTaskGradeListGUI extends ilTable2GUI
@@ -24,7 +24,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     public function __construct($parentObj, $form)
     {
         global $ilDB, $lng;
-        $this->form = $form; 
+        $this->form = $form;
         $user_id = $_GET['member_id'];
         $this->parentObj = $parentObj;
         $this->admin_settings = ilMumieTaskAdminSettings::getInstance();
@@ -51,30 +51,30 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
         $xGrades = $gradesync->getAllXapiGradesByUser();
         $syncId = $gradesync->getSyncIds(array($user_id))[0];
+        if (!empty($xGrades)) {
+            foreach ($xGrades as $xGrade) {
+                if ($xGrade->actor->account->name == $syncId) {
+                    if (is_null($_GET['updateGradeId']) == false && $xGrade->id == $_GET['updateGradeId']) {
+                        $this->overrideGrade($xGrade, $user_id, $parentObj);
+                    }
 
-        foreach($xGrades as $xGrade) {
-            if($xGrade->actor->account->name == $syncId)
-            {
-                if(is_null($_GET['updateGradeId']) == false && $xGrade->id == $_GET['updateGradeId']) {
-                    $this->overrideGrade($xGrade, $user_id, $parentObj);
+                    $this->tpl->setCurrentBlock("tbl_content");
+                    $this->css_row = ($this->css_row != "tblrow1")
+                        ? "tblrow1"
+                        : "tblrow2";
+
+                    $this->tpl->setVariable("CSS_ROW", $this->css_row);
+                    $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
+                    $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'updateGradeId', $xGrade->id);
+                    $this->tpl->setVariable("VAL_GRADE", $xGrade->result->score->raw * 100);
+
+                    $this->tpl->setVariable("LINK_NAME", $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+
+                    $this->tpl->setVariable("LINK_TXT", $lng->txt('rep_robj_xmum_frm_list_use_grade'));
+                    $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10));
+                    $this->tpl->setCurrentBlock("tbl_content");
+                    $this->tpl->parseCurrentBlock();
                 }
-
-                $this->tpl->setCurrentBlock("tbl_content");
-                $this->css_row = ($this->css_row != "tblrow1")
-                    ? "tblrow1"
-                    : "tblrow2";
-
-                $this->tpl->setVariable("CSS_ROW", $this->css_row);
-                $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
-                $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'updateGradeId', $xGrade->id);
-                $this->tpl->setVariable("VAL_GRADE", $xGrade->result->score->raw * 100);
-                
-                $this->tpl->setVariable("LINK_NAME" , $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-                
-                $this->tpl->setVariable("LINK_TXT", $lng->txt('rep_robj_xmum_frm_list_use_grade'));
-                $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10));
-                $this->tpl->setCurrentBlock("tbl_content");
-                $this->tpl->parseCurrentBlock();
             }
         }
 
@@ -102,7 +102,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->parentObj->object);
         $gradesync  = new  ilMumieTaskGradeSync($this->parentObj->object, false);
-        if(!$gradesync->wasGradeOverriden($user_id)) {
+        if (!$gradesync->wasGradeOverriden($user_id)) {
             $ilDB->insert(
                 "xmum_grade_override",
                 array(
@@ -158,7 +158,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         return "";
     }
 
-    
+
 
     public function getPostVar()
     {
@@ -174,7 +174,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     {
         $id = str_replace("[", "__", $this->getPostVar());
         $id = str_replace("]", "__", $id);
-        
+
         return $id;
     }
 
