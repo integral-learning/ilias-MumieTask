@@ -6,7 +6,7 @@ All important changes to this plugin will be documented in this file.
 - Sharing grades for the same MUMIE problems with other Ilias repositories can now be disabled.
 
 ### Changed
-- Plugin now supports Ilias v7.5
+- Plugin now supports Ilias v7.13
 
 ## [v2.0.1] - 2021-08-26
 ### Changed
