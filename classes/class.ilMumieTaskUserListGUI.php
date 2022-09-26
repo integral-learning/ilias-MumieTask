@@ -122,6 +122,9 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
     }
 
     //All functions are necessary for the list to be implemented into a form
+    public function checkInput() {
+        return true;
+    }
     public function insert($a_tpl)
     {
         $a_tpl->setCurrentBlock("prop_custom");
