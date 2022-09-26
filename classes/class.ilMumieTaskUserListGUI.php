@@ -23,7 +23,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         global $ilDB, $lng;
         $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayUserList');
-
+        
         $this->setFormName('participants');
         $this->addColumn("", "", "1", true);
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
@@ -89,7 +89,6 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             if (!empty($id) && !empty($form->getInput("firstnamefield"))) {
                 array_push($searchedMembers, $id["usr_id"]);
             }
-            ilLoggerFactory::getLogger('xmum')->info("first name " . $form->getInput("firstnamefield"));
             $id = $this->checkIfLastNameInList($user_id, $form->getInput("lastnamefield"));
             if (!empty($id) && !in_array($id["usr_id"], $searchedMembers) && !empty($form->getInput("lastnamefield"))) {
                 array_push($searchedMembers, $id["usr_id"]);
@@ -105,7 +104,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             "SELECT usr_id FROM usr_data 
         WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
         " AND " .
-        $ilDB->like("firstname", "text", $name . "%", false)
+        $ilDB->like("firstname", "text", trim($name) . "%", false)
         );
         return $ilDB->fetchAssoc($result);
     }
@@ -117,13 +116,9 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             "SELECT usr_id FROM usr_data 
         WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
         " AND " .
-        $ilDB->like("lastname", "text", $name . "%", false)
+        $ilDB->like("lastname", "text", trim($name) . "%", false)
         );
         return $ilDB->fetchAssoc($result);
-    }
-
-    public function checkInput()
-    {
     }
 
     //All functions are necessary for the list to be implemented into a form

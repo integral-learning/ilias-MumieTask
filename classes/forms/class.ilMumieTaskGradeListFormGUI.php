@@ -19,10 +19,14 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         parent::__construct();
     }
 
-    public function setFields($parentObj, $form)
+    public function setFields($parentObj)
     {
-        global $lng;
+        global $lng, $ilDB;
         $this->parentObj = $parentObj;
+
+        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['member_id'], "integer"));
+        $names = $ilDB->fetchAssoc($result);
+        $this->setTitle($names["firstname"] . " " . $names["lastname"]);
         $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_used_grade'));
         $textField->setDisabled(true);
         $this->textField = $textField;

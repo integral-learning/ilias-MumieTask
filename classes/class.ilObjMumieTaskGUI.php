@@ -49,9 +49,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "viewContent":
             case "displayLearningProgress":
             case "displayUserList":
-            case "displayGradeList":
             case "displaySearchedUserList":
-            case 'forceGradeUpdate':     
+            case "displayGradeList":
+            case 'forceGradeUpdate':
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
                 $this->$cmd();
@@ -109,7 +109,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $lng;
         $this->setCreationMode(true);
         $refId = $_GET["ref_id"];
-        
+
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $task = ilObjMumieTask::constructDummy();
@@ -134,7 +134,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function editPropertiesObject()
     {
-        ilLoggerFactory::getLogger('xmum')->info("EDIT PROIERTIERS");
         global $tpl, $ilTabs, $lng;
         if (empty(ilMumieTaskServer::getAllServers())) {
             $this->addServer();
@@ -432,7 +431,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         global $ilTabs;
         $ilTabs->activateTab('properties');
-        $this->setSubTabs("properties"); 
+        $this->setSubTabs("properties");
         $ilTabs->activateSubTab('lp_settings');
         $this->initLPSettingsForm();
         $values = array();
@@ -482,20 +481,19 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $force_grade_update = $this->object->getPassingGrade() !== $this->form->getInput('passing_grade');
         $is_gradepool_setting_update = $this->object->getPrivateGradepool() !== $this->form->getInput('privategradepool');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
-        if(!$this->object->isGradepoolSet())
-        {
+        if (!$this->object->isGradepoolSet()) {
             $this->object->setPrivateGradepool((int)$this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->doUpdate();
-        if($is_gradepool_setting_update) {
-            ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(      
+        if ($is_gradepool_setting_update) {
+            ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(
                 $this->object->getParentRef(),
                 $this->object->getPrivateGradepool()
             );
         }
 
-        if ($force_grade_update) {       
+        if ($force_grade_update) {
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
 
@@ -545,7 +543,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form = new ilMumieTaskFormAvailabilityGUI();
         $form->setFields(!$this->object->isGradepoolSet());
         $form->addCommandButton('submitAvailabilitySettings', $this->lng->txt('save'));
-        $form->addCommandButton('editProperties', $this->lng->txt('cancel'));  
+        $form->addCommandButton('editProperties', $this->lng->txt('cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
 
         $this->form = $form;
@@ -599,45 +597,48 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
 
     /**
-     * 
+     *
      */
-    public function displayUserList() 
+    public function displayUserList()
     {
         global $ilTabs, $ilCtrl, $lng;
+        $ilTabs->activateTab('userList');
+        $this->initUserList();
+        $this->tpl->setContent($this->form->getHTML());
+    }
+
+    public function initUserList()
+    {
+        global $ilCtrl, $lng;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
+        $form =  new ilMumieTaskUserListFormGUI();
+        $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
+        $form->setSearch($this);
+        $form->addCommandButton('displaySearchedUserList', "Suchen");
+        $form->setTable($this);
+        $form->setFormAction($ilCtrl->getFormAction($this));
+        $this->form = $form;
+    }
+
+    /**
+     *
+     */
+    public function displaySearchedUserList()
+    {
+        global $ilTabs, $ilCtrl, $lng;
+
+        $this->initUserList();
+        $this->form->checkInput();
+        ilLoggerFactory::getLogger('xmum')->info("return members searched " . print_r($this->form->getInput("firstnamefield"), true));
+
         $ilTabs->activateTab('userList');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
         $form =  new ilMumieTaskUserListFormGUI();
         $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
-        $form->setFields($this);
+        $form->addCommandButton('displaySearchedUserList', "Suchen");
+        $form->setSearch($this);
 
-        require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
-        $search_button = new ilMumieTaskFormButtonGUI();
-        $search_button->setButtonLabel($lng->txt('rep_robj_xmum_frm_list_search'));
-        $search_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'displaySearchedUserList'));
-        
-        $form->addItem($search_button);
-        $form->setFields2($this);
-        $form->setFormAction($ilCtrl->getFormAction($this));
-        $this->form = $form;
-        $this->tpl->setContent($this->form->getHTML());
-    }
-
-    /**
-     * 
-     */
-    public function displaySearchedUserList()
-    {
-        global $ilCtrl, $lng;
-        $this->displayUserList();
-        global $ilTabs;
-        $ilTabs->activateTab('userList');
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
-        $form =  new ilMumieTaskUserListFormGUI();
-        $form->addCommandButton('displaySearchedUserList', $lng->txt('rep_robj_xmum_frm_list_search'));
-        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_back'));
-        $this->form->checkInput();
-        
-        $form->setFields2($this, $this->form);
+        $form->setTable($this, $this->form);
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
         $this->tpl->setContent($this->form->getHTML());
@@ -646,7 +647,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     public function displayGradeList()
     {
-        global $ilTabs, $ilCtrl, $lng;
+        global $ilTabs, $ilCtrl, $lng, $ilDB;
         $ilTabs->activateTab('userList');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskGradeListFormGUI.php');
         $form =  new ilMumieTaskGradeListFormGUI($this);

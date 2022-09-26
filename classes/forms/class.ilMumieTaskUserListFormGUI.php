@@ -12,37 +12,47 @@
  */
 class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
 {
+    private $text_item_first;
+    private $text_item_last;
+
     public function __construct()
     {
         parent::__construct();
         $this->setDisableStandardMessage(true);
     }
 
-    public function setFields($parentObj)
+    public function setSearch($parentObj)
     {
         global $lng;
-        
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserListGUI.php');
-        $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_firstname_search'), "firstnamefield");
-        $this->addItem($textField);
-        $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_lastname_search'), "lastnamefield");
-        $this->addItem($textField);
 
-        $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
-        ilUtil::sendInfo('<span>
-        <b>' . $lng->txt('rep_robj_xmum_frm_list_general_dealine') . '</b>
-        <span style="margin-left:50px"> ' . $dateTime->get(IL_CAL_DATETIME) . '</span>
-        </span>' );
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserListGUI.php');
+        $this->text_item_first = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_firstname_search'), 'firstnamefield');
+        $this->addItem($this->text_item_first);
+        $this->text_item_last = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_lastname_search'), 'lastnamefield');
+        $this->addItem($this->text_item_last);
+
+        if ($parentObj->object->getActivationLimited()) {
+            $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
+            ilUtil::sendInfo('<span>
+            <b>' . $lng->txt('rep_robj_xmum_frm_list_general_dealine') . '</b>
+            <span style="margin-left:50px"> ' . $dateTime->get(IL_CAL_DATETIME) . '</span>
+            </span>');
+        }
     }
 
-    public function setFields2($parentObj, $form = null)
+    public function setTable($parentObj, $form = null)
     {
         global $lng;
         $select_task_header_item = new ilFormSectionHeaderGUI();
         $select_task_header_item->setTitle($lng->txt('rep_robj_xmum_tab_userlist'));
         $this->addItem($select_task_header_item);
-
         $userList = new ilMumieTaskUserListGUI($parentObj, $form);
         $this->addItem($userList);
+    }
+
+    public function checkInput()
+    {
+        $ok = parent::checkInput();  
+        return $ok;
     }
 }

@@ -32,9 +32,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayGradeList');
 
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
-        $names = $ilDB->fetchAssoc($result);
-
         $this->setFormName('participants');
 
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submission_date'), 'date');
