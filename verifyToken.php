@@ -21,6 +21,7 @@ if ($method != 'POST') {
 
 chdir("../../../../../../../");
 
+$_GET['client_id'] = $_REQUEST['clientId'];
 // Initialise Ilias and the $ilDB global
 require_once "Services/Context/classes/class.ilContext.php";
 ilContext::init(ilContext::CONTEXT_REST);

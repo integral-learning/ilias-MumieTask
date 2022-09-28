@@ -6,9 +6,16 @@ All important changes to this plugin will be documented in this file.
 - Teachers can now open a new overview page in MUMIE Tasks
 - Teachers can now open a grade overview page with all the submissions and submission dates from a user
 - Teachers can now choose which grade should be used when grading this task
-## [v2.1.0]
+## [v2.1.0] - 2022-09-28
 ### Added 
 - Sharing grades for the same MUMIE problems with other Ilias repositories can now be disabled.
+
+### Changed
+- Plugin now supports Ilias v7.13
+
+### Fixed
+- Fixed an issue where pushing **Force update** button in MUMIE Task's grade settings didn't work 
+
 ## [v2.0.1] - 2021-08-26
 ### Changed
 - Added support for Ilias 6.10

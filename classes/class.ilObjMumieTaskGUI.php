@@ -456,7 +456,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
         $force_sync_button = new ilMumieTaskFormButtonGUI($this->lng->txt('rep_robj_xmum_frm_force_update'));
         $force_sync_button->setButtonLabel($this->lng->txt('rep_robj_xmum_frm_force_update_btn'));
-        $force_sync_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'force_grade_update'));
+        $force_sync_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'forceGradeUpdate'));
         $force_sync_button->setInfo($this->lng->txt('rep_robj_xmum_frm_force_update_desc'));
         $form->addItem($force_sync_button);
 
