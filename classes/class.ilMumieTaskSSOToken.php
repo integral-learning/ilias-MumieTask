@@ -8,13 +8,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This class represents SSO tokens used to validate a user's access to the MUMIE platform
-  */
+/**
+ * This class represents SSO tokens used to validate a user's access to the MUMIE platform
+ */
 class ilMumieTaskSSOToken
 {
-    const MUMIETOKENS_TABLE_NAME = "xmum_sso_tokens";
-    const TOKEN_LENGTH = 30;
+    public const MUMIETOKENS_TABLE_NAME = "xmum_sso_tokens";
+    public const TOKEN_LENGTH = 30;
     private $token;
     private $user;
     private $timecreated;
@@ -48,7 +48,7 @@ class ilMumieTaskSSOToken
                 'id' => array('integer', $ilDB->nextID(self::MUMIETOKENS_TABLE_NAME)),
                 'token' => array('text', $this->token),
                 'timecreated' => array('integer', time()),
-                'user' => array('integer', $this->user))
+                'user' => array('text',  $this->user))
         );
     }
 
@@ -58,7 +58,7 @@ class ilMumieTaskSSOToken
         $query = "SELECT * FROM "
         . self::MUMIETOKENS_TABLE_NAME
         . " WHERE user = "
-        . $ilDB->quote($this->user, 'integer');
+        . $ilDB->quote($this->user, 'text');
 
         $result = $ilDB->fetchAssoc($ilDB->query($query));
         $this->setToken($result["token"]);
@@ -75,7 +75,7 @@ class ilMumieTaskSSOToken
                 'timecreated' => array('integer', time()),
             ),
             array(
-                'user' => array('integer', $this->user),
+                'user' => array('text', $this->user),
             )
         );
     }
@@ -87,7 +87,7 @@ class ilMumieTaskSSOToken
             "DELETE FROM "
             . self::MUMIETOKENS_TABLE_NAME
             . " WHERE user = "
-            . $ilDB->quote($this->user, 'integer')
+            . $ilDB->quote($this->user, 'text')
         );
     }
 
@@ -95,24 +95,45 @@ class ilMumieTaskSSOToken
     {
         $this->read();
         $this->token = $this->generateToken();
-        if (!$this->tokenExistsForUser($this->user)) {
+        if (!$this->tokenExistsForHashedUser($this->user)) {
             $this->create();
         } else {
             $this->update();
         }
     }
 
-    public static function tokenExistsForUser($userId)
+    private static function tokenExistsForHashedUser($hashedUser)
     {
-        $mumie_token = new ilMumieTaskSSOToken($userId);
+        $mumie_token = new ilMumieTaskSSOToken($hashedUser);
         $mumie_token->read();
         return !is_null($mumie_token->timecreated) && !is_null($mumie_token->token);
     }
 
-    public static function invalidateTokenForUser($userId)
+    public static function tokenExistsForIliasUser($iliasUserId)
     {
-        $mumie_token = new ilMumieTaskSSOToken($userId);
-        $mumie_token->delete();
+        global $ilDB;
+        $query = self::getAllTokensForIliasUserQuery($iliasUserId);
+        return !is_null($ilDB->fetchAssoc($ilDB->query($query)));
+    }
+
+    private static function getAllTokensForIliasUserQuery($iliasUserId)
+    {
+        global $ilDB;
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
+        $hashedId = ilMumieTaskIdHashingService::getHashForUser($iliasUserId);
+        return "SELECT * FROM "
+            . self::MUMIETOKENS_TABLE_NAME
+            . " WHERE " . $ilDB->like("user", "text", $hashedId . "%");
+    }
+
+    public static function invalidateAllTokensForUser($iliasUserId)
+    {
+        global $ilDB;
+        $query = self::getAllTokensForIliasUserQuery($iliasUserId);
+        while ($result = $ilDB->fetchAssoc($ilDB->query($query))) {
+            $mumie_token = new ilMumieTaskSSOToken($result["user"]);
+            $mumie_token->delete();
+        }
     }
 
     /**

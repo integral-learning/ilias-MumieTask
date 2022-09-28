@@ -48,7 +48,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case 'submitAvailabilitySettings':
             case "viewContent":
             case "displayLearningProgress":
-            case 'forceGradeUpdate':
+            case 'forceGradeUpdate':     
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
                 $this->$cmd();
@@ -90,7 +90,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 $ilTabs->addSubTab("lp_settings", $lng->txt('rep_robj_xmum_tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
                 $this->lng->loadLanguageModule('rep');
                 $ilTabs->addSubTab("availability_settings", $this->lng->txt('rep_activation_availability'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
-
                 break;
         }
     }
@@ -102,21 +101,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function create()
     {
+        global $lng;
         $this->setCreationMode(true);
-        global $$ilTabs, $ilCtrl, $lng;
-
+        $refId = $_GET["ref_id"];
+        
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $task = ilObjMumieTask::constructDummy();
         $task->setType($this->type);
         $task->create();
         $task->createReference();
-        $task->putInTree($_GET["ref_id"]);
+        $task->putInTree($refId);
         $this->object = $task;
-        global $DIC;
-
-        $tree = $DIC['tree'];
-        $parent_ref = $tree->getParentId($this->object->getRefId());
-        $task->setParentRolePermissions($parent_ref);
+        $task->setParentRolePermissions($task->getParentRef());
+        $task->setPrivateGradepool(ilMumieTaskLPStatus::deriveGradepoolSetting($refId));
 
         $task->update();
 
@@ -307,7 +305,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilUser, $ilCtrl, $ilTabs, $ilDB, $lng;
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-
         require_once('Services/User/classes/class.ilObjUser.php');
         ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
@@ -429,13 +426,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         global $ilTabs;
         $ilTabs->activateTab('properties');
-        $this->setSubTabs("properties");
-
+        $this->setSubTabs("properties"); 
         $ilTabs->activateSubTab('lp_settings');
         $this->initLPSettingsForm();
         $values = array();
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
+        $values['privategradepool'] = $this->object->getPrivateGradepool();
         $this->form->setValuesByArray($values);
         $this->tpl->setContent($this->form->getHTML());
     }
@@ -447,14 +444,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilCtrl;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskLPSettingsFormGUI.php');
-        $form = new ilMumieTaskLPSettingsFormGUI();
+        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet());
         $form->setFields();
         $form->setTitle($this->lng->txt('rep_robj_xmum_tab_lp_settings'));
 
         require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
         $force_sync_button = new ilMumieTaskFormButtonGUI($this->lng->txt('rep_robj_xmum_frm_force_update'));
         $force_sync_button->setButtonLabel($this->lng->txt('rep_robj_xmum_frm_force_update_btn'));
-        $force_sync_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'force_grade_update'));
+        $force_sync_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'forceGradeUpdate'));
         $force_sync_button->setInfo($this->lng->txt('rep_robj_xmum_frm_force_update_desc'));
         $form->addItem($force_sync_button);
 
@@ -469,6 +466,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitLPSettings()
     {
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         $this->initLPSettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -476,13 +474,25 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             return;
         }
         $force_grade_update = $this->object->getPassingGrade() !== $this->form->getInput('passing_grade');
+        $is_gradepool_setting_update = $this->object->getPrivateGradepool() !== $this->form->getInput('privategradepool');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
+        if(!$this->object->isGradepoolSet())
+        {
+            $this->object->setPrivateGradepool((int)$this->form->getInput('privategradepool'));
+        }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->doUpdate();
-        if ($force_grade_update) {
-            $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        if($is_gradepool_setting_update) {
+            ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(      
+                $this->object->getParentRef(),
+                $this->object->getPrivateGradepool()
+            );
+        }
+
+        if ($force_grade_update) {       
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
+
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
         $cmd = 'editLPSettings';
@@ -503,7 +513,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $ilTabs->activateSubTab('availability_settings');
         $this->lng->loadLanguageModule('rep');
-
         $this->initAvailabilitySettingsForm();
         $values = array();
         $values['activation_type'] = $this->object->getActivationLimited();
@@ -528,9 +537,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilCtrl;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormAvailabilityGUI.php');
         $form = new ilMumieTaskFormAvailabilityGUI();
-        $form->setFields();
+        $form->setFields(!$this->object->isGradepoolSet());
         $form->addCommandButton('submitAvailabilitySettings', $this->lng->txt('save'));
-        $form->addCommandButton('editProperties', $this->lng->txt('cancel'));
+        $form->addCommandButton('editProperties', $this->lng->txt('cancel'));  
         $form->setFormAction($ilCtrl->getFormAction($this));
 
         $this->form = $form;

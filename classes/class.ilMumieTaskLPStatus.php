@@ -106,8 +106,28 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
      */
     public static function updateGradesForIlContainer($refId)
     {
-        global $ilDB;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+
+        $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
+        foreach($mumieTasks as $mumieTask)
+        {
+            try {
+                self::updateGrades($mumieTask);
+
+            } catch(Exception $e) {
+                ilLoggerFactory::getLogger('xmum')->info('Error when updating grades for MUMIE Task: ' . $mumieTask->id);
+                ilLoggerFactory::getLogger('xmum')->info($e);
+            }
+        }
+    }
+
+    /**
+     *  @return ilObjMumieTask[]
+     */
+    private static function getMumieTasksInRepository($refId)
+    {
+        global $ilDB;
+        
         $result = $ilDB->query(
             "SELECT o.ref_id, m.id
             FROM tree t
@@ -116,16 +136,34 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             WHERE t.parent = " . $ilDB->quote($refId, "integer")
         );
 
-        while ($record = $ilDB->fetchAssoc($result)) {
+        $mumieTasks = array();
+
+        while ($record = $ilDB->fetchAssoc($result)) 
+        {
             $mumieTask = new ilObjMumieTask($record["ref_id"]);
             $mumieTask->read();
-            try {
-                self::updateGrades($mumieTask);
+            array_push($mumieTasks, $mumieTask);
+        }
+        return $mumieTasks;
+    }
 
-            } catch(Exception $e) {
-                ilLoggerFactory::getLogger('xmum')->info('Error when updating grades for MUMIE Task: ' . $mumieTask->id);
-                ilLoggerFactory::getLogger('xmum')->info($e);
-            }
+    public static function updateGradepoolSettingsForAllMumieTaskInRepository($refId, $privategradepool)
+    {
+        $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
+        foreach($mumieTasks as $mumieTask)
+        {
+            $mumieTask->setPrivateGradepool($privategradepool);
+            $mumieTask->doUpdate();
+        }
+    }
+
+
+    public static function deriveGradepoolSetting($refId)
+    {
+        $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
+        if(!empty($mumieTasks))
+        {
+            return $mumieTasks[0]->getPrivateGradepool();
         }
     }
 

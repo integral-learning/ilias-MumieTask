@@ -240,3 +240,65 @@ if (!$ilDB->fetchAssoc($ilDB->query($query))) {
     }
 }
 ?>
+<#9>
+<?php
+if (!$ilDB->tableColumnExists("xmum_mumie_task","privategradepool")) {
+    $ilDB->addTableColumn(
+        "xmum_mumie_task" , "privategradepool",
+        array(
+            'type' => 'integer',
+            'length' => '2',
+            'notnull' => true,
+            'default' => '-1'
+    ));
+}
+$ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');
+?>
+<#10>
+<?php
+$result;
+if ($ilDB->tableExists('xmum_id_hashes')) {
+    $query = 'SELECT usr_id, hash FROM xmum_id_hashes';
+    $result = $ilDB->query($query);
+    $ilDB->dropTable('xmum_id_hashes');
+}
+$fieldsHashes = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => 8,
+        'notnull' => true,
+    ),
+    'usr_id' => array(
+        'type' => 'integer',
+        'length' => 8,
+        'notnull' => true,
+    ),
+    'hash' => array(
+        'type' => 'text',
+        'length' => '143',
+        'notnull' => true,
+    ),
+);
+$ilDB->createTable("xmum_id_hashes", $fieldsHashes);
+$ilDB->addPrimaryKey("xmum_id_hashes", array("id"));
+$ilDB->createSequence("xmum_id_hashes");
+if (!is_null($result))
+{
+    while ($row = $ilDB->fetchAssoc($result))  {
+        $query = 'INSERT INTO xmum_id_hashes (id, usr_id, hash) VALUES (' .
+            $ilDB->nextID('xmum_id_hashes') . "," .
+            $ilDB->quote($row['usr_id'], 'integer') . "," .
+            $ilDB->quote($row['hash'], 'text') . ")";
+            $ilDB->manipulate($query); 
+    }
+}
+?>
+<#11>
+<?php
+$ilDB->modifyTableColumn("xmum_sso_tokens" , "user",
+array(
+    'type' => 'text',
+    'length' => 143,
+    'notnull' => true,
+));
+?>

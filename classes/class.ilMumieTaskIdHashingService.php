@@ -12,20 +12,23 @@
   */
 class ilMumieTaskIdHashingService
 {
+    private $id;
     private $user_id;
     private $hash;
+    private $task;
 
     const TABLE_NAME = 'xmum_id_hashes';
 
-    private function __construct($user_id)
+    private function __construct($user_id, $task)
     {
         $this->user_id = $user_id;
         $this->hash = $hash;
+        $this->task = $task;
     }
 
-    public static function getHashForUser($user_id)
+    public static function getHashForUser($user_id, $task = null)
     {
-        $service = new ilMumieTaskIdHashingService($user_id);
+        $service = new ilMumieTaskIdHashingService($user_id, $task);
         $service->upsertHash();
         return $service->getHash();
     }
@@ -49,15 +52,21 @@ class ilMumieTaskIdHashingService
     {
         global $ilDB;
         $this->hash = $this->generateHash();
+        if ($this->task != null && $this->task->getPrivateGradepool() == 1) {
+            $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
+        }   
         $result = $ilDB->fetchObject(
             $ilDB->query(
                 'SELECT * FROM '
                 . SELF::TABLE_NAME
                 . " WHERE usr_id = "
                 . $ilDB->quote($this->user_id, "integer")
+                . " AND hash = "
+                . $ilDB->quote($this->hash, 'text')
             )
         );
-        if (!is_null($result) && !is_null($result->hash)) {
+        if (!is_null($result)) {
+            $this->id = $result->id;
             $this->update();
         } else {
             $this->create();
@@ -67,10 +76,10 @@ class ilMumieTaskIdHashingService
     private function create()
     {
         global $ilDB;
-
         $ilDB->insert(
             self::TABLE_NAME,
             array(
+                'id' => array('integer', $ilDB->nextID(self::TABLE_NAME)),
                 'usr_id' => array('integer', $this->user_id),
                 'hash' => array('text', $this->hash),
             )
@@ -80,14 +89,14 @@ class ilMumieTaskIdHashingService
     private function update()
     {
         global $ilDB;
-
         $ilDB->update(
             self::TABLE_NAME,
             array(
                 'hash' => array('text', $this->hash),
+                "usr_id" => array('integer', $this->user_id),
             ),
             array(
-                "usr_id" => array('integer', $this->user_id),
+                'id' => array('integer', $this->id)
             )
         );
     }
