@@ -8,6 +8,9 @@ All important changes to this plugin will be documented in this file.
 ### Changed
 - Plugin now supports Ilias v7.13
 
+### Fixed
+- Fixed an issue where pushing **Force update** button in MUMIE Task's grade settings didn't work 
+
 ## [v2.0.1] - 2021-08-26
 ### Changed
 - Added support for Ilias 6.10
