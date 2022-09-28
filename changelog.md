@@ -1,9 +1,16 @@
 # MumieTask - Changelog
 
 All important changes to this plugin will be documented in this file.
-## [v2.1.0]
+## [v2.1.0] - TODO
 ### Added 
 - Sharing grades for the same MUMIE problems with other Ilias repositories can now be disabled.
+
+### Changed
+- Plugin now supports Ilias v7.13
+
+### Fixed
+- Fixed an issue where pushing **Force update** button in MUMIE Task's grade settings didn't work 
+
 ## [v2.0.1] - 2021-08-26
 ### Changed
 - Added support for Ilias 6.10
