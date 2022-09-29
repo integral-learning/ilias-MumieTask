@@ -601,7 +601,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function displayUserList()
     {
-        global $ilTabs, $ilCtrl, $lng;
+        global $ilTabs;
         $ilTabs->activateTab('userList');
         $this->initUserList();
         $this->tpl->setContent($this->form->getHTML());
@@ -614,7 +614,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form =  new ilMumieTaskUserListFormGUI();
         $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
         $form->setSearch($this);
-        $form->addCommandButton('displaySearchedUserList', "Suchen");
+        
+        require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
+        $search_participant_button = new ilMumieTaskFormButtonGUI("");
+        $search_participant_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'displaySearchedUserList'));
+        $search_participant_button->setButtonLabel($this->lng->txt('rep_robj_xmum_frm_list_search'));
+        $form->addItem($search_participant_button);
+
         $form->setTable($this);
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
@@ -626,17 +632,26 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function displaySearchedUserList()
     {
         global $ilTabs, $ilCtrl, $lng;
-
         $this->initUserList();
-        $this->form->checkInput();
-        ilLoggerFactory::getLogger('xmum')->info("return members searched " . print_r($this->form->getInput("firstnamefield"), true));
+
+        if (!$this->form->checkInput()) {
+            $this->tpl->setContent($this->form->getHTML());
+            return;
+        }
+
+        ilLoggerFactory::getLogger('xmum')->info("return members searched " . empty($this->form->getInput("firstnamefield")));
 
         $ilTabs->activateTab('userList');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
         $form =  new ilMumieTaskUserListFormGUI();
         $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
-        $form->addCommandButton('displaySearchedUserList', "Suchen");
         $form->setSearch($this);
+
+        require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
+        $search_participant_button = new ilMumieTaskFormButtonGUI("");
+        $search_participant_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'displaySearchedUserList'));
+        $search_participant_button->setButtonLabel($this->lng->txt('rep_robj_xmum_frm_list_search'));
+        $form->addItem($search_participant_button);
 
         $form->setTable($this, $this->form);
         $form->setFormAction($ilCtrl->getFormAction($this));

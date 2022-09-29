@@ -23,13 +23,18 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         global $ilDB, $lng;
         $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayUserList');
-        
+
         $this->setFormName('participants');
         $this->addColumn("", "", "1", true);
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
+
+        if ($parentObj->object->getParentRef() == 1) {
+            ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_task_in_base_repository'));
+            return;    
+        }
 
         include_once './Services/Membership/classes/class.ilParticipants.php';
         $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
@@ -51,7 +56,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
             $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
             $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
-            
+
             $result = $ilDB->query(
                 "SELECT mark 
                 FROM ut_lp_marks 
@@ -122,7 +127,8 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
     }
 
     //All functions are necessary for the list to be implemented into a form
-    public function checkInput() {
+    public function checkInput()
+    {
         return true;
     }
     public function insert($a_tpl)

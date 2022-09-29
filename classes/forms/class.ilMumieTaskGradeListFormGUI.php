@@ -28,6 +28,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         $names = $ilDB->fetchAssoc($result);
         $this->setTitle($names["firstname"] . " " . $names["lastname"]);
         $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_used_grade'));
+        $textField->setInfo($lng->txt('rep_robj_xmum_frm_list_grade_desc'));
         $textField->setDisabled(true);
         $this->textField = $textField;
         $this->addItem($this->textField);
