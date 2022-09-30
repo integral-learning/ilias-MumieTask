@@ -31,14 +31,15 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
-        if ($parentObj->object->getParentRef() == 1) {
-            ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_task_in_base_repository'));
-            return;    
+        if ($parentObj->object->getParentRef() != 1) {
+            include_once './Services/Membership/classes/class.ilParticipants.php';
+            $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
+            $members = $this->getSearchedIds($form);
+        } else {
+            $members = $this->getAllIds();
         }
 
-        include_once './Services/Membership/classes/class.ilParticipants.php';
-        $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
-        $members = $this->getSearchedIds($form);
+
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -124,6 +125,19 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $ilDB->like("lastname", "text", trim($name) . "%", false)
         );
         return $ilDB->fetchAssoc($result);
+    }
+
+    private function getAllIds()
+    {
+        global $ilDB;
+        $result = $ilDB->query(
+            "SELECT usr_id FROM usr_data;"
+        );
+        $allIds = array();
+        while($user_id = $ilDB->fetchAssoc($result)) {
+            array_push($allIds, $user_id["usr_id"]);
+        }
+        return $allIds;
     }
 
     //All functions are necessary for the list to be implemented into a form
