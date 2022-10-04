@@ -231,7 +231,7 @@ class ilMumieTaskGradeSync
             "actor": {
                 "account": {
                     "homePage": "https://test.mumie.net/ombplus",
-                    "name": "GSSO_mi3_226073fb06340be81b1cee4fa020dbbc5cb1c917a37ca25235a9a24610f771d2162c03d753b79422426f0712d5cfd365c84bdedc881b2a780103793a921a2529"
+                    "name": "GSSO_mi3_572ab3c373205f4f2faada3d003a1ed0431d550c8fcf1d0898127d4df546d85459309c8fc03f7a630355eeccc494318e5726b3649ffb9975c0c696e3c71e56be"
                 },
                 "objectType": "Agent"
             },
@@ -261,7 +261,7 @@ class ilMumieTaskGradeSync
             "actor": {
                 "account": {
                     "homePage": "https://test.mumie.net/ombplus",
-                    "name": "GSSO_mi3_57cb77701c4e0c2329460137d14ce80b4eb06d6686c7d4558baacabc1b1a9b9c3c95a1e10439c8bb6261ab51e06a7986219da95502b5c307d56674e1f42fa228"
+                    "name": "GSSO_mi3_572ab3c373205f4f2faada3d003a1ed0431d550c8fcf1d0898127d4df546d85459309c8fc03f7a630355eeccc494318e5726b3649ffb9975c0c696e3c71e56be"
                 },
                 "objectType": "Agent"
             },
