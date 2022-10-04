@@ -75,7 +75,7 @@ class ilMumieTaskGradeSync
             $curl->setOpt(CURLOPT_PROXYPORT, ilProxySettings::_getInstance()->getPort());
         }
         $curl->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
-        $curl->setOpt(CURLOPT_USERAGENT, 'MUMIE Task for Ilias');
+        $curl->setOpt(CURLOPT_USERAGENT, 'My User Agent Name');
         $curl->setOpt(CURLOPT_POSTFIELDS, $payload);
         $curl->setOpt(CURLOPT_RETURNTRANSFER, 1);
         $curl->setOpt(
