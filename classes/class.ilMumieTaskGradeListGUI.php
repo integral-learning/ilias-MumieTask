@@ -47,6 +47,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
         $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
         $xGrades = $gradesync->getAllXapiGradesByUser();
+        ilLoggerFactory::getLogger('xmum')->info(print_r($xGrades, true));
         $syncId = $gradesync->getSyncIds(array($user_id))[0];
         if (!empty($xGrades)) {
             foreach ($xGrades as $xGrade) {
@@ -61,7 +62,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                         : "tblrow2";
 
                     $this->tpl->setVariable("CSS_ROW", $this->css_row);
-                    $this->tpl->setVariable("VAL_GRADE", $xGrade->result->score->raw * 100);
+                    $this->tpl->setVariable("VAL_GRADE", $xGrade->result->score->raw * 100 . " " . count($xGrades));
                     $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
                     $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'updateGradeId', $xGrade->id);
 
