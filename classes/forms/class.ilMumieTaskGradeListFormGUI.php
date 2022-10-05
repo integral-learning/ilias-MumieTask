@@ -24,7 +24,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         global $lng, $ilDB;
         $this->parentObj = $parentObj;
 
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['member_id'], "integer"));
+        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
         $names = $ilDB->fetchAssoc($result);
         $this->setTitle($names["firstname"] . " " . $names["lastname"]);
         $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_used_grade'));
@@ -44,7 +44,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         global $ilDB;
         $result = $ilDB->query("SELECT mark 
             FROM ut_lp_marks 
-            WHERE usr_id = " . $ilDB->quote($_GET['member_id'], "integer") .
+            WHERE usr_id = " . $ilDB->quote($_GET['user_id'], "integer") .
             " AND " .
             "obj_id = " . $ilDB->quote($this->parentObj->object->getId() , "integer")
             );
