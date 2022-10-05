@@ -44,7 +44,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        if (is_null($_GET['newGrade']) && $_GET["user_id"] == $user_id) {
+        if (is_null($_GET['newGrade']) == false && $_GET["user_id"] == $user_id) {
             $this->overrideGrade();
         }
         $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
