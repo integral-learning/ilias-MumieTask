@@ -96,7 +96,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         );
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->parentObj->object);
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $this->parentObj->object);
         $gradesync  = new  ilMumieTaskGradeSync($this->parentObj->object, false);
         if (!$gradesync->wasGradeOverriden($_GET["user_id"])) {
             ilLoggerFactory::getLogger('xmum')->info("Grade was overriden");
