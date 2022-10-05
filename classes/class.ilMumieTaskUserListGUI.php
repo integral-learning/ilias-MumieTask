@@ -39,7 +39,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             $members = $this->getAllIds();
         }
 
-
+        ilMumieTaskLPStatus::updateGrades($parentObj->object);
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
