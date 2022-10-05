@@ -60,7 +60,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                         : "tblrow2";
 
                     $this->tpl->setVariable("CSS_ROW", $this->css_row);
-                    $this->tpl->setVariable("VAL_GRADE", round($xGrade->result->score->raw * 100));
+                    $this->tpl->setVariable("VAL_GRADE", round($xGrade->result->score->raw * 100) . " " . $xGrade->id);
                     $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
                     $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'updateGradeId', $xGrade->id);
 
