@@ -44,14 +44,12 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-
         $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
         $xGrades = $gradesync->getAllXapiGradesByUser();
         $syncId = $gradesync->getSyncIds(array($user_id))[0];
         if (!empty($xGrades)) {
             foreach ($xGrades as $xGrade) {
                 if ($xGrade->actor->account->name == $syncId) {
-                    ilLoggerFactory::getLogger('xmum')->info("updateGradeId " . $_GET['updateGradeId'] . " grade id in for loop: " . $xGrade->id);
                     if (is_null($_GET['updateGradeId']) == false && $xGrade->id == $_GET['updateGradeId']) {
                         $this->overrideGrade($xGrade, $user_id, $parentObj);
                     }
