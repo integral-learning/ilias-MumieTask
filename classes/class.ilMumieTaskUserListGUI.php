@@ -54,7 +54,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             ? "tblrow1"
             : "tblrow2";
             $this->tpl->setVariable("CSS_ROW", $this->css_row);
-            $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'member_id', $user_id);
+            $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
             $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
             $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
 
