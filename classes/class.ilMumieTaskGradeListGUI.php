@@ -25,7 +25,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     {
         global $ilDB, $lng;
         $this->form = $form;
-        $user_id = $_GET['member_id'];
+        $user_id = $_GET['user_id'];
         $this->parentObj = $parentObj;
         $this->admin_settings = ilMumieTaskAdminSettings::getInstance();
 
