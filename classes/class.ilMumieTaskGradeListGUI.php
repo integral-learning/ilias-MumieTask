@@ -82,7 +82,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     private function overrideGrade()
     {
         global $ilDB, $DIC;
-        ilLoggerFactory::getLogger('xmum')->info("user id: " . $_GET["user_id"] . " new grade: " . $_GET["newGrade"]);
         $percentage = $_GET['newGrade'];
         $DIC->database()->update(
             'ut_lp_marks',
@@ -100,7 +99,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $this->parentObj->object);
         $gradesync  = new  ilMumieTaskGradeSync($this->parentObj->object, false);
         if (!$gradesync->wasGradeOverriden($_GET["user_id"])) {
-            ilLoggerFactory::getLogger('xmum')->info("Grade was overriden");
             $ilDB->insert(
                 "xmum_grade_override",
                 array(
