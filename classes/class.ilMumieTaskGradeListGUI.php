@@ -92,7 +92,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             ),
             array(
                 'obj_id' => array('int', $this->parentObj->object->getId()),
-                'usr_id' => array('int', $_GET['timestamp']),
+                'usr_id' => array('int', $_GET['user_id']),
             )
         );
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
