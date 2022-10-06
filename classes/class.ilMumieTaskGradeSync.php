@@ -87,7 +87,7 @@ class ilMumieTaskGradeSync
             )
         );
         $response = json_decode($curl->exec());
-        ilLoggerFactory::getLogger('xmum')->info("response ASDFASDGFFGSDFGRESTRGDSFGSREGSERTSDFG:" . (print_r($response)));
+        ilLoggerFactory::getLogger('xmum')->info("response ASDFASDGFFGSDFGRESTRGDSFGSREGSERTSDFG:" . (print_r($response, true)));
         $curl->close();
         return($response);
     }
