@@ -60,6 +60,7 @@ class ilMumieTaskGradeSync
             'lastSync' => $this->getLastSync(),
             'includeAll' => true
         );
+        ilLoggerFactory::getLogger('xmum')->info((print_r($params, true)));
         if ($this->task->getActivationLimited() == 1) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
         }
@@ -87,7 +88,7 @@ class ilMumieTaskGradeSync
             )
         );
         $response = json_decode($curl->exec());
-        ilLoggerFactory::getLogger('xmum')->info("response ASDFASDGFFGSDFGRESTRGDSFGSREGSERTSDFG:" . (print_r($response, true)));
+        ilLoggerFactory::getLogger('xmum')->info((print_r($response, true)));
         $curl->close();
         return($response);
     }
