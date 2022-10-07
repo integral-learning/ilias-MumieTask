@@ -181,9 +181,11 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-            if (!$this->wasGradeOverriden($user_id)) {
+            if (empty($this->wasGradeOverriden($user_id))) {
                 $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
+            } else {
+                $valid_grade_by_user[$user_id] = $this->wasGradeOverriden($user_id)["new_grade"];
             }
         }
 
@@ -218,14 +220,14 @@ class ilMumieTaskGradeSync
     {
         global $ilDB;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-        $query = "SELECT usr_id
+        $query = "SELECT new_grade
         FROM xmum_grade_override
         WHERE " .
         "task_id = " . $ilDB->quote($this->task->getId(), "integer") .
         " AND " .
         "usr_id = " . $ilDB->quote($hashed_user, "text");
         $result = $ilDB->query($query);
-        return !empty($ilDB->fetchAssoc($result));
+        return $ilDB->fetchAssoc($result);
     }
 
 }

@@ -587,7 +587,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         if ($force_grade_update) {
             $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-            ilMumieTaskLPStatus::updateGrades($this->object);
+            ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
 
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
