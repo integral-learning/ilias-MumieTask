@@ -574,7 +574,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $period = $this->form->getItemByPostVar("access_period");
 
             if ($mumieTask->getActivationEndingTime() != $period->getEnd()->get(IL_CAL_UNIX)) {
-                //$force_grade_update = true;
+                $force_grade_update = true;
             }
 
             $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
