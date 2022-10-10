@@ -182,7 +182,7 @@ class ilMumieTaskGradeSync
                 $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
             } else {
-                ilLoggerFactory::getLogger('xmum')->info("overriden grade ". print_r($$this->wasGradeOverriden($user_id, $xapi_grades), true));
+                ilLoggerFactory::getLogger('xmum')->info("overriden grade ". print_r($this->wasGradeOverriden($user_id, $xapi_grades), true));
                 $valid_grade_by_user[$user_id] = $this->wasGradeOverriden($user_id, $xapi_grades);
             }
         }
