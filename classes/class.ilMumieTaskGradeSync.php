@@ -235,7 +235,7 @@ class ilMumieTaskGradeSync
                 return $xGrade;
             }
         }
-
+        ilLoggerFactory::getLogger('xmum')->info("no grade found");
         return null;
     }
 
