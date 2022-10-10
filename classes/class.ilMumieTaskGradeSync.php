@@ -87,7 +87,6 @@ class ilMumieTaskGradeSync
             )
         );
         $response = json_decode($curl->exec());
-        ilLoggerFactory::getLogger('xmum')->info(print_r($response, true));
         $curl->close();
         return($response);
     }
@@ -227,16 +226,17 @@ class ilMumieTaskGradeSync
         $grade = $ilDB->fetchAssoc($result);
         
         if($xapi_grades == null) {
+            ilLoggerFactory::getLogger('xmum')->info("returned new grade as number");
             return $grade["new_grade"];
         }
 
         foreach($xapi_grades as $xGrade) {
             if(round($xGrade->result->score->raw * 100) == $grade["new_grade"]){
-                
+                ilLoggerFactory::getLogger('xmum')->info("returned new grade as xapi Grade");
                 return $xGrade;
             }
         }
-
+        ilLoggerFactory::getLogger('xmum')->info("returned new grade as null");
         return null;
     }
 
