@@ -87,6 +87,7 @@ class ilMumieTaskGradeSync
             )
         );
         $response = json_decode($curl->exec());
+        ilLoggerFactory::getLogger('xmum')->info(print_r($response, true));
         $curl->close();
         return($response);
     }
@@ -185,7 +186,6 @@ class ilMumieTaskGradeSync
                 $valid_grade_by_user[$user_id] = $this->wasGradeOverriden($user_id, $xapi_grades);
             }
         }
-        ilLoggerFactory::getLogger('xmum')->info("valid grades before filter ". print_r($valid_grade_by_user, true));
         return array_filter($valid_grade_by_user);
     }
 
@@ -227,18 +227,16 @@ class ilMumieTaskGradeSync
         $grade = $ilDB->fetchAssoc($result);
         
         if($xapi_grades == null) {
-            ilLoggerFactory::getLogger('xmum')->info("xapi grade null");
             return $grade["new_grade"];
         }
-        ilLoggerFactory::getLogger('xmum')->info("Grades, searched grade = " . $grade["new_grade"]);
+
         foreach($xapi_grades as $xGrade) {
-            ilLoggerFactory::getLogger('xmum')->info(round($xGrade->result->score->raw * 100));
             if(round($xGrade->result->score->raw * 100) == $grade["new_grade"]){
                 
                 return $xGrade;
             }
         }
-        ilLoggerFactory::getLogger('xmum')->info("no grade found");
+
         return null;
     }
 
