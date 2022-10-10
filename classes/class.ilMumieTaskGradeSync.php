@@ -228,12 +228,12 @@ class ilMumieTaskGradeSync
         
         if($xapi_grades == null) {
             ilLoggerFactory::getLogger('xmum')->info("xapi grade null");
-            return $grade;
+            return $grade["new_grade"];
         }
-        ilLoggerFactory::getLogger('xmum')->info("Grades, searched grade = " . $grade);
+        ilLoggerFactory::getLogger('xmum')->info("Grades, searched grade = " . $grade["new_grade"]);
         foreach($xapi_grades as $xGrade) {
             ilLoggerFactory::getLogger('xmum')->info(round($xGrade->result->score->raw * 100));
-            if(round($xGrade->result->score->raw * 100) == $grade){
+            if(round($xGrade->result->score->raw * 100) == $grade["new_grade"]){
                 
                 return $xGrade;
             }
