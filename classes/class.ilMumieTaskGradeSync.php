@@ -230,10 +230,11 @@ class ilMumieTaskGradeSync
             ilLoggerFactory::getLogger('xmum')->info("xapi grade null");
             return $grade;
         }
-
+        ilLoggerFactory::getLogger('xmum')->info("Grades, searched grade = " . $grade);
         foreach($xapi_grades as $xGrade) {
+            ilLoggerFactory::getLogger('xmum')->info(round($xGrade->result->score->raw * 100));
             if(round($xGrade->result->score->raw * 100) == $grade){
-                ilLoggerFactory::getLogger('xmum')->info("return overriden grade");
+                
                 return $xGrade;
             }
         }
