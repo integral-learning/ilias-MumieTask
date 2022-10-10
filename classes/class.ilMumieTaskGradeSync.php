@@ -96,7 +96,6 @@ class ilMumieTaskGradeSync
      */
     public function getValidXapiGradesByUser()
     {
-        ilLoggerFactory::getLogger('xmum')->info("valid grades ". print_r($this->getValidGradeByUser($this->getAllXapiGradesByUser()), true));
         return $this->getValidGradeByUser($this->getAllXapiGradesByUser());
     }
 
@@ -187,7 +186,7 @@ class ilMumieTaskGradeSync
                 $valid_grade_by_user[$user_id] = $this->wasGradeOverriden($user_id)["new_grade"];
             }
         }
-
+        ilLoggerFactory::getLogger('xmum')->info("valid grades ". print_r($valid_grade_by_user, true));
         return array_filter($valid_grade_by_user);
     }
 
