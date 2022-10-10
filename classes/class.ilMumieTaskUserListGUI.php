@@ -40,7 +40,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         }
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-        ilMumieTaskLPStatus::updateGrades($parentObj->object);
+        //ilMumieTaskLPStatus::updateGrades($parentObj->object);
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -63,8 +63,8 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
                 "SELECT mark 
                 FROM ut_lp_marks 
                 WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
-            " AND " .
-            "obj_id = " . $ilDB->quote($parentObj->object->getId(), "integer")
+                " AND " .
+                "obj_id = " . $ilDB->quote($parentObj->object->getId(), "integer")
             );
 
             $grade = $ilDB->fetchAssoc($result);
@@ -135,7 +135,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             "SELECT usr_id FROM usr_data;"
         );
         $allIds = array();
-        while($user_id = $ilDB->fetchAssoc($result)) {
+        while ($user_id = $ilDB->fetchAssoc($result)) {
             array_push($allIds, $user_id["usr_id"]);
         }
         return $allIds;

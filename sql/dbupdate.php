@@ -334,7 +334,7 @@ if (!$ilDB->tableColumnExists("xmum_grade_override", "new_grade")) {
             'type' => 'integer',
             'length' => '3',
             'notnull' => true,
-            'default' => '-1'
+            'default' => '0'
     )
     );
 }
