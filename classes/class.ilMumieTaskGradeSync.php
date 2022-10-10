@@ -96,6 +96,7 @@ class ilMumieTaskGradeSync
      */
     public function getValidXapiGradesByUser()
     {
+        ilLoggerFactory::getLogger('xmum')->info("valid grades ". print_r($this->getValidGradeByUser($this->getAllXapiGradesByUser()), true));
         return $this->getValidGradeByUser($this->getAllXapiGradesByUser());
     }
 
