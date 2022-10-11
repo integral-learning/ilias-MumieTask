@@ -84,7 +84,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             $xapi_grade = $grades_by_user[$user_id];
             $percentage = round($xapi_grade->result->score->scaled * 100);
             self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
-           
+            self::upsertMarks($user_id, $task, $xapi_grade);
         }
     }
 
@@ -96,22 +96,20 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         " AND " .
         "usr_id = " . $ilDB->quote($user_id, "text");
         $existingGrade = $ilDB->fetchAssoc($ilDB->query($query));
-        if (!is_null($existingGrade)) {
+        if (is_null($existingGrade)) {
             $this->updateAccess($user_id, $task->getId(), $task->getRefId(), $this->getLPStatusForUser($task, $user_id));
-            $this->upsertMarks($user_id, $task, $xapi_grade);
-        } else {
-            $DIC->database()->update(
-                'ut_lp_marks',
-                array(
-                    "status_changed" => array('text', date("Y-m-d H:i:s", strtotime($xapi_grade->timestamp))),
-                    "mark" => array('int', round($xapi_grade->result->score->scaled * 100)),
-                ),
-                array(
-                    'obj_id' => array('int', $task->getId()),
-                    'usr_id' => array('int', $user_id),
-                )
-            );
         }
+        $DIC->database()->update(
+            'ut_lp_marks',
+            array(
+                "status_changed" => array('text', date("Y-m-d H:i:s", strtotime($xapi_grade->timestamp))),
+                "mark" => array('int', round($xapi_grade->result->score->scaled * 100)),
+            ),
+            array(
+                'obj_id' => array('int', $task->getId()),
+                'usr_id' => array('int', $user_id),
+            )
+        );
     }
 
     /**
