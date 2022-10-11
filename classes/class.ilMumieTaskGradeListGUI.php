@@ -99,7 +99,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $this->parentObj->object);
         $gradesync  = new  ilMumieTaskGradeSync($this->parentObj->object, false);
         ilLoggerFactory::getLogger('xmum')->info($gradesync->wasGradeOverriden($_GET["user_id"]) . " is empty: " . $gradesync->wasGradeOverriden($_GET["user_id"]));
-        if (empty($gradesync->wasGradeOverriden($_GET["user_id"]))) {
+        if (is_null($gradesync->wasGradeOverriden($_GET["user_id"]))) {
             $ilDB->insert(
                 "xmum_grade_override",
                 array(
