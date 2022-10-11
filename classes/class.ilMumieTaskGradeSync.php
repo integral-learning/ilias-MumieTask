@@ -216,6 +216,8 @@ class ilMumieTaskGradeSync
     {
         global $ilDB;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
+        ilLoggerFactory::getLogger('xmum')->info("hashed user: " . $hashed_user);
+        ilLoggerFactory::getLogger('xmum')->info("task: " . $this->task->getId());
         $query = "SELECT new_grade
         FROM xmum_grade_override
         WHERE " .
@@ -226,9 +228,6 @@ class ilMumieTaskGradeSync
         $grade = $ilDB->fetchAssoc($result);
         
         if($xapi_grades == null) {
-            ilLoggerFactory::getLogger('xmum')->info("returned new grade as number: " . $grade);
-            ilLoggerFactory::getLogger('xmum')->info("hashed user: " . $hashed_user);
-            ilLoggerFactory::getLogger('xmum')->info("task: " . $this->task->getId());
             return $grade["new_grade"];
         }
 
