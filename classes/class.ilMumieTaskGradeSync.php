@@ -141,7 +141,7 @@ class ilMumieTaskGradeSync
         if ($oldest_timestamp == PHP_INT_MAX) {
             $oldest_timestamp = 1;
         }
-        return $oldest_timestamp * 1000;
+        return 1000;
     }
 
     /**
