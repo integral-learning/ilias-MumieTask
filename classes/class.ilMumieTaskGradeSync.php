@@ -180,7 +180,7 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-            if (empty($this->wasGradeOverriden($user_id))) {
+            if (is_null($this->wasGradeOverriden($user_id))) {
                 $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
             } else {
