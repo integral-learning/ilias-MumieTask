@@ -226,7 +226,7 @@ class ilMumieTaskGradeSync
         "usr_id = " . $ilDB->quote($hashed_user, "text");
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
-        
+        ilLoggerFactory::getLogger('xmum')->info("Grade : " . $grade["new_grade"]);
         if($xapi_grades == null) {
             return $grade["new_grade"];
         }
