@@ -8,9 +8,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This class provides information about LP progress and methods to synchronize it with MUMIE servers
-  */
+/**
+ * This class provides information about LP progress and methods to synchronize it with MUMIE servers
+ */
 class ilMumieTaskLPStatus extends ilLPStatusPlugin
 {
     public static function updateAccess($user_id, $objId, $refId, $old_status)
@@ -84,12 +84,27 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             $xapi_grade = $grades_by_user[$user_id];
             $percentage = round($xapi_grade->result->score->scaled * 100);
             self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
-            global $DIC;
+           
+        }
+    }
+
+    private function upsertMarks($user_id, $task, $xapi_grade)
+    {
+        global $ilDB, $DIC;
+        $query = "SELECT * FROM ut_lp_marks WHERE 
+        obj_id = " . $ilDB->quote($task->getId(), "integer") .
+        " AND " .
+        "usr_id = " . $ilDB->quote($user_id, "text");
+        $existingGrade = $ilDB->fetchAssoc($ilDB->query($query));
+        if (!is_null($existingGrade)) {
+            $this->updateAccess($user_id, $task->getId(), $task->getRefId(), $this->getLPStatusForUser($task, $user_id));
+            $this->upsertMarks($user_id, $task, $xapi_grade);
+        } else {
             $DIC->database()->update(
                 'ut_lp_marks',
                 array(
                     "status_changed" => array('text', date("Y-m-d H:i:s", strtotime($xapi_grade->timestamp))),
-                    "mark" => array('int', $percentage),
+                    "mark" => array('int', round($xapi_grade->result->score->scaled * 100)),
                 ),
                 array(
                     'obj_id' => array('int', $task->getId()),
@@ -109,11 +124,9 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 
         $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
-        foreach($mumieTasks as $mumieTask)
-        {
+        foreach ($mumieTasks as $mumieTask) {
             try {
                 self::updateGrades($mumieTask);
-
             } catch(Exception $e) {
                 ilLoggerFactory::getLogger('xmum')->info('Error when updating grades for MUMIE Task: ' . $mumieTask->id);
                 ilLoggerFactory::getLogger('xmum')->info($e);
@@ -127,7 +140,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     private static function getMumieTasksInRepository($refId)
     {
         global $ilDB;
-        
+
         $result = $ilDB->query(
             "SELECT o.ref_id, m.id
             FROM tree t
@@ -138,8 +151,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
         $mumieTasks = array();
 
-        while ($record = $ilDB->fetchAssoc($result)) 
-        {
+        while ($record = $ilDB->fetchAssoc($result)) {
             $mumieTask = new ilObjMumieTask($record["ref_id"]);
             $mumieTask->read();
             array_push($mumieTasks, $mumieTask);
@@ -150,8 +162,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     public static function updateGradepoolSettingsForAllMumieTaskInRepository($refId, $privategradepool)
     {
         $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
-        foreach($mumieTasks as $mumieTask)
-        {
+        foreach ($mumieTasks as $mumieTask) {
             $mumieTask->setPrivateGradepool($privategradepool);
             $mumieTask->doUpdate();
         }
@@ -161,8 +172,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     public static function deriveGradepoolSetting($refId)
     {
         $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
-        if(!empty($mumieTasks))
-        {
+        if (!empty($mumieTasks)) {
             return $mumieTasks[0]->getPrivateGradepool();
         }
     }
