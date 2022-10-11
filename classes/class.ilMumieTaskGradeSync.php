@@ -149,16 +149,7 @@ class ilMumieTaskGradeSync
      */
     private function getAllUsers($task)
     {
-        global $ilDB;
-        $users = array();
-        $result = $ilDB->query("SELECT usr_id" .
-            " FROM ut_lp_marks" .
-            " WHERE obj_id = " . $ilDB->quote($task->getId(), "integer"));
-
-        while ($record = $ilDB->fetchAssoc($result)) {
-            array_push($users, $record['usr_id']);
-        }
-        return $users;
+        return ilParticipants::getInstance($task->getParentRef())->getMembers();
     }
 
     /**
