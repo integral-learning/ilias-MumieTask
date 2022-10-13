@@ -96,10 +96,10 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         " AND " .
         "usr_id = " . $ilDB->quote($user_id, "text");
         $existingGrade = $ilDB->fetchAssoc($ilDB->query($query));
-        if (is_null($existingGrade)) {
-            $query = "INSERT INTO ut_lp_marks (obj_id, usr_id, status) VALUES (" . 
-            $ilDB->quote($task->getId(), "Integer") . 
-            "," . $ilDB->quote($user_id, "Integer") . 
+        if (is_null($existingGrade) && !$task->isDummy()) {
+            $query = "INSERT INTO ut_lp_marks (obj_id, usr_id, status) VALUES (" .
+            $ilDB->quote($task->getId(), "Integer") .
+            "," . $ilDB->quote($user_id, "Integer") .
             "," . $ilDB->quote($this->getLPStatusForUser($task, $user_id), "Integer") . ")";
             $ilDB->manipulate($query);
         }
