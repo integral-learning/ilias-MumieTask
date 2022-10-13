@@ -80,6 +80,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         $grades_by_user = $grade_sync->getValidXapiGradesByUser();
+        ilLoggerFactory::getLogger('xmum')->info("Valid Grades By User: " . print_r($grades_by_user, true));
         foreach (array_keys($grades_by_user) as $user_id) {
             $xapi_grade = $grades_by_user[$user_id];
             $percentage = round($xapi_grade->result->score->scaled * 100);
@@ -88,20 +89,23 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
-    private function upsertMarks($user_id, $task, $xapi_grade)
+    private static function upsertMarks($user_id, $task, $xapi_grade)
     {
         global $ilDB, $DIC;
         $query = "SELECT * FROM ut_lp_marks WHERE 
         obj_id = " . $ilDB->quote($task->getId(), "integer") .
         " AND " .
-        "usr_id = " . $ilDB->quote($user_id, "text");
+        "usr_id = " . $ilDB->quote($user_id, "integer");
         $existingGrade = $ilDB->fetchAssoc($ilDB->query($query));
-        if (is_null($existingGrade) && !$task->isDummy()) {
-            $query = "INSERT INTO ut_lp_marks (obj_id, usr_id, status) VALUES (" .
-            $ilDB->quote($task->getId(), "Integer") .
-            "," . $ilDB->quote($user_id, "Integer") .
-            "," . $ilDB->quote($this->getLPStatusForUser($task, $user_id), "Integer") . ")";
-            $ilDB->manipulate($query);
+        if (is_null($existingGrade)) {
+            $ilDB->insert(
+                "ut_lp_marks",
+                array(
+                    'obj_id' => array('integer', $task->getId()),
+                    'usr_id' => array('text', $user_id)
+                    //, 'status' => array('integer', self::getLPStatusForUser($task, $user_id))
+                )
+            );
         }
         
         $DIC->database()->update(

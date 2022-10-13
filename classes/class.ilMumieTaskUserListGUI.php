@@ -60,7 +60,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
 
             $result = $ilDB->query(
-                "SELECT mark 
+                "SELECT mark
                 FROM ut_lp_marks 
                 WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
                 " AND " .
