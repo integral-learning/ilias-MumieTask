@@ -214,9 +214,9 @@ class ilMumieTaskGradeSync
         $query = "SELECT new_grade
         FROM xmum_grade_override
         WHERE " .
-        "task_id = " . $ilDB->quote($this->task->getId(), "integer") .
+        "usr_id = " . "'" . $ilDB->quote($hashed_user, "text") . "'".
         " AND " .
-        "usr_id = " . $ilDB->quote($hashed_user, "text");
+        "task_id = " . $ilDB->quote($this->task->getId(), "integer");
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
         return !empty((int)$grade["new_grade"]);
