@@ -220,7 +220,7 @@ class ilMumieTaskGradeSync
         ilLoggerFactory::getLogger('xmum')->info("query " . $query);
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
-        return !empty((int)$grade["new_grade"]);
+        return !is_null((int)$grade["new_grade"]);
     }
 
     private function getOverridenGrade($user_id, $xapi_grades)
