@@ -66,26 +66,28 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
      */
     public static function updateGrades($task, $force_update = false)
     {
-        include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
+        if ($task->getPrivateGradepool() != -1) {
+            include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
 
-        if (!$task->getServer() || !$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
-            return;
-        }
-        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        $grade_sync = new ilMumieTaskGradeSync($task, $force_update);
+            if (!$task->getServer() || !$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
+                return;
+            }
+            include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+            $grade_sync = new ilMumieTaskGradeSync($task, $force_update);
 
-        if ($force_update) {
-            ilLoggerFactory::getLogger('xmum')->info("MumieTask: Changes triggered forced grade update");
-            self::deleteLPForTask($task);
-        }
-        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-        $grades_by_user = $grade_sync->getValidXapiGradesByUser();
-        ilLoggerFactory::getLogger('xmum')->info("Valid Grades By User: " . print_r($grades_by_user, true));
-        foreach (array_keys($grades_by_user) as $user_id) {
-            $xapi_grade = $grades_by_user[$user_id];
-            $percentage = round($xapi_grade->result->score->scaled * 100);
-            self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
-            self::upsertMarks($user_id, $task, $xapi_grade);
+            if ($force_update) {
+                ilLoggerFactory::getLogger('xmum')->info("MumieTask: Changes triggered forced grade update");
+                self::deleteLPForTask($task);
+            }
+            include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+            $grades_by_user = $grade_sync->getValidXapiGradesByUser();
+            ilLoggerFactory::getLogger('xmum')->info("Valid Grades By User: " . print_r($grades_by_user, true));
+            foreach (array_keys($grades_by_user) as $user_id) {
+                $xapi_grade = $grades_by_user[$user_id];
+                $percentage = round($xapi_grade->result->score->scaled * 100);
+                self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
+                self::upsertMarks($user_id, $task, $xapi_grade);
+            }
         }
     }
 
@@ -107,7 +109,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
                 )
             );
         }
-        
+
         $DIC->database()->update(
             'ut_lp_marks',
             array(
