@@ -308,6 +308,7 @@ $ilDB->modifyTableColumn(
 ?>
 <#12>
 <?php
+$ilDB->dropTable('xmum_grade_override', false);
 if (!$ilDB->tableExists('xmum_grade_override')) {
     $fieldsAminSettings = array(
         'task_id' => array(
