@@ -320,22 +320,13 @@ if (!$ilDB->tableExists('xmum_grade_override')) {
             'length' => '143',
             'notnull' => true,
         ),
-    );
-    $ilDB->createTable("xmum_grade_override", $fieldsAminSettings);
-}
-?>
-<#13>
-<?php
-if (!$ilDB->tableColumnExists("xmum_grade_override", "new_grade")) {
-    $ilDB->addTableColumn(
-        "xmum_grade_override",
-        "new_grade",
-        array(
+        'new_grade' => array(
             'type' => 'integer',
             'length' => '3',
             'notnull' => true,
             'default' => '0'
-    )
+        )
     );
+    $ilDB->createTable("xmum_grade_override", $fieldsAminSettings);
 }
 ?>
