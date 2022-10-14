@@ -219,7 +219,7 @@ class ilMumieTaskGradeSync
         ilLoggerFactory::getLogger('xmum')->info($query);
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
-        ilLoggerFactory::getLogger('xmum')->info($grade["new_grade"]);
+        ilLoggerFactory::getLogger('xmum')->info(print_r($grade,true));
         return !is_null((int)$grade["new_grade"]);
     }
 
