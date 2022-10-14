@@ -60,7 +60,7 @@ class ilMumieTaskGradeSync
             'lastSync' => $this->getLastSync(),
             'includeAll' => true
         );
-        //ilLoggerFactory::getLogger('xmum')->info(print_r($params, true));
+        ilLoggerFactory::getLogger('xmum')->info(print_r($params, true));
         if ($this->task->getActivationLimited() == 1) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
         }
@@ -88,7 +88,7 @@ class ilMumieTaskGradeSync
             )
         );
         $response = json_decode($curl->exec());
-        //ilLoggerFactory::getLogger('xmum')->info(print_r($response, true));
+        ilLoggerFactory::getLogger('xmum')->info("Server response: " . print_r($response, true));
         $curl->close();
         return($response);
     }
@@ -116,7 +116,6 @@ class ilMumieTaskGradeSync
         }
         return $id;
     }
-
 
     /**
      * LastSync is used to improve performance. We don't need to check grades that were awarded before the last time we synced
@@ -209,15 +208,12 @@ class ilMumieTaskGradeSync
     {
         global $ilDB;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-        ilLoggerFactory::getLogger('xmum')->info("hashed user: " . $hashed_user);
-        ilLoggerFactory::getLogger('xmum')->info("task: " . $this->task->getId());
         $query = "SELECT new_grade
         FROM xmum_grade_override
         WHERE " .
         "usr_id = " . $ilDB->quote($hashed_user, "text") .
         " AND " .
         "task_id = " . $ilDB->quote($this->task->getId(), "integer");
-        ilLoggerFactory::getLogger('xmum')->info("query " . $query);
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
         return !is_null((int)$grade["new_grade"]);
