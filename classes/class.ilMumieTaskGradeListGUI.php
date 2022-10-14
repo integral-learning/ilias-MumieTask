@@ -101,6 +101,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $this->parentObj->object);
         $gradesync  = new ilMumieTaskGradeSync($this->parentObj->object, false);
         if (!$gradesync->wasGradeOverriden($_GET["user_id"])) {
+            ilLoggerFactory::getLogger('xmum')->info("New Grade was inserted into grade override db");
             $ilDB->insert(
                 "xmum_grade_override",
                 array(
@@ -110,6 +111,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                 )
             );
         } else {
+            ilLoggerFactory::getLogger('xmum')->info("New Grade was updated in grade override db");
             $ilDB->update(
                 "xmum_grade_override",
                 array(
