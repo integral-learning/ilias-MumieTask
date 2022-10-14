@@ -40,7 +40,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         }
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-        ilMumieTaskLPStatus::updateGrades($parentObj->object, true);
+        ilMumieTaskLPStatus::updateGrades($parentObj->object);
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
