@@ -1,7 +1,7 @@
 # MumieTask - Changelog
 
 All important changes to this plugin will be documented in this file.
-## [v2.1.0] - TODO
+## [v2.1.1] - TODO
 ###
 - Plugin now supports Ilias v7.14
 
