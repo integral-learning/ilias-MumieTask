@@ -68,7 +68,7 @@ frm_gradepool_pending#:#Entscheidung offen lassen
 frm_passing_grade#:#Mindestpunktzahl
 frm_passing_grade_desc#:#Tragen Sie hier die für das Bestehen notwendige Mindestpunktzahl ein.
 frm_force_update#:#Notensychnonisierung erzwingen
-frm_force_update_desc#:#Wenn Sie diesen Knopf drücken, werden erst alle bestehenden Noten für diese MumieTask gelöscht und dann neu synchronisiert
+frm_force_update_desc#:#Wenn Sie diesen Knopf drücken, werden erst alle bestehenden Noten für diese MumieTask gelöscht und dann neu synchronisiert. Hierbei werden auch alle manuel überschriebenen Noten gelöscht.
 frm_force_update_btn#:#Update erzwingen
 edit_task#:#Bearbeiten
 activation_limited_visibility_info#:#Nutzer können diese MumieTask außerhalb des gewählten Zeitraums sehen, aber nicht bearbeiten
