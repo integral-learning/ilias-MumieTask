@@ -78,7 +78,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             if ($force_update) {
                 ilLoggerFactory::getLogger('xmum')->info("MumieTask: Changes triggered forced grade update");
                 self::deleteLPForTask($task);
-                self::deleteOverridenGradesForTask($task);
             }
             include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
             $grades_by_user = $grade_sync->getValidXapiGradesByUser();
@@ -105,7 +104,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
                 array(
                     'obj_id' => array('integer', $task->getId()),
                     'usr_id' => array('text', $user_id)
-                    //, 'status' => array('integer', self::getLPStatusForUser($task, $user_id))
                 )
             );
         }
@@ -199,7 +197,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         $ilDB->manipulate("DELETE FROM ut_lp_marks WHERE obj_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 
-    private static function deleteOverridenGradesForTask($task)
+    public static function deleteOverridenGradesForTask($task)
     {
         global $ilDB;
         $ilDB->manipulate("DELETE FROM xmum_grade_override WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));

@@ -219,6 +219,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($force_grade_update) {
             $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
+            ilMumieTaskLPStatus::deleteOverridenGradesForTask($this->object);
         }
         ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         $cmd = 'editProperties';
@@ -662,6 +663,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGrades($this->object, true);
+        ilMumieTaskLPStatus::deleteOverridenGradesForTask($this->object);
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
         $cmd = 'editLPSettings';
         $this->performCommand($cmd);
