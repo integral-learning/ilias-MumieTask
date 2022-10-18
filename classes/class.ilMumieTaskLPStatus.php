@@ -81,7 +81,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             }
             include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
             $grades_by_user = $grade_sync->getValidXapiGradesByUser();
-            //ilLoggerFactory::getLogger('xmum')->info("Valid Grades By User: " . print_r($grades_by_user, true));
             foreach (array_keys($grades_by_user) as $user_id) {
                 $xapi_grade = $grades_by_user[$user_id];
                 $percentage = round($xapi_grade->result->score->scaled * 100);

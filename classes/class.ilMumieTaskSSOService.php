@@ -25,7 +25,6 @@ class ilMumieTaskSSOService
 
     public static function verifyToken()
     {
-        $logger = ilLoggerFactory::getLogger('xmum');
         global $ilDB;
         $token = $_POST['token'];
         $hashed_id = $_POST['userId'];

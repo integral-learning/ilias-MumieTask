@@ -69,6 +69,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
                         $this->tpl->setVariable("LINK_TXT", $lng->txt('rep_robj_xmum_frm_list_use_grade'));
                         $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10));
+                        $this->tpl->setVariable("VAL_TIME", substr($xGrade->timestamp, 10, strlen($xGrade->timestamp)));
                         $this->tpl->setCurrentBlock("tbl_content");
                         $this->tpl->parseCurrentBlock();
                     }
@@ -101,7 +102,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $this->parentObj->object);
         $gradesync  = new ilMumieTaskGradeSync($this->parentObj->object, false);
         if (!$gradesync->wasGradeOverriden($_GET["user_id"])) {
-            ilLoggerFactory::getLogger('xmum')->info("New Grade was inserted into grade override db");
             $ilDB->insert(
                 "xmum_grade_override",
                 array(
@@ -111,7 +111,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                 )
             );
         } else {
-            ilLoggerFactory::getLogger('xmum')->info("New Grade was updated in grade override db");
             $ilDB->update(
                 "xmum_grade_override",
                 array(
