@@ -37,7 +37,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submission_date'), 'date');
         $this->addColumn("", 'gradeswitch');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'grade');
-
+        
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
             "tbl_content",
@@ -69,7 +69,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
                         $this->tpl->setVariable("LINK_TXT", $lng->txt('rep_robj_xmum_frm_list_use_grade'));
                         $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10));
-                        $this->tpl->setVariable("VAL_TIME", strtotime(substr($xGrade->timestamp, 10, strlen($xGrade->timestamp))));
+                        $this->tpl->setVariable("VAL_TIME", strtotime(substr($xGrade->timestamp, 11, strlen($xGrade->timestamp))));
                         $this->tpl->setCurrentBlock("tbl_content");
                         $this->tpl->parseCurrentBlock();
                     }
