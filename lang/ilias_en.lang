@@ -68,7 +68,7 @@ frm_gradepool_pending#:#Leave decision open
 frm_passing_grade#:#Passing grade
 frm_passing_grade_desc#:#Please enter the passing threshold for this MumieTask
 frm_force_update#:#Force new grade synchronization
-frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. 
+frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. This also includes all manually overwritten grades.
 frm_force_update_btn#:#Force update
 edit_task#:#Edit
 activation_limited_visibility_info#:#Users can see this MUMIE task outside of the chosen availability period, but cannot work on it
