@@ -605,7 +605,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilTabs;
         $ilTabs->activateTab('userList');
         $this->initUserList();
-        $this->form->setTable($this);
+        if (!$this->form->checkInput()) {
+            $this->tpl->setContent($this->form->getHTML());
+            return;
+        }
+        $this->form->setTable($this, $this->form);
         $this->tpl->setContent($this->form->getHTML());
     }
 
@@ -616,7 +620,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form =  new ilMumieTaskUserListFormGUI();
         $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
         $form->setSearch($this);
-        $form->addCommandButton('displaySearchedUserList', "search");
+        $form->addCommandButton('displayUserList', "search");
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
