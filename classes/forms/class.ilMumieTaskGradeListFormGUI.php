@@ -13,7 +13,6 @@
 class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
     private $parentObj;
-    private $textField;
     public function __construct()
     {
         parent::__construct();
@@ -27,19 +26,14 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
         $names = $ilDB->fetchAssoc($result);
         $this->setTitle($names["firstname"] . " " . $names["lastname"]);
-        $textField = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_used_grade'));
-        $textField->setInfo($lng->txt('rep_robj_xmum_frm_list_grade_desc'));
-        $textField->setDisabled(true);
-        $this->textField = $textField;
-        $this->addItem($this->textField);
-        $this->updateTextField();
+        $this->setCurentGradeInfo();
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
         $userList = new ilMumieTaskGradeListGUI($parentObj, $this);
         $this->addItem($userList);
     }
 
-    public function updateTextField()
+    public function setCurentGradeInfo()
     {
         global $ilDB;
         $result = $ilDB->query("SELECT mark 
@@ -49,7 +43,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
             "obj_id = " . $ilDB->quote($this->parentObj->object->getId() , "integer")
             );
         $grade = $ilDB->fetchAssoc($result);
-        $this->textField->setValue($grade["mark"]);
+        ilUtil::sendInfo("(tmp)Current Grade: " . $grade["mark"]);
     }
    
 }                                                                           

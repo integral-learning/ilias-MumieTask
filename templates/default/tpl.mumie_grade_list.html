@@ -1,25 +1,17 @@
 <tr class="{CSS_ROW} small">
-	
+
 	<!-- BEGIN custom_fields -->
-	<td class="std" >
-		<input type="date" name="submissionDate" placeholder="dd-mm-yyyy" value="{VAL_DATE}" disabled="disabled"/>
-	</td>
-	<td class="std" >
-		<input type="time" name="submissionTime" value="{VAL_TIME}" disabled="disabled"/>
+	<td class="std">
+		<input type="date" name="submissionDate" placeholder="dd-mm-yyyy" value="{VAL_DATE}" disabled="disabled" />
 	</td>
 	<td class="std">
-		<!-- BEGIN as_link -->
-		<div class="il_ContainerItemCommands2">
-		<!-- BEGIN link -->
-			<a class="il_ContainerItemCommand2" href="{LINK_NAME}">{LINK_TXT}</a><br />
-		<!-- END link -->
-			<!-- BEGIN as_menu -->
-			{ACTION_USER}
-		<!-- END as_menu -->
-		</div>
-		<!-- END as_link -->
+		<input type="time" name="submissionTime" value="{VAL_TIME}" disabled="disabled" />
+	</td>
+	<td class="il_ContainerItemCommands2">
+		<a class="il_ContainerItemCommand2" href="{LINK_NAME}">
+		<i class="fa fa-exchange fa-fw"></i></a>
 	</td>
 	<td class="std">
 		{VAL_GRADE}
-	</td> 
+	</td>
 </tr>
