@@ -1,11 +1,16 @@
 # MumieTask - Changelog
 
 All important changes to this plugin will be documented in this file.
-## [v2.1.1] 
+
+## [v2.1.2] 
 ### Added
 - Teachers can now open a new overview page in MUMIE Tasks
 - Teachers can now open a grade overview page with all the submissions and submission dates from a user
 - Teachers can now choose which grade should be used when grading this task
+## [v2.1.1] - 2022-10-18
+###
+- Plugin now supports Ilias v7.14
+
 ## [v2.1.0] - 2022-09-28
 ### Added 
 - Sharing grades for the same MUMIE problems with other Ilias repositories can now be disabled.
