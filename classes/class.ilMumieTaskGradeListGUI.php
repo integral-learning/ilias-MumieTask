@@ -45,9 +45,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
         if ($parentObj->object->getPrivateGradepool() != -1) {
-            if (is_null($_GET['newGrade']) == false && $_GET["user_id"] == $user_id) {
-                $this->overrideGrade();
-            }
             $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
             $xGrades = $gradesync->getAllXapiGradesByUser();
             $syncId = $gradesync->getSyncIds(array($user_id))[0];
@@ -81,7 +78,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    private function overrideGrade()
+    public static function overrideGrade($parentObj)
     {
         global $ilDB, $DIC;
         $percentage = $_GET['newGrade'];
@@ -92,19 +89,19 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                 "mark" => array('int', $percentage),
             ),
             array(
-                'obj_id' => array('int', $this->parentObj->object->getId()),
+                'obj_id' => array('int', $parentObj->object->getId()),
                 'usr_id' => array('int', $_GET['user_id']),
             )
         );
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $this->parentObj->object);
-        $gradesync  = new ilMumieTaskGradeSync($this->parentObj->object, false);
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);
+        $gradesync  = new ilMumieTaskGradeSync($parentObj->object, false);
         if (!$gradesync->wasGradeOverriden($_GET["user_id"])) {
             $ilDB->insert(
                 "xmum_grade_override",
                 array(
-                    'task_id' => array('integer', $this->parentObj->object->getId()),
+                    'task_id' => array('integer', $parentObj->object->getId()),
                     'usr_id' => array('text', $hashed_user),
                     'new_grade' => array('integer', $percentage)
                 )
@@ -116,16 +113,14 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                     'new_grade' => array('integer', $percentage)
                 ),
                 array(
-                    'task_id' => array('integer', $this->parentObj->object->getId()),
+                    'task_id' => array('integer', $parentObj->object->getId()),
                     'usr_id' => array('text', $hashed_user),
                 )
             );
         }
         $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
         $names = $ilDB->fetchAssoc($result);
-        ilUtil::sendSuccess("(tmp)Successfully updated grade for user: " . $names["firstname"] . ", " . $names["lastname"], true);
-        $this->parentObj->performCommand("displayUserList");
-        $this->form->updateTextField();
+        ilUtil::sendSuccess("(tmp)Successfully updated grade for user " . $names["firstname"] . ",  " . $names["lastname"] . " (tmp)to: " . $percentage);
     }
 
     public function insert($a_tpl)

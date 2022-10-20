@@ -72,13 +72,10 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
             $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
             $names = $ilDB->fetchAssoc($result);
-            $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'lastname', $form->getInput("firstnamefield"));
             $this->tpl->setVariable('VAL_NAME', $names['firstname'] . ", " . $names['lastname']);
             $this->tpl->setCurrentBlock("tbl_content");
             $this->tpl->parseCurrentBlock();
         }
-        $this->enable('header');
-        $this->enable('sort');
         $this->setEnableHeader(true);
     }
 
