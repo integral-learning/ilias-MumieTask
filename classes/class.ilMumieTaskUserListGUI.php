@@ -18,7 +18,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
     private $parent_gui;
     private $postvar;
 
-    public function __construct($parentObj, $form = null)
+    public function __construct($parentObj, $form)
     {
         global $ilDB, $lng;
         $this->setId("user" . $_GET["ref_id"]);
@@ -72,7 +72,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
             $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
             $names = $ilDB->fetchAssoc($result);
-
+            $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'lastname', $form->getInput("firstnamefield"));
             $this->tpl->setVariable('VAL_NAME', $names['firstname'] . ", " . $names['lastname']);
             $this->tpl->setCurrentBlock("tbl_content");
             $this->tpl->parseCurrentBlock();
@@ -84,12 +84,10 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
     private function getSearchedIds($form)
     {
-        global $ilDB;
         $members = $this->participants->getMembers();
         if (empty($form) || (empty($form->getInput("firstnamefield")) && empty($form->getInput("lastnamefield")))) {
             return $members;
         }
-
         $searchedMembers = array();
         foreach ($members as $user_id) {
             $id = $this->checkIfFirstNameInList($user_id, $form->getInput("firstnamefield"));

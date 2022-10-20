@@ -21,26 +21,32 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
         $this->setDisableStandardMessage(true);
     }
 
-    public function setSearch($parentObj)
+    public function setSearch($parentObj, $form)
     {
         global $lng;
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserListGUI.php');
         $this->text_item_first = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_firstname_search'), 'firstnamefield');
+        if (!is_null($form) && !empty($form->getInput("firstnamefield"))) {
+            $this->text_item_first->setValue($form->getInput("firstnamefield"));
+        }
         $this->addItem($this->text_item_first);
         $this->text_item_last = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_lastname_search'), 'lastnamefield');
+        if (!is_null($form)) {
+            $this->text_item_last->setValue($form->getInput("lastnamefield"));
+        }
         $this->addItem($this->text_item_last);
-
+        
         if ($parentObj->object->getActivationLimited()) {
             $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
             ilUtil::sendInfo('<span>
             <b>' . $lng->txt('rep_robj_xmum_frm_list_general_dealine') . '</b>
-            <span style="margin-left:50px"> ' . $dateTime->get(IL_CAL_DATETIME) . '</span>
+            <span style="margin-left:50px"> ' . substr($dateTime->get(IL_CAL_DATETIME),0,10) . " - " . substr($dateTime->get(IL_CAL_DATETIME),11,8) . '</span>
             </span>');
         }
     }
 
-    public function setTable($parentObj, $form = null)
+    public function setTable($parentObj, $form)
     {
         global $lng;
         $select_task_header_item = new ilFormSectionHeaderGUI();
@@ -52,7 +58,7 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
 
     public function checkInput()
     {
-        $ok = parent::checkInput();  
+        $ok = parent::checkInput();
         return $ok;
     }
 }

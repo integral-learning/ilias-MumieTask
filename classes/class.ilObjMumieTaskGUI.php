@@ -49,7 +49,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "viewContent":
             case "displayLearningProgress":
             case "displayUserList":
-            case "displaySearchedUserList":
             case "displayGradeList":
             case 'forceGradeUpdate':
             case "setStatusToNotAttempted":
@@ -619,28 +618,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
         $form =  new ilMumieTaskUserListFormGUI();
         $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
-        $form->setSearch($this);
+        $form->setSearch($this, $this->form);
         $form->addCommandButton('displayUserList', "search");
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
-    }
-
-    /**
-     *
-     */
-    public function displaySearchedUserList()
-    {
-        global $ilTabs, $ilCtrl, $lng;
-        $this->initUserList();
-
-        if (!$this->form->checkInput()) {
-            $this->tpl->setContent($this->form->getHTML());
-            return;
-        }
-        $ilTabs->activateTab('userList');
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
-        $this->form->setTable($this, $this->form);
-        $this->tpl->setContent($this->form->getHTML());
     }
 
 

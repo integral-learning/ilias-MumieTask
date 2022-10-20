@@ -23,7 +23,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     public function __construct($parentObj, $form)
     {
-        global $ilDB, $lng;
+        global $lng;
         $this->form = $form;
         $user_id = $_GET['user_id'];
         $this->parentObj = $parentObj;
@@ -68,8 +68,8 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                         $this->tpl->setVariable("LINK_NAME", $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
 
                         $this->tpl->setVariable("LINK_TXT", $lng->txt('rep_robj_xmum_frm_list_use_grade'));
-                        $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10));
-                        $this->tpl->setVariable("VAL_TIME", substr($xGrade->timestamp, 11, 5));
+                        $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10) . " " . substr($xGrade->timestamp, 11, 5));
+                        //$this->tpl->setVariable("VAL_TIME", substr($xGrade->timestamp, 11, 5));
                         $this->tpl->setCurrentBlock("tbl_content");
                         $this->tpl->parseCurrentBlock();
                     }
@@ -122,6 +122,10 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                 )
             );
         }
+        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
+        $names = $ilDB->fetchAssoc($result);
+        ilUtil::sendSuccess("(tmp)Successfully updated grade for user: " . $names["firstname"] . ", " . $names["lastname"], true);
+        $this->parentObj->performCommand("displayUserList");
         $this->form->updateTextField();
     }
 
