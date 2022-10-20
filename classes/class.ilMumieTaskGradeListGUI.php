@@ -68,8 +68,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                         $this->tpl->setVariable("LINK_NAME", $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
 
                         $this->tpl->setVariable("LINK_TXT", $lng->txt('rep_robj_xmum_frm_list_use_grade'));
-                        $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10) . " " . substr($xGrade->timestamp, 11, 5));
-                        //$this->tpl->setVariable("VAL_TIME", substr($xGrade->timestamp, 11, 5));
+                        $this->tpl->setVariable("VAL_DATE", substr($xGrade->timestamp, 0, 10) . " - " . substr($xGrade->timestamp, 11, 5));
                         $this->tpl->setCurrentBlock("tbl_content");
                         $this->tpl->parseCurrentBlock();
                     }
