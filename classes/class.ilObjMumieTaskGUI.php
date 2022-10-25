@@ -50,6 +50,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "displayLearningProgress":
             case "displayUserList":
             case "displayGradeList":
+            case "dueDateExtension":
             case 'forceGradeUpdate':
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
@@ -647,7 +648,31 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($html);
     }
 
+    public function dueDateExtension()
+    {
+        global $ilTabs;
+        $ilTabs->activateTab('userList');
+        $this->initDueDateExtension();
+        $this->tpl->setContent($this->form->getHTML());
+    }
 
+    private function initDueDateExtension()
+    {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieDueDateExtensionForm.php');
+        $form = new ilMumieDueDateExtensionForm();
+        $form->checkInput();
+        $form->setFields($this);
+        $form->addCommandButton('submitDueDateExtension', "(tmp)Save new date");
+        $this->form = $form;
+    }
+
+    public function submitDueDateExtension()
+    {
+        $this->initDueDateExtension();
+        $this->form->updateGrade();
+        $cmd = 'displayUserList';
+        $this->performCommand($cmd);
+    }
     /**
      * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).
      * After that a new synchronization is triggered.

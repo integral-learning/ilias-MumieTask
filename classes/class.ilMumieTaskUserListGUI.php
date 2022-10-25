@@ -26,6 +26,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
+        $this->addColumn("(tmp)Due Date Extension", 'name');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
@@ -55,7 +56,8 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             : "tblrow2";
             $this->tpl->setVariable("CSS_ROW", $this->css_row);
             $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-            $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+            $this->tpl->setVariable('LINK_NAME_DATE', $this->ctrl->getLinkTarget($parentObj, 'dueDateExtension'));
+            $this->tpl->setVariable('LINK_NAME_GRADE', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
             $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
 
             $result = $ilDB->query(
