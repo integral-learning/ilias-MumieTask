@@ -33,7 +33,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setFormName('participants');
 
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submission_date'), 'date');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_use_grade'));
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_use_grade'), 'useGrade');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'grade');
         
         $this->tpl->addBlockFile(

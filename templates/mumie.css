@@ -2,9 +2,8 @@
     background-color: #ccc;
 }
 
-.mumie-user-table{
-    max-width: 60%;
-    margin-left: auto;
+.mumie-user-table {
+    max-width: 80%;
+    margin-left: 30px;
     margin-right: auto;
-    margin-top: 500px;
 }

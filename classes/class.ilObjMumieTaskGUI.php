@@ -623,16 +623,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
         $this->form->setFields($this, $this->form);
         $html = str_replace("ilTableOuter", "mumie-user-table", $this->form->getHTML());
-        // $html .= '<style>
-        // .mumie-user-table{
-        // max-width: 80%;
-        // margin-left: 30px;
-        // margin-right: auto;
-        // }
-        // </style>';
         return $html;
     }
-
 
     public function displayGradeList()
     {
@@ -652,13 +644,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_back'));
         $this->form = $form;
         $html = str_replace("ilTableOuter", "mumie-user-table", $this->form->getHTML());
-        $html .= '<style>
-        .mumie-user-table{
-        max-width: 80%;
-        margin-left: 30px;
-        margin-right: auto;
-        }
-        </style>';
         $this->tpl->setContent($html);
     }
 
