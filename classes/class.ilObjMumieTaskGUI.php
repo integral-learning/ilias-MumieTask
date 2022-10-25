@@ -49,7 +49,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "viewContent":
             case "displayLearningProgress":
             case "displayUserList":
-            case "displayUnsearchedUserList":
             case "displayGradeList":
             case 'forceGradeUpdate':
             case "setStatusToNotAttempted":
@@ -608,14 +607,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($html);
     }
 
-    public function displayUnsearchedUserList()
-    {
-        global $ilTabs;
-        $ilTabs->activateTab('userList');
-        $html = $this->initUserList();     
-        $this->tpl->setContent($html);
-    }
-
     private function initUserList()
     {
         global $ilCtrl, $lng;
@@ -623,22 +614,22 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form =  new ilMumieTaskUserListFormGUI();
         $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
         $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_search'));
-        $form->addCommandButton('displayUnsearchedUserList', $lng->txt('rep_robj_xmum_frm_list_back'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
         if (!$this->form->checkInput()) {
             $this->tpl->setContent($this->form->getHTML());
             return;
         }
+        $this->tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
         $this->form->setFields($this, $this->form);
         $html = str_replace("ilTableOuter", "mumie-user-table", $this->form->getHTML());
-        $html .= '<style>
-        .mumie-user-table{
-        max-width: 80%;
-        margin-left: 30px;
-        margin-right: auto;
-        }
-        </style>';
+        // $html .= '<style>
+        // .mumie-user-table{
+        // max-width: 80%;
+        // margin-left: 30px;
+        // margin-right: auto;
+        // }
+        // </style>';
         return $html;
     }
 
