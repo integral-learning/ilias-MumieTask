@@ -604,28 +604,26 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
-        $this->initUserList(); 
-        $this->tpl->setContent($this->form->getHTML());
+        $html = $this->initUserList();
+        $this->tpl->setContent($html);
     }
 
     public function displayUnsearchedUserList()
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
-        $this->initUserList(); 
-        $this->form->getItemByPostVar("lastnamefield")->setValue("");
-        $this->form->getItemByPostVar("firstnamefield")->setValue("");
-        $this->tpl->setContent($this->form->getHTML());
+        $html = $this->initUserList();     
+        $this->tpl->setContent($html);
     }
 
-    public function initUserList()
+    private function initUserList()
     {
         global $ilCtrl, $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
         $form =  new ilMumieTaskUserListFormGUI();
         $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
-        $form->addCommandButton('displayUserList', "(tmp)search");
-        $form->addCommandButton('displayUnsearchedUserList', "(tmp)cancel");
+        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_search'));
+        $form->addCommandButton('displayUnsearchedUserList', $lng->txt('rep_robj_xmum_frm_list_back'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
         if (!$this->form->checkInput()) {
@@ -633,6 +631,15 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             return;
         }
         $this->form->setFields($this, $this->form);
+        $html = str_replace("ilTableOuter", "mumie-user-table", $this->form->getHTML());
+        $html .= '<style>
+        .mumie-user-table{
+        max-width: 80%;
+        margin-left: 30px;
+        margin-right: auto;
+        }
+        </style>';
+        return $html;
     }
 
 
@@ -644,7 +651,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->plugin->includeClass('class.ilMumieTaskGradeListGUI.php');
             ilMumieTaskGradeListGUI::overrideGrade($this);
             $cmd = 'displayUserList';
-            ilLoggerFactory::getLogger('xmum')->info("grade overriden");
             $this->performCommand($cmd);
             return;
         }
@@ -654,7 +660,15 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form->setFormAction($ilCtrl->getFormAction($this));
         $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_back'));
         $this->form = $form;
-        $this->tpl->setContent($this->form->getHTML());
+        $html = str_replace("ilTableOuter", "mumie-user-table", $this->form->getHTML());
+        $html .= '<style>
+        .mumie-user-table{
+        max-width: 80%;
+        margin-left: 30px;
+        margin-right: auto;
+        }
+        </style>';
+        $this->tpl->setContent($html);
     }
 
 

@@ -25,7 +25,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         parent::__construct($parentObj, 'displayUserList');
 
         $this->setFormName('participants');
-        $this->addColumn("", "", "1", true);
+        //$this->addColumn("", "", "1", true);
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');

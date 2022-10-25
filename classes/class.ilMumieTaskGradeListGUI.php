@@ -19,12 +19,10 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     private $parentObj;
     private $parent_gui;
     private $postvar;
-    private $form;
 
-    public function __construct($parentObj, $form)
+    public function __construct($parentObj)
     {
         global $lng;
-        $this->form = $form;
         $user_id = $_GET['user_id'];
         $this->parentObj = $parentObj;
         $this->admin_settings = ilMumieTaskAdminSettings::getInstance();
@@ -35,7 +33,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setFormName('participants');
 
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submission_date'), 'date');
-        $this->addColumn("(tmp)Use this Grade", 'use_grade');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_use_grade'));
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'grade');
         
         $this->tpl->addBlockFile(
@@ -80,7 +78,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     public static function overrideGrade($parentObj)
     {
-        global $ilDB, $DIC;
+        global $ilDB, $DIC, $lng;
         $percentage = $_GET['newGrade'];
         $DIC->database()->update(
             'ut_lp_marks',
@@ -120,7 +118,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         }
         $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
         $names = $ilDB->fetchAssoc($result);
-        ilUtil::sendSuccess("(tmp)Successfully updated grade for user " . $names["firstname"] . ",  " . $names["lastname"] . " (tmp)to: " . $percentage);
+        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_list_successfull_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_list_to') . " " . $percentage);
     }
 
     public function insert($a_tpl)

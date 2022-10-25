@@ -29,13 +29,13 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         $this->setCurentGradeInfo();
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
-        $userList = new ilMumieTaskGradeListGUI($parentObj, $this);
+        $userList = new ilMumieTaskGradeListGUI($parentObj);
         $this->addItem($userList);
     }
 
     public function setCurentGradeInfo()
     {
-        global $ilDB;
+        global $ilDB, $lng;
         $result = $ilDB->query("SELECT mark 
             FROM ut_lp_marks 
             WHERE usr_id = " . $ilDB->quote($_GET['user_id'], "integer") .
@@ -43,7 +43,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
             "obj_id = " . $ilDB->quote($this->parentObj->object->getId() , "integer")
             );
         $grade = $ilDB->fetchAssoc($result);
-        ilUtil::sendInfo("(tmp)Current Grade: " . $grade["mark"]);
+        ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_used_grade') . " " . $grade["mark"]);
     }
    
 }                                                                           

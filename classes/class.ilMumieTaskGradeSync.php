@@ -86,8 +86,7 @@ class ilMumieTaskGradeSync
                 "X-API-Key: " . $this->admin_settings->getApiKey(),
             )
         );
-        //$response = json_decode($curl->exec());
-        $response = json_decode($this->mockgraderesponse);
+        $response = json_decode($curl->exec());
         $curl->close();
         return($response);
     }
@@ -236,97 +235,4 @@ class ilMumieTaskGradeSync
             }
         }
     }
-    
-    private $mockgraderesponse = '[
-        {
-            "id": "75a9e8eb-f20f-49bd-ae6b-351d3e3f62bf",
-            "actor": {
-                "account": {
-                    "homePage": "https://test.mumie.net/ombplus",
-                    "name": "GSSO_mi3_1966ad7f27e9eee42ca6a56d08c5e5c90b7ee8e6a10ba456d5c322f0baf1e769bf5d390ba67e4b5f3119f2855a5fe190f24654d907b2c1b575c26ba885130f0f"
-                },
-                "objectType": "Agent"
-            },
-            "verb": {
-                "id": "https://www.mumie.net/xapi/verbs/submitted",
-                "display": {
-                    "de": "abgegeben",
-                    "en": "submitted"
-                }
-            },
-            "object": {
-                "id": "OnlineMathemBrueckPlus/ElemenRechneMengenZahlen/Schlus"
-            },
-            "result": {
-                "success": false,
-                "score": {
-                    "scaled": 0.14,
-                    "raw": 0.14,
-                    "min": 0.0,
-                    "max": 1.0
-                }
-            },
-            "timestamp": "2022-08-17T19:45:37+02"
-        },
-        {
-            "id": "2d0415da-31ed-4191-ad1d-60d9726cdb48",
-            "actor": {
-                "account": {
-                    "homePage": "https://test.mumie.net/ombplus",
-                    "name": "GSSO_mi3_98b8a6a9d0d5789c95d7a29f2af4dd9a6ce09a1379aa8d4664326a8c810893c9f55dfb04c87d5e9c21bb269f4f8abd8343d060b01d7a73c54779d98ef782385a"
-                },
-                "objectType": "Agent"
-            },
-            "verb": {
-                "id": "https://www.mumie.net/xapi/verbs/submitted",
-                "display": {
-                    "de": "abgegeben",
-                    "en": "submitted"
-                }
-            },
-            "object": {
-                "id": "OnlineMathemBrueckPlus/ElemenRechneMengenZahlen/Schlus"
-            },
-            "result": {
-                "success": false,
-                "score": {
-                    "scaled": 0.205556,
-                    "raw": 0.205556,
-                    "min": 0.0,
-                    "max": 1.0
-                }
-            },
-            "timestamp": "2022-08-18T11:28:43+02"
-        },
-        {
-            "id": "be9a0c63-4c13-4e7d-a571-fd5b2e85bcd3",
-            "actor": {
-                "account": {
-                    "homePage": "https://test.mumie.net/ombplus",
-                    "name": "GSSO_mi3_98b8a6a9d0d5789c95d7a29f2af4dd9a6ce09a1379aa8d4664326a8c810893c9f55dfb04c87d5e9c21bb269f4f8abd8343d060b01d7a73c54779d98ef782385a"
-                },
-                "objectType": "Agent"
-            },
-            "verb": {
-                "id": "https://www.mumie.net/xapi/verbs/submitted",
-                "display": {
-                    "de": "abgegeben",
-                    "en": "submitted"
-                }
-            },
-            "object": {
-                "id": "OnlineMathemBrueckPlus/ElemenRechneMengenZahlen/Schlus"
-            },
-            "result": {
-                "success": false,
-                "score": {
-                    "scaled": 0.305556,
-                    "raw": 0.305556,
-                    "min": 0.0,
-                    "max": 1.0
-                }
-            },
-            "timestamp": "2022-08-18T11:50:22+02"
-        }
-        ]';
 }
