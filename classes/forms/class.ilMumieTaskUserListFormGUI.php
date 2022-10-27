@@ -46,7 +46,7 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
             $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
             ilUtil::sendInfo('<span>
             <b>' . $lng->txt('rep_robj_xmum_frm_list_general_dealine') . '</b>
-            <span style="margin-left:50px"> ' . substr($dateTime->get(IL_CAL_DATETIME), 0, 10) . " - " . substr($dateTime->get(IL_CAL_DATETIME), 11, 8) . '</span>
+            <span style="margin-left:50px"> ' . substr($dateTime->get(IL_CAL_DATETIME), 8, 2) . "." . substr($dateTime->get(IL_CAL_DATETIME), 5, 2) . "." . substr($dateTime->get(IL_CAL_DATETIME), 0, 4) . " - " . substr($dateTime->get(IL_CAL_DATETIME), 11, 5) . '</span>
             </span>');
         }
     }

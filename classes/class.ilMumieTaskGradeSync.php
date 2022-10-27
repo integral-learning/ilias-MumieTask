@@ -169,11 +169,11 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-            if (!$this->wasGradeOverriden($user_id)) {
+            if ($this->wasGradeOverriden($user_id)) {
+                $valid_grade_by_user[$user_id] = $this->getOverridenGrade($user_id, $xapi_grades);
+            } else {
                 $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
-            } else {
-                $valid_grade_by_user[$user_id] = $this->getOverridenGrade($user_id, $xapi_grades);
             }
         }
         return array_filter($valid_grade_by_user);
@@ -181,10 +181,13 @@ class ilMumieTaskGradeSync
 
     private function isGradeBeforeDueDate($grade)
     {
+        if($this->wasDueDateOverriden($this->getIliasId($grade), $this->task))
+        {
+            return strtotime($grade->timestamp) <= $this->getOverridenDate($this->getIliasId($grade), $this->task);
+        }
         if (!$this->task->getActivationLimited()) {
             return true;
         }
-
         return strtotime($grade->timestamp) <= $this->task->getActivationEndingTime();
     }
 
@@ -202,7 +205,7 @@ class ilMumieTaskGradeSync
         }
         return $latest_grade;
     }
-    
+
     public function wasGradeOverriden($user_id)
     {
         global $ilDB;
@@ -218,6 +221,21 @@ class ilMumieTaskGradeSync
         return !is_null($grade["new_grade"]);
     }
 
+    public static function wasDueDateOverriden($user_id, $task)
+    {
+        global $ilDB;
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
+        $query = "SELECT new_date
+        FROM xmum_date_override
+        WHERE " .
+        "usr_id = " . $ilDB->quote($hashed_user, "text") .
+        " AND " .
+        "task_id = " . $ilDB->quote($task->getId(), "integer");
+        $result = $ilDB->query($query);
+        $grade = $ilDB->fetchAssoc($result);
+        return !is_null($grade["new_date"]);
+    }
+
     private function getOverridenGrade($user_id, $xapi_grades)
     {
         global $ilDB;
@@ -230,13 +248,29 @@ class ilMumieTaskGradeSync
         "usr_id = " . $ilDB->quote($hashed_user, "text");
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
-        foreach($xapi_grades as $xGrade) {
-            if(round($xGrade->result->score->raw * 100) == $grade["new_grade"]){
+        foreach ($xapi_grades as $xGrade) {
+            if (round($xGrade->result->score->raw * 100) == $grade["new_grade"]) {
                 return $xGrade;
             }
         }
     }
+
+    public static function getOverridenDate($user_id, $task)
+    {
+        global $ilDB;
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
+        $query = "SELECT new_date
+        FROM xmum_date_override
+        WHERE " .
+        "task_id = " . $ilDB->quote($task->getId(), "integer") .
+        " AND " .
+        "usr_id = " . $ilDB->quote($hashed_user, "text");
+        $result = $ilDB->query($query);
+        return strtotime($ilDB->fetchAssoc($result)["new_date"]);
+    }
+
     
+
     private $mockgraderesponse = '[
         {
             "id": "75a9e8eb-f20f-49bd-ae6b-351d3e3f62bf",

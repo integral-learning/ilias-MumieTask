@@ -26,7 +26,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
-        $this->addColumn("(tmp)Due Date Extension", 'name');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_deadline_extension'), 'deadline');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);

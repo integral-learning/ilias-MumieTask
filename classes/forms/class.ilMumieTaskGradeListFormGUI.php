@@ -7,9 +7,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This form is used to edit the Learning Progress settings of MumieTasks
-  */
+/**
+ * This form is used to edit the Learning Progress settings of MumieTasks
+ */
 class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
     private $parentObj;
@@ -36,14 +36,24 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     public function setCurentGradeInfo()
     {
         global $ilDB, $lng;
-        $result = $ilDB->query("SELECT mark 
+        $result = $ilDB->query(
+            "SELECT mark 
             FROM ut_lp_marks 
             WHERE usr_id = " . $ilDB->quote($_GET['user_id'], "integer") .
             " AND " .
-            "obj_id = " . $ilDB->quote($this->parentObj->object->getId() , "integer")
-            );
+            "obj_id = " . $ilDB->quote($this->parentObj->object->getId(), "integer")
+        );
         $grade = $ilDB->fetchAssoc($result);
-        ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_used_grade') . " " . $grade["mark"]);
+
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        if (ilMumieTaskGradeSync::wasDueDateOverriden($_GET["user_id"], $this->parentObj->object)) {
+            $abgabefrist = date('Y-m-d H:i', ilMumieTaskGradeSync::getOverridenDate($_GET["user_id"], $this->parentObj->object));
+            ilUtil::sendInfo(
+                "<b>" . $lng->txt('rep_robj_xmum_frm_list_used_grade') . "</b> " . $grade["mark"]. " <br> " .
+                "<b>" . $lng->txt('rep_robj_xmum_frm_list_deadline') . ":</b> " . substr($abgabefrist, 8, 2) . "." . substr($abgabefrist, 5, 2) . "." . substr($abgabefrist, 0, 4) . " - " . substr($abgabefrist, 11, 5)
+            );
+        } else {
+            ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_used_grade') . " " . $grade["mark"]);
+        }
     }
-   
-}                                                                           
+}

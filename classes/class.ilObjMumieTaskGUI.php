@@ -49,6 +49,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "viewContent":
             case "displayLearningProgress":
             case "displayUserList":
+            case "submitDueDateExtension":
             case "displayGradeList":
             case "dueDateExtension":
             case 'forceGradeUpdate':
@@ -658,18 +659,21 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     private function initDueDateExtension()
     {
+        global $ilCtrl, $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieDueDateExtensionForm.php');
         $form = new ilMumieDueDateExtensionForm();
         $form->checkInput();
         $form->setFields($this);
-        $form->addCommandButton('submitDueDateExtension', "(tmp)Save new date");
+        $form->addCommandButton('submitDueDateExtension', $lng->txt('rep_robj_xmum_frm_save'));
+        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_cancel'));
+        $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
 
     public function submitDueDateExtension()
-    {
+    { 
         $this->initDueDateExtension();
-        $this->form->updateGrade();
+        $this->form->updateGrade($this);
         $cmd = 'displayUserList';
         $this->performCommand($cmd);
     }

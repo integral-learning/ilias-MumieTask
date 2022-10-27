@@ -82,14 +82,19 @@ frm_list_change_grade#:#Change Grade
 frm_list_submissions#:#Submissions
 frm_list_submission_date#:#Submission Date
 frm_list_use_grade#:#Use this Grade
-frm_list_used_grade#:#Used Grade:
+frm_list_used_grade#:#Used grade:
 frm_list_back#:#Back
 frm_list_search#:#Search
 frm_list_name#:#Name
 frm_list_firstname_search#:#Firstname
 frm_list_lastname_search#:#Lastname
-frm_list_deadline#:#Due Date
+frm_list_deadline#:#Due date
+frm_list_new_deadline#:#New due date:
 frm_search_title#:#Search Participants
-frm_list_general_dealine#:#General due date:
+frm_list_general_dealine#:#General due date: 
 frm_list_successfull_update#:#Successfully updated grade for user
+frm_list_successfull_date_update#:#Successfully updated due date for user
 frm_list_to#:# to: 
+frm_list_deadline_extension#:#Extend due date
+frm_save#:#Save
+frm_cancel#:#Cancel

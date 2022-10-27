@@ -308,7 +308,6 @@ $ilDB->modifyTableColumn(
 ?>
 <#12>
 <?php
-$ilDB->dropTable('xmum_grade_override', false);
 if (!$ilDB->tableExists('xmum_grade_override')) {
     $fieldsAminSettings = array(
         'task_id' => array(
@@ -329,5 +328,28 @@ if (!$ilDB->tableExists('xmum_grade_override')) {
         )
     );
     $ilDB->createTable("xmum_grade_override", $fieldsAminSettings);
+}
+?>
+<#13>
+<?php
+if (!$ilDB->tableExists('xmum_date_override')) {
+    $fieldsAminSettings = array(
+        'task_id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'usr_id' => array(
+            'type' => 'text',
+            'length' => '143',
+            'notnull' => true,
+        ),
+        'new_date' => array(
+            'type' => 'text',
+            'length' => '16',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_date_override", $fieldsAminSettings);
 }
 ?>

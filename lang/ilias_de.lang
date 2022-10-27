@@ -89,7 +89,12 @@ frm_list_name#:#Name
 frm_list_firstname_search#:#Vorname
 frm_list_lastname_search#:#Nachname
 frm_list_deadline#:#Abgabefrist
+frm_list_new_deadline#:#Neue Abgabefrist:
 frm_search_title#:#Teilnehmer Suche
 frm_list_general_dealine#:#Allgemeine Abgabefrist:
 frm_list_successfull_update#:#Note von 
+frm_list_successfull_date_update#:#Abgabefrist von 
 frm_list_to#:# erfolgreich geändert zu: 
+frm_list_deadline_extension#:#Abgabefrist verlängern
+frm_save#:#Speichern
+frm_cancel#:#Abbrechen
