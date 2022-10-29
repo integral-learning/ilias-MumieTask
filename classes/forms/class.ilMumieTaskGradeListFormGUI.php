@@ -53,7 +53,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
                 "<b>" . $lng->txt('rep_robj_xmum_frm_list_deadline') . ":</b> " . substr($abgabefrist, 8, 2) . "." . substr($abgabefrist, 5, 2) . "." . substr($abgabefrist, 0, 4) . " - " . substr($abgabefrist, 11, 5)
             );
         } else {
-            ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_used_grade') . " " . $grade["mark"]);
+            ilUtil::sendInfo("<b>" . $lng->txt('rep_robj_xmum_frm_list_used_grade') . "</b> " . $grade["mark"]);
         }
     }
 }
