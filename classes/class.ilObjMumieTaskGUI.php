@@ -660,8 +660,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     private function initDueDateExtension()
     {
         global $ilCtrl, $lng;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieDueDateExtensionForm.php');
-        $form = new ilMumieDueDateExtensionForm();
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDueDateExtensionForm.php');
+        $form = new ilMumieTaskDueDateExtensionForm();
         $form->checkInput();
         $form->setFields($this);
         $form->addCommandButton('submitDueDateExtension', $lng->txt('rep_robj_xmum_frm_save'));
