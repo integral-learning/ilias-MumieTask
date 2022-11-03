@@ -146,7 +146,24 @@ class ilMumieTaskGradeSync
      */
     private function getAllUsers($task)
     {
-        return ilParticipants::getInstance($task->getParentRef())->getMembers();
+        if ($task->getParentRef() != 1) {
+            return ilParticipants::getInstance($task->getParentRef())->getMembers();
+        } else {
+            return $this->getAllUserIds();
+        }
+    }
+
+    public static function getAllUserIds()
+    {
+        global $ilDB;
+        $result = $ilDB->query(
+            "SELECT usr_id FROM usr_data;"
+        );
+        $allIds = array();
+        while ($user_id = $ilDB->fetchAssoc($result)) {
+            array_push($allIds, $user_id["usr_id"]);
+        }
+        return $allIds;
     }
 
     /**
