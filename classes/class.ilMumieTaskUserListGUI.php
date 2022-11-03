@@ -116,26 +116,15 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         return $ilDB->fetchAssoc($result);
     }
 
-    private function getAllIds()
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT usr_id FROM usr_data;"
-        );
-        $allIds = array();
-        while ($user_id = $ilDB->fetchAssoc($result)) {
-            array_push($allIds, $user_id["usr_id"]);
-        }
-        return $allIds;
-    }
+    
 
-    private function getMembers($parentObj, $form){
+    private function getMembers($parentObj, $form) {
         if ($parentObj->object->getParentRef() != 1) {
             include_once './Services/Membership/classes/class.ilParticipants.php';
             $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
             return $this->getSearchedIds($form);
         } else {
-            return $this->getAllIds();
+            return ilMumieTaskGradeSync::getAllUserIds();
         }
     }
 

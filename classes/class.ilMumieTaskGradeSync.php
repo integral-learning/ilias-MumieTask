@@ -145,8 +145,25 @@ class ilMumieTaskGradeSync
      * Get all users that can get marks for this MUMIE task
      */
     private function getAllUsers($task)
+    {    
+        if ($task->getParentRef() != 1) {
+            return ilParticipants::getInstance($task->getParentRef())->getMembers();
+        } else {
+            return ilMumieTaskGradeSync::getAllUserIds();
+        }
+    }
+
+    public static function getAllUserIds()
     {
-        return ilParticipants::getInstance($task->getParentRef())->getMembers();
+        global $ilDB;
+        $result = $ilDB->query(
+            "SELECT usr_id FROM usr_data;"
+        );
+        $allIds = array();
+        while ($user_id = $ilDB->fetchAssoc($result)) {
+            array_push($allIds, $user_id["usr_id"]);
+        }
+        return $allIds;
     }
 
     /**
