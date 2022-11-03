@@ -18,7 +18,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  */
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 {
-    const DUMMY_TITLE = "-- Empty MumieTask --";
+    public const DUMMY_TITLE = "-- Empty MumieTask --";
     private static $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
     private $server;
     private $mumie_course;
@@ -105,14 +105,14 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $activation = ilObjectActivation::getItem($this->ref_id);
             switch ($activation["timing_type"]) {
                 case ilObjectActivation::TIMINGS_ACTIVATION:
-                    $this->setActivationLimited(true);
+                    $this->setDeadlineActive(true);
                     $this->setActivationStartingTime($activation["timing_start"]);
                     $this->setActivationEndingTime($activation["timing_end"]);
                     $this->setActivationVisibility(true);//$activation["visible"]);
                     break;
 
                 default:
-                    $this->setActivationLimited(false);
+                    $this->setDeadlineActive(false);
                     break;
             }
         }
@@ -123,7 +123,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function doUpdate()
     {
-        global $DIC;
+        global $DIC, $ilDB;
 
         $DIC->database()->update(
             ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
@@ -144,25 +144,69 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             )
         );
 
-        /**
-         * Snippet taken from ilObjTest->saveToDb()
-         */
         if ($this->ref_id) {
-            include_once "./Services/Object/classes/class.ilObjectActivation.php";
-            ilObjectActivation::getItem($this->ref_id);
-
-            $item = new ilObjectActivation;
-            if (!$this->getActivationLimited()) {
-                $item->setTimingType(ilObjectActivation::TIMINGS_DEACTIVATED);
+            if ($this->isDeadlineDbSet()) {
+                if (!$this->getDeadlineActive()) {
+                    $ilDB->manipulate("DELETE FROM xmum_task_dealines WHERE task_id = " . $ilDB->quote($this->getId(), 'integer'));
+                } else {
+                    $ilDB->update(
+                        "xmum_task_dealines",
+                        array(
+                            'start_date' => array('integer', $this->getActivationStartingTime()),
+                            'end_date' => array('integer', $this->getActivationEndingTime())
+                        ),
+                        array(
+                            'task_id' => array('integer', $this->getId()),
+                        )
+                    );
+                }
             } else {
-                $item->setTimingType(ilObjectActivation::TIMINGS_ACTIVATION);
-                $item->setTimingStart($this->getActivationStartingTime());
-                $item->setTimingEnd($this->getActivationEndingTime());
-                $item->toggleVisible($this->getActivationVisibility());
+                if($this->getDeadlineActive())
+                {
+                    $ilDB->insert(
+                        "xmum_task_dealines",
+                        array(
+                            'task_id' => array('integer', $this->getId()),
+                            'start_date' => array('integer', $this->getActivationStartingTime()),
+                            'end_date' => array('integer', $this->getActivationEndingTime())
+                        )
+                    );
+                }
             }
-
-            $item->update($this->ref_id);
         }
+
+
+
+        // /**
+        //  * Snippet taken from ilObjTest->saveToDb()
+        //  */
+        // if ($this->ref_id) {
+        //     include_once "./Services/Object/classes/class.ilObjectActivation.php";
+        //     ilObjectActivation::getItem($this->ref_id);
+
+        //     $item = new ilObjectActivation();
+        //     if (!$this->getDeadlineActive()) {
+        //         $item->setTimingType(ilObjectActivation::TIMINGS_DEACTIVATED);
+        //     } else {
+        //         $item->setTimingType(ilObjectActivation::TIMINGS_ACTIVATION);
+        //         $item->setTimingStart($this->getActivationStartingTime());
+        //         $item->setTimingEnd($this->getActivationEndingTime());
+        //         $item->toggleVisible($this->getActivationVisibility());
+        //     }
+
+        //     $item->update($this->ref_id);
+        // }
+    }
+    private function isDeadlineDbSet()
+    {
+        global $ilDB;
+        $query = "SELECT *
+        FROM xmum_task_dealines
+        WHERE " .
+        "task_id = " . $ilDB->quote($this->getId(), "integer");
+        $result = $ilDB->query($query);
+        $task = $ilDB->fetchAssoc($result);
+        return !is_null($task["task_id"]);
     }
 
     /**
@@ -412,7 +456,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function getContent()
     {
-        $ssoService = new ilMumieTaskSSOService;
+        $ssoService = new ilMumieTaskSSOService();
         return $ssoService->setUpTokenAndLaunchForm($this);
     }
 
@@ -495,10 +539,23 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function getActivationLimited()
     {
+        //return $this->activation_limited;
+        return false;
+    }
+
+    public function getDeadlineActive()
+    {
         return $this->activation_limited;
     }
 
-    public function setActivationLimited($activation_limited)
+    // public function setActivationLimited($activation_limited)
+    // {
+    //     $this->activation_limited = $activation_limited;
+
+    //     return $this;
+    // }
+
+    public function setDeadlineActive($activation_limited)
     {
         $this->activation_limited = $activation_limited;
 
@@ -556,7 +613,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return !($this->private_gradepool == -1);
     }
 
-    public function getParentRef() 
+    public function getParentRef()
     {
         global $DIC;
         $tree = $DIC['tree'];

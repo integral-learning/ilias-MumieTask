@@ -567,12 +567,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $force_grade_update = false;
 
-        if ($this->form->getInput('activation_type') != $mumieTask->getActivationLimited()) {
+        if ($this->form->getInput('activation_type') != $mumieTask->getDeadlineActive()) {
             $force_grade_update = true;
         }
         if ($this->form->getInput('activation_type')) {
-            $mumieTask->setActivationLimited(true);
-            $mumieTask->setActivationVisibility($this->form->getInput('activation_visibility'));
+            $mumieTask->setDeadlineActive(true);
+            //$mumieTask->setActivationVisibility($this->form->getInput('activation_visibility'));
             $period = $this->form->getItemByPostVar("access_period");
 
             if ($mumieTask->getActivationEndingTime() != $period->getEnd()->get(IL_CAL_UNIX)) {
@@ -582,7 +582,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
             $mumieTask->setActivationEndingTime($period->getEnd()->get(IL_CAL_UNIX));
         } else {
-            $mumieTask->setActivationLimited(false);
+            $mumieTask->setDeadlineActive(false);
         }
 
         $mumieTask->doUpdate();

@@ -42,7 +42,7 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
         }
         $this->addItem($this->text_item_last);
 
-        if ($parentObj->object->getActivationLimited()) {
+        if ($parentObj->object->getDeadlineActive()) {
             $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
             ilUtil::sendInfo('<span>
             <b>' . $lng->txt('rep_robj_xmum_frm_list_general_dealine') . '</b>
