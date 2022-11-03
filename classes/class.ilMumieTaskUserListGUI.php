@@ -14,7 +14,7 @@
  */
 class ilMumieTaskUserListGUI extends ilTable2GUI
 {
-    private $participants;
+    private $members;
     private $parent_gui;
     private $postvar;
 
@@ -76,7 +76,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
 
     private function getSearchedIds($form)
     {
-        $members = $this->participants->getMembers();
+        $members = $this->members;
         if (empty($form) || (empty($form->getInput("firstnamefield")) && empty($form->getInput("lastnamefield")))) {
             return $members;
         }
@@ -124,11 +124,12 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
     {
         if ($parentObj->object->getParentRef() != 1) {
             include_once './Services/Membership/classes/class.ilParticipants.php';
-            $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
+            $this->members = ilParticipants::getInstance($parentObj->object->getParentRef())->getMembers();
             return $this->getSearchedIds($form);
         } else {
             require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-            return ilMumieTaskGradeSync::getAllUserIds();
+            $this->members =  ilMumieTaskGradeSync::getAllUserIds();
+            return $this->getSearchedIds($form);
         }
     }
 
