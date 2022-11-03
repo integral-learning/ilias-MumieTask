@@ -30,13 +30,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
-        if ($parentObj->object->getParentRef() != 1) {
-            include_once './Services/Membership/classes/class.ilParticipants.php';
-            $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
-            $members = $this->getSearchedIds($form);
-        } else {
-            $members = $this->getAllIds();
-        }
+        $members = $this->getMembers($parentObj,$form);
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGrades($parentObj->object);
@@ -133,6 +127,16 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             array_push($allIds, $user_id["usr_id"]);
         }
         return $allIds;
+    }
+
+    private function getMembers($parentObj, $form){
+        if ($parentObj->object->getParentRef() != 1) {
+            include_once './Services/Membership/classes/class.ilParticipants.php';
+            $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
+            return $this->getSearchedIds($form);
+        } else {
+            return $this->getAllIds();
+        }
     }
 
     //All functions are necessary for the list to be implemented into a form
