@@ -149,6 +149,7 @@ class ilMumieTaskGradeSync
         if ($task->getParentRef() != 1) {
             return ilParticipants::getInstance($task->getParentRef())->getMembers();
         } else {
+            require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
             return ilMumieTaskGradeSync::getAllUserIds();
         }
     }
