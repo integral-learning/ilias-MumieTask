@@ -250,6 +250,7 @@ class ilMumieTaskGradeSync
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
         return !is_null($grade["new_date"]);
+        return false;
     }
 
     private function getOverridenGrade($user_id, $xapi_grades)
