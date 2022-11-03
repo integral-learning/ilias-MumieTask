@@ -145,12 +145,11 @@ class ilMumieTaskGradeSync
      * Get all users that can get marks for this MUMIE task
      */
     private function getAllUsers($task)
-    {    
+    {
         if ($task->getParentRef() != 1) {
             return ilParticipants::getInstance($task->getParentRef())->getMembers();
         } else {
-            require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-            return ilMumieTaskGradeSync::getAllUserIds();
+            return $this->getAllUserIds();
         }
     }
 
@@ -219,7 +218,7 @@ class ilMumieTaskGradeSync
         }
         return $latest_grade;
     }
-    
+
     public function wasGradeOverriden($user_id)
     {
         global $ilDB;
@@ -247,8 +246,8 @@ class ilMumieTaskGradeSync
         "usr_id = " . $ilDB->quote($hashed_user, "text");
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
-        foreach($xapi_grades as $xGrade) {
-            if(round($xGrade->result->score->raw * 100) == $grade["new_grade"]){
+        foreach ($xapi_grades as $xGrade) {
+            if (round($xGrade->result->score->raw * 100) == $grade["new_grade"]) {
                 return $xGrade;
             }
         }

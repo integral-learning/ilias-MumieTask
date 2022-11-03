@@ -30,7 +30,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
-        $members = $this->getMembers($parentObj,$form);
+        $members = $this->getMembers($parentObj, $form);
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGrades($parentObj->object);
@@ -116,14 +116,16 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         return $ilDB->fetchAssoc($result);
     }
 
-    
 
-    private function getMembers($parentObj, $form) {
+
+    private function getMembers($parentObj, $form)
+    {
         if ($parentObj->object->getParentRef() != 1) {
             include_once './Services/Membership/classes/class.ilParticipants.php';
             $this->participants = ilParticipants::getInstance($parentObj->object->getParentRef());
             return $this->getSearchedIds($form);
         } else {
+            require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
             return ilMumieTaskGradeSync::getAllUserIds();
         }
     }
