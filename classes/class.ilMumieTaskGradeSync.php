@@ -60,7 +60,7 @@ class ilMumieTaskGradeSync
             'lastSync' => $this->getLastSync(),
             'includeAll' => true
         );
-        if ($this->task->getActivationLimited() == 1) {
+        if ($this->task->getActivationLimited()) {
             $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
         }
         $payload = json_encode($params);
