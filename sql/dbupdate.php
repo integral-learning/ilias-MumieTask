@@ -345,8 +345,8 @@ if (!$ilDB->tableExists('xmum_date_override')) {
             'notnull' => true,
         ),
         'new_date' => array(
-            'type' => 'text',
-            'length' => '16',
+            'type' => 'integer',
+            'length' => '4',
             'notnull' => true,
         ),
     );

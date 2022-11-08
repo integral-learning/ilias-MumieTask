@@ -414,13 +414,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     protected function viewContent()
     {
-        global $ilTabs, $ilCtrl;
+        global $ilTabs, $ilCtrl, $ilUser;
         if ($this->object->isDummy()) {
             $ilCtrl->redirect($this, 'editProperties');
         }
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
-        $this->tpl->setContent($this->object->getContent());
+        
+        if(!$this->object->getActivationLimited() || 
+        time() <= $this->object->getActivationEndingTime() || 
+        ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
+        && time() <= ilMumieTaskGradeSync::getOverridenDate($ilUser->getId(), $this->object)
+        ) {
+            $this->tpl->setContent($this->object->getContent());
+        }     
     }
 
     /**
@@ -522,7 +529,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->initAvailabilitySettingsForm();
         $values = array();
         $values['activation_type'] = $this->object->getActivationLimited();
-        $values['activation_visibility'] = $this->object->getActivationVisibility();
         $values['online'] = $this->object->getOnline();
         $period = new stdClass();
         $period->startingTime = $this->object->getActivationStartingTime();
@@ -567,12 +573,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $force_grade_update = false;
 
-        if ($this->form->getInput('activation_type') != $mumieTask->getDeadlineActive()) {
+        if ($this->form->getInput('activation_type') != $mumieTask->getActivationLimited()) {
             $force_grade_update = true;
         }
         if ($this->form->getInput('activation_type')) {
-            $mumieTask->setDeadlineActive(true);
-            //$mumieTask->setActivationVisibility($this->form->getInput('activation_visibility'));
+            $mumieTask->setActivationLimited(true);
             $period = $this->form->getItemByPostVar("access_period");
 
             if ($mumieTask->getActivationEndingTime() != $period->getEnd()->get(IL_CAL_UNIX)) {
@@ -582,7 +587,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
             $mumieTask->setActivationEndingTime($period->getEnd()->get(IL_CAL_UNIX));
         } else {
-            $mumieTask->setDeadlineActive(false);
+            $mumieTask->setActivationLimited(false);
         }
 
         $mumieTask->doUpdate();

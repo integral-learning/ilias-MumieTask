@@ -37,10 +37,7 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
         $duration_item->setEndText($this->lng->txt('rep_activation_limited_end'));
         $act_type_item->addSubItem($duration_item);
         $this->duration_item = $duration_item;
-
-        $visiblity_item = new ilCheckboxInputGUI($this->lng->txt('rep_activation_limited_visibility'), 'activation_visibility');
-        $visiblity_item->setInfo($this->lng->txt('rep_robj_xmum_activation_limited_visibility_info'));
-        $act_type_item->addSubItem($visiblity_item);
+        
         $this->addItem($act_type_item);
         $this->act_type_item = $act_type_item;
     }

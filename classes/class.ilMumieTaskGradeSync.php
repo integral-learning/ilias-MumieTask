@@ -283,6 +283,6 @@ class ilMumieTaskGradeSync
         " AND " .
         "usr_id = " . $ilDB->quote($hashed_user, "text");
         $result = $ilDB->query($query);
-        return strtotime($ilDB->fetchAssoc($result)["new_date"]);
+        return $ilDB->fetchAssoc($result)["new_date"];
     }
 }

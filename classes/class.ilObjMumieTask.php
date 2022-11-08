@@ -33,7 +33,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $activation_limited;
     private $activation_starting_time;
     private $activation_ending_time;
-    private $activation_visibility;
+
 
     /**
      * Constructor
@@ -101,23 +101,23 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
          * Snippet taken from ilObjTask->loadFromDb
          */
         if ($this->ref_id) {
-            include_once "./Services/Object/classes/class.ilObjectActivation.php";
-            $activation = ilObjectActivation::getItem($this->ref_id);
-            switch ($activation["timing_type"]) {
-                case ilObjectActivation::TIMINGS_ACTIVATION:
-                    $this->setDeadlineActive(true);
-                    $this->setActivationStartingTime($activation["timing_start"]);
-                    $this->setActivationEndingTime($activation["timing_end"]);
-                    $this->setActivationVisibility(true);//$activation["visible"]);
-                    break;
-
-                default:
-                    $this->setDeadlineActive(false);
-                    break;
+            if ($this->isDeadlineDBSet()) {
+                $activation_times = $this->getDeadlineDB();
+                $this->setActivationLimited(true);
+                $this->setActivationStartingTime($activation_times["start_date"]);
+                $this->setActivationEndingTime($activation_times["end_date"]);
+            }else {
+                $this->setActivationLimited(false);
             }
         }
     }
 
+    private function getDeadlineDB(){
+        global $ilDB;
+        $query = "SELECT * FROM xmum_task_dealines WHERE task_id = " . $ilDB->quote($this->getId(), 'integer');
+        $result = $ilDB->query($query);
+        return $ilDB->fetchAssoc($result);
+    }
     /**
      * Update data
      */
@@ -145,8 +145,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         );
 
         if ($this->ref_id) {
-            if ($this->isDeadlineDbSet()) {
-                if (!$this->getDeadlineActive()) {
+            if ($this->isDeadlineDBSet()) {
+                if (!$this->getActivationLimited()) {
                     $ilDB->manipulate("DELETE FROM xmum_task_dealines WHERE task_id = " . $ilDB->quote($this->getId(), 'integer'));
                 } else {
                     $ilDB->update(
@@ -161,8 +161,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                     );
                 }
             } else {
-                if($this->getDeadlineActive())
-                {
+                if ($this->getActivationLimited()) {
                     $ilDB->insert(
                         "xmum_task_dealines",
                         array(
@@ -175,29 +174,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             }
         }
 
-
-
-        // /**
-        //  * Snippet taken from ilObjTest->saveToDb()
-        //  */
-        // if ($this->ref_id) {
-        //     include_once "./Services/Object/classes/class.ilObjectActivation.php";
-        //     ilObjectActivation::getItem($this->ref_id);
-
-        //     $item = new ilObjectActivation();
-        //     if (!$this->getDeadlineActive()) {
-        //         $item->setTimingType(ilObjectActivation::TIMINGS_DEACTIVATED);
-        //     } else {
-        //         $item->setTimingType(ilObjectActivation::TIMINGS_ACTIVATION);
-        //         $item->setTimingStart($this->getActivationStartingTime());
-        //         $item->setTimingEnd($this->getActivationEndingTime());
-        //         $item->toggleVisible($this->getActivationVisibility());
-        //     }
-
-        //     $item->update($this->ref_id);
-        // }
     }
-    private function isDeadlineDbSet()
+
+    private function isDeadlineDBSet()
     {
         global $ilDB;
         $query = "SELECT *
@@ -539,8 +518,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function getActivationLimited()
     {
-        //return $this->activation_limited;
-        return false;
+        return $this->activation_limited;
     }
 
     public function getDeadlineActive()
@@ -548,12 +526,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->activation_limited;
     }
 
-    // public function setActivationLimited($activation_limited)
-    // {
-    //     $this->activation_limited = $activation_limited;
+    public function setActivationLimited($activation_limited)
+    {
+        $this->activation_limited = $activation_limited;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     public function setDeadlineActive($activation_limited)
     {
@@ -582,18 +560,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function setActivationEndingTime($activation_ending_time)
     {
         $this->activation_ending_time = $activation_ending_time;
-
-        return $this;
-    }
-
-    public function getActivationVisibility()
-    {
-        return $this->activation_visibility;
-    }
-
-    public function setActivationVisibility($activation_visibility)
-    {
-        $this->activation_visibility = $activation_visibility;
 
         return $this;
     }
