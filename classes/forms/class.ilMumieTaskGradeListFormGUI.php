@@ -46,7 +46,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         $grade = $ilDB->fetchAssoc($result);
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        if (ilMumieTaskGradeSync::wasDueDateOverriden($_GET["user_id"], $this->parentObj->object)) {
+        if (ilMumieTaskGradeSync::wasDueDateOverriden($_GET["user_id"], $this->parentObj->object) && $this->parentObj->object->getActivationLimited()) {
             $abgabefrist = date('Y-m-d H:i', ilMumieTaskGradeSync::getOverridenDate($_GET["user_id"], $this->parentObj->object));
             ilUtil::sendInfo(
                 "<b>" . $lng->txt('rep_robj_xmum_frm_list_used_grade') . "</b> " . $grade["mark"]. " <br> " .
