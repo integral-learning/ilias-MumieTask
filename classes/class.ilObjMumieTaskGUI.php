@@ -420,7 +420,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
-        
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         if(!$this->object->getActivationLimited() || 
         time() <= $this->object->getActivationEndingTime() || 
         ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
