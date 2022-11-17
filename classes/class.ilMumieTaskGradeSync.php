@@ -7,6 +7,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use ILIAS\BackgroundTasks\TaskManager;
+
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
 include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
@@ -199,7 +201,7 @@ class ilMumieTaskGradeSync
     {
         if($this->wasDueDateOverriden($this->getIliasId($grade), $this->task))
         {
-            return strtotime($grade->timestamp) <= $this->getOverridenDate($this->getIliasId($grade), $this->task);
+            return strtotime($grade->timestamp) <= $this->getOverridenDueDate($this->getIliasId($grade), $this->task);
         }
         if (!$this->task->getActivationLimited()) {
             return true;
@@ -237,22 +239,6 @@ class ilMumieTaskGradeSync
         return !is_null($grade["new_grade"]);
     }
 
-    public static function wasDueDateOverriden($user_id, $task)
-    {
-        global $ilDB;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
-        $query = "SELECT new_date
-        FROM xmum_date_override
-        WHERE " .
-        "usr_id = " . $ilDB->quote($hashed_user, "text") .
-        " AND " .
-        "task_id = " . $ilDB->quote($task->getId(), "integer");
-        $result = $ilDB->query($query);
-        $grade = $ilDB->fetchAssoc($result);
-        return !is_null($grade["new_date"]);
-        return false;
-    }
-
     private function getOverridenGrade($user_id, $xapi_grades)
     {
         global $ilDB;
@@ -272,7 +258,23 @@ class ilMumieTaskGradeSync
         }
     }
 
-    public static function getOverridenDate($user_id, $task)
+    public static function wasDueDateOverriden($user_id, $task)
+    {
+        global $ilDB;
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
+        $query = "SELECT new_date
+        FROM xmum_date_override
+        WHERE " .
+        "usr_id = " . $ilDB->quote($hashed_user, "text") .
+        " AND " .
+        "task_id = " . $ilDB->quote($task->getId(), "integer");
+        $result = $ilDB->query($query);
+        $grade = $ilDB->fetchAssoc($result);
+        return !is_null($grade["new_date"]);
+        return false;
+    }
+
+    public static function getOverridenDueDate($user_id, $task)
     {
         global $ilDB;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
@@ -284,5 +286,24 @@ class ilMumieTaskGradeSync
         "usr_id = " . $ilDB->quote($hashed_user, "text");
         $result = $ilDB->query($query);
         return $ilDB->fetchAssoc($result)["new_date"];
+    }
+
+    public static function getMumieTaskFromId($task_id)
+    {
+        global $ilDB;
+        $query = "SELECT  * FROM object_reference WHERE obj_id = " . $ilDB->quote($task_id, "integer");
+        $result = $ilDB->query($query);
+        $task_ref_id = $ilDB->fetchAssoc($result);
+        $task = new ilObjMumieTask($task_ref_id["ref_id"]);
+        return $task;
+    }
+
+    public static function getDueDateForUser($user_id, $task_id)
+    {
+        $task = self::getMumieTaskFromId($task_id);
+        if(self::wasDueDateOverriden($user_id, $task)) {
+            return self::getOverridenDueDate($user_id, $task);
+        }
+        return $task->getActivationEndingTime();
     }
 }

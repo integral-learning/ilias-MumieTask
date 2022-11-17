@@ -42,11 +42,11 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
         }
         $this->addItem($this->text_item_last);
 
-        if ($parentObj->object->getDeadlineActive()) {
-            $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
+        if ($parentObj->object->getActivationLimited()) {
+            $dateTime = date('d.m.Y - H:i', $parentObj->object->getActivationEndingTime());
             ilUtil::sendInfo('<span>
             <b>' . $lng->txt('rep_robj_xmum_frm_list_general_dealine') . '</b>
-            <span style="margin-left:50px"> ' . substr($dateTime->get(IL_CAL_DATETIME), 8, 2) . "." . substr($dateTime->get(IL_CAL_DATETIME), 5, 2) . "." . substr($dateTime->get(IL_CAL_DATETIME), 0, 4) . " - " . substr($dateTime->get(IL_CAL_DATETIME), 11, 5) . '</span>
+            <span style="margin-left:50px"> ' . $dateTime .   '</span>
             </span>');
         }
     }

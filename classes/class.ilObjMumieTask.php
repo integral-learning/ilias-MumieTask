@@ -521,11 +521,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->activation_limited;
     }
 
-    public function getDeadlineActive()
-    {
-        return $this->activation_limited;
-    }
-
     public function setActivationLimited($activation_limited)
     {
         $this->activation_limited = $activation_limited;

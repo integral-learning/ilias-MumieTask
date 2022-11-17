@@ -424,7 +424,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if(!$this->object->getActivationLimited() || 
         time() <= $this->object->getActivationEndingTime() || 
         ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
-        && time() <= ilMumieTaskGradeSync::getOverridenDate($ilUser->getId(), $this->object)
+        && time() <= ilMumieTaskGradeSync::getOverridenDueDate($ilUser->getId(), $this->object)
         ) {
             $this->tpl->setContent($this->object->getContent());
         }     
@@ -562,6 +562,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitAvailabilitySettings()
     {
+        global $ilDB;
         $this->initAvailabilitySettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -586,6 +587,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
             $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
             $mumieTask->setActivationEndingTime($period->getEnd()->get(IL_CAL_UNIX));
+            $title = $mumieTask->getTitle();
+            require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         } else {
             $mumieTask->setActivationLimited(false);
         }

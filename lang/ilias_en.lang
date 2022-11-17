@@ -88,13 +88,13 @@ frm_list_search#:#Search
 frm_list_name#:#Name
 frm_list_firstname_search#:#Firstname
 frm_list_lastname_search#:#Lastname
-frm_list_deadline#:#Due date
-frm_list_new_deadline#:#New due date:
+frm_list_deadline#:#Deadline
+frm_list_new_deadline#:#New deadline:
 frm_search_title#:#Search Participants
-frm_list_general_dealine#:#General due date: 
+frm_list_general_dealine#:#General deadline: 
 frm_list_successfull_update#:#Successfully updated grade for user
-frm_list_successfull_date_update#:#Successfully updated due date for user
+frm_list_successfull_date_update#:#Successfully updated deadline for user
 frm_list_to#:# to: 
-frm_list_deadline_extension#:#Extend due date
+frm_list_deadline_extension#:#Extend deadline
 frm_save#:#Save
 frm_cancel#:#Cancel

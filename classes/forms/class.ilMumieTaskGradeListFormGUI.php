@@ -47,10 +47,10 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         if (ilMumieTaskGradeSync::wasDueDateOverriden($_GET["user_id"], $this->parentObj->object) && $this->parentObj->object->getActivationLimited()) {
-            $abgabefrist = date('Y-m-d H:i', ilMumieTaskGradeSync::getOverridenDate($_GET["user_id"], $this->parentObj->object));
+            $deadline = date('d.m.Y - H:i',  ilMumieTaskGradeSync::getOverridenDueDate($_GET["user_id"], $this->parentObj->object));
             ilUtil::sendInfo(
                 "<b>" . $lng->txt('rep_robj_xmum_frm_list_used_grade') . "</b> " . $grade["mark"]. " <br> " .
-                "<b>" . $lng->txt('rep_robj_xmum_frm_list_deadline') . ":</b> " . substr($abgabefrist, 8, 2) . "." . substr($abgabefrist, 5, 2) . "." . substr($abgabefrist, 0, 4) . " - " . substr($abgabefrist, 11, 5)
+                "<b>" . $lng->txt('rep_robj_xmum_frm_list_deadline') . ":</b> " . $deadline
             );
         } else {
             ilUtil::sendInfo("<b>" . $lng->txt('rep_robj_xmum_frm_list_used_grade') . "</b> " . $grade["mark"]);
