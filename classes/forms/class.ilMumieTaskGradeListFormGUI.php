@@ -20,7 +20,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
     public function setFields($parentObj)
     {
-        global $lng, $ilDB;
+        global $ilDB;
         $this->parentObj = $parentObj;
 
         $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
@@ -30,6 +30,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
         $userList = new ilMumieTaskGradeListGUI($parentObj);
+        $userList->init();
         $this->addItem($userList);
     }
 
@@ -43,7 +44,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
             "obj_id = " . $ilDB->quote($this->parentObj->object->getId() , "integer")
             );
         $grade = $ilDB->fetchAssoc($result);
-        ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_used_grade') . " " . $grade["mark"]);
+        ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . " " . $grade["mark"]);
     }
    
 }                                                                           

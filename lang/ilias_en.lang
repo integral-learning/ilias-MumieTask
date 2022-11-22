@@ -77,19 +77,18 @@ frm_online_disabled_warning#:#This MUMIE Task cannot be set online because a dec
 open_prb_selector#:#Open problem selector
 open_prb_selector_desc#:#Click here to open a more detailed selection screen. You can filter all problems by category and enter search terms.
 frm_list_grade#:#Grade
-frm_list_grade_desc#:#<br><br>By default the newest submission before the deadline is used. If you want to use a different submission, you can click on the corresponding button to overwrite the current grade.
-frm_list_change_grade#:#Change Grade
-frm_list_submissions#:#Submissions
-frm_list_submission_date#:#Submission Date
-frm_list_use_grade#:#Use this Grade
-frm_list_used_grade#:#Used Grade:
-frm_list_back#:#Back
-frm_list_search#:#Search
-frm_list_name#:#Name
-frm_list_firstname_search#:#Firstname
-frm_list_lastname_search#:#Lastname
-frm_list_deadline#:#Due Date
-frm_search_title#:#Search Participants
-frm_list_general_dealine#:#General due date:
-frm_list_successfull_update#:#Successfully updated grade for user
-frm_list_to#:# to: 
+frm_user_overview_list_grade_desc#:#<br><br>By default the newest submission before the deadline is used. If you want to use a different submission, you can click on the corresponding button to overwrite the current grade.
+frm_user_overview_list_change_grade#:#Change Grade
+frm_user_overview_list_submissions#:#Submissions
+frm_grade_overview_list_submission_date#:#Submission Date
+frm_grade_overview_list_use_grade#:#Use this Grade
+frm_grade_overview_list_used_grade#:#Used Grade:
+frm_grade_overview_list_back#:#Back
+frm_user_overview_list_search#:#Search
+frm_user_overview_list_name#:#Name
+frm_user_overview_list_firstname_search#:#Firstname
+frm_user_overview_list_lastname_search#:#Lastname
+frm_user_overview_list_search_title#:#Search Participants
+frm_user_overview_list_general_dealine#:#General due date:
+frm_grade_overview_list_successfull_update#:#Successfully updated grade for user
+frm_grade_overview_list_to#:# to: 

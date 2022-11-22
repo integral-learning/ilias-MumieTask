@@ -612,8 +612,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilCtrl, $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
         $form =  new ilMumieTaskUserListFormGUI();
-        $form->setTitle($lng->txt('rep_robj_xmum_frm_search_title'));
-        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_search'));
+        $form->setTitle($lng->txt('rep_robj_xmum_frm_user_overview_list_search_title'));
+        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_user_overview_list_search'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
         if (!$this->form->checkInput()) {
@@ -632,7 +632,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $ilTabs->activateTab('userList');
         if (!is_null($_GET['newGrade'])&& !is_null($_GET["user_id"])) {
             $this->plugin->includeClass('class.ilMumieTaskGradeListGUI.php');
-            ilMumieTaskGradeListGUI::overrideGrade($this);
+            ilMumieTaskLPStatus::overrideGrade($this);
             $cmd = 'displayUserList';
             $this->performCommand($cmd);
             return;
@@ -641,7 +641,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form =  new ilMumieTaskGradeListFormGUI($this);
         $form->setFields($this, $this->form);
         $form->setFormAction($ilCtrl->getFormAction($this));
-        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_list_back'));
+        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_grade_overview_list_back'));
         $this->form = $form;
         $html = str_replace("ilTableOuter", "mumie-user-table", $this->form->getHTML());
         $this->tpl->setContent($html);

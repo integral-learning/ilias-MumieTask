@@ -99,23 +99,34 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         "usr_id = " . $ilDB->quote($user_id, "integer");
         $existingGrade = $ilDB->fetchAssoc($ilDB->query($query));
         if (is_null($existingGrade)) {
-            $ilDB->insert(
-                "ut_lp_marks",
-                array(
-                    'obj_id' => array('integer', $task->getId()),
-                    'usr_id' => array('text', $user_id)
-                )
-            );
+            self::insertMark($user_id, $task->getId());
         }
+        self::updateMark($user_id, $task->getId(), round($xapi_grade->result->score->scaled * 100), strtotime($xapi_grade->timestamp));
+    }
 
+    private static function insertMark($user_id, $task_id)
+    {
+        global $ilDB;
+        $ilDB->insert(
+            "ut_lp_marks",
+            array(
+                'obj_id' => array('integer', $task_id),
+                'usr_id' => array('text', $user_id)
+            )
+        );
+    }
+
+    private static function updateMark($user_id, $task_id, $percentage, $timestamp)
+    {
+        global $DIC;
         $DIC->database()->update(
             'ut_lp_marks',
             array(
-                "status_changed" => array('text', date("Y-m-d H:i:s", strtotime($xapi_grade->timestamp))),
-                "mark" => array('int', round($xapi_grade->result->score->scaled * 100)),
+                "status_changed" => array('text', date("Y-m-d H:i:s", $timestamp)),
+                "mark" => array('int', $percentage),
             ),
             array(
-                'obj_id' => array('int', $task->getId()),
+                'obj_id' => array('int', $task_id),
                 'usr_id' => array('int', $user_id),
             )
         );
@@ -187,6 +198,56 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     public static function getLPStatusForUser($task, $user_id)
     {
         return self::getLPDataForUser($task->getId(), $user_id);
+    }
+
+    public static function overrideGrade($parentObj)
+    {
+        global $lng;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
+        $percentage = $_GET['newGrade'];
+        self::updateMark($_GET['user_id'], $parentObj->object->getId(), $percentage, $_GET['timestamp']);
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);
+        if (!ilMumieTaskGradeOverrideService::wasGradeOverriden($_GET["user_id"], $parentObj->object)) {
+            self::insertOverridenGraden($hashed_user, $parentObj->object->getId(), $percentage);
+        }
+        self::updateOverridenGrade($hashed_user, $task_id, $percentage);
+        self::returnGradeOverrideSuccess($percentage);
+    }
+
+    private static function returnGradeOverrideSuccess($percentage)
+    {
+        global $ilDB, $lng;
+        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
+        $names = $ilDB->fetchAssoc($result);
+        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_grade_overview_list_successfull_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_grade_overview_list_to') . " " . $percentage);
+    }
+
+    private static function insertOverridenGraden($hashed_user, $task_id, $percentage)
+    {
+        global $ilDB;
+        $ilDB->insert(
+            "xmum_grade_override",
+            array(
+                'task_id' => array('integer', $task_id),
+                'usr_id' => array('text', $hashed_user),
+            )
+        );
+    }
+
+    private static function updateOverridenGrade($hashed_user, $task_id, $percentage)
+    {
+        global $ilDB;
+        $ilDB->update(
+            "xmum_grade_override",
+            array(
+                'new_grade' => array('integer', $percentage)
+            ),
+            array(
+                'task_id' => array('integer', $task_id),
+                'usr_id' => array('text', $hashed_user),
+            )
+        );
     }
 
     private static function deleteLPForTask($task)

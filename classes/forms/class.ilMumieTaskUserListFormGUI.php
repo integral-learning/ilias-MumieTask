@@ -31,12 +31,12 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
     {
         global $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserListGUI.php');
-        $this->text_item_first = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_firstname_search'), 'firstnamefield');
+        $this->text_item_first = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_user_overview_list_firstname_search'), 'firstnamefield');
         if (!empty($this->getInput("firstnamefield"))) {
             $this->text_item_first->setValue($form->getInput("firstnamefield"));
         }
         $this->addItem($this->text_item_first);
-        $this->text_item_last = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_list_lastname_search'), 'lastnamefield');
+        $this->text_item_last = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_user_overview_list_lastname_search'), 'lastnamefield');
         if (!empty($this->getInput("lastnamefield"))) {
             $this->text_item_last->setValue($this->getInput("lastnamefield"));
         }
@@ -45,7 +45,7 @@ class ilMumieTaskUserListFormGUI extends ilPropertyFormGUI
         if ($parentObj->object->getActivationLimited()) {
             $dateTime = new ilDateTime($parentObj->object->getActivationEndingTime() ?? time(), IL_CAL_UNIX);
             ilUtil::sendInfo('<span>
-            <b>' . $lng->txt('rep_robj_xmum_frm_list_general_dealine') . '</b>
+            <b>' . $lng->txt('rep_robj_xmum_frm_user_overview_list_general_dealine') . '</b>
             <span style="margin-left:50px"> ' . substr($dateTime->get(IL_CAL_DATETIME), 0, 10) . " - " . substr($dateTime->get(IL_CAL_DATETIME), 11, 8) . '</span>
             </span>');
         }

@@ -3,14 +3,13 @@
 /**
  * MumieTask plugin
  *
- * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
- * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * This form is used to add, edit and validate MUMIE Server configurations
- *
+ * This GUI provides a way to list users in a MUMIE task
  */
 class ilMumieTaskUserListGUI extends ilTable2GUI
 {
@@ -25,9 +24,9 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
         parent::__construct($parentObj, 'displayUserList');
 
         $this->setFormName('participants');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_name'), 'name');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_submissions'), 'submission');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
         $members = $this->getMembers($parentObj, $form);
@@ -49,8 +48,7 @@ class ilMumieTaskUserListGUI extends ilTable2GUI
             : "tblrow2";
             $this->tpl->setVariable("CSS_ROW", $this->css_row);
             $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-            $this->tpl->setVariable('LINK_NAME', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-            $this->tpl->setVariable('LINK_TXT', $lng->txt('rep_robj_xmum_frm_list_change_grade'));
+            $this->tpl->setVariable('LINK', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
 
             $result = $ilDB->query(
                 "SELECT mark

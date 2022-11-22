@@ -185,11 +185,11 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-            if (!$this->wasGradeOverriden($user_id)) {
+            if (!ilMumieTaskGradeOverrideService::wasGradeOverriden($user_id, $this->task)) {
                 $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
             } else {
-                $valid_grade_by_user[$user_id] = $this->getOverridenGrade($user_id, $xapi_grades);
+                $valid_grade_by_user[$user_id] = ilMumieTaskGradeOverrideService::getOverridenGrade($user_id, $xapi_grades, $this->task);
             }
         }
         return array_filter($valid_grade_by_user);
@@ -219,37 +219,4 @@ class ilMumieTaskGradeSync
         return $latest_grade;
     }
 
-    public function wasGradeOverriden($user_id)
-    {
-        global $ilDB;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-        $query = "SELECT new_grade
-        FROM xmum_grade_override
-        WHERE " .
-        "usr_id = " . $ilDB->quote($hashed_user, "text") .
-        " AND " .
-        "task_id = " . $ilDB->quote($this->task->getId(), "integer");
-        $result = $ilDB->query($query);
-        $grade = $ilDB->fetchAssoc($result);
-        return !is_null($grade["new_grade"]);
-    }
-
-    private function getOverridenGrade($user_id, $xapi_grades)
-    {
-        global $ilDB;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-        $query = "SELECT new_grade
-        FROM xmum_grade_override
-        WHERE " .
-        "task_id = " . $ilDB->quote($this->task->getId(), "integer") .
-        " AND " .
-        "usr_id = " . $ilDB->quote($hashed_user, "text");
-        $result = $ilDB->query($query);
-        $grade = $ilDB->fetchAssoc($result);
-        foreach ($xapi_grades as $xGrade) {
-            if (round($xGrade->result->score->raw * 100) == $grade["new_grade"]) {
-                return $xGrade;
-            }
-        }
-    }
 }
