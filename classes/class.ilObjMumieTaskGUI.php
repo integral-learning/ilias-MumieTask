@@ -610,8 +610,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     private function initUserList()
     {
         global $ilCtrl, $lng;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskUserListFormGUI.php');
-        $form =  new ilMumieTaskUserListFormGUI();
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskGradeOverviewFormGUI.php');
+        $form =  new ilMumieTaskGradeOverviewFormGUI();
         $form->setTitle($lng->txt('rep_robj_xmum_frm_user_overview_list_search_title'));
         $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_user_overview_list_search'));
         $form->setFormAction($ilCtrl->getFormAction($this));

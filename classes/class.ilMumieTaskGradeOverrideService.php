@@ -14,13 +14,13 @@
 
 class ilMumieTaskGradeOverrideService
 {
-    public static function wasGradeOverriden($user_id, $task)
+    public static function wasGradeOverridden($user_id, $task)
     {
         $grade = self::returnOverriddenGrade($user_id, $task);
         return !is_null($grade["new_grade"]);
     }
 
-    public static function getOverridenGrade($user_id, $xapi_grades, $task)
+    public static function getOverriddenGrade($user_id, $xapi_grades, $task)
     {
         $grade = self::returnOverriddenGrade($user_id, $task);
         foreach ($xapi_grades as $xGrade) {

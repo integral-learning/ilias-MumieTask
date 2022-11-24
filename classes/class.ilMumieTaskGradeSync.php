@@ -42,6 +42,13 @@ class ilMumieTaskGradeSync
         }, $user_ids);
     }
 
+    public function getSyncIdForUser($user_id)
+    {
+        $admin_settings = ilMumieTaskAdminSettings::getInstance();
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
+        return "GSSO_" . $admin_settings->getOrg() . "_" . $hashed_user;
+    }
+
     /**
      * Get the ilias id from a xapi grade
      */
@@ -138,7 +145,7 @@ class ilMumieTaskGradeSync
         if ($oldest_timestamp == PHP_INT_MAX) {
             $oldest_timestamp = 1;
         }
-        return 1000;
+        return $oldest_timestamp*1000;
     }
 
     /**
@@ -185,11 +192,11 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-            if (!ilMumieTaskGradeOverrideService::wasGradeOverriden($user_id, $this->task)) {
+            if (!ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $this->task)) {
                 $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
             } else {
-                $valid_grade_by_user[$user_id] = ilMumieTaskGradeOverrideService::getOverridenGrade($user_id, $xapi_grades, $this->task);
+                $valid_grade_by_user[$user_id] = ilMumieTaskGradeOverrideService::getOverriddenGrade($user_id, $xapi_grades, $this->task);
             }
         }
         return array_filter($valid_grade_by_user);

@@ -81,7 +81,6 @@ frm_user_overview_list_grade_desc#:#<br><br>By default the newest submission bef
 frm_user_overview_list_change_grade#:#Change Grade
 frm_user_overview_list_submissions#:#Submissions
 frm_grade_overview_list_submission_date#:#Submission Date
-frm_grade_overview_list_use_grade#:#Use this Grade
 frm_grade_overview_list_used_grade#:#Used Grade:
 frm_grade_overview_list_back#:#Back
 frm_user_overview_list_search#:#Search

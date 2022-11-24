@@ -30,7 +30,6 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
         $userList = new ilMumieTaskGradeListGUI($parentObj);
-        $userList->init();
         $this->addItem($userList);
     }
 
