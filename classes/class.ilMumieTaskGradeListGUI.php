@@ -29,7 +29,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $user_id = $_GET['user_id'];
 
         $this->setId("user" . $_GET["ref_id"]);
-        ilLoggerFactory::getLogger('xmum')->info($_GET['user_id'], $_GET["ref_id"]);
+        ilLoggerFactory::getLogger('xmum')->info($_GET['user_id'] . " " . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayGradeList');
 
         $this->setFormName('participants');
@@ -87,6 +87,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                 array_push($userGrades, $xGrade);
             }
         }
+        ilLoggerFactory::getLogger('xmum')->info("user grades ". print_r($userGrades, true));
         return $userGrades;
     }
 

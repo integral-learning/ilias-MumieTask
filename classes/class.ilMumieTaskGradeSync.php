@@ -44,9 +44,7 @@ class ilMumieTaskGradeSync
 
     public function getSyncIdForUser($user_id)
     {
-        $admin_settings = ilMumieTaskAdminSettings::getInstance();
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-        return "GSSO_" . $admin_settings->getOrg() . "_" . $hashed_user;
+        return $this->getSyncIds(array($user_id))[0];
     }
 
     /**
