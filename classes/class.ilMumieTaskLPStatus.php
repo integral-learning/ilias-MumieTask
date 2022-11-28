@@ -206,6 +206,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         global $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
         $percentage = $_GET['newGrade'];
         self::updateMark($_GET['user_id'], $parentObj->object->getId(), $percentage, $_GET['timestamp']);
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);
