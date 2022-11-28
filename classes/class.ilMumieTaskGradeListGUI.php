@@ -15,23 +15,22 @@
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
 class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
-    private $parentObj;
     private $parent_gui;
     private $postvar;
 
     public function __construct($parentObj)
     {
-        $this->parentObj = $parentObj;
-        $this->init();
+        $this->init($parentObj);
     }
 
-    private function init()
+    private function init($parentObj)
     {
         global $lng;
         $user_id = $_GET['user_id'];
 
         $this->setId("user" . $_GET["ref_id"]);
-        parent::__construct($this->parentObj, 'displayGradeList');
+        ilLoggerFactory::getLogger('xmum')->info($_GET['user_id'], $_GET["ref_id"]);
+        parent::__construct($parentObj, 'displayGradeList');
 
         $this->setFormName('participants');
 
@@ -45,8 +44,8 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        $userGrades = $this->getGradesForUser($user_id);
-        if ($this->parentObj->object->getPrivateGradepool() != -1) {
+        $userGrades = $this->getGradesForUser($user_id, $parentObj);
+        if ($parentObj->object->getPrivateGradepool() != -1) {
             if (!empty($userGrades)) {
                 foreach ($userGrades as $xGrade) {
                     $this->tpl->setCurrentBlock("tbl_content");
@@ -60,7 +59,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                     $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'newGrade', round($xGrade->result->score->raw * 100));
                     $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xGrade->timestamp));
 
-                    $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($this->parentObj, 'displayGradeList'));
+                    $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
                     $dateTime = date('d.m.Y - H:i', $xGrade->timestamp);
                     $this->tpl->setVariable("VAL_DATE", $dateTime);
                     $this->tpl->setCurrentBlock("tbl_content");
@@ -74,9 +73,9 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    private function getGradesForUser($user_id)
+    private function getGradesForUser($user_id, $parentObj)
     {
-        $gradesync  = new  ilMumieTaskGradeSync($this->parentObj->object, false);
+        $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
         $xGrades = $gradesync->getAllXapiGradesByUser();
         $syncId = $gradesync->getSyncIdForUser($user_id);
         $userGrades = array();
