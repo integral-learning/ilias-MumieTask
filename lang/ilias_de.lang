@@ -82,6 +82,7 @@ frm_user_overview_list_change_grade#:#Note ändern
 frm_user_overview_list_submissions#:#Abgaben
 frm_grade_overview_list_submission_date#:#Abgabedatum
 frm_grade_overview_list_used_grade#:#Aktuelle Note:
+frm_grade_overview_list_use_grade#:#Diese Note benutzen
 frm_grade_overview_list_back#:#Zurück
 frm_user_overview_list_search#:#Suchen
 frm_user_overview_list_name#:#Name
