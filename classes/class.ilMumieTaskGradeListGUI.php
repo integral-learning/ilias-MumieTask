@@ -60,7 +60,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
                     $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xGrade->timestamp));
 
                     $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-                    $dateTime = date('d.m.Y - H:i', $xGrade->timestamp);
+                    $dateTime = date('d.m.Y - H:i', strtotime($xGrade->timestamp));
                     $this->tpl->setVariable("VAL_DATE", $dateTime);
                     $this->tpl->setCurrentBlock("tbl_content");
                     $this->tpl->parseCurrentBlock();

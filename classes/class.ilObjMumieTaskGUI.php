@@ -631,7 +631,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilTabs, $ilCtrl, $lng;
         $ilTabs->activateTab('userList');
         if (!is_null($_GET['newGrade'])&& !is_null($_GET["user_id"])) {
-            $this->plugin->includeClass('class.ilMumieTaskGradeListGUI.php');
+            require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
             ilMumieTaskLPStatus::overrideGrade($this);
             $cmd = 'displayUserList';
             $this->performCommand($cmd);
