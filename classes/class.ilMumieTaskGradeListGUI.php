@@ -79,7 +79,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $xGrades = $gradesync->getAllXapiGradesByUser();
         $syncId = $gradesync->getSyncIdForUser($user_id);
         $userGrades = array();
-        if (empty($userGrades)) {
+        if (empty($xGrades)) {
             return;
         }
         foreach ($xGrades as $xGrade) {
