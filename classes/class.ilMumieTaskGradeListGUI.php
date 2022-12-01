@@ -44,6 +44,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         );
         $userGrades = $this->getGradesForUser($this->user_id, $parentObj);
         if ($this->gradesAvailable($parentObj, $userGrades)) {
+            ilLoggerFactory::getLogger('xmum')->info("grades are available");
             foreach ($userGrades as $xapi_grade) {
                 $this->setTableRow($parentObj, $xapi_grade);
             }
