@@ -29,6 +29,12 @@ class ilMumieTaskGradeSync
         $this->user_ids = $this->getAllUsers($task);
     }
 
+    public function getSyncIdForUser($user_id)
+    {
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
+        return "GSSO_" . $this->admin_settings->getOrg() . "_" . $hashed_user;
+    }
+
     /**
      * SyncIds are composed of a hashed ILIAS user id and a shorthand for the organization the operates the ilias platform.
      *
@@ -36,13 +42,7 @@ class ilMumieTaskGradeSync
      */
     public function getSyncIds($user_ids)
     {
-        return array_map($this->getSyncIdForUser($user_ids), $user_ids);
-    }
-
-    public function getSyncIdForUser($user_id)
-    {
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-        return "GSSO_" . $this->admin_settings->getOrg() . "_" . $hashed_user;
+        return array_map(array($this, "getSyncIdForUser"), $user_ids);
     }
 
     /**
