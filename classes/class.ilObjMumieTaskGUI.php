@@ -657,6 +657,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     private function checkIfNewGradeSetAndAchieved()
     {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         return !is_null($_GET['newGrade']) && 
         !is_null($_GET["user_id"]) && 
         ilMumieTaskGradeSync::checkIfGradeWasAchievedByUser($_GET["user_id"], $this, $_GET['newGrade']);
