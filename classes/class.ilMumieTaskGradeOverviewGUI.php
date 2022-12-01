@@ -116,20 +116,16 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     private function setTableRow($user_id, $parentObj)
     {
-        global $ilDB;
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
-        ? "tblrow1"
-        : "tblrow2";
+            ? "tblrow1"
+            : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
         $this->tpl->setVariable('LINK', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
 
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object->getId());
         $this->tpl->setVariable('VAL_GRADE', $grade);
-
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
-        $names = $ilDB->fetchAssoc($result);
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         $this->tpl->setVariable('VAL_NAME', ilMumieTaskGradeSync::getFirstName($user_id) . ", " . ilMumieTaskGradeSync::getLastName($user_id));
         $this->tpl->setCurrentBlock("tbl_content");

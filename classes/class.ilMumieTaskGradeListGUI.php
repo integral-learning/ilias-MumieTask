@@ -21,6 +21,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     public function __construct($parentObj)
     {
+        parent::__construct($parentObj, 'displayGradeList');
         $this->user_id = $_GET['user_id'];
         $this->setId("user" . $_GET["ref_id"]);
     }
@@ -28,7 +29,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     public function init($parentObj)
     {
         global $lng;
-        parent::__construct($parentObj, 'displayGradeList');
 
         $this->setFormName('participants');
 
@@ -81,14 +81,13 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->css_row = ($this->css_row != "tblrow1")
             ? "tblrow1"
             : "tblrow2";
-
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->tpl->setVariable("VAL_GRADE", round($xapi_grade->result->score->raw * 100));
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'newGrade', round($xapi_grade->result->score->raw * 100));
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xapi_grade->timestamp));
 
-        $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+        $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'gradeOverride'));
         $dateTime = date('d.m.Y - H:i', strtotime($xapi_grade->timestamp));
         $this->tpl->setVariable("VAL_DATE", $dateTime);
         $this->tpl->setCurrentBlock("tbl_content");
