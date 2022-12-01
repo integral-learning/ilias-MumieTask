@@ -642,18 +642,25 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     public function gradeOverride()
     {
-        if (!is_null($_GET['newGrade'])&& !is_null($_GET["user_id"])) {
+        global $lng;
+        if ($this->checkIfNewGradeSetAndAchieved()) {
             require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskGradeOverrideService::overrideGrade($this);
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
         } else {
-            ilUtil::sendInfo("(tmppppppp)Something went wrong when updatinggrade");
+            ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_grade_overview_override_error'));
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
         }
     }
 
+    private function checkIfNewGradeSetAndAchieved()
+    {
+        return !is_null($_GET['newGrade']) && 
+        !is_null($_GET["user_id"]) && 
+        ilMumieTaskGradeSync::checkIfGradeWasAchievedByUser($_GET["user_id"], $this, $_GET['newGrade']);
+    }
 
     /**
      * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).

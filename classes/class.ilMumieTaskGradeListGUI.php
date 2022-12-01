@@ -42,34 +42,15 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        $userGrades = $this->getGradesForUser($this->user_id, $parentObj);
-        if ($this->gradesAvailable($parentObj, $userGrades)) {
-            ilLoggerFactory::getLogger('xmum')->info("grades are available");
-            foreach ($userGrades as $xapi_grade) {
+        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $parentObj);
+        if ($this->gradesAvailable($parentObj, $user_grades)) {
+            foreach ($user_grades as $xapi_grade) {
                 $this->setTableRow($parentObj, $xapi_grade);
             }
         }
         $this->enable('header');
         $this->enable('sort');
         $this->setEnableHeader(true);
-    }
-
-    private function getGradesForUser($user_id, $parentObj)
-    {
-        $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
-        $xapi_grades = $gradesync->getAllXapiGradesByUser();
-        $syncId = $gradesync->getSyncIdForUser($user_id);
-        ilLoggerFactory::getLogger('xmum')->info(print_r($xapi_grades, true));
-        $userGrades = array();
-        if (empty($xapi_grades)) {
-            return;
-        }
-        foreach ($xapi_grades as $xapi_grade) {
-            if ($xapi_grade->actor->account->name == $syncId) {
-                array_push($userGrades, $xapi_grade);
-            }
-        }
-        return $userGrades;
     }
 
     private function gradesAvailable($parentObj, $userGrades)
@@ -88,7 +69,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'newGrade', round($xapi_grade->result->score->raw * 100));
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xapi_grade->timestamp));
-
         $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'gradeOverride'));
         $dateTime = date('d.m.Y - H:i', strtotime($xapi_grade->timestamp));
         $this->tpl->setVariable("VAL_DATE", $dateTime);

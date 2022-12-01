@@ -56,7 +56,6 @@ class ilMumieTaskGradeSync
 
     public function getAllXapiGradesByUser()
     {
-        ilLoggerFactory::getLogger('xmum')->info(print_r($this->getSyncIds($this->user_ids), true));
         $params = array(
             "users" => $this->getSyncIds($this->user_ids),
             "course" => $this->task->getMumieCoursefile(),
@@ -227,6 +226,34 @@ class ilMumieTaskGradeSync
             }
         }
         return $latest_grade;
+    }
+
+    public static function checkIfGradeWasAchievedByUser($user_id, $parentObj, $grade)
+    {
+        $user_grades = self::getGradesForUser($user_id, $parentObj);
+        foreach ($user_grades as $xapi_grade) {
+            if ($grade == round($xapi_grade->result->score->raw * 100)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function getGradesForUser($user_id, $parentObj)
+    {
+        $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
+        $xapi_grades = $gradesync->getAllXapiGradesByUser();
+        $syncId = $gradesync->getSyncIdForUser($user_id);
+        $userGrades = array();
+        if (empty($xapi_grades)) {
+            return;
+        }
+        foreach ($xapi_grades as $xapi_grade) {
+            if ($xapi_grade->actor->account->name == $syncId) {
+                array_push($userGrades, $xapi_grade);
+            }
+        }
+        return $userGrades;
     }
 
     public static function getFirstName($user_id)

@@ -92,3 +92,4 @@ frm_user_overview_list_search_title#:#Search Participants
 frm_user_overview_list_general_dealine#:#General due date:
 frm_grade_overview_list_successfull_update#:#Successfully updated grade for user
 frm_grade_overview_list_to#:# to: 
+frm_grade_overview_override_error#:#There was an error while updating grade
