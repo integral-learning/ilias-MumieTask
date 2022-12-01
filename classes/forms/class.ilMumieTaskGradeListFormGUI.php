@@ -12,7 +12,6 @@
  */
 class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -23,7 +22,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         global $lng;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         $this->setTitle(ilMumieTaskGradeSync::getFirstName($_GET["user_id"]) . " " . ilMumieTaskGradeSync::getLastName($_GET["user_id"]));
-    
+
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($_GET["user_id"], $parentObj->object->getId());
         ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . " " . $grade);

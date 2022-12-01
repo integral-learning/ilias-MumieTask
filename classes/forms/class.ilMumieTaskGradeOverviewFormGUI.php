@@ -14,7 +14,7 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
 {
     private $text_item_first;
     private $text_item_last;
-    
+
     public function __construct()
     {
         parent::__construct();

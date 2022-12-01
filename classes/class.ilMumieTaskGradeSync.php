@@ -272,5 +272,4 @@ class ilMumieTaskGradeSync
         $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
         return $ilDB->fetchAssoc($result);
     }
-
 }
