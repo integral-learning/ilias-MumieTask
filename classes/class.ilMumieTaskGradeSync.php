@@ -56,6 +56,7 @@ class ilMumieTaskGradeSync
 
     public function getAllXapiGradesByUser()
     {
+        ilLoggerFactory::getLogger('xmum')->info($this->getSyncIds($this->user_ids));
         $params = array(
             "users" => $this->getSyncIds($this->user_ids),
             "course" => $this->task->getMumieCoursefile(),
