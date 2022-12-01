@@ -117,7 +117,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         );
     }
 
-    private static function updateMark($user_id, $task_id, $percentage, $timestamp)
+    public static function updateMark($user_id, $task_id, $percentage, $timestamp)
     {
         global $DIC;
         $DIC->database()->update(
@@ -201,55 +201,17 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         return self::getLPDataForUser($task->getId(), $user_id);
     }
 
-    public static function overrideGrade($parentObj)
-    {
-        global $lng;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
-        $percentage = $_GET['newGrade'];
-        self::updateMark($_GET['user_id'], $parentObj->object->getId(), $percentage, $_GET['timestamp']);
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);
-        if (!ilMumieTaskGradeOverrideService::wasGradeOverridden($_GET["user_id"], $parentObj->object)) {
-            self::insertOverridenGraden($hashed_user, $parentObj->object->getId(), $percentage);
-        }
-        self::updateOverridenGrade($hashed_user, $task_id, $percentage);
-        self::returnGradeOverrideSuccess($percentage);
-    }
-
-    private static function returnGradeOverrideSuccess($percentage)
-    {
-        global $ilDB, $lng;
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
-        $names = $ilDB->fetchAssoc($result);
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_grade_overview_list_successfull_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_grade_overview_list_to') . " " . $percentage);
-    }
-
-    private static function insertOverridenGraden($hashed_user, $task_id, $percentage)
+    public static function getCurrentGradeForUser($user_id, $task_id)
     {
         global $ilDB;
-        $ilDB->insert(
-            "xmum_grade_override",
-            array(
-                'task_id' => array('integer', $task_id),
-                'usr_id' => array('text', $hashed_user),
-            )
+        $result = $ilDB->query(
+            "SELECT mark
+            FROM ut_lp_marks 
+            WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
+            " AND " .
+            "obj_id = " . $ilDB->quote($task_id, "integer")
         );
-    }
-
-    private static function updateOverridenGrade($hashed_user, $task_id, $percentage)
-    {
-        global $ilDB;
-        $ilDB->update(
-            "xmum_grade_override",
-            array(
-                'new_grade' => array('integer', $percentage)
-            ),
-            array(
-                'task_id' => array('integer', $task_id),
-                'usr_id' => array('text', $hashed_user),
-            )
-        );
+        return $ilDB->fetchAssoc($result)["mark"];
     }
 
     private static function deleteLPForTask($task)
@@ -258,11 +220,5 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         ilChangeEvent::_deleteReadEvents($task->getId());
         global $ilDB;
         $ilDB->manipulate("DELETE FROM ut_lp_marks WHERE obj_id = " . $ilDB->quote($task->getId(), 'integer'));
-    }
-
-    public static function deleteOverridenGradesForTask($task)
-    {
-        global $ilDB;
-        $ilDB->manipulate("DELETE FROM xmum_grade_override WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 }

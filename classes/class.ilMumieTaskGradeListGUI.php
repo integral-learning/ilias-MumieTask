@@ -17,18 +17,17 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
     private $parent_gui;
     private $postvar;
+    private $user_id;
 
     public function __construct($parentObj)
     {
-        $this->init($parentObj);
+        $this->user_id = $_GET['user_id'];
+        $this->setId("user" . $_GET["ref_id"]);
     }
 
-    private function init($parentObj)
+    public function init($parentObj)
     {
         global $lng;
-        $user_id = $_GET['user_id'];
-
-        $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayGradeList');
 
         $this->setFormName('participants');
@@ -43,30 +42,12 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        $userGrades = $this->getGradesForUser($user_id, $parentObj);
-        if ($parentObj->object->getPrivateGradepool() != -1) {
-            if (!empty($userGrades)) {
-                foreach ($userGrades as $xGrade) {
-                    $this->tpl->setCurrentBlock("tbl_content");
-                    $this->css_row = ($this->css_row != "tblrow1")
-                        ? "tblrow1"
-                        : "tblrow2";
-
-                    $this->tpl->setVariable("CSS_ROW", $this->css_row);
-                    $this->tpl->setVariable("VAL_GRADE", round($xGrade->result->score->raw * 100));
-                    $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-                    $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'newGrade', round($xGrade->result->score->raw * 100));
-                    $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xGrade->timestamp));
-
-                    $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-                    $dateTime = date('d.m.Y - H:i', strtotime($xGrade->timestamp));
-                    $this->tpl->setVariable("VAL_DATE", $dateTime);
-                    $this->tpl->setCurrentBlock("tbl_content");
-                    $this->tpl->parseCurrentBlock();
-                }
+        $userGrades = $this->getGradesForUser($this->user_id, $parentObj);
+        if ($this->gradesAvailable($parentObj, $userGrades)) {
+            foreach ($userGrades as $xapi_grade) {
+                $this->setTableRow($parentObj, $xapi_grade);
             }
         }
-
         $this->enable('header');
         $this->enable('sort');
         $this->setEnableHeader(true);
@@ -75,18 +56,43 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     private function getGradesForUser($user_id, $parentObj)
     {
         $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
-        $xGrades = $gradesync->getAllXapiGradesByUser();
+        $xapi_grades = $gradesync->getAllXapiGradesByUser();
         $syncId = $gradesync->getSyncIdForUser($user_id);
         $userGrades = array();
-        if (empty($xGrades)) {
+        if (empty($xapi_grades)) {
             return;
         }
-        foreach ($xGrades as $xGrade) {
-            if ($xGrade->actor->account->name == $syncId) {
-                array_push($userGrades, $xGrade);
+        foreach ($xapi_grades as $xapi_grade) {
+            if ($xapi_grade->actor->account->name == $syncId) {
+                array_push($userGrades, $xapi_grade);
             }
         }
         return $userGrades;
+    }
+
+    private function gradesAvailable($parentObj, $userGrades)
+    {
+        return $parentObj->object->getPrivateGradepool() != -1 && !empty($userGrades);
+    }
+
+    private function setTableRow($parentObj, $xapi_grade)
+    {
+        $this->tpl->setCurrentBlock("tbl_content");
+        $this->css_row = ($this->css_row != "tblrow1")
+            ? "tblrow1"
+            : "tblrow2";
+
+        $this->tpl->setVariable("CSS_ROW", $this->css_row);
+        $this->tpl->setVariable("VAL_GRADE", round($xapi_grade->result->score->raw * 100));
+        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
+        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'newGrade', round($xapi_grade->result->score->raw * 100));
+        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xapi_grade->timestamp));
+
+        $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+        $dateTime = date('d.m.Y - H:i', strtotime($xapi_grade->timestamp));
+        $this->tpl->setVariable("VAL_DATE", $dateTime);
+        $this->tpl->setCurrentBlock("tbl_content");
+        $this->tpl->parseCurrentBlock();
     }
 
     //necessary functions for list to be added to form

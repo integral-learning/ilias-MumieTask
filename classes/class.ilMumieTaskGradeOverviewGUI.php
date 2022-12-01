@@ -17,15 +17,14 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     private $parent_gui;
     private $postvar;
 
-    public function __construct($parentObj, $form)
-    {
-        $this->init($parentObj, $form);   
-    }
-
-    private function init($parentObj, $form)
+    public function __construct($parentObj)
     {
         $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayUserList');
+    }
+
+    public function init($parentObj, $form)
+    {
         $this->createList($parentObj, $form);
     }
 
@@ -51,37 +50,9 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         );
 
         foreach ($members as $user_id) {
-            $this->tpl->setCurrentBlock("tbl_content");
-            $this->css_row = ($this->css_row != "tblrow1")
-            ? "tblrow1"
-            : "tblrow2";
-            $this->tpl->setVariable("CSS_ROW", $this->css_row);
-            $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-            $this->tpl->setVariable('LINK', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-
-            $grade = $this->getGradeForUser($user_id, $parentObj->object->getId());
-            $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
-
-            $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
-            $names = $ilDB->fetchAssoc($result);
-            $this->tpl->setVariable('VAL_NAME', $names['firstname'] . ", " . $names['lastname']);
-            $this->tpl->setCurrentBlock("tbl_content");
-            $this->tpl->parseCurrentBlock();
+            $this->setTableRow($user_id, $parentObj);
         }
         $this->setEnableHeader(true);
-    }
-
-    private function getGradeForUser($user_id, $task_id)
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT mark
-            FROM ut_lp_marks 
-            WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
-            " AND " .
-            "obj_id = " . $ilDB->quote($task_id, "integer")
-        );
-        return $ilDB->fetchAssoc($result);
     }
 
     private function getSearchedIds($form)
@@ -141,6 +112,28 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             $this->members =  ilMumieTaskGradeSync::getAllUserIds();
             return $this->getSearchedIds($form);
         }
+    }
+
+    private function setTableRow($user_id, $parentObj)
+    {
+        global $ilDB;
+        $this->tpl->setCurrentBlock("tbl_content");
+        $this->css_row = ($this->css_row != "tblrow1")
+        ? "tblrow1"
+        : "tblrow2";
+        $this->tpl->setVariable("CSS_ROW", $this->css_row);
+        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
+        $this->tpl->setVariable('LINK', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object->getId());
+        $this->tpl->setVariable('VAL_GRADE', $grade);
+
+        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
+        $names = $ilDB->fetchAssoc($result);
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        $this->tpl->setVariable('VAL_NAME', ilMumieTaskGradeSync::getFirstName($user_id) . ", " . ilMumieTaskGradeSync::getLastName($user_id));
+        $this->tpl->setCurrentBlock("tbl_content");
+        $this->tpl->parseCurrentBlock();
     }
 
     //All functions are necessary for the list to be implemented into a form

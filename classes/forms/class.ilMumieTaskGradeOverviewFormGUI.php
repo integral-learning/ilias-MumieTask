@@ -57,8 +57,15 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         $select_task_header_item = new ilFormSectionHeaderGUI();
         $select_task_header_item->setTitle($lng->txt('rep_robj_xmum_tab_userlist'));
         $this->addItem($select_task_header_item);
-        $userList = new ilMumieTaskGradeOverviewGUI($parentObj, $form);
+        $userList = new ilMumieTaskGradeOverviewGUI($parentObj);
+        $userList->init($parentObj, $form);
         $this->addItem($userList);
+    }
+
+    public function getHTML()
+    {
+        $html = parent::getHTML();
+        return str_replace("ilTableOuter", "mumie-user-table", $html);
     }
 
     public function checkInput()

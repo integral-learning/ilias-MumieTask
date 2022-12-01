@@ -36,15 +36,13 @@ class ilMumieTaskGradeSync
      */
     public function getSyncIds($user_ids)
     {
-        return array_map(function ($user_id) {
-            $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-            return "GSSO_" . $this->admin_settings->getOrg() . "_" . $hashed_user;
-        }, $user_ids);
+        return array_map($this->getSyncIdForUser, $user_ids);
     }
 
     public function getSyncIdForUser($user_id)
     {
-        return $this->getSyncIds(array($user_id))[0];
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
+        return "GSSO_" . $this->admin_settings->getOrg() . "_" . $hashed_user;
     }
 
     /**
@@ -151,11 +149,16 @@ class ilMumieTaskGradeSync
      */
     private function getAllUsers($task)
     {
-        if ($task->getParentRef() != 1) {
+        if ($this->isInBaseRepository($task)) {
             return ilParticipants::getInstance($task->getParentRef())->getMembers();
         } else {
             return $this->getAllUserIds();
         }
+    }
+
+    private function isInBaseRepository($task)
+    {
+        return $task->getParentRef() != 1;
     }
 
     public static function getAllUserIds()
@@ -223,6 +226,23 @@ class ilMumieTaskGradeSync
             }
         }
         return $latest_grade;
+    }
+
+    public static function getFirstName($user_id)
+    {
+        return self::getUsername($user_id)["firstname"];
+    }
+
+    public static function getLastName($user_id)
+    {
+        return self::getUsername($user_id)["lastname"];
+    }
+
+    private static function getUsername($user_id)
+    {
+        global $ilDB;
+        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
+        return $ilDB->fetchAssoc($result);
     }
 
 }
