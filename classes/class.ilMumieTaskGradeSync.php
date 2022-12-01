@@ -36,7 +36,7 @@ class ilMumieTaskGradeSync
      */
     public function getSyncIds($user_ids)
     {
-        return array_map($this->getSyncIdForUser, $user_ids);
+        return array_map($this->getSyncIdForUser($user_ids), $user_ids);
     }
 
     public function getSyncIdForUser($user_id)
