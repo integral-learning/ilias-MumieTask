@@ -98,3 +98,4 @@ frm_list_to#:# to:
 frm_list_deadline_extension#:#Extend deadline
 frm_save#:#Save
 frm_cancel#:#Cancel
+frm_list_grade_overview_after_deadline#:#The deadline for submission has been exceeded, any further submissions will not be evaluated

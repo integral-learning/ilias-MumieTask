@@ -414,21 +414,29 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     protected function viewContent()
     {
-        global $ilTabs, $ilCtrl, $ilUser;
+        global $ilTabs, $ilCtrl, $lng;
         if ($this->object->isDummy()) {
             $ilCtrl->redirect($this, 'editProperties');
         }
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        if(!$this->object->getActivationLimited() ||
-        !ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
-        && time() <= $this->object->getActivationEndingTime() || 
-        ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
-        && time() <= ilMumieTaskGradeSync::getOverridenDueDate($ilUser->getId(), $this->object)
+        if(!$this->afterDeadline()
         ) {
-            $this->tpl->setContent($this->object->getContent());
-        }     
+            ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_grade_overview_after_deadline'));
+        }
+        $this->tpl->setContent($this->object->getContent()); 
+    }
+
+    private function afterDeadline()
+    {
+        global $ilUser;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        return $this->object->getActivationLimited() && (
+            !ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
+                && time() >= $this->object->getActivationEndingTime() || 
+            ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
+                && time() >= ilMumieTaskGradeSync::getOverridenDueDate($ilUser->getId(), $this->object)
+        );
     }
 
     /**
