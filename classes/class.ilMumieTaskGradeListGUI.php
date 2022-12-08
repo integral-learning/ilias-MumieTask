@@ -26,7 +26,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setId("user" . $_GET["ref_id"]);
     }
 
-    public function init($parentObj)
+    public function init()
     {
         global $lng;
 
@@ -42,10 +42,10 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $parentObj);
-        if ($this->gradesAvailable($parentObj, $user_grades)) {
+        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj);
+        if ($this->gradesAvailable($this->parent_obj, $user_grades)) {
             foreach ($user_grades as $xapi_grade) {
-                $this->setTableRow($parentObj, $xapi_grade);
+                $this->setTableRow($this->parent_obj, $xapi_grade);
             }
         }
         $this->enable('header');
