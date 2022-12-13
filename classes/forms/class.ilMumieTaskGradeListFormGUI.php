@@ -12,7 +12,6 @@
  */
 class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
-    private $parentObj;
     public function __construct()
     {
         parent::__construct();
@@ -20,21 +19,23 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
     public function setFields($parentObj)
     {
-        global $lng, $ilDB;
-        $this->parentObj = $parentObj;
+        global $lng;
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        $this->setTitle(ilMumieTaskUserServer::getFirstName($_GET["user_id"]) . " " . ilMumieTaskUserServer::getLastName($_GET["user_id"]));
 
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
-        $names = $ilDB->fetchAssoc($result);
-        $this->setTitle($names["firstname"] . " " . $names["lastname"]);
-        $this->setCurentGradeInfo();
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($_GET["user_id"], $parentObj->object->getId());
+        ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . " " . $grade);
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
-        $userList = new ilMumieTaskGradeListGUI($parentObj);
-        $this->addItem($userList);
+        $gradeList = new ilMumieTaskGradeListGUI($parentObj);
+        $gradeList->init($parentObj);
+        $this->addItem($gradeList);
     }
 
-    public function setCurentGradeInfo()
+    public function getHTML()
     {
+<<<<<<< HEAD
         global $ilDB, $lng;
         $result = $ilDB->query(
             "SELECT mark 
@@ -55,5 +56,9 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         } else {
             ilUtil::sendInfo("<b>" . $lng->txt('rep_robj_xmum_frm_list_used_grade') . "</b> " . $grade["mark"]);
         }
+=======
+        $html = parent::getHTML();
+        return str_replace("ilTableOuter", "mumie-user-table", $html);
+>>>>>>> feature/#30564-grading-overview-page
     }
 }

@@ -309,7 +309,7 @@ $ilDB->modifyTableColumn(
 <#12>
 <?php
 if (!$ilDB->tableExists('xmum_grade_override')) {
-    $fieldsAminSettings = array(
+    $gradeOverrideSettings = array(
         'task_id' => array(
             'type' => 'integer',
             'length' => 8,
@@ -327,7 +327,7 @@ if (!$ilDB->tableExists('xmum_grade_override')) {
             'default' => '0'
         )
     );
-    $ilDB->createTable("xmum_grade_override", $fieldsAminSettings);
+    $ilDB->createTable("xmum_grade_override", $gradeOverrideSettings);
 }
 ?>
 <#13>
