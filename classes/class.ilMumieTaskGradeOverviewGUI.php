@@ -23,16 +23,15 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     public function init($parentObj, $form)
     {
-
         $this->createList($parentObj, $form);
     }
 
     private function createList($parentObj, $form)
     {
-        global $ilDB, $lng;
+        global $lng;
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_deadline_extension'), 'deadline');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'), 'deadline');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
@@ -141,7 +140,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($parentObj, 'dueDateExtension'));
         $this->tpl->setVariable('LINK_GRADE_OVERVIEW', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
         $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
         $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserServer::getFirstName($user_id) . ", " . ilMumieTaskUserServer::getLastName($user_id));
         $this->tpl->setCurrentBlock("tbl_content");
         $this->tpl->parseCurrentBlock();
@@ -195,16 +194,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         return "";
     }
 
-<<<<<<< HEAD
-
-
-    public function getPostVar()
-    {
-        return $this->postvar;
-    }
-
-=======
->>>>>>> feature/#30564-grading-overview-page
     /**
     * Get Post Variable.
     *
@@ -212,13 +201,8 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     */
     public function getFieldId()
     {
-<<<<<<< HEAD
-        $id = str_replace("[", "__", $this->getPostVar());
-=======
         $id = str_replace("[", "__", null);
->>>>>>> feature/#30564-grading-overview-page
         $id = str_replace("]", "__", $id);
-
         return $id;
     }
 
@@ -229,10 +213,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     public function setParent($a_val)
     {
-<<<<<<< HEAD
-        $this->parent_gui = $a_val;
-=======
->>>>>>> feature/#30564-grading-overview-page
+
     }
 
     public function getInfo()

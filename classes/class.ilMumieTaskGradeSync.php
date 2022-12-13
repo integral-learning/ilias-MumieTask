@@ -195,20 +195,12 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-<<<<<<< HEAD
-            if ($this->wasGradeOverriden($user_id)) {
-                $valid_grade_by_user[$user_id] = $this->getOverridenGrade($user_id, $xapi_grades);
-            } else {
-                $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
-                $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
-=======
             require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             if (!ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $this->task)) {
                 $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
             } else {
                 $valid_grade_by_user[$user_id] = ilMumieTaskGradeOverrideService::getOverriddenGrade($user_id, $xapi_grades, $this->task);
->>>>>>> feature/#30564-grading-overview-page
             }
         }
         return array_filter($valid_grade_by_user);

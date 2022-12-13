@@ -2,8 +2,8 @@
 /**
  * MumieTask plugin
  *
- * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
- * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -23,7 +23,7 @@ class ilMumieTaskDueDateExtensionForm extends ilPropertyFormGUI
     {
         global $lng;
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $_GET["user_id"]);
-        $this->date_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_list_new_deadline'), 'dateTime');
+        $this->date_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_deadline_extension_new_deadline'), 'dateTime');
         $this->date_input->setShowTime(true);
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         if(ilMumieTaskGradeSync::wasDueDateOverriden($_GET["user_id"], $parentObj->object)){
@@ -33,37 +33,6 @@ class ilMumieTaskDueDateExtensionForm extends ilPropertyFormGUI
         }
         $this->date_input->setDate($date_time);
         $this->addItem($this->date_input);
-    }
-
-    public function updateGrade($parentObj)
-    {
-        global $ilDB, $lng;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        if (!ilMumieTaskGradeSync::wasDueDateOverriden($_GET["user_id"], $parentObj->object)) {
-            $ilDB->insert(
-                "xmum_date_override",
-                array(
-                    'task_id' => array('integer', $parentObj->object->getId()),
-                    'usr_id' => array('text', $hashed_user),
-                    'new_date' => array('integer', strtotime($this->getInput("dateTime")))
-                )
-            );
-        } else {
-            $ilDB->update(
-                "xmum_date_override",
-                array(
-                    'new_date' => array('integer', strtotime($this->getInput("dateTime")))
-                ),
-                array(
-                    'task_id' => array('integer', $parentObj->object->getId()),
-                    'usr_id' => array('text', $hashed_user),
-                )
-            );
-        }
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
-        $names = $ilDB->fetchAssoc($result);
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_list_successfull_date_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_list_to') . " " . substr($this->getInput("dateTime"), 0, 10) . " - " . substr($this->getInput("dateTime"), 11, 5) );
     }
 
     public function checkInput()

@@ -64,11 +64,11 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             $task = ilMumieTaskGradeSync::getMumieTaskFromId($this->obj_id);
             $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
             if (!empty($task->getDescription())) {
-                $description_text = '<span class = "mumie-deadline-text">' . $lng->txt('rep_robj_xmum_frm_list_deadline'). ": " . $deadline . "</span><br>" .
+                $description_text = '<span class = "mumie-deadline-text">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline . "</span><br>" .
                 $task->getDescription()
                 ;
             } else {
-                $description_text =  '<span class = "mumie-deadline-text">' . $lng->txt('rep_robj_xmum_frm_list_deadline'). ": " . $deadline . "</span>";
+                $description_text =  '<span class = "mumie-deadline-text">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline . "</span>";
             }
             $this->tpl->setVariable("TXT_DESC", $description_text);
         } catch (Exception $e) {

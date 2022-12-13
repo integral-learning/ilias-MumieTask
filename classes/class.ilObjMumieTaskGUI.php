@@ -698,7 +698,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form->checkInput();
         $form->setFields($this);
         $form->addCommandButton('submitDueDateExtension', $lng->txt('rep_robj_xmum_frm_save'));
-        $form->addCommandButton('displayUserList', $lng->txt('rep_robj_xmum_frm_cancel'));
+        $form->addCommandButton('displayGradeOverviewPage', $lng->txt('rep_robj_xmum_frm_cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
@@ -706,8 +706,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitDueDateExtension()
     { 
         $this->initDueDateExtension();
-        $this->form->updateGrade($this);
-        $cmd = 'displayUserList';
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDueDateExtension.php');
+        ilMumieTaskDueDateExtension::updateDate($this, $this->form->getInput("dateTime"));
+        $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
     }
     /**
