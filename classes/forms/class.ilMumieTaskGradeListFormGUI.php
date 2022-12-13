@@ -20,7 +20,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     public function setFields($parentObj)
     {
         global $lng;
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
         $this->setTitle(ilMumieTaskUserServer::getFirstName($_GET["user_id"]) . " " . ilMumieTaskUserServer::getLastName($_GET["user_id"]));
 
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');

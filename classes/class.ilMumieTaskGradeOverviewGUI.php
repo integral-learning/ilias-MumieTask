@@ -124,7 +124,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object->getId());
         $this->tpl->setVariable('VAL_GRADE', $grade);
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
         $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserServer::getFirstName($user_id) . ", " . ilMumieTaskUserServer::getLastName($user_id));
         $this->tpl->setCurrentBlock("tbl_content");
         $this->tpl->parseCurrentBlock();
