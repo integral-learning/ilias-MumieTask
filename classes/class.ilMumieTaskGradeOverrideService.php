@@ -53,9 +53,9 @@ class ilMumieTaskGradeOverrideService
         ilMumieTaskLPStatus::updateMark($_GET['user_id'], $parentObj->object->getId(), $percentage, $_GET['timestamp']);
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);
         if (!self::wasGradeOverridden($_GET["user_id"], $parentObj->object)) {
-            self::insertOverridenGraden($hashed_user, $parentObj->object->getId(), $percentage);
+            self::insertOverridenGradenUserData($hashed_user, $parentObj->object->getId(), $percentage);
         }
-        self::updateOverridenGrade($hashed_user, $task_id, $percentage);
+        self::updateOverridenGrade($hashed_user, $parentObj->object->getId(), $percentage);
         self::returnGradeOverrideSuccess($percentage);
     }
 
@@ -67,7 +67,7 @@ class ilMumieTaskGradeOverrideService
         ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_grade_overview_list_successfull_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_grade_overview_list_to') . " " . $percentage);
     }
 
-    private static function insertOverridenGraden($hashed_user, $task_id, $percentage)
+    private static function insertOverridenGradenUserData($hashed_user, $task_id)
     {
         global $ilDB;
         $ilDB->insert(

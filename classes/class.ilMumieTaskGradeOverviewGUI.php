@@ -14,8 +14,6 @@
 class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 {
     private $members;
-    private $parent_gui;
-    private $postvar;
 
     public function __construct($parentObj)
     {
@@ -127,7 +125,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object->getId());
         $this->tpl->setVariable('VAL_GRADE', $grade);
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        $this->tpl->setVariable('VAL_NAME', ilMumieTaskGradeSync::getFirstName($user_id) . ", " . ilMumieTaskGradeSync::getLastName($user_id));
+        $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserServer::getFirstName($user_id) . ", " . ilMumieTaskUserServer::getLastName($user_id));
         $this->tpl->setCurrentBlock("tbl_content");
         $this->tpl->parseCurrentBlock();
     }
@@ -180,13 +178,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         return "";
     }
 
-
-
-    public function getPostVar()
-    {
-        return $this->postvar;
-    }
-
     /**
     * Get Post Variable.
     *
@@ -194,7 +185,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     */
     public function getFieldId()
     {
-        $id = str_replace("[", "__", $this->getPostVar());
+        $id = str_replace("[", "__", null);
         $id = str_replace("]", "__", $id);
 
         return $id;
@@ -207,7 +198,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     public function setParent($a_val)
     {
-        $this->parent_gui = $a_val;
     }
 
     public function getInfo()

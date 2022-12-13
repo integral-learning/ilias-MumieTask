@@ -15,8 +15,6 @@
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
 class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
-    private $parent_gui;
-    private $postvar;
     private $user_id;
 
     public function __construct($parentObj)
@@ -121,13 +119,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         return "";
     }
 
-
-
-    public function getPostVar()
-    {
-        return $this->postvar;
-    }
-
     /**
     * Get Post Variable.
     *
@@ -135,7 +126,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     */
     public function getFieldId()
     {
-        $id = str_replace("[", "__", $this->getPostVar());
+        $id = str_replace("[", "__", null);
         $id = str_replace("]", "__", $id);
 
         return $id;
@@ -148,7 +139,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     public function setParent($a_val)
     {
-        $this->parent_gui = $a_val;
     }
 
     public function getInfo()

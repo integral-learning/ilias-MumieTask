@@ -149,14 +149,14 @@ class ilMumieTaskGradeSync
      */
     private function getAllUsers($task)
     {
-        if ($this->isInBaseRepository($task)) {
+        if ($this->isNotInBaseRepository($task)) {
             return ilParticipants::getInstance($task->getParentRef())->getMembers();
         } else {
             return $this->getAllUserIds();
         }
     }
 
-    private function isInBaseRepository($task)
+    private function isNotInBaseRepository($task)
     {
         return $task->getParentRef() != 1;
     }
@@ -254,22 +254,5 @@ class ilMumieTaskGradeSync
             }
         }
         return $userGrades;
-    }
-
-    public static function getFirstName($user_id)
-    {
-        return self::getUsername($user_id)["firstname"];
-    }
-
-    public static function getLastName($user_id)
-    {
-        return self::getUsername($user_id)["lastname"];
-    }
-
-    private static function getUsername($user_id)
-    {
-        global $ilDB;
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
-        return $ilDB->fetchAssoc($result);
     }
 }
