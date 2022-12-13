@@ -94,6 +94,7 @@ frm_grade_overview_list_successfull_update#:#Note von
 frm_grade_overview_list_to#:# erfolgreich geändert zu: 
 frm_deadline_extension_successfull_date_update#:#Abgabefrist von 
 frm_user_overview_list_deadline_extension#:#Abgabefrist verlängern
+frm_user_overview_list_extended_deadline#:#Verlängerte Abgabefrist
 frm_grade_overview_list_deadline#:#Abgabefrist
 frm_save#:#Speichern
 frm_cancel#:#Abbrechen

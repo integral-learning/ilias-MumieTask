@@ -8,7 +8,7 @@
  */
 class ilMumieTaskDueDateExtension extends ilPropertyFormGUI
 {
-    public static function updateDate($parentObj, $date_time_input)
+    public static function upsertOverridenDate($parentObj, $date_time_input)
     {
         global $ilDB, $lng;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);

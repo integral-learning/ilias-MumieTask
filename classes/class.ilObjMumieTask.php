@@ -97,9 +97,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setPrivateGradepool($rec['privategradepool']);
         }
 
-        /**
-         * Snippet taken from ilObjTask->loadFromDb
-         */
         if ($this->ref_id) {
             if ($this->isDeadlineDBSet()) {
                 $activation_times = $this->getDeadlineDB();

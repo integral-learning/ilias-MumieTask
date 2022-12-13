@@ -31,7 +31,8 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         global $lng;
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'), 'deadline');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'), 'deadline_extension');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'), 'extended_deadline');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
@@ -52,6 +53,28 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             $this->setTableRow($user_id, $parentObj);
         }
         $this->setEnableHeader(true);
+    }
+
+    private function setTableRow($user_id, $parentObj)
+    {
+        $this->tpl->setCurrentBlock("tbl_content");
+        $this->css_row = ($this->css_row != "tblrow1")
+        ? "tblrow1"
+        : "tblrow2";
+        $this->tpl->setVariable("CSS_ROW", $this->css_row);
+        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
+        if (ilMumieTaskGradeSync::wasDueDateOverriden($user_id, $parentObj->object) && $parentObj->object->getActivationLimited()) {
+            $deadline = date('d.m.Y - H:i', ilMumieTaskGradeSync::getOverridenDueDate($user_id, $parentObj->object));
+            $this->tpl->setVariable("VAL_EXTENDED_DEADLINE", $deadline);
+        }
+        $grade = $this->getGradeForUser($user_id, $parentObj->object->getId());
+        $this->tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($parentObj, 'dueDateExtension'));
+        $this->tpl->setVariable('LINK_GRADE_OVERVIEW', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+        $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
+        $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserServer::getFirstName($user_id) . ", " . ilMumieTaskUserServer::getLastName($user_id));
+        $this->tpl->setCurrentBlock("tbl_content");
+        $this->tpl->parseCurrentBlock();
     }
 
     private function getGradeForUser($user_id, $task_id)
@@ -127,24 +150,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         }
     }
 
-    private function setTableRow($user_id, $parentObj)
-    {
-        $this->tpl->setCurrentBlock("tbl_content");
-        $this->css_row = ($this->css_row != "tblrow1")
-        ? "tblrow1"
-        : "tblrow2";
-        $this->tpl->setVariable("CSS_ROW", $this->css_row);
-        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-
-        $grade = $this->getGradeForUser($user_id, $parentObj->object->getId());
-        $this->tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($parentObj, 'dueDateExtension'));
-        $this->tpl->setVariable('LINK_GRADE_OVERVIEW', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-        $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
-        $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserServer::getFirstName($user_id) . ", " . ilMumieTaskUserServer::getLastName($user_id));
-        $this->tpl->setCurrentBlock("tbl_content");
-        $this->tpl->parseCurrentBlock();
-    }
+    
 
     //All functions are necessary for the list to be implemented into a form
     public function checkInput()

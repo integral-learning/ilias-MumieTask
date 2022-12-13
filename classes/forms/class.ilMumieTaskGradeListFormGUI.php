@@ -50,7 +50,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
             $deadline = date('d.m.Y - H:i',  ilMumieTaskGradeSync::getOverridenDueDate($_GET["user_id"], $this->parentObj->object));
             ilUtil::sendInfo(
                 "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade["mark"]. " <br> " .
-                "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline') . ":</b> " . $deadline
+                "<b>" . $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline') . ":</b> " . $deadline
             );
         } else {
             ilUtil::sendInfo("<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade["mark"]);
