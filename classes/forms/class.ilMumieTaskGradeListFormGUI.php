@@ -21,11 +21,21 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
     public function setFields($parentObj)
     {
+<<<<<<< HEAD
         $this->parentObj = $parentObj;
         
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
         $this->setTitle(ilMumieTaskUserServer::getFirstName($_GET['user_id']) . " " . ilMumieTaskUserServer::getLastName($_GET['user_id']));
         $this->setCurentGradeInfo();
+=======
+        global $lng;
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
+        $this->setTitle(ilMumieTaskUserServer::getFirstName($_GET["user_id"]) . " " . ilMumieTaskUserServer::getLastName($_GET["user_id"]));
+
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($_GET["user_id"], $parentObj->object->getId());
+        ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . " " . $grade);
+>>>>>>> feature/#30564-grading-overview-page
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
         $gradelist = new ilMumieTaskGradeListGUI($parentObj);

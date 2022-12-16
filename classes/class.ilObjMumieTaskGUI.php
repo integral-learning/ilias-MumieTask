@@ -422,7 +422,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
-        if(!$this->afterDeadline()
+        if($this->afterDeadline()
         ) {
             ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_grade_overview_after_deadline'));
         }

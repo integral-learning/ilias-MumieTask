@@ -149,9 +149,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             return $this->getSearchedIds($form);
         }
     }
-
     
-
     //All functions are necessary for the list to be implemented into a form
     public function checkInput()
     {
@@ -207,9 +205,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     */
     public function getFieldId()
     {
-        $id = str_replace("[", "__", null);
-        $id = str_replace("]", "__", $id);
-        return $id;
+        return null;
     }
 
     public function setParentForm($a_parentform)
