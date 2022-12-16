@@ -31,10 +31,8 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         global $lng;
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
-        if (!$parentObj->object->getActivationLimited()) {
-            $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'), 'deadline_extension');
-            $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'), 'extended_deadline');
-        }
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'), 'deadline_extension');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'), 'extended_deadline');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
