@@ -57,16 +57,13 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             }
         }
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        //Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
         try {
-            ilLoggerFactory::getLogger('xmum')->info($this->obj_id);
             $deadline = date('d.m.Y - H:i', ilMumieTaskGradeSync::getDueDateForUser($ilUser->getId(), $this->obj_id));
             $task = ilMumieTaskGradeSync::getMumieTaskFromId($this->obj_id);
             $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
             if (!empty($task->getDescription())) {
                 $description_text = '<span class = "mumie-deadline-text">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline . "</span><br>" .
-                $task->getDescription()
-                ;
+                $task->getDescription();
             } else {
                 $description_text =  '<span class = "mumie-deadline-text">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline . "</span>";
             }

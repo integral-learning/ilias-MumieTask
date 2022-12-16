@@ -25,9 +25,9 @@ class ilMumieTaskDueDateExtensionForm extends ilPropertyFormGUI
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $_GET["user_id"]);
         $this->date_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_deadline_extension_new_deadline'), 'dateTime');
         $this->date_input->setShowTime(true);
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        if(ilMumieTaskGradeSync::wasDueDateOverriden($_GET["user_id"], $parentObj->object)){
-            $date_time = new ilDateTime(ilMumieTaskGradeSync::getOverridenDueDate($_GET["user_id"], $parentObj->object), IL_CAL_UNIX);
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
+        if(ilMumieTaskDateOverrideService::wasDueDateOverriden($_GET["user_id"], $parentObj->object)){
+            $date_time = new ilDateTime(ilMumieTaskDateOverrideService::getOverridenDueDate($_GET["user_id"], $parentObj->object), IL_CAL_UNIX);
         } else {
             $date_time = new ilDateTime($parentObj->object->getActivationEndingTime(), IL_CAL_UNIX);
         }

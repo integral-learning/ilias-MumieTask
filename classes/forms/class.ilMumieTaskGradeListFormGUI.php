@@ -21,21 +21,11 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
     public function setFields($parentObj)
     {
-<<<<<<< HEAD
         $this->parentObj = $parentObj;
         
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
         $this->setTitle(ilMumieTaskUserServer::getFirstName($_GET['user_id']) . " " . ilMumieTaskUserServer::getLastName($_GET['user_id']));
         $this->setCurentGradeInfo();
-=======
-        global $lng;
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
-        $this->setTitle(ilMumieTaskUserServer::getFirstName($_GET["user_id"]) . " " . ilMumieTaskUserServer::getLastName($_GET["user_id"]));
-
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($_GET["user_id"], $parentObj->object->getId());
-        ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . " " . $grade);
->>>>>>> feature/#30564-grading-overview-page
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
         $gradelist = new ilMumieTaskGradeListGUI($parentObj);
@@ -55,9 +45,9 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         );
         $grade = $ilDB->fetchAssoc($result);
 
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        if (ilMumieTaskGradeSync::wasDueDateOverriden($_GET["user_id"], $this->parentObj->object) && $this->parentObj->object->getActivationLimited()) {
-            $deadline = date('d.m.Y - H:i',  ilMumieTaskGradeSync::getOverridenDueDate($_GET["user_id"], $this->parentObj->object));
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
+        if (ilMumieTaskDateOverrideService::wasDueDateOverriden($_GET["user_id"], $this->parentObj->object) && $this->parentObj->object->getActivationLimited()) {
+            $deadline = date('d.m.Y - H:i',  ilMumieTaskDateOverrideService::getOverridenDueDate($_GET["user_id"], $this->parentObj->object));
             ilUtil::sendInfo(
                 "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade["mark"]. " <br> " .
                 "<b>" . $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline') . ":</b> " . $deadline

@@ -422,8 +422,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
-        if($this->afterDeadline()
-        ) {
+        if($this->afterDeadline()) {
             ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_grade_overview_after_deadline'));
         }
         $this->tpl->setContent($this->object->getContent()); 
@@ -432,13 +431,17 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     private function afterDeadline()
     {
         global $ilUser;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        return $this->object->getActivationLimited() && (
-            !ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
-                && time() >= $this->object->getActivationEndingTime() || 
-            ilMumieTaskGradeSync::wasDueDateOverriden($ilUser->getId(), $this->object)
-                && time() >= ilMumieTaskGradeSync::getOverridenDueDate($ilUser->getId(), $this->object)
-        );
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
+        if(!$this->object->getActivationLimited())
+        {
+           return false;
+        }
+        if(ilMumieTaskDateOverrideService::wasDueDateOverriden($ilUser->getId(), $this->object)) {
+            return time() >= ilMumieTaskDateOverrideService::getOverridenDueDate($ilUser->getId(), $this->object);
+        } else {
+            return time() >= $this->object->getActivationEndingTime();
+        }
+        return false;
     }
 
     /**
@@ -706,8 +709,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitDueDateExtension()
     { 
         $this->initDueDateExtension();
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDueDateExtension.php');
-        ilMumieTaskDueDateExtension::upsertOverridenDate($this, $this->form->getInput("dateTime"));
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
+        ilMumieTaskDateOverrideService::upsertOverridenDate($this, $this->form->getInput("dateTime"));
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
     }
