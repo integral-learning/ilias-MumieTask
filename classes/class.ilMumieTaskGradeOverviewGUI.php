@@ -185,10 +185,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     */
     public function getFieldId()
     {
-        $id = str_replace("[", "__", null);
-        $id = str_replace("]", "__", $id);
-
-        return $id;
+        return null;
     }
 
     public function setParentForm($a_parentform)
