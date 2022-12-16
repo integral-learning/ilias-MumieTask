@@ -67,6 +67,9 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             } else {
                 $description_text =  '<span class = "mumie-deadline-text">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline . "</span>";
             }
+            if(!$task->getActivationLimited()) {
+                $description_text = $task->getDescription();
+            }
             $this->tpl->setVariable("TXT_DESC", $description_text);
         } catch (Exception $e) {
             ilLoggerFactory::getLogger('xmum')->info("Error when updating MUMIE grades:");
