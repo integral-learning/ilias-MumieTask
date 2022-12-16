@@ -31,8 +31,14 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         global $lng;
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'), 'deadline_extension');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'), 'extended_deadline');
+        if($parentObj->object->getActivationLimited()) {
+            $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'), 'deadline_extension');
+            $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'), 'extended_deadline');
+        } else {
+            $this->addColumn("", 'deadline_extension');
+            $this->addColumn("", 'extended_deadline');
+        }
+        
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
@@ -68,8 +74,14 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             $deadline = date('d.m.Y - H:i', ilMumieTaskDateOverrideService::getOverridenDueDate($user_id, $parentObj->object));
             $this->tpl->setVariable("VAL_EXTENDED_DEADLINE", $deadline);
         }
+        if ($parentObj->object->getActivationLimited()) {
+            $this->tpl->setVariable("VAL_HIDDEN", "");
+            $this->tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($parentObj, 'dueDateExtension'));
+        } else {
+            $this->tpl->setVariable("VAL_HIDDEN", "hidden");
+            $this->tpl->setVariable('LINK_DEADLINE_EXTENSION', "");
+        }
         $grade = $this->getGradeForUser($user_id, $parentObj->object->getId());
-        $this->tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($parentObj, 'dueDateExtension'));
         $this->tpl->setVariable('LINK_GRADE_OVERVIEW', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
         $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
