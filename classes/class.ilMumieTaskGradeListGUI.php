@@ -46,8 +46,8 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
         $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj);
-        if ($this->privateGradepoolSet($this->parent_obj, $user_grades)) {
-            if(empty($userGrades)) {
+        if ($this->privateGradepoolSet($this->parent_obj)) {
+            if(empty($user_grades)) {
                 $this->setEmptyTable();
             } else {
                 foreach ($user_grades as $xapi_grade) {
@@ -60,7 +60,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    private function privateGradepoolSet($parentObj, $userGrades)
+    private function privateGradepoolSet($parentObj)
     {
         return $parentObj->object->getPrivateGradepool() != -1;
     }

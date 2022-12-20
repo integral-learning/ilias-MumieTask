@@ -101,7 +101,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             "obj_id = " . $ilDB->quote($task_id, "integer")
         );
 
-        $grade = $ilDB->fetchAssoc($result);
+        return $ilDB->fetchAssoc($result);
     }
 
     private function getSearchedIds($form)
