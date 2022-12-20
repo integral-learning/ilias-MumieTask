@@ -101,4 +101,5 @@ frm_save#:#Save
 frm_cancel#:#Cancel
 frm_list_grade_overview_after_deadline#:#The deadline for submission has been exceeded, any further submissions will not be evaluated
 frm_grade_overview_override_error#:#There was an error while updating grade
-
+frm_grade_overview_no_submission_made#:#There was no submission made
+frm_grade_overview_no_current_grade#:#There is no current grade
