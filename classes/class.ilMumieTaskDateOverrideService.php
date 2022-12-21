@@ -73,4 +73,10 @@ class ilMumieTaskDateOverrideService
         $result = $ilDB->query($query);
         return $ilDB->fetchAssoc($result)["new_date"];
     }
+
+    public static function deleteOverridenGradesForTask($task)
+    {
+        global $ilDB;
+        $ilDB->manipulate("DELETE FROM xmum_date_override WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
+    }
 }
