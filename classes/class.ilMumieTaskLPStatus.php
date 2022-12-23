@@ -172,9 +172,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         $mumieTasks = array();
 
         while ($record = $ilDB->fetchAssoc($result)) {
-
             $mumieTask = new ilObjMumieTask($record["ref_id"]);
-            ilLoggerFactory::getLogger('xmum')->info($record["ref_id"]);
             $mumieTask->read();
             array_push($mumieTasks, $mumieTask);
         }
