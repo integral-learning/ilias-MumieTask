@@ -12,7 +12,7 @@
  * This class provides services for overriding grades
  */
 
-class ilMumieTaskUserServer
+class ilMumieTaskUserService
 {
     public static function getFirstName($user_id)
     {

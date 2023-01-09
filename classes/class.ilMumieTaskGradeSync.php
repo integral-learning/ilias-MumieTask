@@ -54,28 +54,28 @@ class ilMumieTaskGradeSync
         return ilMumieTaskIdHashingService::getUserFromHash($hashed_user);
     }
 
-    public function getAllXapiGradesByUser()
+    private function getNewXapiGrades()
     {
-        $params = array(
-            "users" => $this->getSyncIds($this->user_ids),
-            "course" => $this->task->getMumieCoursefile(),
-            "objectIds" => array(self::getMumieId($this->task)),
-            'lastSync' => $this->getLastSync(),
-            'includeAll' => true
-        );
-        if ($this->task->getActivationLimited() == 1) {
-            $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
-        }
-        $payload = json_encode($params);
+        return $this->getXapiGrades($this->getXapiRequestBody(true));
 
+    }
+
+    private function getAllXapiGradesByUser()
+    {
+        return $this->getXapiGrades($this->getXapiRequestBody(false));
+    }
+
+    private function getXapiGrades($request_body)
+    {
+        $payload = json_encode($request_body);
         require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
         $curl = new ilCurlConnection($this->task->getGradeSyncURL());
         $curl->init();
-        if (ilProxySettings::_getInstance()->isActive()) {
+        if ($proxy_settings->isActive()) {
             $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
-            $curl->setOpt(CURLOPT_PROXY, ilProxySettings::_getInstance()->getHost());
-            $curl->setOpt(CURLOPT_PROXYPORT, ilProxySettings::_getInstance()->getPort());
+            $curl->setOpt(CURLOPT_PROXY, $proxy_settings->getHost());
+            $curl->setOpt(CURLOPT_PROXYPORT, $proxy_settings->getPort());
         }
         $curl->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
         $curl->setOpt(CURLOPT_USERAGENT, 'MUMIE Task for Ilias');
@@ -83,23 +83,43 @@ class ilMumieTaskGradeSync
         $curl->setOpt(CURLOPT_RETURNTRANSFER, 1);
         $curl->setOpt(
             CURLOPT_HTTPHEADER,
-            array(
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($payload),
-                "X-API-Key: " . $this->admin_settings->getApiKey(),
-            )
+            $this->getXapiRequestHeaders($payload)
         );
         $response = json_decode($curl->exec());
         $curl->close();
         return($response);
     }
 
+    private function getXapiRequestBody($getOnlyChangedGrades)
+    {
+        $params = array(
+            "users" => $this->getSyncIds($this->user_ids),
+            "course" => $this->task->getMumieCoursefile(),
+            "objectIds" => array(self::getMumieId($this->task)),
+            'lastSync' => $getOnlyChangedGrades ? $this->getLastSync() : 1,
+            'includeAll' => true
+        );
+        if ($this->task->getActivationLimited() == 1) {
+            $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
+        }
+        return $params;
+    }
+
+    private function getXapiRequestHeaders($payload)
+    {
+        return array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($payload),
+            "X-API-Key: " . $this->admin_settings->getApiKey(),
+        );
+    }
+
     /**
      * get a map of xapi grades by user
      */
-    public function getValidXapiGradesByUser()
+    public function getValidAndNewXapiGradesByUser()
     {
-        return $this->getValidGradeByUser($this->getAllXapiGradesByUser());
+        return $this->getValidGradeByUser($this->getNewXapiGrades());
     }
 
     /**

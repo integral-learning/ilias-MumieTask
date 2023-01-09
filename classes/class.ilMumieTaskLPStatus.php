@@ -82,7 +82,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             self::deleteLPForTask($task);
         }
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-        $grades_by_user = $grade_sync->getValidXapiGradesByUser();
+        $grades_by_user = $grade_sync->getValidAndNewXapiGradesByUser();
         foreach (array_keys($grades_by_user) as $user_id) {
             $xapi_grade = $grades_by_user[$user_id];
             $percentage = round($xapi_grade->result->score->scaled * 100);
