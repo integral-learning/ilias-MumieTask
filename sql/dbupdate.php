@@ -165,7 +165,6 @@ if ($ilDB->numRows($result) < 1) {
 ?>
 <#6>
 <?php
-
 $set = $ilDB->query("SELECT obj_id FROM object_data WHERE type='typ' AND title = 'xmum'");
 if ($rec = $ilDB->fetchAssoc($set)) {
     $typ_id = $rec["obj_id"];
@@ -328,5 +327,81 @@ if (!$ilDB->tableExists('xmum_grade_override')) {
         )
     );
     $ilDB->createTable("xmum_grade_override", $gradeOverrideSettings);
+}
+?>
+<#13>
+<?php
+if (!$ilDB->tableExists('xmum_date_override')) {
+    $fieldsDateOverride = array(
+        'task_id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'usr_id' => array(
+            'type' => 'text',
+            'length' => '143',
+            'notnull' => true,
+        ),
+        'new_date' => array(
+            'type' => 'integer',
+            'length' => '4',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_date_override", $fieldsDateOverride);
+}
+if (!$ilDB->tableExists('xmum_task_dealines')) {
+    $fieldsTaskDeadlines = array(
+        'task_id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'start_date' => array(
+            'type' => 'integer',
+            'length' => '4',
+            'notnull' => true,
+        ),
+        'end_date' => array(
+            'type' => 'integer',
+            'length' => '4',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_task_dealines", $fieldsTaskDeadlines);
+}
+?>
+<#14>
+<?php
+if($ilDB->tableColumnExists("xmum_admin_settings", "share_first_name")) {
+    $fieldsAdminSettings = array(
+        'name' => array(
+            'type' => 'text',
+            'length' => '255',
+            'notnull' => true,
+        ),
+        'value' => array(
+            'type' => 'text',
+            'length' => '255',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_admin_settings2", $fieldsAdminSettings);
+    
+    $query = "SELECT * FROM xmum_admin_settings";
+    $result = $ilDB->query($query);
+    $values = $ilDB->fetchAll($result);
+    foreach($values[0] as $key => $value) {
+        $ilDB->insert(
+            "xmum_admin_settings2",
+            array(
+                'name' => array('text', $key),
+                'value' => array('text', $value),
+            )
+        );
+    }
+    $ilDB->dropTable("xmum_admin_settings");
+    $ilDB->renameTable("xmum_admin_settings2", "xmum_admin_settings");
 }
 ?>
