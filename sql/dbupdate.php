@@ -165,7 +165,6 @@ if ($ilDB->numRows($result) < 1) {
 ?>
 <#6>
 <?php
-
 $set = $ilDB->query("SELECT obj_id FROM object_data WHERE type='typ' AND title = 'xmum'");
 if ($rec = $ilDB->fetchAssoc($set)) {
     $typ_id = $rec["obj_id"];
