@@ -29,17 +29,20 @@ class ilMumieTaskGradeSync
         $this->user_ids = $this->getAllUsers($task);
     }
 
+    public function getSyncIdForUser($user_id)
+    {
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
+        return "GSSO_" . $this->admin_settings->getOrg() . "_" . $hashed_user;
+    }
+
     /**
      * SyncIds are composed of a hashed ILIAS user id and a shorthand for the organization the operates the ilias platform.
      *
      * They must be a unique identifier for users on both ILIAS and MUMIE servers
      */
-    private function getSyncIds($user_ids)
+    public function getSyncIds($user_ids)
     {
-        return array_map(function ($user_id) {
-            $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-            return "GSSO_" . $this->admin_settings->getOrg() . "_" . $hashed_user;
-        }, $user_ids);
+        return array_map(array($this, "getSyncIdForUser"), $user_ids);
     }
 
     /**
@@ -51,33 +54,28 @@ class ilMumieTaskGradeSync
         return ilMumieTaskIdHashingService::getUserFromHash($hashed_user);
     }
 
-
-    /**
-     * get a map of xapi grades by user
-     */
-    public function getXapiGradesByUser()
+    private function getNewXapiGrades()
     {
-        $params = array(
-            "users" => $this->getSyncIds($this->user_ids),
-            "course" => $this->task->getMumieCoursefile(),
-            "objectIds" => array(self::getMumieId($this->task)),
-            'lastSync' => $this->getLastSync(),
-            'includeAll' => true
-        );
+        return $this->getXapiGrades($this->getXapiRequestBody(true));
 
-        if ($this->task->getActivationLimited() == 1) {
-            $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
-        }
-        $payload = json_encode($params);
+    }
 
+    private function getAllXapiGradesByUser()
+    {
+        return $this->getXapiGrades($this->getXapiRequestBody(false));
+    }
+
+    private function getXapiGrades($request_body)
+    {
+        $payload = json_encode($request_body);
         require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
         $curl = new ilCurlConnection($this->task->getGradeSyncURL());
         $curl->init();
-        if (ilProxySettings::_getInstance()->isActive()) {
+        if ($proxy_settings->isActive()) {
             $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
-            $curl->setOpt(CURLOPT_PROXY, ilProxySettings::_getInstance()->getHost());
-            $curl->setOpt(CURLOPT_PROXYPORT, ilProxySettings::_getInstance()->getPort());
+            $curl->setOpt(CURLOPT_PROXY, $proxy_settings->getHost());
+            $curl->setOpt(CURLOPT_PROXYPORT, $proxy_settings->getPort());
         }
         $curl->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
         $curl->setOpt(CURLOPT_USERAGENT, 'MUMIE Task for Ilias');
@@ -85,15 +83,43 @@ class ilMumieTaskGradeSync
         $curl->setOpt(CURLOPT_RETURNTRANSFER, 1);
         $curl->setOpt(
             CURLOPT_HTTPHEADER,
-            array(
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($payload),
-                "X-API-Key: " . $this->admin_settings->getApiKey(),
-            )
+            $this->getXapiRequestHeaders($payload)
         );
         $response = json_decode($curl->exec());
         $curl->close();
-        return $this->getValidGradeByUser($response);
+        return($response);
+    }
+
+    private function getXapiRequestBody($getOnlyChangedGrades)
+    {
+        $params = array(
+            "users" => $this->getSyncIds($this->user_ids),
+            "course" => $this->task->getMumieCoursefile(),
+            "objectIds" => array(self::getMumieId($this->task)),
+            'lastSync' => $getOnlyChangedGrades ? $this->getLastSync() : 1,
+            'includeAll' => true
+        );
+        if ($this->task->getActivationLimited() == 1) {
+            $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
+        }
+        return $params;
+    }
+
+    private function getXapiRequestHeaders($payload)
+    {
+        return array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($payload),
+            "X-API-Key: " . $this->admin_settings->getApiKey(),
+        );
+    }
+
+    /**
+     * get a map of xapi grades by user
+     */
+    public function getValidAndNewXapiGradesByUser()
+    {
+        return $this->getValidGradeByUser($this->getNewXapiGrades());
     }
 
     /**
@@ -111,7 +137,6 @@ class ilMumieTaskGradeSync
         }
         return $id;
     }
-
 
     /**
      * LastSync is used to improve performance. We don't need to check grades that were awarded before the last time we synced
@@ -136,7 +161,7 @@ class ilMumieTaskGradeSync
         if ($oldest_timestamp == PHP_INT_MAX) {
             $oldest_timestamp = 1;
         }
-        return $oldest_timestamp * 1000;
+        return $oldest_timestamp*1000;
     }
 
     /**
@@ -144,16 +169,29 @@ class ilMumieTaskGradeSync
      */
     private function getAllUsers($task)
     {
-        global $ilDB;
-        $users = array();
-        $result = $ilDB->query("SELECT usr_id" .
-            " FROM ut_lp_marks" .
-            " WHERE obj_id = " . $ilDB->quote($task->getId(), "integer"));
-
-        while ($record = $ilDB->fetchAssoc($result)) {
-            array_push($users, $record['usr_id']);
+        if ($this->isNotInBaseRepository($task)) {
+            return ilParticipants::getInstance($task->getParentRef())->getMembers();
+        } else {
+            return $this->getAllUserIds();
         }
-        return $users;
+    }
+
+    private function isNotInBaseRepository($task)
+    {
+        return $task->getParentRef() != 1;
+    }
+
+    public static function getAllUserIds()
+    {
+        global $ilDB;
+        $result = $ilDB->query(
+            "SELECT usr_id FROM usr_data;"
+        );
+        $allIds = array();
+        while ($user_id = $ilDB->fetchAssoc($result)) {
+            array_push($allIds, $user_id["usr_id"]);
+        }
+        return $allIds;
     }
 
     /**
@@ -175,10 +213,14 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-            $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
-            $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
+            require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
+            if (!ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $this->task)) {
+                $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
+                $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
+            } else {
+                $valid_grade_by_user[$user_id] = ilMumieTaskGradeOverrideService::getOverriddenGrade($user_id, $xapi_grades, $this->task);
+            }
         }
-
         return array_filter($valid_grade_by_user);
     }
 
@@ -204,5 +246,33 @@ class ilMumieTaskGradeSync
             }
         }
         return $latest_grade;
+    }
+
+    public static function checkIfGradeWasAchievedByUser($user_id, $parentObj, $grade)
+    {
+        $user_grades = self::getGradesForUser($user_id, $parentObj);
+        foreach ($user_grades as $xapi_grade) {
+            if ($grade == round($xapi_grade->result->score->raw * 100)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function getGradesForUser($user_id, $parentObj)
+    {
+        $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
+        $xapi_grades = $gradesync->getAllXapiGradesByUser();
+        $syncId = $gradesync->getSyncIdForUser($user_id);
+        $userGrades = array();
+        if (empty($xapi_grades)) {
+            return;
+        }
+        foreach ($xapi_grades as $xapi_grade) {
+            if ($xapi_grade->actor->account->name == $syncId) {
+                array_push($userGrades, $xapi_grade);
+            }
+        }
+        return $userGrades;
     }
 }

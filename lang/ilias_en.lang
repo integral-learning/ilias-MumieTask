@@ -11,6 +11,7 @@ frm_share_email_desc#:#Choose, whether a user's e-mail address should be shared 
 tab_shared_data#:#Privacy
 tab_servers#:#Servers
 tab_authentication#:#Authentication
+tab_userlist#:#Grade Overview
 frm_auth_api#:#MUMIE API Key
 frm_auth_api_desc#:#Specify the MUMIE API key for grade synchronization
 frm_auth_org#:#MUMIE Org
@@ -67,7 +68,7 @@ frm_gradepool_pending#:#Leave decision open
 frm_passing_grade#:#Passing grade
 frm_passing_grade_desc#:#Please enter the passing threshold for this MumieTask
 frm_force_update#:#Force new grade synchronization
-frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. 
+frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. This also includes all manually overwritten grades.
 frm_force_update_btn#:#Force update
 edit_task#:#Edit
 activation_limited_visibility_info#:#Users can see this MUMIE task outside of the chosen availability period, but cannot work on it
@@ -75,3 +76,20 @@ frm_online_info#:#Make this MUMIE Task visible and usable to all users with read
 frm_online_disabled_warning#:#This MUMIE Task cannot be set online because a decision is still pending. Please go to grading settings.
 open_prb_selector#:#Open problem selector
 open_prb_selector_desc#:#Click here to open a more detailed selection screen. You can filter all problems by category and enter search terms.
+frm_list_grade#:#Grade
+frm_user_overview_list_grade_desc#:#<br><br>By default the newest submission before the deadline is used. If you want to use a different submission, you can click on the corresponding button to overwrite the current grade.
+frm_user_overview_list_change_grade#:#Change Grade
+frm_user_overview_list_submissions#:#Submissions
+frm_grade_overview_list_submission_date#:#Submission Date
+frm_grade_overview_list_used_grade#:#Used Grade:
+frm_grade_overview_list_use_grade#:#Use this grade
+frm_grade_overview_list_back#:#Back
+frm_user_overview_list_search#:#Search
+frm_user_overview_list_name#:#Name
+frm_user_overview_list_firstname_search#:#Firstname
+frm_user_overview_list_lastname_search#:#Lastname
+frm_user_overview_list_search_title#:#Search Participants
+frm_user_overview_list_general_dealine#:#General due date:
+frm_grade_overview_list_successfull_update#:#Successfully updated grade for user
+frm_grade_overview_list_to#:# to: 
+frm_grade_overview_override_error#:#There was an error while updating grade

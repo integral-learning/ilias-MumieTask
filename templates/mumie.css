@@ -1,3 +1,7 @@
 .mumie-collapsible:hover {
     background-color: #ccc;
 }
+
+.mumie-user-table {
+    max-width: 80%;
+}
