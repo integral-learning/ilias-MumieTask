@@ -22,8 +22,8 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     {
         $this->parentObj = $parentObj;
 
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserServer.php');
-        $this->setTitle(ilMumieTaskUserServer::getFirstName($_GET['user_id']) . " " . ilMumieTaskUserServer::getLastName($_GET['user_id']));
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
+        $this->setTitle(ilMumieTaskUserServer::getFirstName($_GET['user_id']) . " " . ilMumieTaskUserService::getLastName($_GET['user_id']));
         $this->setCurentGradeInfo();
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
