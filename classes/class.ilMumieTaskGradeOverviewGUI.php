@@ -38,7 +38,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             $this->addColumn("", 'deadline_extension');
             $this->addColumn("", 'extended_deadline');
         }
-        
+
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
@@ -218,7 +218,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     */
     public function getFieldId()
     {
-        return null;
     }
 
     public function setParentForm($a_parentform)

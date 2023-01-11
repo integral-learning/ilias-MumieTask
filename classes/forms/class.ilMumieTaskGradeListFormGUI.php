@@ -7,7 +7,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
  * This form is used to edit the Learning Progress settings of MumieTasks
  */
@@ -65,5 +64,11 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
                 );
             }
         }
+    }
+
+    public function getHTML()
+    {
+        $html = parent::getHTML();
+        return str_replace("ilTableOuter", "mumie-user-table", $html);
     }
 }
