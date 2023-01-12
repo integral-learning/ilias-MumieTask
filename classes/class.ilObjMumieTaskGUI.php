@@ -436,8 +436,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         {
            return false;
         }
-        if(ilMumieDeadlineExtensionService::wasDueDateOverriden($ilUser->getId(), $this->object)) {
-            return time() >= ilMumieDeadlineExtensionService::getOverridenDueDate($ilUser->getId(), $this->object);
+        if(ilMumieDeadlineExtensionService::hasDeadlineExtension($ilUser->getId(), $this->object)) {
+            return time() >= ilMumieDeadlineExtensionService::getDeadlineExtension($ilUser->getId(), $this->object);
         } else {
             return time() >= $this->object->getActivationEndingTime();
         }
@@ -711,7 +711,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     { 
         $this->initDueDateExtension();
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
-        ilMumieDeadlineExtensionService::upsertOverriddenDate($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
+        ilMumieDeadlineExtensionService::upsertDeadlineExtension($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
     }

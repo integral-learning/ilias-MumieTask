@@ -228,9 +228,9 @@ class ilMumieTaskGradeSync
 
     private function isGradeBeforeDueDate($grade)
     {
-        if(ilMumieDeadlineExtensionService::wasDueDateOverriden($this->getIliasId($grade), $this->task))
+        if(ilMumieDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task))
         {
-            return strtotime($grade->timestamp) <= ilMumieDeadlineExtensionService::getOverridenDueDate($this->getIliasId($grade), $this->task);
+            return strtotime($grade->timestamp) <= ilMumieDeadlineExtensionService::getDeadlineExtension($this->getIliasId($grade), $this->task);
         }
         if (!$this->task->getActivationLimited()) {
             return true;
@@ -296,8 +296,8 @@ class ilMumieTaskGradeSync
     public static function getDueDateForUser($user_id, $task_id)
     {
         $task = self::getMumieTaskFromId($task_id);
-        if(ilMumieDeadlineExtensionService::wasDueDateOverriden($user_id, $task)) {
-            return ilMumieDeadlineExtensionService::getOverridenDueDate($user_id, $task);
+        if(ilMumieDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
+            return ilMumieDeadlineExtensionService::getDeadlineExtension($user_id, $task);
         }
         return $task->getActivationEndingTime();
     }

@@ -20,13 +20,13 @@ class ilMumieDeadlineExtensionService
     const USER_ID = 'usr_id';
     const DATE = 'date';
 
-    public static function upsertOverriddenDate($mumie_task, $date_time_input, $user_id)
+    public static function upsertDeadlineExtension($mumie_task, $date_time_input, $user_id)
     {
         global $ilDB, $lng;
         //TODO: Use regular user_id instead
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $mumie_task);
         $deadline_extension = new ilMumieDeadlineExtension(strtotime($date_time_input), $hashed_user, $mumie_task->getId());
-        if (!self::wasDueDateOverriden($user_id, $mumie_task)) {
+        if (!self::hasDeadlineExtension($user_id, $mumie_task)) {
             self::insertDeadlineExtension($deadline_extension);
         } else {
             self::updateDeadlineExtension($deadline_extension);
@@ -63,7 +63,7 @@ class ilMumieDeadlineExtensionService
         );
     }
 
-    public static function wasDueDateOverriden($user_id, $task)
+    public static function hasDeadlineExtension($user_id, $task)
     {
         global $ilDB;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
@@ -78,7 +78,7 @@ class ilMumieDeadlineExtensionService
         return !is_null($grade[self::DATE]);
     }
 
-    public static function getOverridenDueDate($user_id, $task)
+    public static function getDeadlineExtension($user_id, $task)
     {
         global $ilDB;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
@@ -94,7 +94,7 @@ class ilMumieDeadlineExtensionService
         return $ilDB->fetchAssoc($result)[self::DATE];
     }
 
-    public static function deleteOverridenGradesForTask($task)
+    public static function deleteDeadlineExtensions($task)
     {
         global $ilDB;
         $ilDB->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
