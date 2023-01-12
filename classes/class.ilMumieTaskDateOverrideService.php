@@ -14,11 +14,11 @@
 
 class ilMumieTaskDateOverrideService
 {
-    public static function upsertOverridenDate($parentObj, $date_time_input)
+    public static function upsertOverridenDate($parentObj, $date_time_input, $user_id)
     {
         global $ilDB, $lng;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);
-        if (!self::wasDueDateOverriden($_GET["user_id"], $parentObj->object)) {
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $parentObj->object);
+        if (!self::wasDueDateOverriden($user_id, $parentObj->object)) {
             $ilDB->insert(
                 "xmum_date_override",
                 array(
@@ -39,7 +39,7 @@ class ilMumieTaskDateOverrideService
                 )
             );
         }
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
+        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
         $names = $ilDB->fetchAssoc($result);
         ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_deadline_extension_successfull_date_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_grade_overview_list_to') . " " . substr($date_time_input, 0, 10) . " - " . substr($date_time_input, 11, 5));
     }
