@@ -14,10 +14,10 @@
 
 class ilMumieTaskDateOverrideService
 {
-    const DATE_OVERRIDE_TABLE = "xmum_date_override";
+    const DATE_OVERRIDE_TABLE = "xmum_deadline_ext";
     const TASK_ID = 'task_id';
     const USER_ID = 'usr_id';
-    const DATE = 'new_date';
+    const DATE = 'date';
 
     public static function upsertOverriddenDate($mumie_task, $date_time_input, $user_id)
     {
@@ -63,8 +63,8 @@ class ilMumieTaskDateOverrideService
     {
         global $ilDB;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
-        $query = "SELECT new_date
-        FROM xmum_date_override
+        $query = "SELECT date
+        FROM xmum_deadline_ext
         WHERE " .
         "usr_id = " . $ilDB->quote($hashed_user, "text") .
         " AND " .
@@ -79,8 +79,8 @@ class ilMumieTaskDateOverrideService
     {
         global $ilDB;
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
-        $query = "SELECT new_date
-        FROM xmum_date_override
+        $query = "SELECT date
+        FROM xmum_deadline_ext
         WHERE " .
         "task_id = " . $ilDB->quote($task->getId(), "integer") .
         " AND " .
@@ -92,6 +92,6 @@ class ilMumieTaskDateOverrideService
     public static function deleteOverridenGradesForTask($task)
     {
         global $ilDB;
-        $ilDB->manipulate("DELETE FROM xmum_date_override WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
+        $ilDB->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 }

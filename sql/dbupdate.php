@@ -331,8 +331,8 @@ if (!$ilDB->tableExists('xmum_grade_override')) {
 ?>
 <#13>
 <?php
-if (!$ilDB->tableExists('xmum_date_override')) {
-    $fieldsAminSettings = array(
+if (!$ilDB->tableExists('xmum_deadline_ext')) {
+    $tableSettings = array(
         'task_id' => array(
             'type' => 'integer',
             'length' => 8,
@@ -343,13 +343,13 @@ if (!$ilDB->tableExists('xmum_date_override')) {
             'length' => '143',
             'notnull' => true,
         ),
-        'new_date' => array(
+        'date' => array(
             'type' => 'integer',
             'length' => '4',
             'notnull' => true,
         ),
     );
-    $ilDB->createTable("xmum_date_override", $fieldsAminSettings);
+    $ilDB->createTable("xmum_deadline_ext", $tableSettings);
 }
 if (!$ilDB->tableExists('xmum_task_dealines')) {
     $fieldsAminSettings = array(
