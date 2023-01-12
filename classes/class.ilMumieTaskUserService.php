@@ -24,6 +24,11 @@ class ilMumieTaskUserService
         return self::getUsername($user_id)["lastname"];
     }
 
+    public static function getFullName($user_id)
+    {
+        return self::getFirstName($user_id) . " " . self::getLastName($user_id);
+    }
+
     private static function getUsername($user_id)
     {
         global $ilDB;
