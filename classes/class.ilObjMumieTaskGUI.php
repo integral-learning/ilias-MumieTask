@@ -431,7 +431,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     private function afterDeadline()
     {
         global $ilUser;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/duedateextension/class.ilMumieTaskDateOverrideService.php');
         if(!$this->object->getActivationLimited())
         {
            return false;
@@ -710,7 +710,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitDueDateExtension()
     { 
         $this->initDueDateExtension();
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/duedateextension/class.ilMumieTaskDateOverrideService.php');
         ilMumieTaskDateOverrideService::upsertOverriddenDate($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);

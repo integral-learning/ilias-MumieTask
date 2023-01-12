@@ -69,7 +69,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/duedateextension/class.ilMumieTaskDateOverrideService.php');
         if (ilMumieTaskDateOverrideService::wasDueDateOverriden($user_id, $parentObj->object) && $parentObj->object->getActivationLimited()) {
             $deadline = date('d.m.Y - H:i', ilMumieTaskDateOverrideService::getOverridenDueDate($user_id, $parentObj->object));
             $this->tpl->setVariable("VAL_EXTENDED_DEADLINE", $deadline);

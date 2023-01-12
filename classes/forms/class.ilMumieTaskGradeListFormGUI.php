@@ -43,7 +43,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
             "obj_id = " . $ilDB->quote($this->parentObj->object->getId(), "integer")
         );
         $grade = $ilDB->fetchAssoc($result);
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/duedateextension/class.ilMumieTaskDateOverrideService.php');
         if (ilMumieTaskDateOverrideService::wasDueDateOverriden($_GET["user_id"], $this->parentObj->object) && $this->parentObj->object->getActivationLimited()) {
             $deadline = date('d.m.Y - H:i', ilMumieTaskDateOverrideService::getOverridenDueDate($_GET["user_id"], $this->parentObj->object));
             ilUtil::sendInfo(
