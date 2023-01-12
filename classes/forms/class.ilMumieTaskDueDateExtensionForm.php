@@ -8,7 +8,7 @@
  */
 
 /**
- * This form is used to edit the Learning Progress settings of MumieTasks
+ * This form is used to grant due date extensions for a given MumieTask
  */
 class ilMumieTaskDueDateExtensionForm extends ilPropertyFormGUI
 {
@@ -37,9 +37,8 @@ class ilMumieTaskDueDateExtensionForm extends ilPropertyFormGUI
         $this->addItem($this->date_input);
     }
 
-    public function checkInput()
+    public function checkInput() : bool
     {
-        $ok = parent::checkInput();
-        return $ok;
+        return parent::checkInput();
     }
 }
