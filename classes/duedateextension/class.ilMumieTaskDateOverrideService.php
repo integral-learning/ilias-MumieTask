@@ -14,6 +14,11 @@
 
 class ilMumieTaskDateOverrideService
 {
+    const DATE_OVERRIDE_TABLE = "xmum_date_override";
+    const TASK_ID = 'task_id';
+    const USER_ID = 'usr_id';
+    const DATE = 'new_date';
+
     public static function upsertOverriddenDate($mumie_task, $date_time_input, $user_id)
     {
         global $ilDB, $lng;
@@ -31,11 +36,11 @@ class ilMumieTaskDateOverrideService
     private static function insertOverriddenDate($mumie_task, $user_id, $date) {
         global $ilDB;
         $ilDB->insert(
-            "xmum_date_override",
+            self::DATE_OVERRIDE_TABLE,
             array(
-                'task_id' => array('integer', $mumie_task->getId()),
-                'usr_id' => array('text', $user_id),
-                'new_date' => array('integer', strtotime($date))
+                self::TASK_ID => array('integer', $mumie_task->getId()),
+                self::USER_ID => array('text', $user_id),
+                self::DATE => array('integer', strtotime($date))
             )
         );
     }
@@ -43,13 +48,13 @@ class ilMumieTaskDateOverrideService
     private static function updateOverriddenDate($mumie_task, $user_id, $date) {
         global $ilDB;
         $ilDB->update(
-            "xmum_date_override",
+            self::DATE_OVERRIDE_TABLE,
             array(
-                'new_date' => array('integer', strtotime($date))
+                self::DATE => array('integer', strtotime($date))
             ),
             array(
-                'task_id' => array('integer', $mumie_task->getId()),
-                'usr_id' => array('text', $user_id),
+                self::TASK_ID => array('integer', $mumie_task->getId()),
+                self::USER_ID => array('text', $user_id),
             )
         );
     }
@@ -66,7 +71,7 @@ class ilMumieTaskDateOverrideService
         "task_id = " . $ilDB->quote($task->getId(), "integer");
         $result = $ilDB->query($query);
         $grade = $ilDB->fetchAssoc($result);
-        return !is_null($grade["new_date"]);
+        return !is_null($grade[self::DATE]);
         return false;
     }
 
@@ -81,7 +86,7 @@ class ilMumieTaskDateOverrideService
         " AND " .
         "usr_id = " . $ilDB->quote($hashed_user, "text");
         $result = $ilDB->query($query);
-        return $ilDB->fetchAssoc($result)["new_date"];
+        return $ilDB->fetchAssoc($result)[self::DATE];
     }
 
     public static function deleteOverridenGradesForTask($task)
