@@ -23,9 +23,7 @@ class ilMumieDeadlineExtensionService
     public static function upsertDeadlineExtension($mumie_task, $date_time_input, $user_id)
     {
         global $ilDB, $lng;
-        //TODO: Use regular user_id instead
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $mumie_task);
-        $deadline_extension = new ilMumieDeadlineExtension(strtotime($date_time_input), $hashed_user, $mumie_task->getId());
+        $deadline_extension = new ilMumieDeadlineExtension(strtotime($date_time_input), $user_id, $mumie_task->getId());
         if (!self::hasDeadlineExtension($user_id, $mumie_task)) {
             self::insertDeadlineExtension($deadline_extension);
         } else {
@@ -36,7 +34,8 @@ class ilMumieDeadlineExtensionService
         ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_deadline_extension_successfull_date_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_grade_overview_list_to') . " " . substr($date_time_input, 0, 10) . " - " . substr($date_time_input, 11, 5));
     }
 
-    private static function insertDeadlineExtension(ilMumieDeadlineExtension $deadline_extension) {
+    private static function insertDeadlineExtension(ilMumieDeadlineExtension $deadline_extension)
+    {
         global $ilDB;
         $ilDB->insert(
             self::DEADLINE_EXTENSION_TABLE,
@@ -63,35 +62,31 @@ class ilMumieDeadlineExtensionService
         );
     }
 
-    public static function hasDeadlineExtension($user_id, $task)
+    public static function hasDeadlineExtension($user_id, $task): boolean
     {
-        global $ilDB;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
-        $query = "SELECT date
-        FROM xmum_deadline_ext
-        WHERE " .
-        "usr_id = " . $ilDB->quote($hashed_user, "text") .
-        " AND " .
-        "task_id = " . $ilDB->quote($task->getId(), "integer");
-        $result = $ilDB->query($query);
-        $grade = $ilDB->fetchAssoc($result);
-        return !is_null($grade[self::DATE]);
+        return !is_null(self::getDeadlineExtension($user_id, $task)->getUserId());
     }
 
-    public static function getDeadlineExtension($user_id, $task)
+    public static function getDeadlineExtensionDate($user_id, $task)
+    {
+        return self::getDeadlineExtension($user_id, $task)->getDate();
+    }
+
+    private static function getDeadlineExtension($user_id, $task): ilMumieDeadlineExtension
     {
         global $ilDB;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $task);
-        $query = "SELECT date
+        $query = "SELECT *
         FROM xmum_deadline_ext
         WHERE " .
-        "task_id = " . $ilDB->quote($task->getId(), "integer") .
-        " AND " .
-        "usr_id = " . $ilDB->quote($hashed_user, "text");
-        $result = $ilDB->query($query);
-        ilLoggerFactory::getLogger('xmum')->info("xxxxxxxxxxxxxxxxxxxxxxxxxxx                   --------------MumieTask: Changes triggered forced grade update");
-
-        return $ilDB->fetchAssoc($result)[self::DATE];
+            self::TASK_ID .
+            " = "
+            . $ilDB->quote($task->getId(), "integer") .
+            " AND " .
+            self::USER_ID .
+            " = " .
+            $ilDB->quote($user_id, "text");
+        $result = $ilDB->fetchAssoc($ilDB->query($query));
+        return new ilMumieDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
     }
 
     public static function deleteDeadlineExtensions($task)

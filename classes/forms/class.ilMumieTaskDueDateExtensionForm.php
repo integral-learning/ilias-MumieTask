@@ -29,7 +29,7 @@ class ilMumieTaskDueDateExtensionForm extends ilPropertyFormGUI
         $this->date_input->setShowTime(true);
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
         if(ilMumieDeadlineExtensionService::hasDeadlineExtension($_GET["user_id"], $this->mumie_task)){
-            $date_time = new ilDateTime(ilMumieDeadlineExtensionService::getDeadlineExtension($_GET["user_id"], $this->mumie_task), IL_CAL_UNIX);
+            $date_time = new ilDateTime(ilMumieDeadlineExtensionService::getDeadlineExtensionDate($_GET["user_id"], $this->mumie_task), IL_CAL_UNIX);
         } else {
             $date_time = new ilDateTime($this->mumie_task->getActivationEndingTime(), IL_CAL_UNIX);
         }
