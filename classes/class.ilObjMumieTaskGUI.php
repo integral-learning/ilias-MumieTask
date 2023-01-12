@@ -711,7 +711,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     { 
         $this->initDueDateExtension();
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskDateOverrideService.php');
-        ilMumieTaskDateOverrideService::upsertOverridenDate($this, $this->form->getInput("dateTime"), $_GET["user_id"]);
+        ilMumieTaskDateOverrideService::upsertOverriddenDate($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
     }

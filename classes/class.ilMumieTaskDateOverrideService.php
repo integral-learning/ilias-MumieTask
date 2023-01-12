@@ -14,34 +14,44 @@
 
 class ilMumieTaskDateOverrideService
 {
-    public static function upsertOverridenDate($parentObj, $date_time_input, $user_id)
+    public static function upsertOverriddenDate($mumie_task, $date_time_input, $user_id)
     {
         global $ilDB, $lng;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $parentObj->object);
-        if (!self::wasDueDateOverriden($user_id, $parentObj->object)) {
-            $ilDB->insert(
-                "xmum_date_override",
-                array(
-                    'task_id' => array('integer', $parentObj->object->getId()),
-                    'usr_id' => array('text', $hashed_user),
-                    'new_date' => array('integer', strtotime($date_time_input))
-                )
-            );
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $mumie_task);
+        if (!self::wasDueDateOverriden($user_id, $mumie_task)) {
+            self::insertOverriddenDate($mumie_task,$hashed_user, $date_time_input);
         } else {
-            $ilDB->update(
-                "xmum_date_override",
-                array(
-                    'new_date' => array('integer', strtotime($date_time_input))
-                ),
-                array(
-                    'task_id' => array('integer', $parentObj->object->getId()),
-                    'usr_id' => array('text', $hashed_user),
-                )
-            );
+            self::updateOverriddenDate($mumie_task, $hashed_user, $date_time_input);
         }
         $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
         $names = $ilDB->fetchAssoc($result);
         ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_deadline_extension_successfull_date_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_grade_overview_list_to') . " " . substr($date_time_input, 0, 10) . " - " . substr($date_time_input, 11, 5));
+    }
+
+    private static function insertOverriddenDate($mumie_task, $user_id, $date) {
+        global $ilDB;
+        $ilDB->insert(
+            "xmum_date_override",
+            array(
+                'task_id' => array('integer', $mumie_task->getId()),
+                'usr_id' => array('text', $user_id),
+                'new_date' => array('integer', strtotime($date))
+            )
+        );
+    }
+
+    private static function updateOverriddenDate($mumie_task, $user_id, $date) {
+        global $ilDB;
+        $ilDB->update(
+            "xmum_date_override",
+            array(
+                'new_date' => array('integer', strtotime($date))
+            ),
+            array(
+                'task_id' => array('integer', $mumie_task->getId()),
+                'usr_id' => array('text', $user_id),
+            )
+        );
     }
 
     public static function wasDueDateOverriden($user_id, $task)
