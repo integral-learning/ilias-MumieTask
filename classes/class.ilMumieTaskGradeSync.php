@@ -12,7 +12,7 @@ use ILIAS\BackgroundTasks\TaskManager;
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
 include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/duedateextension/class.ilMumieTaskDateOverrideService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
 /**
  * This class pulls grades for a given task from its MUMIE server
  */
@@ -228,9 +228,9 @@ class ilMumieTaskGradeSync
 
     private function isGradeBeforeDueDate($grade)
     {
-        if(ilMumieTaskDateOverrideService::wasDueDateOverriden($this->getIliasId($grade), $this->task))
+        if(ilMumieDeadlineExtensionService::wasDueDateOverriden($this->getIliasId($grade), $this->task))
         {
-            return strtotime($grade->timestamp) <= ilMumieTaskDateOverrideService::getOverridenDueDate($this->getIliasId($grade), $this->task);
+            return strtotime($grade->timestamp) <= ilMumieDeadlineExtensionService::getOverridenDueDate($this->getIliasId($grade), $this->task);
         }
         if (!$this->task->getActivationLimited()) {
             return true;
@@ -296,8 +296,8 @@ class ilMumieTaskGradeSync
     public static function getDueDateForUser($user_id, $task_id)
     {
         $task = self::getMumieTaskFromId($task_id);
-        if(ilMumieTaskDateOverrideService::wasDueDateOverriden($user_id, $task)) {
-            return ilMumieTaskDateOverrideService::getOverridenDueDate($user_id, $task);
+        if(ilMumieDeadlineExtensionService::wasDueDateOverriden($user_id, $task)) {
+            return ilMumieDeadlineExtensionService::getOverridenDueDate($user_id, $task);
         }
         return $task->getActivationEndingTime();
     }

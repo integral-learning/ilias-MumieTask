@@ -12,7 +12,7 @@
  * This class provides services for overriding grades
  */
 
-class ilMumieTaskDateOverrideService
+class ilMumieDeadlineExtensionService
 {
     const DATE_OVERRIDE_TABLE = "xmum_deadline_ext";
     const TASK_ID = 'task_id';
