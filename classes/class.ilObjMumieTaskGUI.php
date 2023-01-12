@@ -697,9 +697,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilCtrl, $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDueDateExtensionForm.php');
-        $form = new ilMumieTaskDueDateExtensionForm();
+        $form = new ilMumieTaskDueDateExtensionForm($this->object);
         $form->checkInput();
-        $form->setFields($this);
+        $form->setFields();
         $form->addCommandButton('submitDueDateExtension', $lng->txt('rep_robj_xmum_frm_save'));
         $form->addCommandButton('displayGradeOverviewPage', $lng->txt('rep_robj_xmum_frm_cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
