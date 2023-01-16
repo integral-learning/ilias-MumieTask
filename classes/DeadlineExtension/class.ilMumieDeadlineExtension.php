@@ -8,6 +8,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDateTime.php');
+
 /**
  * This class represents a due date extension granted to a student
  */
@@ -23,15 +25,15 @@ class ilMumieDeadlineExtension {
      */
     public function __construct($unix_time, $user_id, $task_id)
     {
-        $this->date = new ilDateTime($unix_time, IL_CAL_UNIX);
+        $this->date = new ilMumieTaskDateTime($unix_time, IL_CAL_UNIX);
         $this->user_id = $user_id;
         $this->task_id = $task_id;
     }
 
     /**
-     * @return ilDateTime
+     * @return ilMumieTaskDateTime
      */
-    public function getDate(): ilDateTime
+    public function getDate(): ilMumieTaskDateTime
     {
         return $this->date;
     }
@@ -75,6 +77,4 @@ class ilMumieDeadlineExtension {
     {
         $this->task_id = $task_id;
     }
-
-
 }

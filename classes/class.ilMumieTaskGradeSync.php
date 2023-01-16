@@ -291,12 +291,12 @@ class ilMumieTaskGradeSync
         return $task;
     }
 
-    public static function getDeadlineForUser($user_id, $task_id)
+    public static function getDeadlineDateForUser($user_id, $task_id) : ilMumieTaskDateTime
     {
         $task = self::getMumieTaskFromId($task_id);
         if(ilMumieDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
-            return ilMumieDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task)->getUnixTime();
+            return ilMumieDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task);
         }
-        return $task->getActivationEndingTime();
+        return new ilMumieTaskDateTime($task->getActivationEndingTime());
     }
 }
