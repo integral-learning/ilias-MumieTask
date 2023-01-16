@@ -19,6 +19,16 @@ class ilMumieTaskDeadlineExtensionService
     const USER_ID = 'usr_id';
     const DATE = 'date';
 
+    public static function hasDeadlineExtension($user_id, $task): bool
+    {
+        return !is_null(self::getDeadlineExtension($user_id, $task)->getUserId());
+    }
+
+    public static function getDeadlineExtensionDate($user_id, $task): ilMumieTaskDateTime
+    {
+        return self::getDeadlineExtension($user_id, $task)->getDate();
+    }
+
     public static function upsertDeadlineExtension($mumie_task, $date_time_input, $user_id)
     {
         $deadline_extension = new ilMumieTaskDeadlineExtension(strtotime($date_time_input), $user_id, $mumie_task->getId());
@@ -28,6 +38,13 @@ class ilMumieTaskDeadlineExtensionService
             self::updateDeadlineExtension($deadline_extension);
         }
         self::sendUpdateSuccessMessage($deadline_extension);
+    }
+
+    public static function deleteDeadlineExtensions($task)
+    {
+        global $ilDB;
+        //TODO: Delete when MT is deleted
+        $ilDB->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 
     private static function insertDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)
@@ -58,16 +75,6 @@ class ilMumieTaskDeadlineExtensionService
         );
     }
 
-    public static function hasDeadlineExtension($user_id, $task): bool
-    {
-        return !is_null(self::getDeadlineExtension($user_id, $task)->getUserId());
-    }
-
-    public static function getDeadlineExtensionDate($user_id, $task): ilMumieTaskDateTime
-    {
-        return self::getDeadlineExtension($user_id, $task)->getDate();
-    }
-
     private static function getDeadlineExtension($user_id, $task): ilMumieTaskDeadlineExtension
     {
         global $ilDB;
@@ -83,13 +90,6 @@ class ilMumieTaskDeadlineExtensionService
             $ilDB->quote($user_id, "text");
         $result = $ilDB->fetchAssoc($ilDB->query($query));
         return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
-    }
-
-    public static function deleteDeadlineExtensions($task)
-    {
-        global $ilDB;
-        //TODO: Delete when MT is deleted
-        $ilDB->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 
     private static function sendUpdateSuccessMessage(ilMumieTaskDeadlineExtension $deadline_extension)
