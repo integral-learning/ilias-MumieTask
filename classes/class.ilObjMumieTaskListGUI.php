@@ -58,7 +58,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
         }
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         try {
-            $deadline = date('d.m.Y - H:i', ilMumieTaskGradeSync::getDueDateForUser($ilUser->getId(), $this->obj_id));
+            $deadline = date('d.m.Y - H:i', ilMumieTaskGradeSync::getDeadlineForUser($ilUser->getId(), $this->obj_id));
             $task = ilMumieTaskGradeSync::getMumieTaskFromId($this->obj_id);
             $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
             if (!empty($task->getDescription())) {

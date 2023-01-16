@@ -291,7 +291,7 @@ class ilMumieTaskGradeSync
         return $task;
     }
 
-    public static function getDueDateForUser($user_id, $task_id)
+    public static function getDeadlineForUser($user_id, $task_id)
     {
         $task = self::getMumieTaskFromId($task_id);
         if(ilMumieDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
