@@ -654,8 +654,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilTabs, $ilCtrl, $lng;
         $ilTabs->activateTab('userList');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskGradeListFormGUI.php');
-        $form =  new ilMumieTaskGradeListFormGUI();
-        $form->setFields($this);
+        $form =  new ilMumieTaskGradeListFormGUI($this, $_GET['user_id']);
+        $form->setFields();
         $form->setFormAction($ilCtrl->getFormAction($this));
         $form->addCommandButton('displayGradeOverviewPage', $lng->txt('rep_robj_xmum_frm_grade_overview_list_back'));
         $this->form = $form;

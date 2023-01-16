@@ -12,22 +12,23 @@
  */
 class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
-    private $parentObj;
-    public function __construct()
+    private $user_id;
+    private $parent_gui;
+    public function __construct($parent_gui, $user_id)
     {
         parent::__construct();
+        $this->parent_gui = $parent_gui;
+        $this->user_id = $user_id;
     }
 
-    public function setFields($parentObj)
+    public function setFields()
     {
-        $this->parentObj = $parentObj;
-
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-        $this->setTitle(ilMumieTaskUserService::getFirstName($_GET['user_id']) . " " . ilMumieTaskUserService::getLastName($_GET['user_id']));
+        $this->setTitle(ilMumieTaskUserService::getFirstName($this->user_id) . " " . ilMumieTaskUserService::getLastName($this->user_id));
         $this->setCurentGradeInfo();
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
-        $gradelist = new ilMumieTaskGradeListGUI($parentObj);
+        $gradelist = new ilMumieTaskGradeListGUI($this->parent_gui);
         $gradelist->init();
         $this->addItem($gradelist);
     }
@@ -35,17 +36,18 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     public function setCurentGradeInfo()
     {
         global $ilDB, $lng;
+        $mumie_task = $this->parent_gui->object;
         $result = $ilDB->query(
             "SELECT mark 
             FROM ut_lp_marks 
-            WHERE usr_id = " . $ilDB->quote($_GET['user_id'], "integer") .
+            WHERE usr_id = " . $ilDB->quote($this->user_id, "integer") .
             " AND " .
-            "obj_id = " . $ilDB->quote($this->parentObj->object->getId(), "integer")
+            "obj_id = " . $ilDB->quote($mumie_task->getId(), "integer")
         );
         $grade = $ilDB->fetchAssoc($result);
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
-        if (ilMumieDeadlineExtensionService::hasDeadlineExtension($_GET["user_id"], $this->parentObj->object) && $this->parentObj->object->getActivationLimited()) {
-            $deadline = ilMumieDeadlineExtensionService::getDeadlineExtensionDate($_GET["user_id"], $this->parentObj->object)->get();
+        if (ilMumieDeadlineExtensionService::hasDeadlineExtension($this->user_id, $mumie_task) && $mumie_task->getActivationLimited()) {
+            $deadline = ilMumieDeadlineExtensionService::getDeadlineExtensionDate($this->user_id, $mumie_task)->get();
             ilUtil::sendInfo(
                 "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade["mark"]. " <br> " .
                 "<b>" . $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline') . ":</b> " . $deadline
