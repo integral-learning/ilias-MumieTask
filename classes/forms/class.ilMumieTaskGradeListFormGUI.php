@@ -59,7 +59,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     private function getCurrentGradeInformation($grade): string
     {
         global $lng;
-        $grade_info = is_null($grade) ? $lng->txt('rep_robj_xmum_frm_grade_overview_no_current_grade') : $grade["mark"];
+        $grade_info = is_null($grade) ? $lng->txt('rep_robj_xmum_frm_grade_overview_no_current_grade') : $grade;
         return "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade_info . "<br>";
     }
 
