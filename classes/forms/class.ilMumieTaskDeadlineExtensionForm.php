@@ -12,7 +12,13 @@
  */
 class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 {
+    /**
+     * @var ilDateTimeInputGUI
+     */
     private $date_input;
+    /**
+     * @var ilObjMumieTask
+     */
     private $mumie_task;
     /**
      * @var string
