@@ -63,7 +63,7 @@ class ilMumieDeadlineExtensionService
         return !is_null(self::getDeadlineExtension($user_id, $task)->getUserId());
     }
 
-    public static function getDeadlineExtensionDate($user_id, $task)
+    public static function getDeadlineExtensionDate($user_id, $task): ilMumieTaskDateTime
     {
         return self::getDeadlineExtension($user_id, $task)->getDate();
     }

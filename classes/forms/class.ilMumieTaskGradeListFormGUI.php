@@ -8,7 +8,7 @@
  */
 
 /**
- * This form is used to edit the Learning Progress settings of MumieTasks
+ * This form is used to display all submissions a user has gotten for a given MumieTask
  */
 class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
@@ -25,7 +25,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     {
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
         $this->setTitle(ilMumieTaskUserService::getFirstName($this->user_id) . " " . ilMumieTaskUserService::getLastName($this->user_id));
-        $this->setCurentGradeInfo();
+        $this->setCurrentGradeInfo();
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
         $gradelist = new ilMumieTaskGradeListGUI($this->parent_gui);
@@ -33,39 +33,34 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         $this->addItem($gradelist);
     }
 
-    public function setCurentGradeInfo()
+    public function setCurrentGradeInfo()
     {
-        global $ilDB, $lng;
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $mumie_task = $this->parent_gui->object;
-        $result = $ilDB->query(
-            "SELECT mark 
-            FROM ut_lp_marks 
-            WHERE usr_id = " . $ilDB->quote($this->user_id, "integer") .
-            " AND " .
-            "obj_id = " . $ilDB->quote($mumie_task->getId(), "integer")
-        );
-        $grade = $ilDB->fetchAssoc($result);
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($this->user_id, $mumie_task->getId());
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
         if (ilMumieDeadlineExtensionService::hasDeadlineExtension($this->user_id, $mumie_task) && $mumie_task->getActivationLimited()) {
-            $deadline = ilMumieDeadlineExtensionService::getDeadlineExtensionDate($this->user_id, $mumie_task)->get();
+            $deadline = ilMumieDeadlineExtensionService::getDeadlineExtensionDate($this->user_id, $mumie_task);
             ilUtil::sendInfo(
-                "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade["mark"]. " <br> " .
-                "<b>" . $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline') . ":</b> " . $deadline
+                $this->getCurrentGradeInformation($grade) .
+                $this->getDeadlineExtensionInformation($deadline)
             );
-            if (empty($grade["mark"])) {
-                ilUtil::sendInfo(
-                    "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $lng->txt('rep_robj_xmum_frm_grade_overview_no_current_grade') . " <br> " .
-                    "<b>" . $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline') . ":</b> " . $deadline
-                );
-            }
         } else {
-            ilUtil::sendInfo("<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade["mark"]);
-            if (empty($grade["mark"])) {
-                ilUtil::sendInfo(
-                    "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $lng->txt('rep_robj_xmum_frm_grade_overview_no_current_grade') . " <br> "
-                );
-            }
+            ilUtil::sendInfo($this->getCurrentGradeInformation($grade));
         }
+    }
+
+    private function getDeadlineExtensionInformation(ilMumieTaskDateTime $deadline_extension_date): string
+    {
+        global $lng;
+        return "<b>" . $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline') . ":</b> " . $deadline_extension_date;
+    }
+
+    private function getCurrentGradeInformation($grade): string
+    {
+        global $lng;
+        $grade_info = is_null($grade) ? $lng->txt('rep_robj_xmum_frm_grade_overview_no_current_grade') : $grade["mark"];
+        return "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade_info . "<br>";
     }
 
     public function getHTML()
