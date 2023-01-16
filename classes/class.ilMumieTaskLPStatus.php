@@ -145,7 +145,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
         foreach ($mumieTasks as $mumieTask) {
             try {
-                $mumieTask->setDescription("ttttmmmppppp");
                 self::updateGrades($mumieTask);
             } catch(Exception $e) {
                 ilLoggerFactory::getLogger('xmum')->info('Error when updating grades for MUMIE Task: ' . $mumieTask->id);
@@ -172,9 +171,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         $mumieTasks = array();
 
         while ($record = $ilDB->fetchAssoc($result)) {
-
             $mumieTask = new ilObjMumieTask($record["ref_id"]);
-            ilLoggerFactory::getLogger('xmum')->info($record["ref_id"]);
             $mumieTask->read();
             array_push($mumieTasks, $mumieTask);
         }
