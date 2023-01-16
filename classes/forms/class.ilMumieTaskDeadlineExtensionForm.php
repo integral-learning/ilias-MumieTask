@@ -10,7 +10,7 @@
 /**
  * This form is used to grant due date extensions for a given MumieTask
  */
-class ilMumieTaskDueDateExtensionForm extends ilPropertyFormGUI
+class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 {
     private $date_input;
     private $mumie_task;
