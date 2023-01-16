@@ -6,10 +6,10 @@
     max-width: 80%;
 }
 
-.mumie-deadline-text {
+.mumie-deadline-badge {
     background-color: rgb(118, 170, 219);
     color: white;
-    padding: 0px 8px;
+    padding: 0 8px;
     text-align: center;
     border-radius: 5px;
   }
