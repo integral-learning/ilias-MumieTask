@@ -24,7 +24,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     public function setFields()
     {
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-        $this->setTitle(ilMumieTaskUserService::getFirstName($this->user_id) . " " . ilMumieTaskUserService::getLastName($this->user_id));
+        $this->setTitle(ilMumieTaskUserService::getFullName($this->user_id));
         $this->setCurrentGradeInfo();
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
