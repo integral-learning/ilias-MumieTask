@@ -13,7 +13,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 /**
  * This class represents a due date extension granted to a student
  */
-class ilMumieDeadlineExtension {
+class ilMumieTaskDeadlineExtension {
     private $date;
     private $user_id;
     private $task_id;

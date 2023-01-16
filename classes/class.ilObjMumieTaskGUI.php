@@ -431,13 +431,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     private function afterDeadline()
     {
         global $ilUser;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
         if(!$this->object->getActivationLimited())
         {
            return false;
         }
-        if(ilMumieDeadlineExtensionService::hasDeadlineExtension($ilUser->getId(), $this->object)) {
-            return time() >= ilMumieDeadlineExtensionService::getDeadlineExtensionDate($ilUser->getId(), $this->object)->getUnixTime();
+        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($ilUser->getId(), $this->object)) {
+            return time() >= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($ilUser->getId(), $this->object)->getUnixTime();
         } else {
             return time() >= $this->object->getActivationEndingTime();
         }
@@ -710,8 +710,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitDueDateExtension()
     { 
         $this->initDueDateExtension();
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
-        ilMumieDeadlineExtensionService::upsertDeadlineExtension($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
+        ilMumieTaskDeadlineExtensionService::upsertDeadlineExtension($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
     }

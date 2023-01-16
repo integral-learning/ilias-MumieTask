@@ -10,7 +10,7 @@
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
 include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
 /**
  * This class pulls grades for a given task from its MUMIE server
  */
@@ -226,9 +226,9 @@ class ilMumieTaskGradeSync
 
     private function isGradeBeforeDueDate($grade)
     {
-        if(ilMumieDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task))
+        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task))
         {
-            return strtotime($grade->timestamp) <= ilMumieDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
+            return strtotime($grade->timestamp) <= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
         }
         if (!$this->task->getActivationLimited()) {
             return true;
@@ -294,8 +294,8 @@ class ilMumieTaskGradeSync
     public static function getDeadlineDateForUser($user_id, $task_id) : ilMumieTaskDateTime
     {
         $task = self::getMumieTaskFromId($task_id);
-        if(ilMumieDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
-            return ilMumieDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task);
+        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
+            return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task);
         }
         return new ilMumieTaskDateTime($task->getActivationEndingTime());
     }

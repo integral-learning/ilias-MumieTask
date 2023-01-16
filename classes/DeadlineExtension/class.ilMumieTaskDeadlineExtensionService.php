@@ -8,11 +8,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtension.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtension.php');
 /**
  * This service is used to manage deadline extensions for students
  */
-class ilMumieDeadlineExtensionService
+class ilMumieTaskDeadlineExtensionService
 {
     const DEADLINE_EXTENSION_TABLE = "xmum_deadline_ext";
     const TASK_ID = 'task_id';
@@ -21,7 +21,7 @@ class ilMumieDeadlineExtensionService
 
     public static function upsertDeadlineExtension($mumie_task, $date_time_input, $user_id)
     {
-        $deadline_extension = new ilMumieDeadlineExtension(strtotime($date_time_input), $user_id, $mumie_task->getId());
+        $deadline_extension = new ilMumieTaskDeadlineExtension(strtotime($date_time_input), $user_id, $mumie_task->getId());
         if (!self::hasDeadlineExtension($user_id, $mumie_task)) {
             self::insertDeadlineExtension($deadline_extension);
         } else {
@@ -30,7 +30,7 @@ class ilMumieDeadlineExtensionService
         self::sendUpdateSuccessMessage($deadline_extension);
     }
 
-    private static function insertDeadlineExtension(ilMumieDeadlineExtension $deadline_extension)
+    private static function insertDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)
     {
         global $ilDB;
         $ilDB->insert(
@@ -43,7 +43,7 @@ class ilMumieDeadlineExtensionService
         );
     }
 
-    private static function updateDeadlineExtension(ilMumieDeadlineExtension $deadline_extension)
+    private static function updateDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)
     {
         global $ilDB;
         $ilDB->update(
@@ -68,7 +68,7 @@ class ilMumieDeadlineExtensionService
         return self::getDeadlineExtension($user_id, $task)->getDate();
     }
 
-    private static function getDeadlineExtension($user_id, $task): ilMumieDeadlineExtension
+    private static function getDeadlineExtension($user_id, $task): ilMumieTaskDeadlineExtension
     {
         global $ilDB;
         $query = "SELECT *
@@ -82,7 +82,7 @@ class ilMumieDeadlineExtensionService
             " = " .
             $ilDB->quote($user_id, "text");
         $result = $ilDB->fetchAssoc($ilDB->query($query));
-        return new ilMumieDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
+        return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
     }
 
     public static function deleteDeadlineExtensions($task)
@@ -92,7 +92,7 @@ class ilMumieDeadlineExtensionService
         $ilDB->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 
-    private static function sendUpdateSuccessMessage(ilMumieDeadlineExtension $deadline_extension)
+    private static function sendUpdateSuccessMessage(ilMumieTaskDeadlineExtension $deadline_extension)
     {
         global $lng;
         require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
