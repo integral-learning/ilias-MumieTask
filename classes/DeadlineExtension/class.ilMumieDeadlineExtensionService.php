@@ -38,7 +38,7 @@ class ilMumieDeadlineExtensionService
             array(
                 self::TASK_ID => array('integer', $deadline_extension->getTaskId()),
                 self::USER_ID => array('text', $deadline_extension->getUserId()),
-                self::DATE => array('integer', $deadline_extension->getDate())
+                self::DATE => array('integer', $deadline_extension->getDate()->getUnixTime())
             )
         );
     }
@@ -49,7 +49,7 @@ class ilMumieDeadlineExtensionService
         $ilDB->update(
             self::DEADLINE_EXTENSION_TABLE,
             array(
-                self::DATE => array('integer', $deadline_extension->getDate())
+                self::DATE => array('integer', $deadline_extension->getDate()->getUnixTime())
             ),
             array(
                 self::TASK_ID => array('integer', $deadline_extension->getTaskId()),

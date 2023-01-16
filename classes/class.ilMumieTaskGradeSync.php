@@ -230,7 +230,7 @@ class ilMumieTaskGradeSync
     {
         if(ilMumieDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task))
         {
-            return strtotime($grade->timestamp) <= ilMumieDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task);
+            return strtotime($grade->timestamp) <= ilMumieDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
         }
         if (!$this->task->getActivationLimited()) {
             return true;
@@ -297,7 +297,7 @@ class ilMumieTaskGradeSync
     {
         $task = self::getMumieTaskFromId($task_id);
         if(ilMumieDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
-            return ilMumieDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task);
+            return ilMumieDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task)->getUnixTime();
         }
         return $task->getActivationEndingTime();
     }

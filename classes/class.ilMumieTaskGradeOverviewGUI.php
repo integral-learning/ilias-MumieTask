@@ -71,7 +71,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieDeadlineExtensionService.php');
         if (ilMumieDeadlineExtensionService::hasDeadlineExtension($user_id, $parentObj->object) && $parentObj->object->getActivationLimited()) {
-            $deadline = date('d.m.Y - H:i', ilMumieDeadlineExtensionService::getDeadlineExtensionDate($user_id, $parentObj->object));
+            $deadline = ilMumieDeadlineExtensionService::getDeadlineExtensionDate($user_id, $parentObj->object)->get(IL_CAL_FKT_DATE, 'd.m.Y - H:i');
             $this->tpl->setVariable("VAL_EXTENDED_DEADLINE", $deadline);
         }
         if ($parentObj->object->getActivationLimited()) {

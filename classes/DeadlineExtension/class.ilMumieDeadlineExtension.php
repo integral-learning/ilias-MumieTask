@@ -17,21 +17,21 @@ class ilMumieDeadlineExtension {
     private $task_id;
 
     /**
-     * @param $date
+     * @param $unix_time
      * @param $user_id
      * @param $task_id
      */
-    public function __construct($date, $user_id, $task_id)
+    public function __construct($unix_time, $user_id, $task_id)
     {
-        $this->date = $date;
+        $this->date = new ilDateTime($unix_time, IL_CAL_UNIX);
         $this->user_id = $user_id;
         $this->task_id = $task_id;
     }
 
     /**
-     * @return mixed
+     * @return ilDateTime
      */
-    public function getDate()
+    public function getDate(): ilDateTime
     {
         return $this->date;
     }

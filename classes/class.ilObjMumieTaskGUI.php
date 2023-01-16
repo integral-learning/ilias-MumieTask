@@ -437,7 +437,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
            return false;
         }
         if(ilMumieDeadlineExtensionService::hasDeadlineExtension($ilUser->getId(), $this->object)) {
-            return time() >= ilMumieDeadlineExtensionService::getDeadlineExtensionDate($ilUser->getId(), $this->object);
+            return time() >= ilMumieDeadlineExtensionService::getDeadlineExtensionDate($ilUser->getId(), $this->object)->getUnixTime();
         } else {
             return time() >= $this->object->getActivationEndingTime();
         }
