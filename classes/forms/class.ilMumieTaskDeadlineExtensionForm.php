@@ -42,7 +42,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
         if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->user_id, $this->mumie_task)){
             $date_time = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->user_id, $this->mumie_task);
         } else {
-            $date_time = new ilDateTime($this->mumie_task->getActivationEndingTime(), IL_CAL_UNIX);
+            $date_time = $this->mumie_task->getDeadlineDateTime();
         }
         $this->date_input->setDate($date_time);
         $this->addItem($this->date_input);

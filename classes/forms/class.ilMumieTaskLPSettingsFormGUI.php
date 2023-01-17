@@ -21,6 +21,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     private $modus_item;
     private $gradepool_item;
     private $passing_threshold_item;
+    private $deadline_item;
     private $disable_grade_pool_selection;
 
     public function setFields()
@@ -56,6 +57,12 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->passing_threshold_item->setDecimals(0);
         $this->addItem($this->passing_threshold_item);
         $this->passing_threshold_item->setInfo($lng->txt('rep_robj_xmum_frm_passing_grade_desc'));
+
+        $this->deadline_item = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'), 'deadline');
+        $this->deadline_item->setInfo($lng->txt('rep_robj_xmum_frm_lp_deadline_desc'));
+        $this->deadline_item->setShowTime(true);
+
+        $this->addItem($this->deadline_item);
     }
 
     private function getGradepoolInfo()

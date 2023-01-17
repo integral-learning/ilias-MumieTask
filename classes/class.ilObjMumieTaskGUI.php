@@ -446,6 +446,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
         $values['privategradepool'] = $this->object->getPrivateGradepool();
+        $values['deadline'] = $this->object->getDeadlineDateTime();
         $this->form->setValuesByArray($values);
         $this->tpl->setContent($this->form->getHTML());
     }
@@ -493,6 +494,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->object->setPrivateGradepool((int)$this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
+        $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
         $this->object->doUpdate();
         if ($is_gradepool_setting_update) {
             ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(

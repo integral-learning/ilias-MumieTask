@@ -101,7 +101,7 @@ class ilMumieTaskGradeSync
             'includeAll' => true
         );
         if ($this->task->getActivationLimited() == 1) {
-            $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
+            $params["dueDate"] = $this->task->getDeadline() * 1000;
         }
         return $params;
     }
@@ -234,7 +234,7 @@ class ilMumieTaskGradeSync
         if (!$this->task->getActivationLimited()) {
             return true;
         }
-        return strtotime($grade->timestamp) <= $this->task->getActivationEndingTime();
+        return strtotime($grade->timestamp) <= $this->task->getDeadline();
     }
 
     private function getLatestGrade($xapi_grades)

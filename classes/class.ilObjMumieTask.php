@@ -35,6 +35,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $activation_starting_time;
     private $activation_ending_time;
     private $activation_visibility;
+    private $deadline;
 
     /**
      * Constructor
@@ -96,6 +97,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setPassingGrade($rec['passing_grade']);
             $this->setOnline($rec['online']);
             $this->setPrivateGradepool($rec['privategradepool']);
+            $this->setDeadline($rec['deadline']);
         }
 
         /**
@@ -139,7 +141,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'lp_modus' => array('integer', $this->getLpModus()),
                 'privategradepool' => array('integer', $this->getPrivateGradepool()),
                 'online' => array('integer', $this->getOnline()),
-            ),
+                'deadline' => array('integer', $this->getDeadline())
+    ),
             array(
                 'id' => array("int", $this->getId()),
             )
@@ -566,11 +569,29 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function hasDeadline()
     {
 
-        return isset($this->activation_ending_time);
+        return isset($this->deadline);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getDeadline()
+    {
+        return $this->deadline;
+    }
+
+    /**
+     * @param mixed $deadline
+     */
+    public function setDeadline($deadline) : void
+    {
+        $this->deadline = $deadline;
+    }
+
+
 
     public function getDeadlineDateTime(): ilMumieTaskDateTime
     {
-        return new ilMumieTaskDateTime($this->activation_ending_time);
+        return new ilMumieTaskDateTime($this->deadline);
     }
 }

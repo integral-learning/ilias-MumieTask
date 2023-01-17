@@ -43,10 +43,9 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         $this->addItem($this->text_item_last);
 
         if ($parentObj->object->getActivationLimited()) {
-            $dateTime = date('d.m.Y - H:i', $parentObj->object->getActivationEndingTime());
             ilUtil::sendInfo('<span>
             <b>' . $lng->txt('rep_robj_xmum_frm_user_overview_list_general_deadline') . '</b>
-            <span style="margin-left:50px"> ' . $dateTime . '</span>
+            <span style="margin-left:50px"> ' . $parentObj->object->getDeadlineDateTime() . '</span>
             </span>');
         }
     }
