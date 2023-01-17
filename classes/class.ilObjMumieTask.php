@@ -13,6 +13,7 @@ require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDateTime.php');
 
 /**
  */
@@ -504,13 +505,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this;
     }
 
-    public function setDeadlineActive($activation_limited)
-    {
-        $this->activation_limited = $activation_limited;
-
-        return $this;
-    }
-
     public function getActivationStartingTime()
     {
         return $this->activation_starting_time;
@@ -567,5 +561,16 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         global $DIC;
         $tree = $DIC['tree'];
         return $tree->getParentId($this->getRefId());
+    }
+
+    public function hasDeadline()
+    {
+
+        return isset($this->activation_ending_time);
+    }
+
+    public function getDeadlineDateTime(): ilMumieTaskDateTime
+    {
+        return new ilMumieTaskDateTime($this->activation_ending_time);
     }
 }

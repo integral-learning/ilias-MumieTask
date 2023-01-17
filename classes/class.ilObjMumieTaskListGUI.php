@@ -56,12 +56,13 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
     {
         global $ilUser, $tpl;
 
-        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskObjService.php');
         try {
-            $deadline = ilMumieTaskGradeSync::getDeadlineDateForUser($ilUser->getId(), $this->obj_id);
-            $task = ilMumieTaskGradeSync::getMumieTaskFromId($this->obj_id);
+            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($ilUser->getId(), $this->obj_id);
+            $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
 
-            if(!$task->getActivationLimited()) {
+            if(!$task->hasDeadline()) {
                 return parent::insertDescription();
             }
 

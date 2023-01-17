@@ -11,6 +11,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
 /**
  * This class pulls grades for a given task from its MUMIE server
  */
@@ -277,26 +278,5 @@ class ilMumieTaskGradeSync
             }
         }
         return $userGrades;
-    }
-
-
-
-    public static function getMumieTaskFromId($task_id)
-    {
-        global $ilDB;
-        $query = "SELECT  * FROM object_reference WHERE obj_id = " . $ilDB->quote($task_id, "integer");
-        $result = $ilDB->query($query);
-        $task_ref_id = $ilDB->fetchAssoc($result);
-        $task = new ilObjMumieTask($task_ref_id["ref_id"]);
-        return $task;
-    }
-
-    public static function getDeadlineDateForUser($user_id, $task_id) : ilMumieTaskDateTime
-    {
-        $task = self::getMumieTaskFromId($task_id);
-        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
-            return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task);
-        }
-        return new ilMumieTaskDateTime($task->getActivationEndingTime());
     }
 }

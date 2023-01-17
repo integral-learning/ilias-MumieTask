@@ -416,32 +416,17 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     protected function viewContent()
     {
-        global $ilTabs, $ilCtrl, $lng;
+        global $ilTabs, $ilCtrl, $lng, $ilUser;
         if ($this->object->isDummy()) {
             $ilCtrl->redirect($this, 'editProperties');
         }
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
-        if($this->afterDeadline()) {
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
+        if(ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
             ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_grade_overview_after_deadline'));
         }
         $this->tpl->setContent($this->object->getContent()); 
-    }
-
-    private function afterDeadline()
-    {
-        global $ilUser;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
-        if(!$this->object->getActivationLimited())
-        {
-           return false;
-        }
-        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($ilUser->getId(), $this->object)) {
-            return time() >= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($ilUser->getId(), $this->object)->getUnixTime();
-        } else {
-            return time() >= $this->object->getActivationEndingTime();
-        }
-        return false;
     }
 
     /**

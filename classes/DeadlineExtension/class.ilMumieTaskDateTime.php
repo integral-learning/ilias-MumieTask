@@ -26,4 +26,9 @@ class ilMumieTaskDateTime extends ilDateTime {
         return $this::get();
     }
 
+    public function hasPassed(): bool
+    {
+        return time() > $this->getUnixTime();
+    }
+
 }
