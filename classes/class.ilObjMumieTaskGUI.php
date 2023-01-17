@@ -715,6 +715,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
     }
+
     /**
      * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).
      * After that a new synchronization is triggered.

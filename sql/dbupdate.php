@@ -351,24 +351,4 @@ if (!$ilDB->tableExists('xmum_deadline_ext')) {
     );
     $ilDB->createTable("xmum_deadline_ext", $tableSettings);
 }
-if (!$ilDB->tableExists('xmum_task_dealines')) {
-    $fieldsAminSettings = array(
-        'task_id' => array(
-            'type' => 'integer',
-            'length' => 8,
-            'notnull' => true,
-        ),
-        'start_date' => array(
-            'type' => 'integer',
-            'length' => '4',
-            'notnull' => true,
-        ),
-        'end_date' => array(
-            'type' => 'integer',
-            'length' => '4',
-            'notnull' => true,
-        ),
-    );
-    $ilDB->createTable("xmum_task_dealines", $fieldsAminSettings);
-}
 ?>

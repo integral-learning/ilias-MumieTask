@@ -33,7 +33,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $activation_limited;
     private $activation_starting_time;
     private $activation_ending_time;
-
+    private $activation_visibility;
 
     /**
      * Constructor
@@ -97,24 +97,27 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setPrivateGradepool($rec['privategradepool']);
         }
 
+        /**
+         * Snippet taken from ilObjTask->loadFromDb
+         */
         if ($this->ref_id) {
-            if ($this->isDeadlineDBSet()) {
-                $activation_times = $this->getDeadlineDB();
-                $this->setActivationLimited(true);
-                $this->setActivationStartingTime($activation_times["start_date"]);
-                $this->setActivationEndingTime($activation_times["end_date"]);
-            }else {
-                $this->setActivationLimited(false);
+            include_once "./Services/Object/classes/class.ilObjectActivation.php";
+            $activation = ilObjectActivation::getItem($this->ref_id);
+            switch ($activation["timing_type"]) {
+                case ilObjectActivation::TIMINGS_ACTIVATION:
+                    $this->setActivationLimited(true);
+                    $this->setActivationStartingTime($activation["timing_start"]);
+                    $this->setActivationEndingTime($activation["timing_end"]);
+                    $this->setActivationVisibility($activation["visible"]);
+                    break;
+
+                default:
+                    $this->setActivationLimited(false);
+                    break;
             }
         }
     }
 
-    private function getDeadlineDB(){
-        global $ilDB;
-        $query = "SELECT * FROM xmum_task_dealines WHERE task_id = " . $ilDB->quote($this->getId(), 'integer');
-        $result = $ilDB->query($query);
-        return $ilDB->fetchAssoc($result);
-    }
     /**
      * Update data
      */
@@ -141,48 +144,25 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             )
         );
 
+        /**
+         * Snippet taken from ilObjTest->saveToDb()
+         */
         if ($this->ref_id) {
-            if ($this->isDeadlineDBSet()) {
-                if (!$this->getActivationLimited()) {
-                    $ilDB->manipulate("DELETE FROM xmum_task_dealines WHERE task_id = " . $ilDB->quote($this->getId(), 'integer'));
-                } else {
-                    $ilDB->update(
-                        "xmum_task_dealines",
-                        array(
-                            'start_date' => array('integer', $this->getActivationStartingTime()),
-                            'end_date' => array('integer', $this->getActivationEndingTime())
-                        ),
-                        array(
-                            'task_id' => array('integer', $this->getId()),
-                        )
-                    );
-                }
+            include_once "./Services/Object/classes/class.ilObjectActivation.php";
+            ilObjectActivation::getItem($this->ref_id);
+
+            $item = new ilObjectActivation;
+            if (!$this->getActivationLimited()) {
+                $item->setTimingType(ilObjectActivation::TIMINGS_DEACTIVATED);
             } else {
-                if ($this->getActivationLimited()) {
-                    $ilDB->insert(
-                        "xmum_task_dealines",
-                        array(
-                            'task_id' => array('integer', $this->getId()),
-                            'start_date' => array('integer', $this->getActivationStartingTime()),
-                            'end_date' => array('integer', $this->getActivationEndingTime())
-                        )
-                    );
-                }
+                $item->setTimingType(ilObjectActivation::TIMINGS_ACTIVATION);
+                $item->setTimingStart($this->getActivationStartingTime());
+                $item->setTimingEnd($this->getActivationEndingTime());
+                $item->toggleVisible($this->getActivationVisibility());
             }
+
+            $item->update($this->ref_id);
         }
-
-    }
-
-    private function isDeadlineDBSet()
-    {
-        global $ilDB;
-        $query = "SELECT *
-        FROM xmum_task_dealines
-        WHERE " .
-        "task_id = " . $ilDB->quote($this->getId(), "integer");
-        $result = $ilDB->query($query);
-        $task = $ilDB->fetchAssoc($result);
-        return !is_null($task["task_id"]);
     }
 
     /**
@@ -191,7 +171,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function doDelete()
     {
         global $ilDB;
-
+        require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
+        ilMumieTaskDeadlineExtensionService::deleteDeadlineExtensions($this);
         $ilDB->manipulate(
             "DELETE FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME . " WHERE " .
             " id = " . $ilDB->quote($this->getId(), "integer")
@@ -444,7 +425,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function getLoginUrl()
     {
         return ilMumieTaskServer::fromUrl($this->server)->getLoginUrl();
-        //return $this->server . 'public/xapi/auth/sso/login';
     }
 
     /**
@@ -454,7 +434,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function getLogoutUrl()
     {
-        //return $this->server . 'public/xapi/auth/sso/logout';
         ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
     }
 
@@ -552,6 +531,18 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function setActivationEndingTime($activation_ending_time)
     {
         $this->activation_ending_time = $activation_ending_time;
+
+        return $this;
+    }
+
+    public function getActivationVisibility()
+    {
+        return $this->activation_visibility;
+    }
+
+    public function setActivationVisibility($activation_visibility)
+    {
+        $this->activation_visibility = $activation_visibility;
 
         return $this;
     }

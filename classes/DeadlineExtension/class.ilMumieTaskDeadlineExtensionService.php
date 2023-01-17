@@ -43,7 +43,6 @@ class ilMumieTaskDeadlineExtensionService
     public static function deleteDeadlineExtensions($task)
     {
         global $ilDB;
-        //TODO: Delete when MT is deleted
         $ilDB->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 

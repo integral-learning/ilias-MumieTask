@@ -77,9 +77,6 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
                         $ilAccess->addInfoItem(IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
                         return false;
                     }
-                    if (!self::_lookupAfterStartTime($a_obj_id)) {
-                        return false;
-                    }
                 }
                 break;
         }
@@ -100,17 +97,5 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
             return $row["online"] == 1;
         }
         return false;
-    }
-
-    public static function _lookupAfterStartTime($objId)
-    {
-        global $ilDB;
-
-        $query = "SELECT start_date FROM xmum_task_dealines where task_id = " . $ilDB->quote($objId, 'integer');
-
-        if ($row = $ilDB->fetchAssoc($ilDB->query($query))) {
-            return time() >= $row["start_date"];
-        }
-        return true;
     }
 }
