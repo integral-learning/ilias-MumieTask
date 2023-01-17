@@ -38,7 +38,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
         $this->date_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_deadline_extension_new_deadline'), 'dateTime');
         $this->date_input->setShowTime(true);
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->user_id, $this->mumie_task)){
             $date_time = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->user_id, $this->mumie_task);
         } else {

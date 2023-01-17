@@ -695,7 +695,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitDueDateExtension()
     { 
         $this->initDueDateExtension();
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         ilMumieTaskDeadlineExtensionService::upsertDeadlineExtension($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);

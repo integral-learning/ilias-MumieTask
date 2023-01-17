@@ -1,6 +1,8 @@
 <?php
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtension.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtension.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskObjService.php');
+
 class ilMumieTaskDeadlineService
 {
     public static function getDeadlineDateForUser(string $user_id, string $task_id) : ilMumieTaskDateTime
@@ -15,7 +17,7 @@ class ilMumieTaskDeadlineService
 
     public static function hasDeadlinePassedForUser(string $user_id, ilObjMumieTask $task) : bool
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         if(!$task->hasDeadline())
         {
             return false;

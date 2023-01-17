@@ -38,7 +38,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $mumie_task = $this->parent_gui->object;
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($this->user_id, $mumie_task->getId());
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/DeadlineExtension/class.ilMumieTaskDeadlineExtensionService.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->user_id, $mumie_task) && $mumie_task->getActivationLimited()) {
             $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->user_id, $mumie_task);
             ilUtil::sendInfo(
