@@ -12,6 +12,7 @@
  */
 class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 {
+    const DEADLINE_PARAM = 'deadline_extension';
     /**
      * @var ilDateTimeInputGUI
      */
@@ -36,7 +37,8 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
     {
         global $lng;
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
-        $this->date_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_deadline_extension_new_deadline'), 'dateTime');
+        $this->date_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_deadline_extension_new_deadline'),
+            self::DEADLINE_PARAM);
         $this->date_input->setShowTime(true);
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->user_id, $this->mumie_task)){
@@ -50,6 +52,12 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 
     public function checkInput() : bool
     {
-        return parent::checkInput();
+        global $lng;
+        $ok = parent::checkInput();
+        if ($this->mumie_task->getDeadline() > strtotime($this->getInput(self::DEADLINE_PARAM))) {
+            $ok = false;
+            $this->date_input->setAlert($lng->txt("rep_robj_xmum_frm_deadline_extension_before_general_deadline_error"));
+        }
+        return $ok;
     }
 }

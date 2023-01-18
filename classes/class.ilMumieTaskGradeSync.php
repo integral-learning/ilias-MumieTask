@@ -102,7 +102,7 @@ class ilMumieTaskGradeSync
             'lastSync' => $getOnlyChangedGrades ? $this->getLastSync() : 1,
             'includeAll' => true
         );
-        if ($this->task->getActivationLimited() == 1) {
+        if ($this->task->hasDeadline() == 1) {
             $params["dueDate"] = $this->task->getDeadline() * 1000;
         }
         return $params;
@@ -233,7 +233,7 @@ class ilMumieTaskGradeSync
         {
             return strtotime($grade->timestamp) <= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
         }
-        if (!$this->task->getActivationLimited()) {
+        if (!$this->task->hasDeadline()) {
             return true;
         }
         return strtotime($grade->timestamp) <= $this->task->getDeadline();

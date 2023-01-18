@@ -691,7 +691,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDeadlineExtensionForm.php');
         $form = new ilMumieTaskDeadlineExtensionForm($this->object, $_GET["user_id"]);
         $form->setTitle($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'));
-        $form->checkInput();
         $form->setFields();
         $form->addCommandButton('submitDeadlineExtension', $lng->txt('rep_robj_xmum_frm_save'));
         $form->addCommandButton('displayGradeOverviewPage', $lng->txt('rep_robj_xmum_frm_cancel'));
@@ -702,8 +701,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitDeadlineExtension()
     { 
         $this->initDeadlineExtension();
+        if (!$this->form->checkInput()) {
+            $this->form->setValuesByPost();
+            $this->tpl->setContent($this->form->getHTML());
+            return;
+        }
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
-        ilMumieTaskDeadlineExtensionService::upsertDeadlineExtension($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
+        ilMumieTaskDeadlineExtensionService::upsertDeadlineExtension($this->object, $this->form->getInput("deadline_extension"), $_GET["user_id"]);
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
     }
