@@ -616,8 +616,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
-        $html = $this->initGradeOverviewPage();
-        $this->tpl->setContent($html);
+        $this->initGradeOverviewPage();
+        $this->tpl->setContent($this->form->getHTML());
     }
 
     private function initGradeOverviewPage()
@@ -635,7 +635,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         $this->tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
         $this->form->setFields($this, $this->form);
-        return $this->form->getHTML();
     }
 
     public function displayGradeList()
