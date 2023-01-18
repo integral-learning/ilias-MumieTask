@@ -8,6 +8,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskUser.php');
 /**
  * This class provides services for overriding grades
  */
@@ -16,23 +17,24 @@ class ilMumieTaskUserService
 {
     public static function getFirstName($user_id)
     {
-        return self::getUsername($user_id)["firstname"];
+        return self::getUser($user_id)->getFirstName();
     }
 
     public static function getLastName($user_id)
     {
-        return self::getUsername($user_id)["lastname"];
+        return self::getUser($user_id)->getLastName();
     }
 
     public static function getFullName($user_id)
     {
-        return self::getFirstName($user_id) . " " . self::getLastName($user_id);
+        return self::getUser($user_id)->getFullname();
     }
 
-    private static function getUsername($user_id)
+    public static function getUser($user_id): ilMumieTaskUser
     {
         global $ilDB;
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
-        return $ilDB->fetchAssoc($result);
+        $result = $ilDB->query("SELECT * FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
+        $user = $ilDB->fetchAssoc($result);
+        return new ilMumieTaskUser($user['usr_id'], $user["firstname"], $user['lastname']);
     }
 }

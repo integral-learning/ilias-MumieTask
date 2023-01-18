@@ -13,6 +13,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
 
 /**
  * This class pulls grades for a given task from its MUMIE server
@@ -29,7 +30,7 @@ class ilMumieTaskGradeSync
         $this->admin_settings = ilMumieTaskAdminSettings::getInstance();
         $this->task = $task;
         $this->force_update = $force_update;
-        $this->user_ids = $this->getAllUsers($task);
+        $this->user_ids = ilMumieTaskParticipantService::getAllMemberIds($task);
     }
 
     public function getSyncIdForUser($user_id)
@@ -165,36 +166,6 @@ class ilMumieTaskGradeSync
             $oldest_timestamp = 1;
         }
         return $oldest_timestamp*1000;
-    }
-
-    /**
-     * Get all users that can get marks for this MUMIE task
-     */
-    private function getAllUsers($task)
-    {
-        if ($this->isNotInBaseRepository($task)) {
-            return ilParticipants::getInstance($task->getParentRef())->getMembers();
-        } else {
-            return $this->getAllUserIds();
-        }
-    }
-
-    private function isNotInBaseRepository($task)
-    {
-        return $task->getParentRef() != 1;
-    }
-
-    public static function getAllUserIds()
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT usr_id FROM usr_data;"
-        );
-        $allIds = array();
-        while ($user_id = $ilDB->fetchAssoc($result)) {
-            array_push($allIds, $user_id["usr_id"]);
-        }
-        return $allIds;
     }
 
     /**

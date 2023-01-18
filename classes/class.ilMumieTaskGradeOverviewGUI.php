@@ -8,6 +8,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
 /**
  * This GUI provides a way to list users in a MUMIE task
  */
@@ -36,7 +37,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
-        $members = $this->getMembers($parentObj, $form);
+        $members = ilMumieTaskParticipantService::filter($parentObj->object, $form->getInput("firstnamefield"),$form->getInput("lastnamefield"));
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGrades($parentObj->object);
@@ -74,26 +75,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->tpl->parseCurrentBlock();
     }
 
-    private function getSearchedIds($form)
-    {
-        $members = $this->members;
-        if (empty($form) || (empty($form->getInput("firstnamefield")) && empty($form->getInput("lastnamefield")))) {
-            return $members;
-        }
-        $searchedMembers = array();
-        foreach ($members as $user_id) {
-            $id = $this->checkIfFirstNameInList($user_id, $form->getInput("firstnamefield"));
-            if (!empty($id) && !empty($form->getInput("firstnamefield"))) {
-                array_push($searchedMembers, $id["usr_id"]);
-            }
-            $id = $this->checkIfLastNameInList($user_id, $form->getInput("lastnamefield"));
-            if (!empty($id) && !in_array($id["usr_id"], $searchedMembers) && !empty($form->getInput("lastnamefield"))) {
-                array_push($searchedMembers, $id["usr_id"]);
-            }
-        }
-        return $searchedMembers;
-    }
-
     private function getDeadlineCellContent($user_id, $mumie_task)
     {
         if (!$mumie_task->hasDeadline())
@@ -122,45 +103,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
         $tpl->setVariable('LINK_DELETE_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'deleteDeadlineExtension'));
         return $tpl->get();
-
-    }
-    private function checkIfFirstNameInList($user_id, $name)
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT usr_id FROM usr_data 
-        WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
-        " AND " .
-        $ilDB->like("firstname", "text", trim($name) . "%", false)
-        );
-        return $ilDB->fetchAssoc($result);
-    }
-
-    private function checkIfLastNameInList($user_id, $name)
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT usr_id FROM usr_data 
-        WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
-        " AND " .
-        $ilDB->like("lastname", "text", trim($name) . "%", false)
-        );
-        return $ilDB->fetchAssoc($result);
-    }
-
-
-
-    private function getMembers($parentObj, $form)
-    {
-        if ($parentObj->object->getParentRef() != 1) {
-            include_once './Services/Membership/classes/class.ilParticipants.php';
-            $this->members = ilParticipants::getInstance($parentObj->object->getParentRef())->getMembers();
-            return $this->getSearchedIds($form);
-        } else {
-            require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-            $this->members =  ilMumieTaskGradeSync::getAllUserIds();
-            return $this->getSearchedIds($form);
-        }
     }
 
     //All functions are necessary for the list to be implemented into a form
@@ -218,6 +160,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     */
     public function getFieldId()
     {
+        return "";
     }
 
     public function setParentForm($a_parentform)
