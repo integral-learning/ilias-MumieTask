@@ -40,6 +40,17 @@ class ilMumieTaskDeadlineExtensionService
         self::sendUpdateSuccessMessage($deadline_extension);
     }
 
+    public static function deleteDeadlineExtension($mumie_task, $user_id)
+    {
+        global $ilDB;
+        $ilDB->manipulate(
+            "DELETE FROM xmum_deadline_ext WHERE task_id = " .
+            $ilDB->quote($mumie_task->getId(), 'integer') .
+            " AND usr_id = " .
+            $ilDB->quote($user_id, 'integer')
+        );
+    }
+
     public static function deleteDeadlineExtensions($task)
     {
         global $ilDB;

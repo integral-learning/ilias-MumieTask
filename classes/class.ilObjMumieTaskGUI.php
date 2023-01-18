@@ -16,6 +16,8 @@
 include_once('./Services/Repository/classes/class.ilObjectPluginGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
 
 
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
@@ -56,6 +58,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "displayGradeOverviewPage":
             case "gradeOverride":
             case 'forceGradeUpdate':
+            case 'deleteDeadlineExtension':
             case "setStatusToNotAttempted":
                 $this->checkPermission("read");
                 $this->$cmd();
@@ -706,8 +709,22 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->tpl->setContent($this->form->getHTML());
             return;
         }
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         ilMumieTaskDeadlineExtensionService::upsertDeadlineExtension($this->object, $this->form->getInput("deadline_extension"), $_GET["user_id"]);
+        $cmd = 'displayGradeOverviewPage';
+        $this->performCommand($cmd);
+    }
+
+    private function deleteDeadlineExtension()
+    {
+        global $lng;
+        $user_id = $_GET["user_id"];
+        ilMumieTaskDeadlineExtensionService::deleteDeadlineExtension($this->object, $user_id);
+        ilUtil::sendSuccess(
+            sprintf(
+                $lng->txt('rep_robj_xmum_frm_deadline_extension_successfull_delete'),
+                ilMumieTaskUserService::getFullName($user_id)
+            )
+        );
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
     }

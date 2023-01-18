@@ -93,6 +93,7 @@ frm_user_overview_list_search_title#:#Search Participants
 frm_user_overview_list_general_deadline#:#General deadline:
 frm_grade_overview_list_successfull_update#:#Successfully updated grade for <b>%s</b>
 frm_deadline_extension_successfull_update#:#Successfully granted deadline extension to <b>%s</b>
+frm_deadline_extension_successfull_delete#:#Successfully deleted deadline extension for <b>%s</b>
 frm_deadline_extension_before_general_deadline_error#:#Please choose a date after the general deadline
 frm_user_overview_list_deadline_extension#:#Extend deadline
 frm_user_overview_list_extended_deadline#:#Deadline extension

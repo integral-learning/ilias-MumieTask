@@ -93,6 +93,7 @@ frm_user_overview_list_search_title#:#Teilnehmersuche
 frm_user_overview_list_general_deadline#:#Allgemeine Abgabefrist:
 frm_grade_overview_list_successfull_update#:#Bewertung für <b>%s</b> erfolgreich geändert
 frm_deadline_extension_successfull_update#:#Abgabefrist für <b>%s</b> erfolgreich verlängert
+frm_deadline_extension_successfull_delete#:#Abgabefristverlängerung für <b>%s</b> erfolgreich gelöscht
 frm_deadline_extension_before_general_deadline_error#:#Bitte wählen Sie einen Zeitpunk nach Ende der allgmeinen Abgabefrist
 frm_user_overview_list_deadline_extension#:#Abgabefrist verlängern
 frm_user_overview_list_extended_deadline#:#Verlängerte Abgabefrist

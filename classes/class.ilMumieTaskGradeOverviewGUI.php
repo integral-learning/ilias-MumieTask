@@ -110,7 +110,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     private function getDeadlineUnsetCellContent()
     {
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-unset.html", true, true, true, "DEFAULT", true);
-        $tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
+        $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
         return $tpl->get();
     }
 
@@ -119,7 +119,8 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-set.html", true, true, true, "DEFAULT", true);
         $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task)->get();
         $tpl->setVariable("DEADLINE", $deadline);
-        $tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
+        $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
+        $tpl->setVariable('LINK_DELETE_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'deleteDeadlineExtension'));
         return $tpl->get();
 
     }
