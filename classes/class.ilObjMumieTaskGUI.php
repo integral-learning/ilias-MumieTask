@@ -15,6 +15,8 @@
 
 include_once('./Services/Repository/classes/class.ilObjectPluginGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
+
 
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
 {
@@ -48,9 +50,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case 'submitAvailabilitySettings':
             case "viewContent":
             case "displayLearningProgress":
-            case "submitDueDateExtension":
+            case "submitDeadlineExtension":
             case "displayGradeList":
-            case "dueDateExtension":
+            case "displayDeadlineExtension":
             case "displayGradeOverviewPage":
             case "gradeOverride":
             case 'forceGradeUpdate':
@@ -652,35 +654,35 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function gradeOverride()
     {
         global $lng;
-        if ($this->checkIfNewGradeSetAndAchieved()) {
+        $user_id = $_GET["user_id"];
+        $score = $_GET['score'];
+        $timestamp = $_GET['timestamp'];
+        $areParametersValid = !is_null($user_id) && !is_null($score) && !is_null($timestamp);
+
+        $grade = new ilMumieTaskGrade($user_id, $score, $this->object, $timestamp);
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+
+        if ($areParametersValid && ilMumieTaskGradeSync::isValidGrade($grade)) {
             require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
-            ilMumieTaskGradeOverrideService::overrideGrade($this);
+            ilMumieTaskGradeOverrideService::overrideGrade($grade);
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
         } else {
-            ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_grade_overview_override_error'));
+            ilUtil::sendFailure($lng->txt('rep_robj_xmum_frm_grade_overview_override_error'));
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
         }
     }
 
-    private function checkIfNewGradeSetAndAchieved()
-    {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-        return !is_null($_GET['newGrade']) &&
-        !is_null($_GET["user_id"]) &&
-        ilMumieTaskGradeSync::checkIfGradeWasAchievedByUser($_GET["user_id"], $this, $_GET['newGrade']);
-    }
-
-    public function dueDateExtension()
+    public function displayDeadlineExtension()
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
-        $this->initDueDateExtension();
+        $this->initDeadlineExtension();
         $this->tpl->setContent($this->form->getHTML());
     }
 
-    private function initDueDateExtension()
+    private function initDeadlineExtension()
     {
         global $ilCtrl, $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDeadlineExtensionForm.php');
@@ -688,15 +690,15 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form->setTitle($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'));
         $form->checkInput();
         $form->setFields();
-        $form->addCommandButton('submitDueDateExtension', $lng->txt('rep_robj_xmum_frm_save'));
+        $form->addCommandButton('submitDeadlineExtension', $lng->txt('rep_robj_xmum_frm_save'));
         $form->addCommandButton('displayGradeOverviewPage', $lng->txt('rep_robj_xmum_frm_cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
         $this->form = $form;
     }
 
-    public function submitDueDateExtension()
+    public function submitDeadlineExtension()
     { 
-        $this->initDueDateExtension();
+        $this->initDeadlineExtension();
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         ilMumieTaskDeadlineExtensionService::upsertDeadlineExtension($this->object, $this->form->getInput("dateTime"), $_GET["user_id"]);
         $cmd = 'displayGradeOverviewPage';

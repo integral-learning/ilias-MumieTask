@@ -45,7 +45,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj);
+        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj->object);
         if ($this->privateGradepoolSet($this->parent_obj)) {
             if(empty($user_grades)) {
                 $this->setEmptyTable();
@@ -90,7 +90,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->tpl->setVariable("VAL_HIDDEN", "");
         $this->tpl->setVariable("VAL_NO_GRADE", "");
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
-        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'newGrade', round($xapi_grade->result->score->raw * 100));
+        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'score', $xapi_grade->result->score->raw);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xapi_grade->timestamp));
         $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'gradeOverride'));
         $dateTime = date('d.m.Y - H:i', strtotime($xapi_grade->timestamp));

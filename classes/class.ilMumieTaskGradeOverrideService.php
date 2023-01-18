@@ -44,19 +44,19 @@ class ilMumieTaskGradeOverrideService
         return $ilDB->fetchAssoc($result)["new_grade"];
     }
 
-    public static function overrideGrade($parentObj)
+    public static function overrideGrade(ilMumieTaskGrade $grade)
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-        $percentage = $_GET['newGrade'];
-        ilMumieTaskLPStatus::updateMark($_GET['user_id'], $parentObj->object->getId(), $percentage, $_GET['timestamp']);
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($_GET["user_id"], $parentObj->object);
-        if (!self::wasGradeOverridden($_GET["user_id"], $parentObj->object)) {
-            self::insertOverridenGradenUserData($hashed_user, $parentObj->object->getId(), $percentage);
+
+        ilMumieTaskLPStatus::updateMark($grade->getUserId(), $grade->getMumieTask()->getId(), $grade->getPercentileScore(), $grade->getTimestamp());
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($grade->getUserId(), $grade->getMumieTask());
+        if (!self::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
+            self::insertOverridenGradenUserData($hashed_user, $grade->getMumieTask()->getId());
         }
-        self::updateOverridenGrade($hashed_user, $parentObj->object->getId(), $percentage);
-        self::returnGradeOverrideSuccess($percentage);
+        self::updateOverridenGrade($hashed_user, $grade->getMumieTask()->getId(), $grade->getPercentileScore());
+        self::returnGradeOverrideSuccess($grade->getPercentileScore());
     }
 
     private static function returnGradeOverrideSuccess($percentage)
