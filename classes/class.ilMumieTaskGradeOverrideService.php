@@ -90,7 +90,7 @@ class ilMumieTaskGradeOverrideService
         );
     }
 
-    public static function deleteOverridenGradesForTask($task)
+    public static function deleteGradeOverridesForTask($task)
     {
         global $ilDB;
         $ilDB->manipulate("DELETE FROM xmum_grade_override WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));

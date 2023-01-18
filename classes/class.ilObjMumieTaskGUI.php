@@ -224,7 +224,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
             require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
-            ilMumieTaskGradeOverrideService::deleteOverridenGradesForTask($this->object);
+            ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         }
         ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         $cmd = 'editProperties';
@@ -719,7 +719,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
         ilMumieTaskLPStatus::updateGrades($this->object, true);
-        ilMumieTaskGradeOverrideService::deleteOverridenGradesForTask($this->object);
+        ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
         $cmd = 'editLPSettings';
         $this->performCommand($cmd);
