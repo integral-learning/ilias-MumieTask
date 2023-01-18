@@ -91,7 +91,7 @@ frm_user_overview_list_lastname_search#:#Nachname
 frm_deadline_extension_new_deadline#:#Neue Abgabefrist:
 frm_user_overview_list_search_title#:#Teilnehmersuche
 frm_user_overview_list_general_deadline#:#Allgemeine Abgabefrist:
-frm_grade_overview_list_successfull_update#:#Bewertung für Nutzer erfolgreich geändert
+frm_grade_overview_list_successfull_update#:#Bewertung für <b>%s</b> erfolgreich geändert
 frm_deadline_extension_successfull_update#:#Abgabefrist für <b>%s</b> erfolgreich verlängert
 frm_user_overview_list_deadline_extension#:#Abgabefrist verlängern
 frm_user_overview_list_extended_deadline#:#Verlängerte Abgabefrist

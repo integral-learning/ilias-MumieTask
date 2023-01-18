@@ -56,15 +56,6 @@ class ilMumieTaskGradeOverrideService
             self::insertOverridenGradenUserData($hashed_user, $grade->getMumieTask()->getId());
         }
         self::updateOverridenGrade($hashed_user, $grade->getMumieTask()->getId(), $grade->getPercentileScore());
-        self::returnGradeOverrideSuccess($grade->getPercentileScore());
-    }
-
-    private static function returnGradeOverrideSuccess($percentage)
-    {
-        global $ilDB, $lng;
-        $result = $ilDB->query("SELECT firstname, lastname FROM usr_data WHERE usr_id = ". $ilDB->quote($_GET['user_id'], "integer"));
-        $names = $ilDB->fetchAssoc($result);
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_frm_grade_overview_list_successfull_update') . " " . $names["firstname"] . ",  " . $names["lastname"] . " " .  $lng->txt('rep_robj_xmum_frm_grade_overview_list_to') . " " . $percentage);
     }
 
     private static function insertOverridenGradenUserData($hashed_user, $task_id)

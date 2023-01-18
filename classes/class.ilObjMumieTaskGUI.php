@@ -665,6 +665,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($areParametersValid && ilMumieTaskGradeSync::isValidGrade($grade)) {
             require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskGradeOverrideService::overrideGrade($grade);
+            ilUtil::sendSuccess(
+                sprintf($lng->txt('rep_robj_xmum_frm_grade_overview_list_successfull_update'),
+                    ilMumieTaskUserService::getFullName($user_id))
+            );
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
         } else {
