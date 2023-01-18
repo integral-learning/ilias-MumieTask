@@ -15,16 +15,6 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 
 class ilMumieTaskUserService
 {
-    public static function getFirstName($user_id)
-    {
-        return self::getUser($user_id)->getFirstName();
-    }
-
-    public static function getLastName($user_id)
-    {
-        return self::getUser($user_id)->getLastName();
-    }
-
     public static function getFullName($user_id)
     {
         return self::getUser($user_id)->getFullname();
