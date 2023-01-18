@@ -31,14 +31,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         global $lng;
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
-        if($parentObj->object->hasDeadline()) {
-            $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_deadline_extension'), 'deadline_extension');
-            $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'), 'extended_deadline');
-        } else {
-            $this->addColumn("", 'deadline_extension');
-            $this->addColumn("", 'extended_deadline');
-        }
-
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'));
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
@@ -56,52 +49,29 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         );
 
         foreach ($members as $user_id) {
-            $this->setTableRow($user_id, $parentObj);
+            $this->addTableRow($user_id, $parentObj);
         }
         $this->setEnableHeader(true);
     }
 
-    private function setTableRow($user_id, $parentObj)
+    private function addTableRow($user_id, $parentObj)
     {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
+
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
         ? "tblrow1"
         : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $parentObj->object) && $parentObj->object->hasDeadline()) {
-            $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $parentObj->object)->get();
-            $this->tpl->setVariable("VAL_EXTENDED_DEADLINE", $deadline);
-        }
-        if ($parentObj->object->hasDeadline()) {
-            $this->tpl->setVariable("VAL_HIDDEN", "");
-            $this->tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($parentObj, 'displayDeadlineExtension'));
-        } else {
-            $this->tpl->setVariable("VAL_HIDDEN", "hidden");
-            $this->tpl->setVariable('LINK_DEADLINE_EXTENSION', "");
-        }
-        $grade = $this->getGradeForUser($user_id, $parentObj->object->getId());
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object->getId());
+        $this->tpl->setVariable('DEADLINE_CELL_CONTENT', $this->getDeadlineCellContent($user_id, $parentObj->object));
         $this->tpl->setVariable('LINK_GRADE_OVERVIEW', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-        $this->tpl->setVariable('VAL_GRADE', $grade['mark']);
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-        $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserService::getFirstName($user_id) . ", " . ilMumieTaskUserService::getLastName($user_id));
-        $this->tpl->setCurrentBlock("tbl_content");
+        $this->tpl->setVariable('VAL_GRADE', $grade);
+        $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserService::getFullName($user_id));
         $this->tpl->parseCurrentBlock();
-    }
-
-    private function getGradeForUser($user_id, $task_id)
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT mark
-            FROM ut_lp_marks 
-            WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
-            " AND " .
-            "obj_id = " . $ilDB->quote($task_id, "integer")
-        );
-
-        return $ilDB->fetchAssoc($result);
     }
 
     private function getSearchedIds($form)
@@ -124,6 +94,35 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         return $searchedMembers;
     }
 
+    private function getDeadlineCellContent($user_id, $mumie_task)
+    {
+        if (!$mumie_task->hasDeadline())
+        {
+            return "-";
+        }
+        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task))
+        {
+            return $this->getDeadlineSetCellContent($user_id, $mumie_task);
+        }
+        return $this->getDeadlineUnsetCellContent();
+    }
+
+    private function getDeadlineUnsetCellContent()
+    {
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-unset.html", true, true, true, "DEFAULT", true);
+        $tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
+        return $tpl->get();
+    }
+
+    private function getDeadlineSetCellContent($user_id, $mumie_task)
+    {
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-set.html", true, true, true, "DEFAULT", true);
+        $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task)->get();
+        $tpl->setVariable("DEADLINE", $deadline);
+        $tpl->setVariable('LINK_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
+        return $tpl->get();
+
+    }
     private function checkIfFirstNameInList($user_id, $name)
     {
         global $ilDB;
