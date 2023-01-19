@@ -755,8 +755,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function forceGradeUpdate()
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-        ilMumieTaskLPStatus::updateGrades($this->object, true);
         ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
+        ilMumieTaskLPStatus::updateGrades($this->object, true);
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
         $cmd = 'editLPSettings';
         $this->performCommand($cmd);
