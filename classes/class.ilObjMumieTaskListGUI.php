@@ -59,13 +59,6 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskObjService.php');
         try {
-            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($ilUser->getId(), $this->obj_id);
-            $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
-
-            if(!$task->hasDeadline()) {
-                return parent::insertDescription();
-            }
-
             // This fragment replicates parent behaviour
             if ($this->getSubstitutionStatus()) {
                 $this->insertSubstitutions();
@@ -74,8 +67,15 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
                 }
             }
 
-            $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
+            $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
 
+            if(!$task->hasDeadline()) {
+                return parent::insertDescription();
+            }
+
+            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($ilUser->getId(), $task);
+
+            $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
             $this->tpl->setVariable("TXT_DESC", $this->getDescriptionWithDeadlineBadge($deadline, $task));
             $this->tpl->setCurrentBlock("item_description");
             $this->tpl->parseCurrentBlock();

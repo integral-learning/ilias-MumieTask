@@ -7,6 +7,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
+
 /**
  * This form is used to grant due date extensions for a given MumieTask
  */
@@ -16,7 +18,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
     /**
      * @var ilDateTimeInputGUI
      */
-    private $date_input;
+    private $deadline_input;
     /**
      * @var ilObjMumieTask
      */
@@ -37,17 +39,12 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
     {
         global $lng;
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
-        $this->date_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_deadline_extension_new_deadline'),
+        $this->deadline_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_deadline_extension_new_deadline'),
             self::DEADLINE_PARAM);
-        $this->date_input->setShowTime(true);
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
-        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->user_id, $this->mumie_task)){
-            $date_time = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->user_id, $this->mumie_task);
-        } else {
-            $date_time = $this->mumie_task->getDeadlineDateTime();
-        }
-        $this->date_input->setDate($date_time);
-        $this->addItem($this->date_input);
+        $this->deadline_input->setShowTime(true);
+        $deadline_date = ilMumieTaskDeadlineService::getDeadlineDateForUser($this->user_id, $this->mumie_task);
+        $this->deadline_input->setDate($deadline_date);
+        $this->addItem($this->deadline_input);
     }
 
     public function checkInput() : bool
@@ -56,7 +53,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
         $ok = parent::checkInput();
         if ($this->mumie_task->getDeadline() > strtotime($this->getInput(self::DEADLINE_PARAM))) {
             $ok = false;
-            $this->date_input->setAlert($lng->txt("rep_robj_xmum_frm_deadline_extension_before_general_deadline_error"));
+            $this->deadline_input->setAlert($lng->txt("rep_robj_xmum_frm_deadline_extension_before_general_deadline_error"));
         }
         return $ok;
     }

@@ -6,9 +6,8 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 
 class ilMumieTaskDeadlineService
 {
-    public static function getDeadlineDateForUser(string $user_id, string $task_id) : ilMumieTaskDateTime
+    public static function getDeadlineDateForUser(string $user_id, ilObjMumieTask $task) : ilMumieTaskDateTime
     {
-        $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($task_id);
         if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $task))
         {
             return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task);
@@ -22,6 +21,6 @@ class ilMumieTaskDeadlineService
         {
             return false;
         }
-        return self::getDeadlineDateForUser($user_id, $task->getId())->hasPassed();
+        return self::getDeadlineDateForUser($user_id, $task)->hasPassed();
     }
 }
