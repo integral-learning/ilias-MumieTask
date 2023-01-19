@@ -8,6 +8,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
+
 /**
  * This class provides information about LP progress and methods to synchronize it with MUMIE servers
  */
@@ -201,7 +203,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         return self::getLPDataForUser($task->getId(), $user_id);
     }
 
-    public static function getCurrentGradeForUser($user_id, $task_id)
+    public static function getCurrentGradeForUser($user_id, ilObjMumieTask $mumie_task): ?ilMumieTaskGrade
     {
         global $ilDB;
         $result = $ilDB->query(
@@ -209,9 +211,15 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             FROM ut_lp_marks 
             WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
             " AND " .
-            "obj_id = " . $ilDB->quote($task_id, "integer")
+            "obj_id = " . $ilDB->quote($mumie_task->getId(), "integer")
         );
-        return $ilDB->fetchAssoc($result)["mark"];
+        $lp_mark = $ilDB->fetchAssoc($result);
+        if(empty($lp_mark)) {
+            return null;
+        }
+        $score = $lp_mark['mark'] / 100;
+        $timestamp = strtotime($lp_mark['status_changed']);
+        return new ilMumieTaskGrade($user_id, $score, $mumie_task, $timestamp);
     }
 
     private static function deleteLPForTask($task)

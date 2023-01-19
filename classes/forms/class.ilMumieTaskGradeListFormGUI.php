@@ -37,7 +37,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     {
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $mumie_task = $this->parent_gui->object;
-        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($this->user_id, $mumie_task->getId());
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($this->user_id, $mumie_task);
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->user_id, $mumie_task) && $mumie_task->hasDeadline()) {
             $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->user_id, $mumie_task);
@@ -56,10 +56,10 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         return "<b>" . $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline') . ":</b> " . $deadline_extension_date;
     }
 
-    private function getCurrentGradeInformation($grade): string
+    private function getCurrentGradeInformation(?ilMumieTaskGrade $grade): string
     {
         global $lng;
-        $grade_info = is_null($grade) ? $lng->txt('rep_robj_xmum_frm_grade_overview_no_current_grade') : $grade;
+        $grade_info = is_null($grade) ? $lng->txt('rep_robj_xmum_frm_grade_overview_no_current_grade') : $grade->getPercentileScore();
         return "<b>" . $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade') . "</b> " . $grade_info . "<br>";
     }
 
