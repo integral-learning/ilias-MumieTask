@@ -569,7 +569,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function hasDeadline()
     {
 
-        return !empty($this->deadline);
+        return !empty($this->deadline) && $this->deadline > 0;
     }
 
     /**

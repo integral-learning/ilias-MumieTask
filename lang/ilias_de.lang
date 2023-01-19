@@ -81,8 +81,8 @@ frm_user_overview_list_grade_desc#:#<br><br>Es wird die neueste Abgabe vor dem A
 frm_user_overview_list_change_grade#:#Note ändern
 frm_user_overview_list_submissions#:#Abgaben
 frm_grade_overview_list_submission_date#:#Abgabedatum
-frm_grade_overview_list_used_grade#:#Aktuelle Note:
-frm_grade_overview_list_use_grade#:#Diese Note benutzen
+frm_grade_overview_list_used_grade#:#Aktuelle Bewertung
+frm_grade_overview_list_use_grade#:#Bewertung auswählen
 frm_grade_overview_list_back#:#Zurück
 frm_user_overview_list_search#:#Suchen
 frm_user_overview_list_name#:#Name
@@ -97,7 +97,7 @@ frm_deadline_extension_successfull_delete#:#Abgabefristverlängerung für <b>%s<
 frm_deadline_extension_before_general_deadline_error#:#Bitte wählen Sie einen Zeitpunk nach Ende der allgmeinen Abgabefrist
 frm_user_overview_list_deadline_extension#:#Abgabefrist verlängern
 frm_user_overview_list_extended_deadline#:#Verlängerte Abgabefrist
-frm_user_gradeoverview_overridden_explanation#:#Diese Note wurde manuell überschrieben.
+frm_user_gradeoverview_overridden_explanation#:#Diese Note wurde manuell überschrieben. Weitere Abgaben werden nicht mehr bei der Bewertung berücksichtigt.
 frm_grade_overview_list_deadline#:#Abgabefrist
 frm_save#:#Speichern
 frm_cancel#:#Abbrechen
@@ -107,4 +107,6 @@ frm_grade_overview_no_submission_made#:#Es gab bisher keine Abgabe
 frm_grade_overview_no_current_grade#:#Es liegt keine aktuelle Note vor
 frm_lp_deadline_desc#:#Falls diese Option aktiviert ist, werden keine Bewertungen, die nach dem gewählten Datum erzielt wurden, mit ILIAS synchronisiert.
 grade_override_removed#:#Manuel ausgewählte Bewertung für <b>%s</b> erfolgreich entfernt.
-btn_remove_grade_override#:#Automatisch auswählen
+btn_remove_grade_override#:#Auswahl zurücksetzen
+grade_override_desc#:#Neue Abgaben werden automatisch in ILIAS übernommen, sofern die Abgabefrist noch nicht abgelaufen ist. Um eine andere Abgabe für die Bewertung zu verwenden, können Sie auf die entsprechende Schaltfläche in der Tabelle klicken.<br><br>Eine manuell ausgewählte Bewertung wird auch durch zukünftige Abgaben des Studierenden <b>nicht</b> ersetzt werden.
+student_name#:#Name
