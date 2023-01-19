@@ -18,6 +18,8 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
+
 
 
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
@@ -57,6 +59,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case "displayDeadlineExtension":
             case "displayGradeOverviewPage":
             case "gradeOverride":
+            case "deleteGradeOverride":
             case 'forceGradeUpdate':
             case 'deleteDeadlineExtension':
             case "setStatusToNotAttempted":
@@ -729,6 +732,21 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->performCommand($cmd);
     }
 
+    private function deleteGradeOverride()
+    {
+        global $lng;
+        $user_id = $_GET["user_id"];
+        ilMumieTaskGradeOverrideService::deleteGradeOverride($this->object, $user_id);
+        ilUtil::sendSuccess(
+            sprintf(
+                $lng->txt('rep_robj_xmum_grade_override_removed'),
+                ilMumieTaskUserService::getFullName($user_id)
+            )
+        );
+        $cmd = 'displayGradeOverviewPage';
+        $this->performCommand($cmd);
+    }
+
     /**
      * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).
      * After that a new synchronization is triggered.
@@ -737,7 +755,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function forceGradeUpdate()
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
         ilMumieTaskLPStatus::updateGrades($this->object, true);
         ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);

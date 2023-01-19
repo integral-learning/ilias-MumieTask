@@ -106,3 +106,5 @@ frm_grade_overview_override_error#:#There was an error while updating grade
 frm_grade_overview_no_submission_made#:#There was no submission made
 frm_grade_overview_no_current_grade#:#There is no current grade
 frm_lp_deadline_desc#:#If enabled, grades that were earned after the selected date will not be synchronized with ILIAS
+grade_override_removed#:#Sucessfully removed grade override for <b>%s</b>.
+btn_remove_grade_override#:#Select automatically
