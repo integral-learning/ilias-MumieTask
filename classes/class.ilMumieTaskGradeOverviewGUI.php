@@ -15,7 +15,6 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 {
     const EMPTY_CELL = "-";
-    private $members;
 
     public function __construct($parentObj)
     {
@@ -24,11 +23,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     }
 
     public function init($parentObj, $form)
-    {
-        $this->createList($parentObj, $form);
-    }
-
-    private function createList($parentObj, $form)
     {
         global $lng;
         $this->setFormName('participants');
