@@ -6,6 +6,7 @@
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 include_once("./Services/Repository/classes/class.ilRepositoryObjectPlugin.php");
 
 class ilMumieTaskPlugin extends ilRepositoryObjectPlugin

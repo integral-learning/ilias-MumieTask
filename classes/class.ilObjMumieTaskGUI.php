@@ -596,8 +596,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
             $mumieTask->setActivationStartingTime($period->getStart()->get(IL_CAL_UNIX));
             $mumieTask->setActivationEndingTime($period->getEnd()->get(IL_CAL_UNIX));
-            $title = $mumieTask->getTitle();
-            require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         } else {
             $mumieTask->setActivationLimited(false);
         }
