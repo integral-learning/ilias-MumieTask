@@ -39,7 +39,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
     {
         global $lng;
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
-        $this->deadline_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_deadline_extension_new_deadline'),
+        $this->deadline_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'),
             self::DEADLINE_PARAM);
         $this->deadline_input->setShowTime(true);
         $deadline_date = ilMumieTaskDeadlineService::getDeadlineDateForUser($this->user_id, $this->mumie_task);
