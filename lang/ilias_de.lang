@@ -13,7 +13,7 @@ tab_servers#:#Server
 tab_authentication#:#Authentifizierung
 tab_userlist#:#Bewertungsübersicht
 frm_auth_api#:#MUMIE-API-Key
-frm_auth_api_desc#:#Geben Sie den MUMIE-API-Key für die Notensychnonisierung ein
+frm_auth_api_desc#:#Geben Sie den MUMIE-API-Key für die Bewertungssychnonisierung ein
 frm_auth_org#:#MUMIE-Org
 frm_auth_org_desc#:#Geben Sie ihr Organisationskürzel ein, z.B. "rwth"
 frm_shared_data_description#:#Legen Sie fest, welche personenbezogenen Daten mit MUMIE-Servern geteilt werden sollen
@@ -46,16 +46,16 @@ embedded#:#Eingebettet
 language#:#Sprache
 language_desc#:#Bitte wählen Sie die Sprache, in der die MumieTask angezeigt werden soll.
 tab_gen_settings#:#Allgemein
-tab_lp_settings#:#Noten
+tab_lp_settings#:#Bewertungen
 msg_suc_saved#:#Änderungen erfolgreich gespeichert
 msg_suc_server_add#:#MUMIE-Server erfolgreich hinzugefügt
 msg_suc_deleted#:#Löschen erfolgreich
 msg_no_server_found#:#Es wurde kein konfigurierter MUMIE-Server gefunden! <br><br> Bitte fügen Sie einen Server hinzu um fortfahren zu können.
 msg_server_missing#:#Diese MumieTask nutzt eine Server-Konfiguration, die aus Ilias gelöscht wurde! <br><br>Einige Felder können nicht geändert werden bis eine Mumie-Server-Konfiguration für die folgende URL erstellt wurde:<br><br>
 msg_no_connection_to_server#:#Ilias konnte keine Antwort von dem MUMIE-Server erhalten, der für die Erstellung dieser MumieTask verwendet wurde. Bitte kontaktieren Sie Ihren Ilias-Administrator. <br><br>Diese MumieTask kann nicht editiert werden, bis wieder eine Verbindung zu folgender URL hergestellt werden kann: <br><br>
-grades#:#Noten
-frm_sync_lp#:#Noten-Synchronisation
-frm_sync_lp_desc#:#Wählen Sie, ob Noten für diese MumieTask automatisch mit Ilias synchronisiert werden sollen
+grades#:#Bewertungen
+frm_sync_lp#:#Bewertungssynchronisation
+frm_sync_lp_desc#:#Wählen Sie, ob Bewertungen für diese MUMIE-Task automatisch mit Ilias synchronisiert werden sollen
 frm_privategradepool#:#Punkte mit anderen Kursen teilen
 frm_privategradepool_desc#:#Bestimmen Sie, ob MUMIE-Punktzahlen mit anderen Kursen geteilt werden.
 frm_privategradepool_decided#:#<b>Hinweis:</b><br> Diese Entscheidung war <b>endgültig</b> und gilt auch für alle anderen MUMIE-Tasks in diesem Kurs.
@@ -67,8 +67,8 @@ frm_disable#:#Deaktiviert
 frm_gradepool_pending#:#Entscheidung offen lassen
 frm_passing_grade#:#Mindestpunktzahl
 frm_passing_grade_desc#:#Tragen Sie hier die für das Bestehen notwendige Mindestpunktzahl ein.
-frm_force_update#:#Notensychnonisierung erzwingen
-frm_force_update_desc#:#Wenn Sie diesen Knopf drücken, werden erst alle bestehenden Noten für diese MumieTask gelöscht und dann neu synchronisiert. Hierbei werden auch alle manuel überschriebenen Noten gelöscht.
+frm_force_update#:#Bewertungssychnonisierung erzwingen
+frm_force_update_desc#:#Wenn Sie diesen Knopf drücken, werden erst alle bestehenden Bewertungen für diese MumieTask gelöscht und dann neu synchronisiert. Hierbei werden auch alle manuel überschriebenen Bewertungen gelöscht.
 frm_force_update_btn#:#Update erzwingen
 edit_task#:#Bearbeiten
 activation_limited_visibility_info#:#Nutzer können diese MumieTask außerhalb des gewählten Zeitraums sehen, aber nicht bearbeiten
@@ -76,20 +76,35 @@ frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MumieTask sehen und
 frm_online_disabled_warning#:#Diese MUMIE-Task kann nicht online gestellt werden, da noch eine Entscheidung aussteht. Bitte rufen sie die Bewertungseinstellungen auf. 
 open_prb_selector#:#Aufgabenauswahl öffnen
 open_prb_selector_desc#:#Klicken Sie hier, um eine detaillierte Auswahl zu öffnen. Sie können alle verfügbaren Aufgaben nach Kategorien filtern und nach beliebigen Begriffen durchsuchen.
-frm_list_grade#:#Note
+frm_list_grade#:#Bewertung
 frm_user_overview_list_grade_desc#:#<br><br>Es wird die neueste Abgabe vor dem Abgabe Datum genutzt. Wenn eine andere Abgabe genutzt werden soll, drücken sie den Knopf neben der entsprechenden Abgabe.
-frm_user_overview_list_change_grade#:#Note ändern
+frm_user_overview_list_change_grade#:#Bewertung ändern
 frm_user_overview_list_submissions#:#Abgaben
 frm_grade_overview_list_submission_date#:#Abgabedatum
-frm_grade_overview_list_used_grade#:#Aktuelle Note:
-frm_grade_overview_list_use_grade#:#Diese Note benutzen
+frm_grade_overview_list_used_grade#:#Aktuelle Bewertung
+frm_grade_overview_list_use_grade#:#Bewertung auswählen
 frm_grade_overview_list_back#:#Zurück
 frm_user_overview_list_search#:#Suchen
 frm_user_overview_list_name#:#Name
 frm_user_overview_list_firstname_search#:#Vorname
 frm_user_overview_list_lastname_search#:#Nachname
 frm_user_overview_list_search_title#:#Teilnehmersuche
-frm_user_overview_list_general_dealine#:#Allgemeine Abgabefrist:
-frm_grade_overview_list_successfull_update#:#Note von 
-frm_grade_overview_list_to#:# erfolgreich geändert zu: 
-frm_grade_overview_override_error#:#Es gab einen Fehler bei dem Ändern der Note
+frm_user_overview_list_general_deadline#:#Allgemeine Abgabefrist:
+frm_grade_overview_list_successfull_update#:#Bewertung für <b>%s</b> erfolgreich geändert
+frm_deadline_extension_successfull_update#:#Abgabefrist für <b>%s</b> erfolgreich verlängert
+frm_deadline_extension_successfull_delete#:#Abgabefristverlängerung für <b>%s</b> erfolgreich gelöscht
+frm_deadline_extension_before_general_deadline_error#:#Bitte wählen Sie einen Zeitpunk nach Ende der allgmeinen Abgabefrist
+frm_user_overview_list_extended_deadline#:#Abgabefristverlängerung
+frm_user_gradeoverview_overridden_explanation#:#Diese Bewertung wurde manuell überschrieben. Weitere Abgaben werden nicht mehr bei der Bewertung berücksichtigt.
+frm_grade_overview_list_deadline#:#Abgabefrist
+frm_save#:#Speichern
+frm_cancel#:#Abbrechen
+frm_list_grade_overview_after_deadline#:#Die Abgabefrist ist überschritten. Weitere Abgaben werden nicht mehr gewertet.
+frm_grade_overview_override_error#:#Beim Eintragen der Bewertung ist ein Fehler aufgetreten
+frm_grade_overview_no_submission_made#:#Es gab bisher keine Abgabe
+frm_lp_deadline_desc#:#Falls diese Option aktiviert ist, werden keine Bewertungen, die nach dem gewählten Datum erzielt wurden, mit ILIAS synchronisiert.
+grade_override_removed#:#Manuel ausgewählte Bewertung für <b>%s</b> erfolgreich entfernt.
+btn_remove_grade_override#:#Auswahl zurücksetzen
+grade_override_desc#:#Neue Abgaben werden automatisch in ILIAS übernommen, sofern die Abgabefrist noch nicht abgelaufen ist. Um eine andere Abgabe für die Bewertung zu verwenden, können Sie auf die entsprechende Schaltfläche in der Tabelle klicken.<br><br>Eine manuell ausgewählte Bewertung wird auch durch zukünftige Abgaben des Studierenden <b>nicht</b> ersetzt werden.
+student_name#:#Name
+deadline_extension_desc#:#Hier können Sie Studierenden individuelle Fristverlängerungen gewähren. Falls Sie bereits manuel eine andere Bewertung ausgewählt haben, hat diese Fristverlängerung keine Auswirkung.

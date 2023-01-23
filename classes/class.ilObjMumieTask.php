@@ -1,5 +1,4 @@
 <?php
-
 /**
  * MumieTask plugin
  *
@@ -13,12 +12,13 @@ require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDateTime.php');
 
 /**
  */
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 {
-    const DUMMY_TITLE = "-- Empty MumieTask --";
+    public const DUMMY_TITLE = "-- Empty MumieTask --";
     private static $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
     private $server;
     private $mumie_course;
@@ -34,6 +34,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $activation_starting_time;
     private $activation_ending_time;
     private $activation_visibility;
+    private $deadline;
 
     /**
      * Constructor
@@ -95,6 +96,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setPassingGrade($rec['passing_grade']);
             $this->setOnline($rec['online']);
             $this->setPrivateGradepool($rec['privategradepool']);
+            $this->setDeadline($rec['deadline']);
         }
 
         /**
@@ -123,7 +125,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function doUpdate()
     {
-        global $DIC;
+        global $DIC, $ilDB;
 
         $DIC->database()->update(
             ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
@@ -138,7 +140,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'lp_modus' => array('integer', $this->getLpModus()),
                 'privategradepool' => array('integer', $this->getPrivateGradepool()),
                 'online' => array('integer', $this->getOnline()),
-            ),
+                'deadline' => array('integer', $this->getDeadline())
+    ),
             array(
                 'id' => array("int", $this->getId()),
             )
@@ -171,7 +174,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function doDelete()
     {
         global $ilDB;
-
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
+        ilMumieTaskDeadlineExtensionService::deleteDeadlineExtensions($this);
         $ilDB->manipulate(
             "DELETE FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME . " WHERE " .
             " id = " . $ilDB->quote($this->getId(), "integer")
@@ -412,7 +416,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function getContent()
     {
-        $ssoService = new ilMumieTaskSSOService;
+        $ssoService = new ilMumieTaskSSOService();
         return $ssoService->setUpTokenAndLaunchForm($this);
     }
 
@@ -424,7 +428,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function getLoginUrl()
     {
         return ilMumieTaskServer::fromUrl($this->server)->getLoginUrl();
-        //return $this->server . 'public/xapi/auth/sso/login';
     }
 
     /**
@@ -434,7 +437,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function getLogoutUrl()
     {
-        //return $this->server . 'public/xapi/auth/sso/logout';
         ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
     }
 
@@ -556,10 +558,39 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return !($this->private_gradepool == -1);
     }
 
-    public function getParentRef() 
+    public function getParentRef()
     {
         global $DIC;
         $tree = $DIC['tree'];
         return $tree->getParentId($this->getRefId());
+    }
+
+    public function hasDeadline()
+    {
+
+        return !empty($this->deadline) && $this->deadline > 0;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeadline()
+    {
+        return $this->deadline;
+    }
+
+    /**
+     * @param mixed $deadline
+     */
+    public function setDeadline($deadline) : void
+    {
+        $this->deadline = $deadline;
+    }
+
+
+
+    public function getDeadlineDateTime(): ilMumieTaskDateTime
+    {
+        return new ilMumieTaskDateTime($this->deadline);
     }
 }

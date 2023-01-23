@@ -329,3 +329,52 @@ if (!$ilDB->tableExists('xmum_grade_override')) {
     $ilDB->createTable("xmum_grade_override", $gradeOverrideSettings);
 }
 ?>
+<#13>
+<?php
+if (!$ilDB->tableExists('xmum_deadline_ext')) {
+    $tableSettings = array(
+        'task_id' => array(
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+        ),
+        'usr_id' => array(
+            'type' => 'text',
+            'length' => '143',
+            'notnull' => true,
+        ),
+        'date' => array(
+            'type' => 'integer',
+            'length' => '4',
+            'notnull' => true,
+        ),
+    );
+    $ilDB->createTable("xmum_deadline_ext", $tableSettings);
+}
+?>
+<#14>
+<?php
+if (!$ilDB->tableColumnExists("xmum_mumie_task", "deadline")) {
+    $ilDB->addTableColumn(
+        'xmum_mumie_task',
+        'deadline',
+        array(
+            'type' => 'integer',
+            'length' => '4',
+            'notnull' => false
+        )
+    );
+
+    $query = "SELECT xmum_mumie_task.id, crs_items.timing_end FROM xmum_mumie_task JOIN object_reference ON xmum_mumie_task.id = object_reference.obj_id JOIN crs_items ON object_reference.ref_id = crs_items.obj_id WHERE crs_items.timing_type = 0";
+    $result = $ilDB->query($query);
+    while ($row = $ilDB->fetchAssoc($result))
+    {
+        $ilDB->manipulate(
+            'UPDATE xmum_mumie_task SET deadline = ' .
+            $ilDB->quote($row['timing_end'], 'integer') .
+            ' WHERE id = ' .
+            $ilDB->quote($row['id'], 'integer')
+        );
+    }
+}
+?>

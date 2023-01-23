@@ -10,6 +10,10 @@
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
 include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
 
 /**
  * This class pulls grades for a given task from its MUMIE server
@@ -26,7 +30,7 @@ class ilMumieTaskGradeSync
         $this->admin_settings = ilMumieTaskAdminSettings::getInstance();
         $this->task = $task;
         $this->force_update = $force_update;
-        $this->user_ids = $this->getAllUsers($task);
+        $this->user_ids = ilMumieTaskParticipantService::getAllMemberIds($task);
     }
 
     public function getSyncIdForUser($user_id)
@@ -99,9 +103,6 @@ class ilMumieTaskGradeSync
             'lastSync' => $getOnlyChangedGrades ? $this->getLastSync() : 1,
             'includeAll' => true
         );
-        if ($this->task->getActivationLimited() == 1) {
-            $params["dueDate"] = $this->task->getActivationEndingTime() * 1000;
-        }
         return $params;
     }
 
@@ -120,6 +121,12 @@ class ilMumieTaskGradeSync
     public function getValidAndNewXapiGradesByUser()
     {
         return $this->getValidGradeByUser($this->getNewXapiGrades());
+    }
+
+    public function getValidAndNewXapiGradesForUser($user_id)
+    {
+        $grades_by_user = $this->getValidAndNewXapiGradesByUser();
+        return $grades_by_user[$user_id];
     }
 
     /**
@@ -165,36 +172,6 @@ class ilMumieTaskGradeSync
     }
 
     /**
-     * Get all users that can get marks for this MUMIE task
-     */
-    private function getAllUsers($task)
-    {
-        if ($this->isNotInBaseRepository($task)) {
-            return ilParticipants::getInstance($task->getParentRef())->getMembers();
-        } else {
-            return $this->getAllUserIds();
-        }
-    }
-
-    private function isNotInBaseRepository($task)
-    {
-        return $task->getParentRef() != 1;
-    }
-
-    public static function getAllUserIds()
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT usr_id FROM usr_data;"
-        );
-        $allIds = array();
-        while ($user_id = $ilDB->fetchAssoc($result)) {
-            array_push($allIds, $user_id["usr_id"]);
-        }
-        return $allIds;
-    }
-
-    /**
      * A user can submit multiple solutions to MUMIE Tasks.
      *
      * Filter out grades that were earned after the due date. Other than that, select always the latest grade
@@ -226,11 +203,14 @@ class ilMumieTaskGradeSync
 
     private function isGradeBeforeDueDate($grade)
     {
-        if (!$this->task->getActivationLimited()) {
+        if (!$this->task->hasDeadline()) {
             return true;
         }
-
-        return strtotime($grade->timestamp) <= $this->task->getActivationEndingTime();
+        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task))
+        {
+            return strtotime($grade->timestamp) <= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
+        }
+        return strtotime($grade->timestamp) <= $this->task->getDeadline();
     }
 
     private function getLatestGrade($xapi_grades)
@@ -248,20 +228,20 @@ class ilMumieTaskGradeSync
         return $latest_grade;
     }
 
-    public static function checkIfGradeWasAchievedByUser($user_id, $parentObj, $grade)
+    public static function isValidGrade(ilMumieTaskGrade $grade)
     {
-        $user_grades = self::getGradesForUser($user_id, $parentObj);
+        $user_grades = self::getGradesForUser($grade->getUserId(), $grade->getMumieTask());
         foreach ($user_grades as $xapi_grade) {
-            if ($grade == round($xapi_grade->result->score->raw * 100)) {
+            if ($grade->getScore() == $xapi_grade->result->score->raw) {
                 return true;
             }
         }
         return false;
     }
 
-    public static function getGradesForUser($user_id, $parentObj)
+    public static function getGradesForUser($user_id, $mumie_task)
     {
-        $gradesync  = new  ilMumieTaskGradeSync($parentObj->object, false);
+        $gradesync  = new  ilMumieTaskGradeSync($mumie_task, false);
         $xapi_grades = $gradesync->getAllXapiGradesByUser();
         $syncId = $gradesync->getSyncIdForUser($user_id);
         $userGrades = array();

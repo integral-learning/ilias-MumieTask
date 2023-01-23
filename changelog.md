@@ -1,11 +1,15 @@
 # MumieTask - Changelog
 
 All important changes to this plugin will be documented in this file.
-## [v2.3.0] 
+## [v2.3.0] - TODO
 ### Added
 - Teachers can now open a user overview page in MUMIE Tasks on which they can see the current grades of all user
 - Teachers can now open a grade overview page with all the submissions and submission dates from a user
 - Teachers can now choose which grade should be used when grading this task
+- Teachers can now grade deadline extensions to individual students
+
+### Changed
+- Deadlines are now decoupled from availability. Teachers can now set them on the grade setting page. Existing deadlines are migrated to the new system.
 
 ## [v2.2.1] - 2022-11-18
 ### Changed

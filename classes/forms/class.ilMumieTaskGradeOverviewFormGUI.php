@@ -2,8 +2,8 @@
 /**
  * MumieTask plugin
  *
- * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
- * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -42,11 +42,10 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         }
         $this->addItem($this->text_item_last);
 
-        if ($parentObj->object->getActivationLimited()) {
-            $dateTime = date('d.m.Y - H:i', $parentObj->object->getActivationEndingTime());
+        if ($parentObj->object->hasDeadline()) {
             ilUtil::sendInfo('<span>
-            <b>' . $lng->txt('rep_robj_xmum_frm_user_overview_list_general_dealine') . '</b>
-            <span style="margin-left:50px"> ' . $dateTime . '</span>
+            <b>' . $lng->txt('rep_robj_xmum_frm_user_overview_list_general_deadline') . '</b>
+            <span style="margin-left:50px"> ' . $parentObj->object->getDeadlineDateTime() . '</span>
             </span>');
         }
     }

@@ -8,12 +8,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
 /**
  * This GUI provides a way to list users in a MUMIE task
  */
 class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 {
-    private $members;
+    const EMPTY_CELL = "-";
 
     public function __construct($parentObj)
     {
@@ -23,19 +24,15 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     public function init($parentObj, $form)
     {
-        $this->createList($parentObj, $form);
-    }
-
-    private function createList($parentObj, $form)
-    {
-        global $ilDB, $lng;
+        global $lng;
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
+        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'));
         $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
-        $members = $this->getMembers($parentObj, $form);
+        $members = ilMumieTaskParticipantService::filter($parentObj->object, $form->getInput("firstnamefield"),$form->getInput("lastnamefield"));
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGrades($parentObj->object);
@@ -48,86 +45,77 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         );
 
         foreach ($members as $user_id) {
-            $this->setTableRow($user_id, $parentObj);
+            $this->addTableRow($user_id, $parentObj);
         }
         $this->setEnableHeader(true);
     }
 
-    private function getSearchedIds($form)
+    private function addTableRow($user_id, $parentObj)
     {
-        $members = $this->members;
-        if (empty($form) || (empty($form->getInput("firstnamefield")) && empty($form->getInput("lastnamefield")))) {
-            return $members;
-        }
-        $searchedMembers = array();
-        foreach ($members as $user_id) {
-            $id = $this->checkIfFirstNameInList($user_id, $form->getInput("firstnamefield"));
-            if (!empty($id) && !empty($form->getInput("firstnamefield"))) {
-                array_push($searchedMembers, $id["usr_id"]);
-            }
-            $id = $this->checkIfLastNameInList($user_id, $form->getInput("lastnamefield"));
-            if (!empty($id) && !in_array($id["usr_id"], $searchedMembers) && !empty($form->getInput("lastnamefield"))) {
-                array_push($searchedMembers, $id["usr_id"]);
-            }
-        }
-        return $searchedMembers;
-    }
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
 
-    private function checkIfFirstNameInList($user_id, $name)
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT usr_id FROM usr_data 
-        WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
-        " AND " .
-        $ilDB->like("firstname", "text", trim($name) . "%", false)
-        );
-        return $ilDB->fetchAssoc($result);
-    }
-
-    private function checkIfLastNameInList($user_id, $name)
-    {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT usr_id FROM usr_data 
-        WHERE usr_id = ". $ilDB->quote($user_id, "integer") .
-        " AND " .
-        $ilDB->like("lastname", "text", trim($name) . "%", false)
-        );
-        return $ilDB->fetchAssoc($result);
-    }
-
-
-
-    private function getMembers($parentObj, $form)
-    {
-        if ($parentObj->object->getParentRef() != 1) {
-            include_once './Services/Membership/classes/class.ilParticipants.php';
-            $this->members = ilParticipants::getInstance($parentObj->object->getParentRef())->getMembers();
-            return $this->getSearchedIds($form);
-        } else {
-            require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-            $this->members =  ilMumieTaskGradeSync::getAllUserIds();
-            return $this->getSearchedIds($form);
-        }
-    }
-
-    private function setTableRow($user_id, $parentObj)
-    {
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
-            ? "tblrow1"
-            : "tblrow2";
+        ? "tblrow1"
+        : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-        $this->tpl->setVariable('LINK', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
-
-        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object->getId());
-        $this->tpl->setVariable('VAL_GRADE', $grade);
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-        $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserService::getFirstName($user_id) . ", " . ilMumieTaskUserService::getLastName($user_id));
-        $this->tpl->setCurrentBlock("tbl_content");
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object);
+        $this->tpl->setVariable('DEADLINE_CELL_CONTENT', $this->getDeadlineCellContent($user_id, $parentObj->object));
+        $this->tpl->setVariable('LINK_GRADE_OVERVIEW', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
+        $this->tpl->setVariable('VAL_GRADE', $this->getGradeCellContent($grade));
+        $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserService::getFullName($user_id));
         $this->tpl->parseCurrentBlock();
+    }
+
+    private function getDeadlineCellContent($user_id, $mumie_task)
+    {
+        if (!$mumie_task->hasDeadline())
+        {
+            return self::EMPTY_CELL;
+        }
+        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task))
+        {
+            return $this->getDeadlineSetCellContent($user_id, $mumie_task);
+        }
+        return $this->getDeadlineUnsetCellContent();
+    }
+
+    private function getDeadlineUnsetCellContent()
+    {
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-unset.html", true, true, true, "DEFAULT", true);
+        $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
+        return $tpl->get();
+    }
+
+    private function getDeadlineSetCellContent($user_id, $mumie_task)
+    {
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-set.html", true, true, true, "DEFAULT", true);
+        $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task)->get();
+        $tpl->setVariable("DEADLINE", $deadline);
+        $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
+        $tpl->setVariable('LINK_DELETE_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'deleteDeadlineExtension'));
+        return $tpl->get();
+    }
+
+    private function getGradeCellContent(?ilMumieTaskGrade $grade): string
+    {
+        global $lng;
+        if (is_null($grade))
+        {
+            return self::EMPTY_CELL;
+        }
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
+        if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask()))
+        {
+            $tpl = new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html", true, true, true, "DEFAULT", true);
+            $tpl->setVariable("VAL_GRADE", $grade->getPercentileScore());
+            $tpl->setVariable("OVERRIDDEN_MOUSEOVER", $lng->txt('rep_robj_xmum_frm_user_gradeoverview_overridden_explanation'));
+            return $tpl->get();
+        }
+        return $grade->getPercentileScore();
     }
 
     //All functions are necessary for the list to be implemented into a form
@@ -185,6 +173,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     */
     public function getFieldId()
     {
+        return "";
     }
 
     public function setParentForm($a_parentform)
@@ -194,6 +183,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     public function setParent($a_val)
     {
+
     }
 
     public function getInfo()

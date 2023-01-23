@@ -26,6 +26,11 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     public function init()
     {
+        $this->createList();
+    }
+
+    private function createList()
+    {
         global $lng;
 
         $this->setFormName('participants');
@@ -40,20 +45,38 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj);
-        if ($this->gradesAvailable($this->parent_obj, $user_grades)) {
-            foreach ($user_grades as $xapi_grade) {
-                $this->setTableRow($this->parent_obj, $xapi_grade);
+        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj->object);
+        if ($this->privateGradepoolSet($this->parent_obj)) {
+            if(empty($user_grades)) {
+                $this->setEmptyTable();
+            } else {
+                foreach ($user_grades as $xapi_grade) {
+                    $this->setTableRow($this->parent_obj, $xapi_grade);
+                }
             }
+            
         }
         $this->enable('header');
-        $this->enable('sort');
         $this->setEnableHeader(true);
     }
 
-    private function gradesAvailable($parentObj, $userGrades)
+    private function privateGradepoolSet($parentObj)
     {
-        return $parentObj->object->getPrivateGradepool() != -1 && !empty($userGrades);
+        return $parentObj->object->getPrivateGradepool() != -1;
+    }
+
+    private function setEmptyTable()
+    {
+        global $lng;
+        $this->tpl->setCurrentBlock("tbl_content");
+        $this->css_row = ($this->css_row != "tblrow1")
+            ? "tblrow1"
+            : "tblrow2";
+        $this->tpl->setVariable("CSS_ROW", $this->css_row);
+        $this->tpl->setVariable("VAL_HIDDEN", "hidden");
+        $this->tpl->setVariable("VAL_NO_GRADE", $lng->txt('rep_robj_xmum_frm_grade_overview_no_submission_made'));
+        $this->tpl->setCurrentBlock("tbl_content");
+        $this->tpl->parseCurrentBlock();
     }
 
     private function setTableRow($parentObj, $xapi_grade)
@@ -64,8 +87,10 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->tpl->setVariable("VAL_GRADE", round($xapi_grade->result->score->raw * 100));
+        $this->tpl->setVariable("VAL_HIDDEN", "");
+        $this->tpl->setVariable("VAL_NO_GRADE", "");
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
-        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'newGrade', round($xapi_grade->result->score->raw * 100));
+        $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'score', $xapi_grade->result->score->raw);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xapi_grade->timestamp));
         $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'gradeOverride'));
         $dateTime = date('d.m.Y - H:i', strtotime($xapi_grade->timestamp));
