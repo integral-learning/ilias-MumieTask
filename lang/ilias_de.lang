@@ -102,7 +102,6 @@ frm_cancel#:#Abbrechen
 frm_list_grade_overview_after_deadline#:#Die Abgabefrist ist überschritten. Weitere Abgaben werden nicht mehr gewertet.
 frm_grade_overview_override_error#:#Beim Eintragen der Bewertung ist ein Fehler aufgetreten
 frm_grade_overview_no_submission_made#:#Es gab bisher keine Abgabe
-frm_grade_overview_no_current_grade#:#Es liegt keine aktuelle Bewertung vor
 frm_lp_deadline_desc#:#Falls diese Option aktiviert ist, werden keine Bewertungen, die nach dem gewählten Datum erzielt wurden, mit ILIAS synchronisiert.
 grade_override_removed#:#Manuel ausgewählte Bewertung für <b>%s</b> erfolgreich entfernt.
 btn_remove_grade_override#:#Auswahl zurücksetzen
