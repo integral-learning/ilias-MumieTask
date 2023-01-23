@@ -701,6 +701,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form->addCommandButton('submitDeadlineExtension', $lng->txt('rep_robj_xmum_frm_save'));
         $form->addCommandButton('displayGradeOverviewPage', $lng->txt('rep_robj_xmum_frm_cancel'));
         $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setInfoBox();
+
         $this->form = $form;
     }
 

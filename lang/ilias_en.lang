@@ -110,3 +110,4 @@ grade_override_removed#:#Sucessfully removed grade override for <b>%s</b>.
 btn_remove_grade_override#:#Reset selection
 grade_override_desc#:#Grades are automatically updated in ILIAS to the latest submitted answer within the deadline. If you want to use a different submission, you can click on the corresponding button to overwrite the current grade.<br><br>A manually selected grade will not be replaced by new submissions.
 student_name#:#Name
+deadline_extension_desc#:#Here you can grant a deadline extension to the student. If you have already manually selected a grade for them, this setting will not have any effect.

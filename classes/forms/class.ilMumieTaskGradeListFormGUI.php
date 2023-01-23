@@ -46,55 +46,9 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     private function setInfoBox()
     {
         global $lng;
-        $template = ilMumieTaskTemplateEngine::getTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeList/tpl.grade-list-info-box.html");
-        $template->setVariable('STUDENT_NAME', $lng->txt('rep_robj_xmum_student_name'));
-        $template->setVariable('STUDENT_NAME_VALUE', ilMumieTaskUserService::getFullName($this->user_id));
-        $template->setVariable('GENERAL_DEADLINE', $lng->txt('rep_robj_xmum_frm_user_overview_list_general_deadline'));
-        $template->setVariable('GENERAL_DEADLINE_VALUE', $this->getDeadlineInformation());
-        $template->setVariable('DEADLINE_EXTENSION', $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'));
-        $template->setVariable('DEADLINE_EXTENSION_VALUE', $this->getDeadlineExtensionInformation());
-        $template->setVariable('CURRENT_GRADE', $lng->txt('rep_robj_xmum_frm_grade_overview_list_used_grade'));
-        $template->setVariable('CURRENT_GRADE_VALUE', $this->getCurrentGradeInformation());
-        $template->setVariable('GRADE_OVERVIEW_DESC', $lng->txt('rep_robj_xmum_grade_override_desc'));
+        $description = $lng->txt('rep_robj_xmum_grade_override_desc');
+        $template = ilMumieTaskTemplateEngine::getStudentGradingInfoboxTemplate($this->mumie_task, $this->user_id, $description);
         ilUtil::sendInfo($template->get());
-    }
-
-    private function getDeadlineInformation()
-    {
-        if($this->mumie_task->hasDeadline())
-        {
-            return $this->mumie_task->getDeadlineDateTime();
-        }
-        return ilMumieTaskTemplateEngine::EMPTY_CELL;
-
-    }
-    private function getDeadlineExtensionInformation(): string
-    {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->user_id, $this->mumie_task) && $this->mumie_task->hasDeadline())
-        {
-            return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->user_id,
-                $this->parent_gui->object);
-        }
-        return ilMumieTaskTemplateEngine::EMPTY_CELL;
-    }
-
-    private function getCurrentGradeInformation(): string
-    {
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-        $mumie_task = $this->parent_gui->object;
-        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($this->user_id, $mumie_task);
-        if (is_null($grade))
-        {
-            return ilMumieTaskTemplateEngine::EMPTY_CELL;
-        }
-        if (ilMumieTaskGradeOverrideService::wasGradeOverridden($this->user_id, $mumie_task))
-        {
-            $template = ilMumieTaskTemplateEngine::getTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html");
-            $template->setVariable("VAL_GRADE", $grade->getPercentileScore());
-            return $template->get();
-        }
-        return $grade->getPercentileScore();
     }
 
     public function getHTML()
