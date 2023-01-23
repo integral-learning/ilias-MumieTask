@@ -14,7 +14,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  */
 class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 {
-    const DEADLINE_PARAM = 'deadline_extension';
+    public const DEADLINE_PARAM = 'deadline_extension';
     /**
      * @var ilDateTimeInputGUI
      */
@@ -39,8 +39,10 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
     {
         global $lng;
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
-        $this->deadline_input = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'),
-            self::DEADLINE_PARAM);
+        $this->deadline_input = new ilDateTimeInputGUI(
+            $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'),
+            self::DEADLINE_PARAM
+        );
         $this->deadline_input->setShowTime(true);
         $deadline_date = ilMumieTaskDeadlineService::getDeadlineDateForUser($this->user_id, $this->mumie_task);
         $this->deadline_input->setDate($deadline_date);
@@ -56,7 +58,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
         ilUtil::sendInfo($template->get());
     }
 
-    public function checkInput() : bool
+    public function checkInput(): bool
     {
         global $lng;
         $ok = parent::checkInput();

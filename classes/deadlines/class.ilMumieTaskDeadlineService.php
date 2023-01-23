@@ -14,19 +14,17 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 
 class ilMumieTaskDeadlineService
 {
-    public static function getDeadlineDateForUser(string $user_id, ilObjMumieTask $task) : ilMumieTaskDateTime
+    public static function getDeadlineDateForUser(string $user_id, ilObjMumieTask $task): ilMumieTaskDateTime
     {
-        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $task))
-        {
+        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
             return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task);
         }
         return $task->getDeadlineDateTime();
     }
 
-    public static function hasDeadlinePassedForUser(string $user_id, ilObjMumieTask $task) : bool
+    public static function hasDeadlinePassedForUser(string $user_id, ilObjMumieTask $task): bool
     {
-        if(!$task->hasDeadline())
-        {
+        if (!$task->hasDeadline()) {
             return false;
         }
         return self::getDeadlineDateForUser($user_id, $task)->hasPassed();

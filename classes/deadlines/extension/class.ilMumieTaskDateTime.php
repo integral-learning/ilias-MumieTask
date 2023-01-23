@@ -10,7 +10,8 @@
 /**
  * This class changes default behavior of ilDateTime. It's only meant to be used within MUMIE Task plugins
  */
-class ilMumieTaskDateTime extends ilDateTime {
+class ilMumieTaskDateTime extends ilDateTime
+{
     public function __construct($a_date = null, $a_format = IL_CAL_UNIX, $a_tz = '')
     {
         parent::__construct($a_date, $a_format, $a_tz);
@@ -30,5 +31,4 @@ class ilMumieTaskDateTime extends ilDateTime {
     {
         return time() > $this->getUnixTime();
     }
-
 }

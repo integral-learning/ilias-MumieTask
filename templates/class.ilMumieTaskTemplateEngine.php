@@ -9,7 +9,7 @@
 
 class ilMumieTaskTemplateEngine
 {
-    const EMPTY_CELL = '-';
+    public const EMPTY_CELL = '-';
     public static function getTemplate(string $path): ilTemplate
     {
         return new ilTemplate($path, true, true, true, "DEFAULT", true);
@@ -33,19 +33,16 @@ class ilMumieTaskTemplateEngine
 
     private static function getDeadlineInformation(ilObjMumieTask $mumie_task): string
     {
-        if($mumie_task->hasDeadline())
-        {
+        if ($mumie_task->hasDeadline()) {
             return $mumie_task->getDeadlineDateTime();
         }
         return ilMumieTaskTemplateEngine::EMPTY_CELL;
-
     }
 
     private static function getDeadlineExtensionInformation(ilObjMumieTask $mumie_task, $user_id): string
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task) && $mumie_task->hasDeadline())
-        {
+        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task) && $mumie_task->hasDeadline()) {
             return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task);
         }
         return ilMumieTaskTemplateEngine::EMPTY_CELL;
@@ -55,12 +52,10 @@ class ilMumieTaskTemplateEngine
     {
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $mumie_task);
-        if (is_null($grade))
-        {
+        if (is_null($grade)) {
             return ilMumieTaskTemplateEngine::EMPTY_CELL;
         }
-        if (ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $mumie_task))
-        {
+        if (ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $mumie_task)) {
             $template = ilMumieTaskTemplateEngine::getTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html");
             $template->setVariable("VAL_GRADE", $grade->getPercentileScore());
             return $template->get();

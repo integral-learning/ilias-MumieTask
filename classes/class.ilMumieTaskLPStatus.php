@@ -68,8 +68,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
      */
     public static function updateGrades($task, $force_update = false)
     {
-        if (!self::isGradable($task))
-        {
+        if (!self::isGradable($task)) {
             return;
         }
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
@@ -89,8 +88,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     public static function updateGradeForUser($task, $user_id, $force_update = false)
     {
-        if (!self::isGradable($task))
-        {
+        if (!self::isGradable($task)) {
             return;
         }
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
@@ -121,8 +119,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             return false;
         }
         include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
-        if (!$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress())
-        {
+        if (!$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
             return false;
         }
         return true;
@@ -249,7 +246,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             "obj_id = " . $ilDB->quote($mumie_task->getId(), "integer")
         );
         $lp_mark = $ilDB->fetchAssoc($result);
-        if(empty($lp_mark)) {
+        if (empty($lp_mark)) {
             return null;
         }
         $score = $lp_mark['mark'] / 100;
@@ -263,8 +260,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         ilChangeEvent::_deleteReadEvents($task->getId());
         global $ilDB;
         $query = "DELETE FROM ut_lp_marks WHERE obj_id = " . $ilDB->quote($task->getId(), 'integer');
-        if ($user_id > 0)
-        {
+        if ($user_id > 0) {
             $query .= " AND usr_id = " . $ilDB->quote($task->getId(), 'integer');
         }
         $ilDB->manipulate($query);

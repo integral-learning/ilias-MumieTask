@@ -47,14 +47,13 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         );
         $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj->object);
         if ($this->privateGradepoolSet($this->parent_obj)) {
-            if(empty($user_grades)) {
+            if (empty($user_grades)) {
                 $this->setEmptyTable();
             } else {
                 foreach ($user_grades as $xapi_grade) {
                     $this->setTableRow($this->parent_obj, $xapi_grade);
                 }
             }
-            
         }
         $this->enable('header');
         $this->setEnableHeader(true);

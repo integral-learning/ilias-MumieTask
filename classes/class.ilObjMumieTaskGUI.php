@@ -431,10 +431,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
-        if(ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
+        if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
             ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_grade_overview_after_deadline'));
         }
-        $this->tpl->setContent($this->object->getContent()); 
+        $this->tpl->setContent($this->object->getContent());
     }
 
     /**
@@ -669,8 +669,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskGradeOverrideService::overrideGrade($grade);
             ilUtil::sendSuccess(
-                sprintf($lng->txt('rep_robj_xmum_frm_grade_overview_list_successfull_update'),
-                    ilMumieTaskUserService::getFullName($user_id))
+                sprintf(
+                    $lng->txt('rep_robj_xmum_frm_grade_overview_list_successfull_update'),
+                    ilMumieTaskUserService::getFullName($user_id)
+                )
             );
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
@@ -705,7 +707,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
 
     public function submitDeadlineExtension()
-    { 
+    {
         $this->initDeadlineExtension();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();

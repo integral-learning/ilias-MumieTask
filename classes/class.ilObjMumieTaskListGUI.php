@@ -70,7 +70,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
             $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
 
-            if(!$task->hasDeadline()) {
+            if (!$task->hasDeadline()) {
                 return parent::insertDescription();
             }
 
@@ -97,7 +97,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
         }
     }
 
-    private function getDeadlineBadge(ilMumieTaskDateTime $deadline_date) : string
+    private function getDeadlineBadge(ilMumieTaskDateTime $deadline_date): string
     {
         global $lng;
         return '<span class = "mumie-deadline-badge">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline_date . "</span>";

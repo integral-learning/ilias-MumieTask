@@ -16,7 +16,6 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 
 class ilMumieTaskSSOService
 {
-
     /**
      * Verifies MUMIE tokens for SSO
      *

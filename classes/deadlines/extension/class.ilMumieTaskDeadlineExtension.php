@@ -13,7 +13,8 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 /**
  * This class represents a due date extension granted to a student
  */
-class ilMumieTaskDeadlineExtension {
+class ilMumieTaskDeadlineExtension
+{
     private $date;
     private $user_id;
     private $task_id;
@@ -41,7 +42,7 @@ class ilMumieTaskDeadlineExtension {
     /**
      * @param mixed $date
      */
-    public function setDate($date) : void
+    public function setDate($date): void
     {
         $this->date = $date;
     }
@@ -57,7 +58,7 @@ class ilMumieTaskDeadlineExtension {
     /**
      * @param mixed $user_id
      */
-    public function setUserId($user_id) : void
+    public function setUserId($user_id): void
     {
         $this->user_id = $user_id;
     }
@@ -73,7 +74,7 @@ class ilMumieTaskDeadlineExtension {
     /**
      * @param mixed $task_id
      */
-    public function setTaskId($task_id) : void
+    public function setTaskId($task_id): void
     {
         $this->task_id = $task_id;
     }

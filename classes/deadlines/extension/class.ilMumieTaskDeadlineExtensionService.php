@@ -14,10 +14,10 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  */
 class ilMumieTaskDeadlineExtensionService
 {
-    const DEADLINE_EXTENSION_TABLE = "xmum_deadline_ext";
-    const TASK_ID = 'task_id';
-    const USER_ID = 'usr_id';
-    const DATE = 'date';
+    public const DEADLINE_EXTENSION_TABLE = "xmum_deadline_ext";
+    public const TASK_ID = 'task_id';
+    public const USER_ID = 'usr_id';
+    public const DATE = 'date';
 
     public static function hasDeadlineExtension($user_id, $task): bool
     {

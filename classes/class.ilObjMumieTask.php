@@ -154,7 +154,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             include_once "./Services/Object/classes/class.ilObjectActivation.php";
             ilObjectActivation::getItem($this->ref_id);
 
-            $item = new ilObjectActivation;
+            $item = new ilObjectActivation();
             if (!$this->getActivationLimited()) {
                 $item->setTimingType(ilObjectActivation::TIMINGS_DEACTIVATED);
             } else {
@@ -567,7 +567,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function hasDeadline()
     {
-
         return !empty($this->deadline) && $this->deadline > 0;
     }
 
@@ -582,7 +581,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * @param mixed $deadline
      */
-    public function setDeadline($deadline) : void
+    public function setDeadline($deadline): void
     {
         $this->deadline = $deadline;
     }

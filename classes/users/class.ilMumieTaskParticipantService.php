@@ -14,7 +14,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  */
 class ilMumieTaskParticipantService
 {
-    public static function filter(ilObjMumieTask $mumie_task, $first_name = '', $last_name = '') : array
+    public static function filter(ilObjMumieTask $mumie_task, $first_name = '', $last_name = ''): array
     {
         $members = self::getAllMemberIds($mumie_task);
         return array_filter($members, function ($user_id) use ($first_name, $last_name) {
@@ -22,18 +22,18 @@ class ilMumieTaskParticipantService
         });
     }
 
-    private static function matchesName($user_id, $first_name, $last_name) : bool
+    private static function matchesName($user_id, $first_name, $last_name): bool
     {
         $user = ilMumieTaskUserService::getUser($user_id);
         return self::matchesFirstName($user, $first_name) && self::matchesLastName($user, $last_name);
     }
 
-    private static function matchesFirstName(ilMumieTaskUser $user, $first_name = '') : bool
+    private static function matchesFirstName(ilMumieTaskUser $user, $first_name = ''): bool
     {
         return self::matchesCaseInsensitive($user->getFirstName(), $first_name);
     }
 
-    private static function matchesLastName(ilMumieTaskUser $user, $last_name = '') : bool
+    private static function matchesLastName(ilMumieTaskUser $user, $last_name = ''): bool
     {
         return self::matchesCaseInsensitive($user->getLastName(), $last_name);
     }
@@ -43,7 +43,7 @@ class ilMumieTaskParticipantService
         return preg_match(sprintf("#^%s#i", $needle), $haystack);
     }
 
-    public static function getAllMemberIds(ilObjMumieTask $mumie_task) : array
+    public static function getAllMemberIds(ilObjMumieTask $mumie_task): array
     {
         if (self::isInBaseRepository($mumie_task)) {
             return self::getAllUserIds();
@@ -52,12 +52,12 @@ class ilMumieTaskParticipantService
         }
     }
 
-    private static function isInBaseRepository(ilObjMumieTask $mumie_task) : bool
+    private static function isInBaseRepository(ilObjMumieTask $mumie_task): bool
     {
         return $mumie_task->getParentRef() == 1;
     }
 
-    private static function getAllUserIds() : array
+    private static function getAllUserIds(): array
     {
         global $ilDB;
         $result = $ilDB->query(

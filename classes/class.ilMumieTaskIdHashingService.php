@@ -7,9 +7,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * Some organizations might use personal data like matriculation numbers as user id. That's why we need a way to replace them with another unique identifier.
-  */
+/**
+ * Some organizations might use personal data like matriculation numbers as user id. That's why we need a way to replace them with another unique identifier.
+ */
 class ilMumieTaskIdHashingService
 {
     private $id;
@@ -17,7 +17,7 @@ class ilMumieTaskIdHashingService
     private $hash;
     private $task;
 
-    const TABLE_NAME = 'xmum_id_hashes';
+    public const TABLE_NAME = 'xmum_id_hashes';
 
     private function __construct($user_id, $task)
     {
@@ -39,7 +39,7 @@ class ilMumieTaskIdHashingService
         $result = $ilDB->fetchObject(
             $ilDB->query(
                 'SELECT * FROM '
-                . SELF::TABLE_NAME
+                . self::TABLE_NAME
                 . " WHERE hash = "
                 . $ilDB->quote($hash, "text")
             )
@@ -54,11 +54,11 @@ class ilMumieTaskIdHashingService
         $this->hash = $this->generateHash();
         if ($this->task != null && $this->task->getPrivateGradepool() == 1) {
             $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
-        }   
+        }
         $result = $ilDB->fetchObject(
             $ilDB->query(
                 'SELECT * FROM '
-                . SELF::TABLE_NAME
+                . self::TABLE_NAME
                 . " WHERE usr_id = "
                 . $ilDB->quote($this->user_id, "integer")
                 . " AND hash = "

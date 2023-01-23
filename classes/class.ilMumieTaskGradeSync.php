@@ -13,7 +13,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
-require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
 
 /**
  * This class pulls grades for a given task from its MUMIE server
@@ -61,7 +61,6 @@ class ilMumieTaskGradeSync
     private function getNewXapiGrades()
     {
         return $this->getXapiGrades($this->getXapiRequestBody(true));
-
     }
 
     private function getAllXapiGradesByUser()
@@ -206,8 +205,7 @@ class ilMumieTaskGradeSync
         if (!$this->task->hasDeadline()) {
             return true;
         }
-        if(ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task))
-        {
+        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task)) {
             return strtotime($grade->timestamp) <= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
         }
         return strtotime($grade->timestamp) <= $this->task->getDeadline();

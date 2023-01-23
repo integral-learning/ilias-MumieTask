@@ -14,9 +14,9 @@
 
 class ilMumieTaskGradeOverrideService
 {
-    const TASK_ID = 'task_id';
-    const USER_ID = 'usr_id';
-    const NEW_GRADE = 'new_grade';
+    public const TASK_ID = 'task_id';
+    public const USER_ID = 'usr_id';
+    public const NEW_GRADE = 'new_grade';
 
     public static function wasGradeOverridden($user_id, $task)
     {

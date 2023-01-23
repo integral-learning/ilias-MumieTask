@@ -14,7 +14,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  */
 class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 {
-    const EMPTY_CELL = "-";
+    public const EMPTY_CELL = "-";
 
     public function __construct($parentObj)
     {
@@ -32,7 +32,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
-        $members = ilMumieTaskParticipantService::filter($parentObj->object, $form->getInput("firstnamefield"),$form->getInput("lastnamefield"));
+        $members = ilMumieTaskParticipantService::filter($parentObj->object, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGrades($parentObj->object);
@@ -72,12 +72,10 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     private function getDeadlineCellContent($user_id, $mumie_task)
     {
-        if (!$mumie_task->hasDeadline())
-        {
+        if (!$mumie_task->hasDeadline()) {
             return self::EMPTY_CELL;
         }
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task))
-        {
+        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task)) {
             return $this->getDeadlineSetCellContent($user_id, $mumie_task);
         }
         return $this->getDeadlineUnsetCellContent();
@@ -103,13 +101,11 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     private function getGradeCellContent(?ilMumieTaskGrade $grade): string
     {
         global $lng;
-        if (is_null($grade))
-        {
+        if (is_null($grade)) {
             return self::EMPTY_CELL;
         }
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
-        if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask()))
-        {
+        if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
             $tpl = new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html", true, true, true, "DEFAULT", true);
             $tpl->setVariable("VAL_GRADE", $grade->getPercentileScore());
             $tpl->setVariable("OVERRIDDEN_MOUSEOVER", $lng->txt('rep_robj_xmum_frm_user_gradeoverview_overridden_explanation'));
@@ -183,7 +179,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     public function setParent($a_val)
     {
-
     }
 
     public function getInfo()

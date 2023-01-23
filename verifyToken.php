@@ -8,9 +8,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This script is used by MUMIE Servers to verify a user's identity during SSO
-  */
+/**
+ * This script is used by MUMIE Servers to verify a user's identity during SSO
+ */
 
 header('Content-Type:application/json');
 $method = $_SERVER['REQUEST_METHOD'];

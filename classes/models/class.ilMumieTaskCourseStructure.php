@@ -88,7 +88,7 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
 
         return $this;
     }
-    
+
     /**
      * Get the value of link
      * @return void

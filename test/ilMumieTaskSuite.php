@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestSuite;
 
 class ilMumieTaskSuite extends TestSuite

@@ -7,14 +7,14 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This class is used to store and retrieve admin settings for the MumieTask plugin.
-  *
-  * We are not using active records since they didn't deliver reliable results during development
-  */
+/**
+ * This class is used to store and retrieve admin settings for the MumieTask plugin.
+ *
+ * We are not using active records since they didn't deliver reliable results during development
+ */
 class ilMumieTaskAdminSettings
 {
-    const TABLE_NAME = 'xmum_admin_settings';
+    public const TABLE_NAME = 'xmum_admin_settings';
 
     protected $share_first_name;
     protected $share_last_name;
