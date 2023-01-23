@@ -25,11 +25,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     public function init($parentObj, $form)
     {
-        $this->createList($parentObj, $form);
-    }
-
-    private function createList($parentObj, $form)
-    {
         global $lng;
         $this->setFormName('participants');
         $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
