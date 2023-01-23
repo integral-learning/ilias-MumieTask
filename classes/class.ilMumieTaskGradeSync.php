@@ -126,6 +126,12 @@ class ilMumieTaskGradeSync
         return $this->getValidGradeByUser($this->getNewXapiGrades());
     }
 
+    public function getValidAndNewXapiGradesForUser($user_id)
+    {
+        $grades_by_user = $this->getValidAndNewXapiGradesByUser();
+        return $grades_by_user[$user_id];
+    }
+
     /**
      * Get the unique identifier for a MUMIE task
      *

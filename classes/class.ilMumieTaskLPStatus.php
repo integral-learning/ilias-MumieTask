@@ -68,12 +68,8 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
      */
     public static function updateGrades($task, $force_update = false)
     {
-        if ($task->getPrivateGradepool() == -1) {
-            return;
-        }
-        include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
-
-        if (!$task->getServer() || !$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
+        if (!self::isGradable($task))
+        {
             return;
         }
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
@@ -87,10 +83,49 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         $grades_by_user = $grade_sync->getValidAndNewXapiGradesByUser();
         foreach (array_keys($grades_by_user) as $user_id) {
             $xapi_grade = $grades_by_user[$user_id];
-            $percentage = round($xapi_grade->result->score->scaled * 100);
-            self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
-            self::upsertMarks($user_id, $task, $xapi_grade);
+            self::upsertXapiGrade($xapi_grade, $task, $user_id);
         }
+    }
+
+    public static function updateGradeForUser($task, $user_id, $force_update = false)
+    {
+        if (!self::isGradable($task))
+        {
+            return;
+        }
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+        $grade_sync = new ilMumieTaskGradeSync($task, $force_update);
+
+        if ($force_update) {
+            self::deleteLPForTask($task, $user_id);
+        }
+
+        $xapi_grade = $grade_sync->getValidAndNewXapiGradesForUser($user_id);
+        self::upsertXapiGrade($xapi_grade, $task, $user_id);
+    }
+
+    private static function upsertXapiGrade($xapi_grade, $task, $user_id)
+    {
+        $percentage = round($xapi_grade->result->score->scaled * 100);
+        self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
+        self::upsertMarks($user_id, $task, $xapi_grade);
+    }
+
+    private static function isGradable(ilObjMumieTask $task): bool
+    {
+        if ($task->getPrivateGradepool() == -1) {
+            return false;
+        }
+
+        if (!$task->getServer()) {
+            return false;
+        }
+        include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
+        if (!$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress())
+        {
+            return false;
+        }
+        return true;
     }
 
     private static function upsertMarks($user_id, $task, $xapi_grade)
@@ -222,11 +257,16 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         return new ilMumieTaskGrade($user_id, $score, $mumie_task, $timestamp);
     }
 
-    private static function deleteLPForTask($task)
+    private static function deleteLPForTask($task, $user_id = 0)
     {
         require_once('Services/Tracking/classes/class.ilChangeEvent.php');
         ilChangeEvent::_deleteReadEvents($task->getId());
         global $ilDB;
-        $ilDB->manipulate("DELETE FROM ut_lp_marks WHERE obj_id = " . $ilDB->quote($task->getId(), 'integer'));
+        $query = "DELETE FROM ut_lp_marks WHERE obj_id = " . $ilDB->quote($task->getId(), 'integer');
+        if ($user_id > 0)
+        {
+            $query .= " AND usr_id = " . $ilDB->quote($task->getId(), 'integer');
+        }
+        $ilDB->manipulate($query);
     }
 }

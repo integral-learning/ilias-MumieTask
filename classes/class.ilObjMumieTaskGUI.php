@@ -737,6 +737,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $lng;
         $user_id = $_GET["user_id"];
         ilMumieTaskGradeOverrideService::deleteGradeOverride($this->object, $user_id);
+        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
+        ilMumieTaskLPStatus::updateGradeForUser($this->object, $user_id, true);
         ilUtil::sendSuccess(
             sprintf(
                 $lng->txt('rep_robj_xmum_grade_override_removed'),
