@@ -55,25 +55,25 @@ class ilMumieTaskGradeOverrideService
 
         ilMumieTaskLPStatus::updateMark($grade->getUserId(), $grade->getMumieTask()->getId(), $grade->getPercentileScore(), $grade->getTimestamp());
         if (!self::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
-            self::insertGradeOverride($grade->getUserId(), $grade);
+            self::insertGradeOverride($grade);
         }
-        self::updateGradeOverride($grade->getUserId(), $grade);
+        self::updateGradeOverride($grade);
     }
 
-    private static function insertGradeOverride($user_id, ilMumieTaskGrade $grade)
+    private static function insertGradeOverride(ilMumieTaskGrade $grade)
     {
         global $ilDB;
         $ilDB->insert(
             "xmum_grade_override",
             array(
                 self::TASK_ID => array('integer', $grade->getMumieTask()->getId()),
-                self::USER_ID => array('text', $user_id),
+                self::USER_ID => array('text', $grade->getUserId()),
                 self::NEW_GRADE => array('integer', $grade->getPercentileScore())
             )
         );
     }
 
-    private static function updateGradeOverride($user_id, ilMumieTaskGrade $grade)
+    private static function updateGradeOverride(ilMumieTaskGrade $grade)
     {
         global $ilDB;
         $ilDB->update(
@@ -83,12 +83,12 @@ class ilMumieTaskGradeOverrideService
             ),
             array(
                 self::TASK_ID => array('integer', $grade->getMumieTask()->getId()),
-                self::USER_ID => array('text', $user_id),
+                self::USER_ID => array('text', $grade->getUserId()),
             )
         );
     }
 
-    public static function deleteGradeOverridesForTask($task)
+    public static function deleteGradeOverridesForTask(ilObjMumieTask $task)
     {
         global $ilDB;
         $ilDB->manipulate("DELETE FROM xmum_grade_override WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
