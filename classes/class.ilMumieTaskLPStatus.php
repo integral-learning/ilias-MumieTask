@@ -180,7 +180,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         foreach ($mumieTasks as $mumieTask) {
             try {
                 self::updateGrades($mumieTask);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 ilLoggerFactory::getLogger('xmum')->info('Error when updating grades for MUMIE Task: ' . $mumieTask->id);
                 ilLoggerFactory::getLogger('xmum')->info($e);
             }
