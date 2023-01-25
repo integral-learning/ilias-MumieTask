@@ -28,8 +28,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
      */
     private $user_id;
 
-    public function __construct($mumie_task, $user_id)
-    {
+    public function __construct($mumie_task, $user_id)    {
         parent::__construct();
         $this->mumie_task = $mumie_task;
         $this->user_id = $user_id;
