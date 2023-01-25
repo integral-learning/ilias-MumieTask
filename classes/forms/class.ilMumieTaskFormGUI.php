@@ -29,6 +29,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $server_data_item;
     private $course_file_item;
     private $org_item;
+    private $dropzone_item;
 
     private $server_options = array();
     private $course_options = array();
@@ -102,6 +103,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         $this->org_item = new ilHiddenInputGUI('mumie_org');
         $this->addItem($this->org_item);
+
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZone.php');
+        $this->dropzone_item = new ilMumieTaskDropZone("abc", "dec");
+        $this->addItem($this->dropzone_item);
 
         $this->populateOptions($servers);
     }

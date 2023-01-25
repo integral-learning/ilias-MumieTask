@@ -17,3 +17,15 @@
 .mumie-icon {
     margin-left: 0.5em;
 }
+
+.mumie-dropzone {
+    width: 100%;
+    height: 300px;
+    background: blueviolet;
+    margin: 10px;
+    padding: 10px;
+}
+
+.red {
+    background: red;
+}
