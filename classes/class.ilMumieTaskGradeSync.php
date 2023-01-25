@@ -18,7 +18,8 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 /**
  * This class pulls grades for a given task from its MUMIE server
  */
-class ilMumieTaskGradeSync{
+class ilMumieTaskGradeSync
+{
     private $user_ids;
     private $task;
     private $admin_settings;
