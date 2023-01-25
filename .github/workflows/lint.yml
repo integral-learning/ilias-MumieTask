@@ -25,7 +25,7 @@ jobs:
         run: composer require friendsofphp/php-cs-fixer
 
       - name: Fix Style
-        run: ./vendor/bin/php-cs-fixer fix --diff
+        run: ./vendor/bin/php-cs-fixer fix --diff ./
 
       - name: Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v4
