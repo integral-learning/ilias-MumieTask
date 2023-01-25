@@ -22,12 +22,10 @@ jobs:
           extensions: mbstring, intl, gd, xml, dom, json, fileinfo, curl, zip, iconv
 
       - name: Install Dependencies
-        run: mkdir -p tools/php-cs-fixer
-            composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer 
-            composer install --prefer-dist
+        run: composer require friendsofphp/php-cs-fixer
 
       - name: Fix Style
-        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --diff
+        run: ./vendor/bin/php-cs-fixer fix --diff
 
       - name: Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v4
