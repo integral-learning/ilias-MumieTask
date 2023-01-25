@@ -104,11 +104,16 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->org_item = new ilHiddenInputGUI('mumie_org');
         $this->addItem($this->org_item);
 
+
+        $this->populateOptions($servers);
+
+        $select_task_header_item = new ilFormSectionHeaderGUI();
+        $select_task_header_item->setTitle($lng->txt('rep_robj_xmum_frm_multi_problem_header'));
+        $this->addItem($select_task_header_item);
+
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZone.php');
         $this->dropzone_item = new ilMumieTaskDropZone("abc", "dec");
         $this->addItem($this->dropzone_item);
-
-        $this->populateOptions($servers);
     }
 
     public function checkInput()

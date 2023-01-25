@@ -14,6 +14,7 @@ class ilMumieTaskTemplateEngine
     {
         global $tpl;
         $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
+        $tpl->addCss("Services/FileUpload/templates/default/fileupload.css");
         return new ilTemplate($path, true, true, true, "DEFAULT", true);
     }
 
