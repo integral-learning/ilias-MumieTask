@@ -8,8 +8,8 @@
  */
 
 require_once('Services/Form/classes/class.ilFormPropertyGUI.php');
-class ilMumieTaskDropZone extends ilFormPropertyGUI {
-
+class ilMumieTaskDropZone extends ilFormPropertyGUI
+{
     public function insert($a_tpl)
     {
         $a_tpl->setCurrentBlock("prop_generic");
@@ -28,7 +28,7 @@ class ilMumieTaskDropZone extends ilFormPropertyGUI {
         return $dropzone_template->get();
     }
 
-    public function setValueByArray($a_values){
-
+    public function setValueByArray($a_values)
+    {
     }
 }
