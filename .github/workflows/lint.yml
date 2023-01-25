@@ -1,6 +1,7 @@
-name: Format (PHP)
+name: fix-style
 
 on:
+  push:
   pull_request:
     paths:
       - '**.php'
@@ -9,13 +10,24 @@ jobs:
   php-cs-fixer:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Run php-cs-fixer
-        uses: docker://oskarstark/php-cs-fixer-ga
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v1
         with:
-          commit_message: Apply php-cs-fixer changes
+          php-version: '7.3'
+          extensions: mbstring, intl, gd, xml, dom, json, fileinfo, curl, zip, iconv
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist
+
+      - name: Fix Style
+        run: ./vendor/bin/php-cs-fixer fix --diff
+
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Fix styling changes
