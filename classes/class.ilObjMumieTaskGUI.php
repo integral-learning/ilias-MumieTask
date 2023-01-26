@@ -214,6 +214,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->initPropertiesForm();
 
         if (!$this->form->checkInput()) {
+            ilLoggerFactory::getLogger("xmum")->info("-----------" . $this->form->getInput("xmum_multi_problems"));
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
             $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');

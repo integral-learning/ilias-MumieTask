@@ -112,7 +112,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->addItem($select_task_header_item);
 
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZone.php');
-        $this->dropzone_item = new ilMumieTaskDropZone("abc", "dec");
+        $this->dropzone_item = new ilMumieTaskDropZone( "", "xmum_multi_problems");
         $this->addItem($this->dropzone_item);
     }
 

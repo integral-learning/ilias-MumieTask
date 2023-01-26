@@ -9,6 +9,7 @@
 (function ($) {
   $(document).ready(function () {
     const dropzone = document.getElementById("xmum-dropzone");
+    const multiProblemInputElem = document.getElementById("xmum_multi_problems");
     const DRAG_OVER_CLASS = "ilFileDragOver";
     dropzone.addEventListener("dragover",  (event) => {
       event.preventDefault();
@@ -17,8 +18,10 @@
     dropzone.ondrop = (event) => {
       console.log("on drop")
       console.log(event.dataTransfer.getData("identifier"));
-      console.log(event.dataTransfer.getData("mumie/jsonArray"));
+      const data = event.dataTransfer.getData("mumie/jsonArray");
+      console.log(data);
       dropzone.classList.remove("red");
+      multiProblemInputElem.setAttribute("value", event.dataTransfer.getData("mumie/jsonArray"));
 
     }
     dropzone.addEventListener("dragenter",  (event) => {
