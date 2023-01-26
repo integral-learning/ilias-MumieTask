@@ -53,7 +53,7 @@ class ilMumieTaskTaskDTO
     /**
      * @return string
      */
-    public function getServer() : string
+    public function getServer(): string
     {
         return $this->server;
     }
@@ -61,7 +61,7 @@ class ilMumieTaskTaskDTO
     /**
      * @return string
      */
-    public function getCourse() : string
+    public function getCourse(): string
     {
         return $this->course;
     }
@@ -69,7 +69,7 @@ class ilMumieTaskTaskDTO
     /**
      * @return string
      */
-    public function getPathToCoursefile() : string
+    public function getPathToCoursefile(): string
     {
         return $this->path_to_coursefile;
     }
@@ -77,7 +77,7 @@ class ilMumieTaskTaskDTO
     /**
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -85,7 +85,7 @@ class ilMumieTaskTaskDTO
     /**
      * @return string
      */
-    public function getLanguage() : string
+    public function getLanguage(): string
     {
         return $this->language;
     }
