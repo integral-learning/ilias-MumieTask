@@ -110,3 +110,4 @@ student_name#:#Name
 deadline_extension_desc#:#Here you can grant a deadline extension to the student. If you have already manually selected a grade for them, this setting will not have any effect.
 frm_multi_problem_header#:#Select multiple MUMIE Problems
 form_drag_mt_here#:#Drag MUMIE Problems here
+multi_create_success#:#Successfully created %s additional MUMIE Tasks via drag & drop!
