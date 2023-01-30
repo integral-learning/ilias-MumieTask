@@ -13,13 +13,8 @@
     const DRAG_OVER_CLASS = "ilFileDragOver";
     dropzone.addEventListener("dragover",  (event) => {
       event.preventDefault();
-      // console.log("i was dragged over")})
     })
     dropzone.ondrop = (event) => {
-      console.log("on drop")
-      console.log(event.dataTransfer.getData("identifier"));
-      const data = event.dataTransfer.getData("mumie/jsonArray");
-      console.log(data);
       dropzone.classList.remove("red");
       multiProblemInputElem.setAttribute("value", event.dataTransfer.getData("mumie/jsonArray"));
 
