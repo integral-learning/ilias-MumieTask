@@ -72,7 +72,8 @@ class ilMumieTaskMultiUploadProcessor
         return $new_task;
     }
 
-    private static function isValidProblem(ilMumieTaskTaskDTO $task_dto): bool {
+    private static function isValidProblem(ilMumieTaskTaskDTO $task_dto): bool
+    {
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $server = ilMumieTaskServer::fromUrl($task_dto->getServer());
         $server->buildStructure();

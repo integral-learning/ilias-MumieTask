@@ -162,8 +162,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskMultiUploadProcessor.php');
         $multi_problems_input = $this->getInput("xmum_multi_problems");
-        if (isset($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input))
-        {
+        if (isset($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input)) {
             $ok = false;
             $this->dropzone_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_problems_not_found'));
         }
