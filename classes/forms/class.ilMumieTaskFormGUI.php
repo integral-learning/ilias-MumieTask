@@ -65,6 +65,15 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->course_item->setRequired(true);
         $this->addItem($this->course_item);
 
+        $this->launchcontainer_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_launchcontainer'), 'xmum_launchcontainer');
+        $opt_window = new ilRadioOption($lng->txt('rep_robj_xmum_window'), '0');
+        $opt_embedded = new ilRadioOption($lng->txt('rep_robj_xmum_embedded'), '1');
+        $this->launchcontainer_item->setRequired(true);
+        $this->launchcontainer_item->addOption($opt_window);
+        $this->launchcontainer_item->addOption($opt_embedded);
+        $this->launchcontainer_item->setInfo($lng->txt('rep_robj_xmum_launchcontainer_desc'));
+        $this->addItem($this->launchcontainer_item);
+
         $select_task_header_item = new ilFormSectionHeaderGUI();
         $select_task_header_item->setTitle($lng->txt("rep_robj_xmum_mumie_select_problem"));
         $this->addItem($select_task_header_item);
@@ -81,16 +90,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $problem_selector_button->setButtonLabel($this->lng->txt('rep_robj_xmum_open_prb_selector'));
         $problem_selector_button->setInfo($this->lng->txt('rep_robj_xmum_open_prb_selector_desc'));
         $this->addItem($problem_selector_button);
-
-
-        $this->launchcontainer_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_launchcontainer'), 'xmum_launchcontainer');
-        $opt_window = new ilRadioOption($lng->txt('rep_robj_xmum_window'), '0');
-        $opt_embedded = new ilRadioOption($lng->txt('rep_robj_xmum_embedded'), '1');
-        $this->launchcontainer_item->setRequired(true);
-        $this->launchcontainer_item->addOption($opt_window);
-        $this->launchcontainer_item->addOption($opt_embedded);
-        $this->launchcontainer_item->setInfo($lng->txt('rep_robj_xmum_launchcontainer_desc'));
-        $this->addItem($this->launchcontainer_item);
 
         $servers = ilMumieTaskServer::getAllServers();
 
