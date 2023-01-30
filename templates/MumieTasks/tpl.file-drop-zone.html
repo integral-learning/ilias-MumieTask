@@ -1,9 +1,18 @@
 <div>
-    <div class="ilFileUploadContainer" >
+    <div class="ilFileUploadContainer">
         <div class="ilFileUploadDropArea">
             <div class="ilFileUploadDropZone" id="xmum-dropzone">
                 <i class='ilFileDropTargetOverlayImage'></i> {TXT_DRAG_PROBLEMS_HERE}
             </div>
-        </div>{DESCRIPTION}</div>
-    <input hidden name="{POST_VAR}" id="xmum_multi_problems"/>
+            <input hidden name="{POST_VAR}" id="xmum_multi_problems" />
+        </div>
+    </div>
+    <div id="xmum_dropzone_description" hidden>
+        <u>
+            {MULTI_PROBLEM_LIST_HEADER}
+        </u>
+        <ul id="xmum_selected_multi_problems">
+        </ul>
+        {DESCRIPTION}
+    </div>
 </div>

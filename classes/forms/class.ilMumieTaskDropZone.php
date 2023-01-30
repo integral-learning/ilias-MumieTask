@@ -27,7 +27,8 @@ class ilMumieTaskDropZone extends ilFormPropertyGUI
         global $tpl, $lng;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/class.ilMumieTaskTemplateEngine.php');
         $dropzone_template = ilMumieTaskTemplateEngine::getDropzoneTemplate();
-        $dropzone_template->setVariable("DESCRIPTION", "TODO");
+        $dropzone_template->setVariable("DESCRIPTION", $lng->txt('rep_robj_xmum_dropzone_description'));
+        $dropzone_template->setVariable("MULTI_PROBLEM_LIST_HEADER", $lng->txt('rep_robj_xmum_multi_problem_list_description'));
         $dropzone_template->setVariable("TXT_DRAG_PROBLEMS_HERE", $lng->txt('rep_robj_xmum_form_drag_mt_here'));
         $dropzone_template->setVariable("POST_VAR", $this->getPostVar());
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskDropzone.js');
