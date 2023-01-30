@@ -111,3 +111,7 @@ deadline_extension_desc#:#Hier können Sie Studierenden individuelle Fristverlä
 frm_multi_problem_header#:#Wählen Sie mehrere MUMIE-Probleme
 form_drag_mt_here#:#Ziehe Sie die MUMIE-Problems hierhinein
 multi_create_success#:#Es wurden %s weitere MUMIE-Tasks über Drag&Drop erstellt!
+mumie_problems#:#MUMIE-Problems
+open_dnd_prb_selector#:#Mehrfach-Aufgabenauswahl öffnen
+dnd_prb_selector_desc#:#Hier klicken, um die Mehrfach-Aufgabeauswahl zu öffnen. Wählen sie einfach die Aufgaben aus, die Sie importieren möchten, und ziehen sie diese in das untere Feld. <br><br>Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> and <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
+

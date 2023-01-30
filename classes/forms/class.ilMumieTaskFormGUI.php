@@ -110,6 +110,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $select_task_header_item = new ilFormSectionHeaderGUI();
         $select_task_header_item->setTitle($lng->txt('rep_robj_xmum_frm_multi_problem_header'));
         $this->addItem($select_task_header_item);
+        $multi_problem_selector_btn = new ilMumieTaskFormButtonGUI($lng->txt('rep_robj_xmum_mumie_problems'), "xmum_multi_prb_sel");
+        $multi_problem_selector_btn->setButtonLabel($lng->txt('rep_robj_xmum_open_dnd_prb_selector'));
+        $multi_problem_selector_btn->setInfo($lng->txt('rep_robj_xmum_dnd_prb_selector_desc'));
+        $this->addItem($multi_problem_selector_btn);
 
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZone.php');
         $this->dropzone_item = new ilMumieTaskDropZone("", "xmum_multi_problems");
