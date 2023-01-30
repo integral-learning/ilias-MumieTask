@@ -114,3 +114,4 @@ multi_create_success#:#Successfully created %s additional MUMIE Tasks via drag &
 mumie_problems#:#MUMIE Problems
 open_dnd_prb_selector#:#Open multi problem selector
 dnd_prb_selector_desc#:#Clicking here will open the multi problem selection screen. Simply choose the problems you want to import and drag them in the field below.<br><br>Once you click <b>Save</b>, Ilias will automatically create new MUMIE-Tasks for the selected problems. The settings for <i>Launch container</i>, <i>online</i> and <i>Deadline</i> will be copied from this currently opened MUMIE Task.
+frm_tsk_problems_not_found#:#One or more problems could not be found.

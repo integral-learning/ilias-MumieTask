@@ -37,7 +37,7 @@ mumie_select_problem#:#Wählen Sie ein MUMIE-Problem
 mumie_problem#:#MUMIE-Problem
 mumie_problem_desc#:#Wählen Sie aus <b><span id='xmum_task_count'></span></b> MUMIE-Problemen! <br><br>Ein MUMIE-Problem ist eine benotete Übung auf der MUMIE-Plattform
 frm_tsk_course_not_found#:#Dieser Kurs konnte auf dem ausgewählten server nicht gefunden werden.
-frm_tsk_problem_not_found#:#Dieses Problem konnte auf dem ausgewählten server nicht gefunden werden.
+frm_tsk_problem_not_found#:#Dieses Problem konnte auf dem ausgewählten Server nicht gefunden werden.
 frm_tsk_lang_not_found#:#Es gibt keine Übersetzung in die gewünschte Sprache für das ausgewählte Problem
 launchcontainer#:#Start-Container
 launchcontainer_desc#:#Bitte wählen Sie, ob diese Aktivität in einem neuen Browser-Tab geöffnet oder in die Ilias-Umgebung eingebettet werden soll.
@@ -114,4 +114,4 @@ multi_create_success#:#Es wurden %s weitere MUMIE-Tasks über Drag&Drop erstellt
 mumie_problems#:#MUMIE-Problems
 open_dnd_prb_selector#:#Mehrfach-Aufgabenauswahl öffnen
 dnd_prb_selector_desc#:#Hier klicken, um die Mehrfach-Aufgabeauswahl zu öffnen. Wählen sie einfach die Aufgaben aus, die Sie importieren möchten, und ziehen sie diese in das untere Feld. <br><br>Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> and <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
-
+frm_tsk_problems_not_found#:#Ein oder mehrere Problems konnten nicht auf dem Server gefunden werden

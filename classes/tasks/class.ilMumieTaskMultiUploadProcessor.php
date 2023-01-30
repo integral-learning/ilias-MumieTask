@@ -14,11 +14,27 @@ class ilMumieTaskMultiUploadProcessor
     public static function process(ilObjMumieTask $base_task, string $tasks_json)
     {
         global $lng;
-        $taskDTOs = self::parseTaskDTOs($tasks_json);
-        foreach ($taskDTOs as $taskDTO) {
+        $task_dtos = self::parseTaskDTOs($tasks_json);
+        foreach ($task_dtos as $taskDTO) {
             self::generateMumieTask($taskDTO, $base_task);
         }
-        ilUtil::sendInfo(sprintf($lng->txt("rep_robj_xmum_multi_create_success"), count($taskDTOs)), true);
+        ilUtil::sendInfo(sprintf($lng->txt("rep_robj_xmum_multi_create_success"), count($task_dtos)), true);
+    }
+
+    public static function isValid(string $tasks_json): bool
+    {
+        try {
+            $task_dtos = self::parseTaskDTOs($tasks_json);
+            return !in_array(
+                false,
+                array_map(function ($task_dto) {
+                    return self::isValidProblem($task_dto);
+                }, $task_dtos),
+                true
+            );
+        } catch (Exception $exception) {
+            return false;
+        }
     }
 
     private static function parseTaskDTOs(string $tasks_json): array
@@ -54,5 +70,14 @@ class ilMumieTaskMultiUploadProcessor
         $new_task->putInTree($parent_ref);
         $new_task->setParentRolePermissions($parent_ref);
         return $new_task;
+    }
+
+    private static function isValidProblem(ilMumieTaskTaskDTO $task_dto): bool {
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+        $server = ilMumieTaskServer::fromUrl($task_dto->getServer());
+        $server->buildStructure();
+        $course = $server->getCoursebyName($task_dto->getCourse());
+        $task = $course->getTaskByLink($task_dto->getLink());
+        return !is_null($task);
     }
 }
