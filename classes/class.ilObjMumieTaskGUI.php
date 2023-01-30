@@ -258,7 +258,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $mumieTask->update();
 
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskMultiUploadProcessor.php');
-        ilMumieTaskMultiUploadProcessor::process($mumieTask, $this->form->getInput("xmum_multi_problems"));
+        $tasks_json = $this->form->getInput("xmum_multi_problems");
+        if (!empty($tasks_json)) {
+            ilMumieTaskMultiUploadProcessor::process($mumieTask, $tasks_json);
+        }
     }
 
     /**
