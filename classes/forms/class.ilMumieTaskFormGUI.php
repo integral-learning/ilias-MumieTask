@@ -114,8 +114,8 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $multi_problem_selector_btn->setInfo($lng->txt('rep_robj_xmum_dnd_prb_selector_desc'));
         $this->addItem($multi_problem_selector_btn);
 
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZone.php');
-        $this->dropzone_item = new ilMumieTaskDropZone("", "xmum_multi_problems");
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZoneGUI.php');
+        $this->dropzone_item = new ilMumieTaskDropZoneGUI("", "xmum_multi_problems");
         $this->addItem($this->dropzone_item);
     }
 

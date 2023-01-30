@@ -8,7 +8,7 @@
  */
 
 require_once('Services/Form/classes/class.ilFormPropertyGUI.php');
-class ilMumieTaskDropZone extends ilFormPropertyGUI
+class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
 {
     public function __construct($a_title = "", $post_var = "")
     {
