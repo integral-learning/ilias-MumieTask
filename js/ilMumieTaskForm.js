@@ -136,6 +136,7 @@
 
         const problemSelectorController = (function () {
             const problemSelectorButton = document.getElementById('xmum_prb_sel');
+            const multiProblemSelectorButton = document.getElementById('xmum_multi_prb_sel');
             let problemSelectorWindow;
             const mumieOrg = document.getElementById('mumie_org').value;
 
@@ -214,6 +215,18 @@
                             , '_blank'
                         );
                     };
+
+                    multiProblemSelectorButton.onclick = function(e) {
+                        e.preventDefault();
+                        problemSelectorWindow = window.open(
+                          lmsSelectorUrl
+                          + '/lms-problem-selector?'
+                          + "serverUrl="
+                          + encodeURIComponent(serverController.getSelectedServer().url_prefix),
+                          "_blank",
+                          'toolbar=0,location=0,menubar=0'
+                        );
+                    }
 
                     window.onclose = function () {
                         sendSuccess();

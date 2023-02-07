@@ -12,7 +12,15 @@ class ilMumieTaskTemplateEngine
     public const EMPTY_CELL = '-';
     public static function getTemplate(string $path): ilTemplate
     {
+        global $tpl;
+        $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
+        $tpl->addCss("Services/FileUpload/templates/default/fileupload.css");
         return new ilTemplate($path, true, true, true, "DEFAULT", true);
+    }
+
+    public static function getDropzoneTemplate(): ilTemplate
+    {
+        return self::getTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/MumieTasks/tpl.file-drop-zone.html");
     }
 
     public static function getStudentGradingInfoboxTemplate(ilObjMumieTask $mumie_task, string $user_id, string $description = ''): ilTemplate
