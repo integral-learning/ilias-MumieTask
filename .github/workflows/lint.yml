@@ -6,7 +6,7 @@ on:
       - '**.php'
 
 jobs:
-  php-cs-fixer:
+  php-formatter:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
