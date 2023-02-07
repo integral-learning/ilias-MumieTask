@@ -107,13 +107,13 @@ grade_override_removed#:#Manuel ausgewählte Bewertung für <b>%s</b> erfolgreic
 btn_remove_grade_override#:#Auswahl zurücksetzen
 grade_override_desc#:#Neue Abgaben werden automatisch in ILIAS übernommen, sofern die Abgabefrist noch nicht abgelaufen ist. Um eine andere Abgabe für die Bewertung zu verwenden, können Sie auf die entsprechende Schaltfläche in der Tabelle klicken.<br><br>Eine manuell ausgewählte Bewertung wird auch durch zukünftige Abgaben des Studierenden <b>nicht</b> ersetzt werden.
 student_name#:#Name
-deadline_extension_desc#:#Hier können Sie Studierenden individuelle Fristverlängerungen gewähren. Falls Sie bereits manuel eine andere Bewertung ausgewählt haben, hat diese Fristverlängerung keine Auswirkung.
+deadline_extension_desc#:#Hier können Sie Studierenden individuelle Fristverlängerungen gewähren. Falls Sie bereits manuell eine andere Bewertung ausgewählt haben, hat diese Fristverlängerung keine Auswirkung.
 frm_multi_problem_header#:#Zusätzliche MUMIE-Probleme erzeugen
 form_drag_mt_here#:#Ziehe Sie die MUMIE-Problems hierhinein
 multi_create_success#:#Es wurden %s weitere MUMIE-Tasks über Drag&Drop erstellt!
 mumie_problems#:#MUMIE-Problems
 open_dnd_prb_selector#:#Mehrfach-Aufgabenauswahl öffnen
-dnd_prb_selector_desc#:#Hier klicken, um die Mehrfach-Aufgabeauswahl zu öffnen. Wählen sie einfach die Aufgaben aus, die Sie importieren möchten, und ziehen sie diese in das untere Feld.
+dnd_prb_selector_desc#:#Hier klicken, um die Mehrfach-Aufgabenauswahl zu öffnen. Wählen sie einfach die Aufgaben aus, die Sie importieren möchten, und ziehen sie diese in das untere Feld.
 frm_tsk_problems_not_found#:#Ein oder mehrere Problems konnten nicht auf dem Server gefunden werden
-dropzone_description#:#Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> and <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
+dropzone_description#:#Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> und <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
 multi_problem_list_description#:#Sie haben die folgenden MUMIE-Problems ausgewählt
