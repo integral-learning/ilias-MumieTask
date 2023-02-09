@@ -29,6 +29,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $server_data_item;
     private $course_file_item;
     private $org_item;
+    private $dropzone_item;
 
     private $server_options = array();
     private $course_options = array();
@@ -64,6 +65,15 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->course_item->setRequired(true);
         $this->addItem($this->course_item);
 
+        $this->launchcontainer_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_launchcontainer'), 'xmum_launchcontainer');
+        $opt_window = new ilRadioOption($lng->txt('rep_robj_xmum_window'), '0');
+        $opt_embedded = new ilRadioOption($lng->txt('rep_robj_xmum_embedded'), '1');
+        $this->launchcontainer_item->setRequired(true);
+        $this->launchcontainer_item->addOption($opt_window);
+        $this->launchcontainer_item->addOption($opt_embedded);
+        $this->launchcontainer_item->setInfo($lng->txt('rep_robj_xmum_launchcontainer_desc'));
+        $this->addItem($this->launchcontainer_item);
+
         $select_task_header_item = new ilFormSectionHeaderGUI();
         $select_task_header_item->setTitle($lng->txt("rep_robj_xmum_mumie_select_problem"));
         $this->addItem($select_task_header_item);
@@ -81,16 +91,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $problem_selector_button->setInfo($this->lng->txt('rep_robj_xmum_open_prb_selector_desc'));
         $this->addItem($problem_selector_button);
 
-
-        $this->launchcontainer_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_launchcontainer'), 'xmum_launchcontainer');
-        $opt_window = new ilRadioOption($lng->txt('rep_robj_xmum_window'), '0');
-        $opt_embedded = new ilRadioOption($lng->txt('rep_robj_xmum_embedded'), '1');
-        $this->launchcontainer_item->setRequired(true);
-        $this->launchcontainer_item->addOption($opt_window);
-        $this->launchcontainer_item->addOption($opt_embedded);
-        $this->launchcontainer_item->setInfo($lng->txt('rep_robj_xmum_launchcontainer_desc'));
-        $this->addItem($this->launchcontainer_item);
-
         $servers = ilMumieTaskServer::getAllServers();
 
         $this->server_data_item = new ilHiddenInputGUI('server_data');
@@ -103,7 +103,20 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->org_item = new ilHiddenInputGUI('mumie_org');
         $this->addItem($this->org_item);
 
+
         $this->populateOptions($servers);
+
+        $select_task_header_item = new ilFormSectionHeaderGUI();
+        $select_task_header_item->setTitle($lng->txt('rep_robj_xmum_frm_multi_problem_header'));
+        $this->addItem($select_task_header_item);
+        $multi_problem_selector_btn = new ilMumieTaskFormButtonGUI($lng->txt('rep_robj_xmum_mumie_problems'), "xmum_multi_prb_sel");
+        $multi_problem_selector_btn->setButtonLabel($lng->txt('rep_robj_xmum_open_dnd_prb_selector'));
+        $multi_problem_selector_btn->setInfo($lng->txt('rep_robj_xmum_dnd_prb_selector_desc'));
+        $this->addItem($multi_problem_selector_btn);
+
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZoneGUI.php');
+        $this->dropzone_item = new ilMumieTaskDropZoneGUI("", "xmum_multi_problems");
+        $this->addItem($this->dropzone_item);
     }
 
     public function checkInput()
@@ -144,6 +157,13 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         if (!$is_dummy && !in_array($this->getInput("xmum_language"), $task->getLanguages())) {
             $ok = false;
             $this->language_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_lang_not_found'));
+        }
+
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskMultiUploadProcessor.php');
+        $multi_problems_input = $this->getInput("xmum_multi_problems");
+        if (!empty($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input)) {
+            $ok = false;
+            $this->dropzone_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_problems_not_found'));
         }
 
         return $ok;
