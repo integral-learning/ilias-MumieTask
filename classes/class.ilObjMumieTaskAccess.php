@@ -1,8 +1,14 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 class ilObjMumieTaskAccess extends ilObjectPluginAccess
 {
-
     /**
      * Checks wether a user may invoke a command or not
      * (this method is called by ilAccessHandler::checkAccess)
@@ -59,6 +65,12 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
                 return $ilAccess->checkAccess("write", "", $a_ref_id);
             case 'submitAvailabilitySettings':
                 return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case "displayGradeOverviewPage":
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case "displayGradeList":
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
+            case "gradeOverride":
+                return $ilAccess->checkAccess("write", "", $a_ref_id);
         }
 
         $rbacsystem = $DIC['rbacsystem'];
@@ -67,12 +79,11 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
         switch ($a_permission) {
             case "read":
             case "visible":
-                if (!self::_lookupOnline($a_obj_id)
-                    && (!$rbacsystem->checkAccessOfUser($a_user_id, 'write', $a_ref_id))
-                ) {
-                    $ilAccess->addInfoItem(IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
-
-                    return false;
+                if (!$rbacsystem->checkAccessOfUser($a_user_id, 'write', $a_ref_id)) {
+                    if (!self::_lookupOnline($a_obj_id)) {
+                        $ilAccess->addInfoItem(IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
+                        return false;
+                    }
                 }
                 break;
         }

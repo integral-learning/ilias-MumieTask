@@ -10,7 +10,6 @@
 include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
 class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 {
-
     /**
      * Handles all commands, default is "configure"
      */

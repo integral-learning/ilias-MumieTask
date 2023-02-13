@@ -6,6 +6,7 @@
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskServerStructure.php');
 
 /**
@@ -20,12 +21,12 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements \JsonSeria
     /**
      * This is used as parameter when requesting available courses and tasks.
      */
-    const MUMIE_JSON_FORMAT_VERSION = 3;
+    public const MUMIE_JSON_FORMAT_VERSION = 3;
 
     /**
      * This is used as parameter when synchronizing grades
      */
-    const MUMIE_GRADE_SYNC_VERSION = 2;
+    public const MUMIE_GRADE_SYNC_VERSION = 2;
 
     private static $SERVER_TABLE_NAME = "xmum_mumie_servers";
     public function __construct($id = 0)

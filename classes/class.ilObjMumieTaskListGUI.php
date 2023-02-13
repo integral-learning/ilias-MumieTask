@@ -6,6 +6,7 @@
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 include_once "./Services/Repository/classes/class.ilObjectPluginListGUI.php";
 
 class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
@@ -24,7 +25,6 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
     {
         global $lng, $ctrl;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-
         //Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
         try {
             ilMumieTaskLPStatus::updateGradesForIlContainer($_GET["ref_id"]);
@@ -46,13 +46,70 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
     }
 
     /**
+     * Insert description for MUMIE Task - including information about any deadline set by the teacher,
+     *
+     * We need to to override parent method or we won't be able to add any kind of styling to the deadline bade.
+     * We closely follow the structure found in ilObjectListGUI::insertDescription
+     *
+     * @return true|void
+     */
+    public function insertDescription()
+    {
+        global $ilUser, $tpl;
+
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskObjService.php');
+        try {
+            // This fragment replicates parent behaviour
+            if ($this->getSubstitutionStatus()) {
+                $this->insertSubstitutions();
+                if (!$this->substitutions->isDescriptionEnabled()) {
+                    return true;
+                }
+            }
+
+            $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
+
+            if (!$task->hasDeadline()) {
+                return parent::insertDescription();
+            }
+
+            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($ilUser->getId(), $task);
+
+            $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
+            $this->tpl->setVariable("TXT_DESC", $this->getDescriptionWithDeadlineBadge($deadline, $task));
+            $this->tpl->setCurrentBlock("item_description");
+            $this->tpl->parseCurrentBlock();
+        } catch (Exception $e) {
+            ilLoggerFactory::getLogger('xmum')->error("Error when setting MUMIE Task description in list view:");
+            ilLoggerFactory::getLogger('xmum')->error($e);
+            parent::insertDescription();
+        }
+    }
+
+    private function getDescriptionWithDeadlineBadge(ilMumieTaskDateTime $deadline, ilObjMumieTask $task): string
+    {
+        if (!empty($task->getDescription())) {
+            return $this->getDeadlineBadge($deadline) . "<br>" .
+                strip_tags($task->getDescription());
+        } else {
+            return  $this->getDeadlineBadge($deadline);
+        }
+    }
+
+    private function getDeadlineBadge(ilMumieTaskDateTime $deadline_date): string
+    {
+        global $lng;
+        return '<span class = "mumie-deadline-badge">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline_date . "</span>";
+    }
+
+    /**
      * Insert an offline warning into the description field in list view, if MumieTask is not set to online
      *
      * @access public
-     * @param
-     *
+     * @return array
      */
-    public function getProperties()
+    public function getProperties(): array
     {
         global $lng;
 
@@ -61,6 +118,6 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             $props[] = array("alert" => true, "property" => $lng->txt("status"),
                 "value" => $lng->txt("offline"));
         }
-        return $props ? $props : array();
+        return $props ?? array();
     }
 }

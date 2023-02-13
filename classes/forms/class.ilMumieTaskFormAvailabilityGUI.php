@@ -7,9 +7,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This class is used to display and validate the custom availability form for MumieTask
-  */
+/**
+ * This class is used to display and validate the custom availability form for MumieTask
+ */
 class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 {
     private $online_item;
@@ -38,9 +38,6 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
         $act_type_item->addSubItem($duration_item);
         $this->duration_item = $duration_item;
 
-        $visiblity_item = new ilCheckboxInputGUI($this->lng->txt('rep_activation_limited_visibility'), 'activation_visibility');
-        $visiblity_item->setInfo($this->lng->txt('rep_robj_xmum_activation_limited_visibility_info'));
-        $act_type_item->addSubItem($visiblity_item);
         $this->addItem($act_type_item);
         $this->act_type_item = $act_type_item;
     }
@@ -64,11 +61,10 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
     {
         global $lng;
         $online_info = $lng->txt('rep_robj_xmum_frm_online_info');
-        if ($disable_online_selection)
-        { 
+        if ($disable_online_selection) {
             $online_info .= '<br><br>' . $lng->txt('rep_robj_xmum_frm_online_disabled_warning');
         }
-           
+
         return $online_info;
     }
 }

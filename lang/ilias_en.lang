@@ -11,6 +11,7 @@ frm_share_email_desc#:#Choose, whether a user's e-mail address should be shared 
 tab_shared_data#:#Privacy
 tab_servers#:#Servers
 tab_authentication#:#Authentication
+tab_userlist#:#Grade Overview
 frm_auth_api#:#MUMIE API Key
 frm_auth_api_desc#:#Specify the MUMIE API key for grade synchronization
 frm_auth_org#:#MUMIE Org
@@ -67,7 +68,7 @@ frm_gradepool_pending#:#Leave decision open
 frm_passing_grade#:#Passing grade
 frm_passing_grade_desc#:#Please enter the passing threshold for this MumieTask
 frm_force_update#:#Force new grade synchronization
-frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. 
+frm_force_update_desc#:#Pressing this button will delete all learning progress for this MUMIE Task and then load the latest grades from the server. This also includes all manually overwritten grades.
 frm_force_update_btn#:#Force update
 edit_task#:#Edit
 activation_limited_visibility_info#:#Users can see this MUMIE task outside of the chosen availability period, but cannot work on it
@@ -75,3 +76,44 @@ frm_online_info#:#Make this MUMIE Task visible and usable to all users with read
 frm_online_disabled_warning#:#This MUMIE Task cannot be set online because a decision is still pending. Please go to grading settings.
 open_prb_selector#:#Open problem selector
 open_prb_selector_desc#:#Click here to open a more detailed selection screen. You can filter all problems by category and enter search terms.
+frm_list_grade#:#Grade
+frm_user_overview_list_grade_desc#:#<br><br>By default the newest submission before the deadline is used. If you want to use a different submission, you can click on the corresponding button to overwrite the current grade.
+frm_user_overview_list_change_grade#:#Change Grade
+frm_user_overview_list_submissions#:#Submissions
+frm_grade_overview_list_submission_date#:#Submission Date
+frm_grade_overview_list_used_grade#:#Current grade
+frm_grade_overview_list_use_grade#:#Select grade
+frm_grade_overview_list_back#:#Back
+frm_user_overview_list_search#:#Search
+frm_user_overview_list_name#:#Name
+frm_user_overview_list_firstname_search#:#Firstname
+frm_user_overview_list_lastname_search#:#Lastname
+frm_user_overview_list_search_title#:#Search Participants
+frm_user_overview_list_general_deadline#:#General deadline:
+frm_grade_overview_list_successfull_update#:#Successfully updated grade for <b>%s</b>
+frm_deadline_extension_successfull_update#:#Successfully granted deadline extension to <b>%s</b>
+frm_deadline_extension_successfull_delete#:#Successfully deleted deadline extension for <b>%s</b>
+frm_deadline_extension_before_general_deadline_error#:#Please choose a date after the general deadline
+frm_user_overview_list_extended_deadline#:#Deadline extension
+frm_user_gradeoverview_overridden_explanation#:#This grade was manually overridden. Further submissions will not be taken into account for grading.
+frm_grade_overview_list_deadline#:#Deadline
+frm_save#:#Save
+frm_cancel#:#Cancel
+frm_list_grade_overview_after_deadline#:#The deadline for submission has passed. Any further submissions will not be taken into account for grading.
+frm_grade_overview_override_error#:#There was an error while updating grade
+frm_grade_overview_no_submission_made#:#There was no submission made
+frm_lp_deadline_desc#:#If enabled, grades that were earned after the selected date will not be synchronized with ILIAS
+grade_override_removed#:#Sucessfully removed grade override for <b>%s</b>.
+btn_remove_grade_override#:#Reset selection
+grade_override_desc#:#Grades are automatically updated in ILIAS to the latest submitted answer within the deadline. If you want to use a different submission, you can click on the corresponding button to overwrite the current grade.<br><br>A manually selected grade will not be replaced by new submissions.
+student_name#:#Name
+deadline_extension_desc#:#Here you can grant a deadline extension to the student. If you have already manually selected a grade for them, this setting will not have any effect.
+frm_multi_problem_header#:#Create additional MUMIE Problems
+form_drag_mt_here#:#Drag MUMIE Problems here
+multi_create_success#:#Successfully created %s additional MUMIE Tasks via drag & drop!
+mumie_problems#:#MUMIE Problems
+open_dnd_prb_selector#:#Open multi problem selector
+dnd_prb_selector_desc#:#Clicking here will open the multi problem selection screen. Simply choose the problems you want to import and drag them in the field below.<br><br>
+frm_tsk_problems_not_found#:#One or more problems could not be found.
+dropzone_description#:#Once you click <b>Save</b>, Ilias will automatically create new MUMIE-Tasks for the selected problems. The settings for <i>Launch container</i>, <i>online</i> and <i>Deadline</i> will be copied from this currently opened MUMIE Task.
+multi_problem_list_description#:#You have selected the following MUMIE Problems

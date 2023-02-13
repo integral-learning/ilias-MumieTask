@@ -1,9 +1,10 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 class ilMumieTaskServerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         /*include_once ("./Services/PHPUnit/classes/class.ilUnitUtil.php");
         ilUnitUtil::performInitialisation();*/

@@ -7,9 +7,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This form is used to edit the Learning Progress settings of MumieTasks
-  */
+/**
+ * This form is used to edit the Learning Progress settings of MumieTasks
+ */
 class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 {
     public function __construct($disable_grade_pool_selection)
@@ -21,6 +21,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     private $modus_item;
     private $gradepool_item;
     private $passing_threshold_item;
+    private $deadline_item;
     private $disable_grade_pool_selection;
 
     public function setFields()
@@ -35,7 +36,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->addItem($this->modus_item);
 
         $this->gradepool_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_privategradepool'), "privategradepool");
-        
+
         $this->gradepool_item->setInfo($this->getGradepoolInfo());
         $gradepool_option_true = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 0);
         $gradepool_option_false = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 1);
@@ -44,7 +45,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $gradepool_option_false->setDisabled($this->disable_grade_pool_selection);
         $this->gradepool_item->addOption($gradepool_option_true);
         $this->gradepool_item->addOption($gradepool_option_false);
-        if(!$this->disable_grade_pool_selection) {
+        if (!$this->disable_grade_pool_selection) {
             $this->gradepool_item->addOption($gradepool_option_pending);
         }
         $this->addItem($this->gradepool_item);
@@ -56,17 +57,21 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->passing_threshold_item->setDecimals(0);
         $this->addItem($this->passing_threshold_item);
         $this->passing_threshold_item->setInfo($lng->txt('rep_robj_xmum_frm_passing_grade_desc'));
+
+        $this->deadline_item = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'), 'deadline');
+        $this->deadline_item->setInfo($lng->txt('rep_robj_xmum_frm_lp_deadline_desc'));
+        $this->deadline_item->setShowTime(true);
+
+        $this->addItem($this->deadline_item);
     }
 
     private function getGradepoolInfo()
     {
         global $lng;
         $gradepool_info = $lng->txt('rep_robj_xmum_frm_privategradepool_desc') . '<br><br>';
-        if (!$this->disable_grade_pool_selection)
-        {
+        if (!$this->disable_grade_pool_selection) {
             $gradepool_info .= $lng->txt('rep_robj_xmum_frm_privategradepool_undecided');
-        } else
-        {
+        } else {
             $gradepool_info .= $lng->txt('rep_robj_xmum_frm_privategradepool_decided');
         }
 
@@ -76,7 +81,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 
     public function checkInput()
     {
-        $ok = parent::checkInput();  
+        $ok = parent::checkInput();
         return $ok;
     }
 }

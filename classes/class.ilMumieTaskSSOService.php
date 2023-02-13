@@ -6,6 +6,7 @@
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOToken.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
@@ -15,7 +16,6 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 
 class ilMumieTaskSSOService
 {
-
     /**
      * Verifies MUMIE tokens for SSO
      *
@@ -25,7 +25,6 @@ class ilMumieTaskSSOService
 
     public static function verifyToken()
     {
-        $logger = ilLoggerFactory::getLogger('xmum');
         global $ilDB;
         $token = $_POST['token'];
         $hashed_id = $_POST['userId'];

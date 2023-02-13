@@ -1,4 +1,11 @@
 <?php
+/**
+ * MumieTask plugin
+ *
+ * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
+ * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 class ilMumieTaskTagStructure implements \JsonSerializable
 {

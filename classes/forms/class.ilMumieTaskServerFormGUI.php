@@ -8,9 +8,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /**
-  * This form is used to add, edit and validate MUMIE Server configurations
-  */
+/**
+ * This form is used to add, edit and validate MUMIE Server configurations
+ */
 class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 {
     public function __construct()
