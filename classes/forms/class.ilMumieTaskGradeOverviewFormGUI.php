@@ -61,13 +61,13 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         $this->addItem($userList);
     }
 
-    public function getHTML()
+    public function getHTML() : string
     {
         $html = parent::getHTML();
         return str_replace("ilTableOuter", "mumie-user-table", $html);
     }
 
-    public function checkInput()
+    public function checkInput() : bool
     {
         $ok = parent::checkInput();
         return $ok;

@@ -36,7 +36,7 @@ class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
         return $dropzone_template->get();
     }
 
-    public function checkInput()
+    public function checkInput() : bool
     {
         return true;
     }

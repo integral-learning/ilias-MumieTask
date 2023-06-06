@@ -27,7 +27,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Get type.
      */
-    final public function getType()
+    final public function getType() : string
     {
         return ilMumieTaskPlugin::ID;
     }
@@ -35,7 +35,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Handles all commands of this class, centralizes permission checks
      */
-    public function performCommand($cmd)
+    public function performCommand($cmd) : void
     {
         switch ($cmd) {
             case "editProperties":
@@ -68,7 +68,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 break;
         }
     }
-    public function setTabs()
+    public function setTabs() : void
     {
         global $ilCtrl, $ilAccess, $ilTabs, $lng, $DIC;
         $this->tabs->clearTargets();
@@ -114,7 +114,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      *
      * We decided to do implement creation this way, because we need the option to add MUMIE servers during the creation process, but generating any kind of output during repObj creation caused ILIAS errors
      */
-    public function create()
+    public function create() : void
     {
         global $lng;
         $this->setCreationMode(true);
@@ -407,7 +407,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * After object has been created -> jump to this command
      */
-    public function getAfterCreationCmd()
+    public function getAfterCreationCmd() : string
     {
         return "editProperties";
     }
@@ -415,7 +415,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Get standard command
      */
-    public function getStandardCmd()
+    public function getStandardCmd() : string
     {
         return "viewContent";
     }

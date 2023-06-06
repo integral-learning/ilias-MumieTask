@@ -32,7 +32,7 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
         parent::addItem($this->url_item);
     }
 
-    public function checkInput()
+    public function checkInput() : bool
     {
         global $DIC, $lng;
         $id = $_GET['server_id'];

@@ -51,7 +51,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         ilUtil::sendInfo($template->get());
     }
 
-    public function getHTML()
+    public function getHTML() : string
     {
         $html = parent::getHTML();
         return str_replace("ilTableOuter", "mumie-user-table", $html);

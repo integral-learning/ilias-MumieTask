@@ -16,12 +16,12 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
         $this->setType('xmum');
     }
 
-    public function getGuiClass()
+    public function getGuiClass() : string
     {
         return 'ilObjMumieTaskGUI';
     }
 
-    public function initCommands()
+    public function initCommands() : array
     {
         global $lng, $ctrl;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
@@ -53,7 +53,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
      *
      * @return true|void
      */
-    public function insertDescription()
+    public function insertDescription() : void
     {
         global $ilUser, $tpl;
 
@@ -64,14 +64,14 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             if ($this->getSubstitutionStatus()) {
                 $this->insertSubstitutions();
                 if (!$this->substitutions->isDescriptionEnabled()) {
-                    return true;
+//                    return true;
                 }
             }
 
             $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
 
             if (!$task->hasDeadline()) {
-                return parent::insertDescription();
+                parent::insertDescription();
             }
 
             $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($ilUser->getId(), $task);

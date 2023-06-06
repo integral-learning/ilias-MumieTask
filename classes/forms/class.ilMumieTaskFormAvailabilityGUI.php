@@ -42,14 +42,14 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
         $this->act_type_item = $act_type_item;
     }
 
-    public function checkInput()
+    public function checkInput() : bool
     {
         $ok = parent::checkInput();
 
         return $ok;
     }
 
-    public function setValuesByArray($values, $a_restrict_to_value_keys = false)
+    public function setValuesByArray($values, $a_restrict_to_value_keys = false) : void
     {
         $period = $values['period'];
         $this->duration_item->setStart(new ilDateTime($period->startingTime ?? time(), IL_CAL_UNIX));
