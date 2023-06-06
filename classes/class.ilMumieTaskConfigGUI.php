@@ -8,16 +8,19 @@
  */
 
 include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
+/**
+ * @ilCtrl_IsCalledBy ilMumieTaskConfigGUI: ilObjComponentSettingsGUI
+ */
 class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 {
     /**
      * Handles all commands, default is "configure"
      */
-    public function performCommand($cmd) : void
+    public function performCommand(string $cmd) : void
     {
         global $tree, $rbacsystem, $ilErr, $lng, $ilCtrl, $tpl;
 
-        $cmd = $ilCtrl->getCmd($this);
+        $cmd = $ilCtrl->getCmd($cmd);
 
         $this->setTabs();
         switch ($cmd) {
@@ -144,7 +147,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     private function submitSharedData()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        global $tpl, $ilCtrl, $lng;
+        global $tpl, $ilCtrl, $lng, $DIC;
         $this->initShareDataForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -158,7 +161,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings->setShareEmail($this->form->getInput('shareEmail'));
         $admin_settings->update();
         $cmd = "sharedData";
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         $this->$cmd();
     }
 
@@ -206,7 +209,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function submitAuthForm()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        global $tpl, $ilCtrl, $lng;
+        global $tpl, $ilCtrl, $lng, $DIC;
         $this->initAuthForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -219,7 +222,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings->setOrg($this->form->getInput("org"));
         $admin_settings->update();
         $cmd = "authentication";
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         $this->$cmd();
     }
 
@@ -257,7 +260,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function submitServer()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-        global $tpl, $lng;
+        global $tpl, $lng, $DIC;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -274,7 +277,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $mumie_server->setName($input_name);
         $mumie_server->setUrlPrefix($input_url_prefix);
         $mumie_server->upsert();
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
         $this->listServers();
     }
 
@@ -285,12 +288,12 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function deleteServer()
     {
-        global $lng;
+        global $lng, $DIC;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $server = new ilMumieTaskServer($_GET['server_id']);
         $server->delete();
         $cmd = "configure";
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_deleted'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $lng->txt('rep_robj_xmum_msg_suc_deleted'), true);
         $this->$cmd();
     }
 

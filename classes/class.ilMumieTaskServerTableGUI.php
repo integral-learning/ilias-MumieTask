@@ -17,7 +17,7 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
     public function __construct($a_parent_obj, $a_parent_cmd = '', $a_template_context = '')
     {
         // this uses the cached plugin object
-        $this->plugin_object = ilPlugin::getPluginObject(IL_COMP_SERVICE, 'Repository', 'robj', 'MumieTask');
+        $this->plugin_object = $a_parent_obj;
 
         parent::__construct($a_parent_obj, $a_parent_cmd, $a_template_context);
     }
@@ -45,7 +45,6 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
 
     private function getServerData()
     {
-        $this->plugin_object->includeClass('class.ilMumieTaskServer.php');
         $this->setData(ilMumieTaskServer::getAllServerData());
     }
 
