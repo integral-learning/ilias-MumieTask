@@ -48,7 +48,7 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
         $this->setData(ilMumieTaskServer::getAllServerData());
     }
 
-    protected function fillRow($set) : void
+    protected function fillRow($set): void
     {
         global $lng, $ilCtrl;
 

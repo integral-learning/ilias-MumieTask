@@ -51,11 +51,11 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 
     public function setInfoBox()
     {
-        global $lng;
+        global $lng, $DIC;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/class.ilMumieTaskTemplateEngine.php');
         $description = $lng->txt('rep_robj_xmum_deadline_extension_desc');
         $template = ilMumieTaskTemplateEngine::getStudentGradingInfoboxTemplate($this->mumie_task, $this->user_id, $description);
-        ilUtil::sendInfo($template->get());
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $template->get());
     }
 
     public function checkInput(): bool

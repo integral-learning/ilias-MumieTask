@@ -25,7 +25,7 @@ class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
         $this->id = $id;
     }
 
-    public function insert($a_tpl) : void
+    public function insert($a_tpl): void
     {
         $a_tpl->setCurrentBlock("prop_generic");
         $a_tpl->setVariable("PROP_GENERIC", $this->render());

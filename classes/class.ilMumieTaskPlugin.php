@@ -12,12 +12,12 @@ class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
     public const ID = "xmum";
 
     // must correspond to the plugin subdirectory
-    public function getPluginName() : string
+    public function getPluginName(): string
     {
         return "MumieTask";
     }
 
-    protected function uninstallCustom() : void
+    protected function uninstallCustom(): void
     {
         // TODO: Nothing to do here.
     }

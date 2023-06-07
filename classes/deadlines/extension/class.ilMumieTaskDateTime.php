@@ -22,7 +22,7 @@ class ilMumieTaskDateTime extends ilDateTime
         return parent::get($a_format, $a_format_str, $a_tz);
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this::get();
     }

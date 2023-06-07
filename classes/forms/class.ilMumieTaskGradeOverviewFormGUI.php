@@ -29,7 +29,7 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
 
     private function setSearch($parentObj, $form)
     {
-        global $lng;
+        global $lng, $DIC;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverviewGUI.php');
         $this->text_item_first = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_user_overview_list_firstname_search'), 'firstnamefield');
         if (!empty($this->getInput("firstnamefield"))) {
@@ -43,7 +43,7 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         $this->addItem($this->text_item_last);
 
         if ($parentObj->object->hasDeadline()) {
-            ilUtil::sendInfo('<span>
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('info', '<span>
             <b>' . $lng->txt('rep_robj_xmum_frm_user_overview_list_general_deadline') . '</b>
             <span style="margin-left:50px"> ' . $parentObj->object->getDeadlineDateTime() . '</span>
             </span>');
@@ -61,13 +61,13 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         $this->addItem($userList);
     }
 
-    public function getHTML() : string
+    public function getHTML(): string
     {
         $html = parent::getHTML();
         return str_replace("ilTableOuter", "mumie-user-table", $html);
     }
 
-    public function checkInput() : bool
+    public function checkInput(): bool
     {
         $ok = parent::checkInput();
         return $ok;

@@ -24,7 +24,7 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
      *
      * @return    boolean        true, if everything is ok
      */
-    public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "") : bool
+    public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = ""): bool
     {
         global $ilUser, $ilAccess, $ilCtrl, $DIC, $lng;
         if (!isset($a_cmd) || trim($a_cmd) === '') {

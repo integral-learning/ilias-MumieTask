@@ -27,7 +27,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Get type.
      */
-    final public function getType() : string
+    final public function getType(): string
     {
         return ilMumieTaskPlugin::ID;
     }
@@ -35,7 +35,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Handles all commands of this class, centralizes permission checks
      */
-    public function performCommand($cmd) : void
+    public function performCommand($cmd): void
     {
         switch ($cmd) {
             case "editProperties":
@@ -68,7 +68,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 break;
         }
     }
-    public function setTabs() : void
+    public function setTabs(): void
     {
         global $ilCtrl, $ilAccess, $ilTabs, $lng, $DIC;
         $this->tabs->clearTargets();
@@ -114,9 +114,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      *
      * We decided to do implement creation this way, because we need the option to add MUMIE servers during the creation process, but generating any kind of output during repObj creation caused ILIAS errors
      */
-    public function create() : void
+    public function create(): void
     {
-        global $lng;
+        global $lng, $DIC;
         $this->setCreationMode(true);
         $refId = $_GET["ref_id"];
 
@@ -136,7 +136,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->ctrl->setParameter($this, "ref_id", $this->object->getRefId());
         $this->afterSave($this->object);
         $this->setCreationMode(false);
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $lng->txt('rep_robj_xmum_msg_suc_saved'), true);
     }
 
     /**
@@ -144,10 +144,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function editPropertiesObject()
     {
-        global $tpl, $ilTabs, $lng;
+        global $tpl, $ilTabs, $lng, $DIC;
         if (empty(ilMumieTaskServer::getAllServers())) {
             $this->addServer();
-            ilUtil::sendInfo($lng->txt("rep_robj_xmum_msg_no_server_found"), true);
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $lng->txt("rep_robj_xmum_msg_no_server_found"), true);
             return;
         }
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
@@ -157,10 +157,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->initPropertiesForm();
         if (!$this->object->isDummy() && !ilMumieTaskServer::serverConfigExistsForUrl($this->object->getServer())) {
             $this->form->disable();
-            ilUtil::sendFailure($lng->txt('rep_robj_xmum_msg_server_missing') . $this->object->getServer());
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('failure', $lng->txt('rep_robj_xmum_msg_server_missing') . $this->object->getServer());
         } elseif (!$this->object->isDummy() && !ilMumieTaskServer::fromUrl($this->object->getServer())->isValidMumieServer()) {
             $this->form->disable();
-            ilUtil::sendFailure($lng->txt('rep_robj_xmum_msg_no_connection_to_server') . $this->object->getServer());
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('failure', $lng->txt('rep_robj_xmum_msg_no_connection_to_server') . $this->object->getServer());
         }
         $this->setPropertyValues();
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
@@ -210,7 +210,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitMumieTask()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-        global $tpl, $ilCtrl, $lng;
+        global $tpl, $ilCtrl, $lng, $DIC;
         $this->initPropertiesForm();
 
         if (!$this->form->checkInput()) {
@@ -232,7 +232,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
             ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         }
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $lng->txt('rep_robj_xmum_msg_suc_saved'), true);
         $cmd = 'editProperties';
 
         $ilCtrl->redirect($this, 'editProperties');
@@ -299,7 +299,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitServer()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-        global $tpl, $lng;
+        global $tpl, $lng, $DIC;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -312,7 +312,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $mumie_server->setName($input_name);
             $mumie_server->setUrlPrefix($input_url_prefix);
             $mumie_server->upsert();
-            ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
 
             $cmd = 'editProperties';
             $this->performCommand($cmd);
@@ -346,7 +346,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function setProgressInfo()
     {
-        global $ilUser, $lng;
+        global $ilUser, $lng, $DIC;
         $status = ilMumieTaskLPStatus::getLPStatusForUser($this->object, $ilUser->getId());
         $status_path = ilLearningProgressBaseGUI::_getImagePathForStatus($status);
         $lng->loadLanguageModule('trac');
@@ -354,22 +354,22 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         switch ($status) {
             case ilLPStatus::LP_STATUS_COMPLETED_NUM:
                 $status_text = $lng->txt(ilLPStatus::LP_STATUS_COMPLETED);
-                ilUtil::sendSuccess($this->getLPMessageString($status_text, $status_path), true);
+                $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->getLPMessageString($status_text, $status_path), true);
                 break;
             case ilLPStatus::LP_STATUS_FAILED_NUM:
                 $status_text = $lng->txt(ilLPStatus::LP_STATUS_FAILED);
-                ilUtil::sendFailure($this->getLPMessageString($status_text, $status_path), true);
+                $DIC->ui()->mainTemplate()->setOnScreenMessage('failure', $this->getLPMessageString($status_text, $status_path), true);
                 break;
             case ilLPStatus::LP_STATUS_IN_PROGRESS_NUM:
                 $status_text = $lng->txt(ilLPStatus::LP_STATUS_IN_PROGRESS);
-                ilUtil::sendQuestion($this->getLPMessageString($status_text, $status_path), true);
+                $DIC->ui()->mainTemplate()->setOnScreenMessage('question', $this->getLPMessageString($status_text, $status_path), true);
                 break;
             case ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM:
                 $status_text = $lng->txt(ilLPStatus::LP_STATUS_NOT_ATTEMPTED);
-                ilUtil::sendQuestion($this->getLPMessageString($status_text, $status_path), true);
+                $DIC->ui()->mainTemplate()->setOnScreenMessage('question', $this->getLPMessageString($status_text, $status_path), true);
                 break;
             default:
-                ilUtil::sendQuestion($this->getLPMessageString($status_text, $status_path), true);
+                $DIC->ui()->mainTemplate()->setOnScreenMessage('question', $this->getLPMessageString($status_text, $status_path), true);
         }
     }
 
@@ -407,7 +407,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * After object has been created -> jump to this command
      */
-    public function getAfterCreationCmd() : string
+    public function getAfterCreationCmd(): string
     {
         return "editProperties";
     }
@@ -415,7 +415,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Get standard command
      */
-    public function getStandardCmd() : string
+    public function getStandardCmd(): string
     {
         return "viewContent";
     }
@@ -430,7 +430,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     protected function viewContent()
     {
-        global $ilTabs, $ilCtrl, $lng, $ilUser;
+        global $ilTabs, $ilCtrl, $lng, $ilUser, $DIC;
         if ($this->object->isDummy()) {
             $ilCtrl->redirect($this, 'editProperties');
         }
@@ -438,7 +438,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->object->updateAccess();
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
         if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
-            ilUtil::sendInfo($lng->txt('rep_robj_xmum_frm_list_grade_overview_after_deadline'));
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $lng->txt('rep_robj_xmum_frm_list_grade_overview_after_deadline'));
         }
         $this->tpl->setContent($this->object->getContent());
     }
@@ -494,6 +494,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitLPSettings()
     {
+        global $DIC;
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         $this->initLPSettingsForm();
         if (!$this->form->checkInput()) {
@@ -521,7 +522,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
 
-        ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
         $cmd = 'editLPSettings';
         $this->performCommand($cmd);
@@ -577,7 +578,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitAvailabilitySettings()
     {
-        global $ilDB;
+        global $ilDB, $DIC;
         $this->initAvailabilitySettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -613,7 +614,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
 
-        ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
 
         $cmd = 'editProperties';
         $this->performCommand($cmd);
@@ -662,7 +663,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     public function gradeOverride()
     {
-        global $lng;
+        global $lng, $DIC;
         $user_id = $_GET["user_id"];
         $score = $_GET['score'];
         $timestamp = $_GET['timestamp'];
@@ -674,7 +675,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($areParametersValid && ilMumieTaskGradeSync::isValidGrade($grade)) {
             require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskGradeOverrideService::overrideGrade($grade);
-            ilUtil::sendSuccess(
+            $DIC->ui()->mainTemplate()->setOnScreenMessage(
+                'success',
                 sprintf(
                     $lng->txt('rep_robj_xmum_frm_grade_overview_list_successfull_update'),
                     ilMumieTaskUserService::getFullName($user_id)
@@ -683,7 +685,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
         } else {
-            ilUtil::sendFailure($lng->txt('rep_robj_xmum_frm_grade_overview_override_error'));
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('failure', $lng->txt('rep_robj_xmum_frm_grade_overview_override_error'));
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
         }
@@ -727,10 +729,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     private function deleteDeadlineExtension()
     {
-        global $lng;
+        global $lng, $DIC;
         $user_id = $_GET["user_id"];
         ilMumieTaskDeadlineExtensionService::deleteDeadlineExtension($this->object, $user_id);
-        ilUtil::sendSuccess(
+        $DIC->ui()->mainTemplate()->setOnScreenMessage(
+            'success',
             sprintf(
                 $lng->txt('rep_robj_xmum_frm_deadline_extension_successfull_delete'),
                 ilMumieTaskUserService::getFullName($user_id)
@@ -742,12 +745,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     private function deleteGradeOverride()
     {
-        global $lng;
+        global $lng, $DIC;
         $user_id = $_GET["user_id"];
         ilMumieTaskGradeOverrideService::deleteGradeOverride($this->object, $user_id);
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGradeForUser($this->object, $user_id, true);
-        ilUtil::sendSuccess(
+        $DIC->ui()->mainTemplate()->setOnScreenMessage(
+            'success',
             sprintf(
                 $lng->txt('rep_robj_xmum_grade_override_removed'),
                 ilMumieTaskUserService::getFullName($user_id)
@@ -764,10 +768,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function forceGradeUpdate()
     {
+        global $DIC;
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         ilMumieTaskLPStatus::updateGrades($this->object, true);
-        ilUtil::sendSuccess($this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->lng->txt('rep_robj_xmum_msg_suc_saved'), false);
         $cmd = 'editLPSettings';
         $this->performCommand($cmd);
     }

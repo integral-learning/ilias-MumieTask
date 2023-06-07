@@ -16,7 +16,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     /**
      * Handles all commands, default is "configure"
      */
-    public function performCommand(string $cmd) : void
+    public function performCommand(string $cmd): void
     {
         global $tree, $rbacsystem, $ilErr, $lng, $ilCtrl, $tpl;
 

@@ -79,7 +79,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     }
 
 
-    public function checkInput() : bool
+    public function checkInput(): bool
     {
         $ok = parent::checkInput();
         return $ok;

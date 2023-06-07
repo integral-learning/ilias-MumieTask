@@ -16,12 +16,12 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
         $this->setType('xmum');
     }
 
-    public function getGuiClass() : string
+    public function getGuiClass(): string
     {
         return 'ilObjMumieTaskGUI';
     }
 
-    public function initCommands() : array
+    public function initCommands(): array
     {
         global $lng, $ctrl;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
@@ -53,7 +53,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
      *
      * @return true|void
      */
-    public function insertDescription() : void
+    public function insertDescription(): void
     {
         global $ilUser, $tpl;
 

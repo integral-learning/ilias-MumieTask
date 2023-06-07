@@ -57,7 +57,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Get type.
      */
-    final public function initType() : void
+    final public function initType(): void
     {
         $this->setType(ilMumieTaskPlugin::ID);
     }
@@ -65,7 +65,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Create object
      */
-    public function doCreate() : void
+    public function doCreate(): void
     {
         global $ilDB;
         $ilDB->insert(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME, array(
@@ -76,7 +76,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Read data from db
      */
-    public function doRead() : void
+    public function doRead(): void
     {
         global $ilDB;
 
@@ -123,7 +123,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Update data
      */
-    public function doUpdate() : void
+    public function doUpdate(): void
     {
         global $DIC, $ilDB;
 
@@ -171,7 +171,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Delete data from db
      */
-    public function doDelete() : void
+    public function doDelete(): void
     {
         global $ilDB;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
@@ -220,7 +220,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return array
      */
-    public function getLPCompleted() : array
+    public function getLPCompleted(): array
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         return ilMumieTaskLPStatus::getLPCompletedForMumieTask($this->getId());
@@ -231,7 +231,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return array
      */
-    public function getLPNotAttempted() : array
+    public function getLPNotAttempted(): array
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         return ilMumieTaskLPStatus::getLPNotAttemptedForMumieTask($this->getId());
@@ -242,7 +242,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return array
      */
-    public function getLPFailed() : array
+    public function getLPFailed(): array
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         return ilMumieTaskLPStatus::getLPFailedForMumieTask($this->getId());
@@ -253,7 +253,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return array
      */
-    public function getLPInProgress() : array
+    public function getLPInProgress(): array
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         return ilMumieTaskLPStatus::getLPInProgressForMumieTask($this->getId());
@@ -265,7 +265,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @param int $a_user_id
      * @return int
      */
-    public function getLPStatusForUser($a_user_id) : int
+    public function getLPStatusForUser($a_user_id): int
     {
         $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         return ilMumieTaskLPStatus::getLPStatusForUser($this, $a_user_id);

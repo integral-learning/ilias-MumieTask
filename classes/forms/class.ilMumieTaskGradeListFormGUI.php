@@ -45,13 +45,13 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 
     private function setInfoBox()
     {
-        global $lng;
+        global $lng, $DIC;
         $description = $lng->txt('rep_robj_xmum_grade_override_desc');
         $template = ilMumieTaskTemplateEngine::getStudentGradingInfoboxTemplate($this->mumie_task, $this->user_id, $description);
-        ilUtil::sendInfo($template->get());
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $template->get());
     }
 
-    public function getHTML() : string
+    public function getHTML(): string
     {
         $html = parent::getHTML();
         return str_replace("ilTableOuter", "mumie-user-table", $html);

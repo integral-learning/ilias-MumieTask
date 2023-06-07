@@ -119,7 +119,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->addItem($this->dropzone_item);
     }
 
-    public function checkInput() : bool
+    public function checkInput(): bool
     {
         global $lng;
         $ok = parent::checkInput();
@@ -202,7 +202,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     /**
      * Save all Mumie Servers as a hidden input field. The JS file needs to know about them and their structure
      */
-    public function setValuesByArray($a_values, $a_restrict_to_value_keys = false) : void
+    public function setValuesByArray($a_values, $a_restrict_to_value_keys = false): void
     {
         parent::setValuesByArray($a_values);
         $servers = (array) ilMumieTaskServer::getAllServers();
