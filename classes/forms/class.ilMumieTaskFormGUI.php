@@ -45,6 +45,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->description_item = new ilTextInputGUI($lng->txt('description'), 'description');
         $this->addItem($this->description_item);
 
+        require_once ('Services/Form/classes/class.ilSelectInputGUI.php');
         $this->server_item = new ilSelectInputGui($lng->txt('rep_robj_xmum_mumie_server'), 'xmum_server');
         $this->server_item->setRequired(true);
         $this->addItem($this->server_item);

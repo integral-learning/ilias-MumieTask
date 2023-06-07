@@ -24,7 +24,7 @@ class ilMumieTaskDateTime extends ilDateTime
 
     public function __toString(): string
     {
-        return $this::get();
+        return $this::get() ?? '';
     }
 
     public function hasPassed(): bool

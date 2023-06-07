@@ -13,7 +13,6 @@
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilMumieTaskLPTableGUI
  */
 
-include_once('./Services/Repository/classes/class.ilObjectPluginGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
@@ -43,6 +42,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 $cmd .= 'Object';
                 $this->$cmd();
                 // no break
+            case 'create':
             case 'createObject':
             case "submitMumieTask":
             case 'cancelDummy':

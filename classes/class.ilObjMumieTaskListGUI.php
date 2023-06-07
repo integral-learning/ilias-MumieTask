@@ -7,8 +7,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-include_once "./Services/Repository/classes/class.ilObjectPluginListGUI.php";
-
 class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 {
     public function initType()
@@ -113,7 +111,6 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
     {
         global $lng;
 
-        $this->plugin->includeClass("class.ilObjMumieTaskAccess.php");
         if (!ilObjMumieTaskAccess::_lookupOnline($this->obj_id)) {
             $props[] = array("alert" => true, "property" => $lng->txt("status"),
                 "value" => $lng->txt("offline"));

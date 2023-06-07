@@ -7,7 +7,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
@@ -47,7 +46,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         parent::__construct($a_ref_id);
     }
 
-    public static function constructDummy()
+    public static function constructDummy() : ilObjMumieTask
     {
         $task = new ilObjMumieTask();
         $task->setTitle(self::DUMMY_TITLE);
@@ -64,8 +63,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     /**
      * Create object
+     * @param bool $clone_mode
      */
-    public function doCreate(): void
+    public function doCreate(bool $clone_mode = false): void
     {
         global $ilDB;
         $ilDB->insert(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME, array(
