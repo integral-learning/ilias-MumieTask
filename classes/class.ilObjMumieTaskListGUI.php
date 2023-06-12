@@ -14,8 +14,8 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
     public function __construct(int $a_context)
     {
-        parent::__construct($a_context);
         $this->i18n = new ilMumieTaskI18N();
+        parent::__construct($a_context);
     }
 
     public function initType()
@@ -30,7 +30,6 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
     public function initCommands(): array
     {
-        global $lng, $ctrl;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         //Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
         try {
