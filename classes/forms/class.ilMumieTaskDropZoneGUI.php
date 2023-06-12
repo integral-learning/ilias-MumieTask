@@ -8,6 +8,7 @@
  */
 
 require_once('Services/Form/classes/class.ilFormPropertyGUI.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
 {
     private ilMumieTaskI18N $i18n;

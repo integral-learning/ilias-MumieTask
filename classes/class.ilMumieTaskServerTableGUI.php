@@ -8,6 +8,7 @@
  */
 
 include_once('./Services/Table/classes/class.ilTable2GUI.php');
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This GUI provides a way to list MUMIE servers with buttons to edit and delete entries

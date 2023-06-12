@@ -25,6 +25,7 @@ class ilMumieTaskTemplateEngine
 
     public static function getStudentGradingInfoboxTemplate(ilObjMumieTask $mumie_task, string $user_id, string $description = ''): ilTemplate
     {
+        require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
         $i18N = new ilMumieTaskI18N();
         $template = ilMumieTaskTemplateEngine::getTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeList/tpl.grade-list-info-box.html");
         $template->setVariable('STUDENT_NAME', $i18N->txt('student_name'));
