@@ -31,10 +31,10 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     {
         $i18n = $this->i18n;
         $this->setFormName('participants');
-        $this->addColumn($i18n->txt('user_overview_list_name'), 'name');
-        $this->addColumn($i18n->txt('user_overview_list_extended_deadline'));
-        $this->addColumn($i18n->txt('list_grade'), 'note');
-        $this->addColumn($i18n->txt('user_overview_list_submissions'), 'submission');
+        $this->addColumn($this->i18n->txt('frm_user_overview_list_name'), 'name');
+        $this->addColumn($this->i18n->txt('frm_user_overview_list_extended_deadline'));
+        $this->addColumn($this->i18n->txt('frm_list_grade'), 'note');
+        $this->addColumn($this->i18n->txt('frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
         $members = ilMumieTaskParticipantService::filter($this->objMumieTask, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
