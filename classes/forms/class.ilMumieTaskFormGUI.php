@@ -15,7 +15,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 {
     public function __construct()
     {
+        global $DIC;
         parent::__construct();
+        $this->lng = $DIC->language();
+        $this->plugin = new ilObjMumieTask();
     }
 
     private $title_item;
@@ -36,7 +39,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     public function setFields($is_creation_mode = false)
     {
-        global $lng, $ilCtrl;
+        global $ilCtrl;
+        $lng = $this->lng;
+        $plugin = $this->plugin;
+
 
         $this->title_item = new ilTextInputGUI($lng->txt('title'), 'title');
         $this->title_item->setRequired(true);
@@ -46,41 +52,41 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->addItem($this->description_item);
 
         require_once ('Services/Form/classes/class.ilSelectInputGUI.php');
-        $this->server_item = new ilSelectInputGui($lng->txt('rep_robj_xmum_mumie_server'), 'xmum_server');
+        $this->server_item = new ilSelectInputGui($plugin->txt('mumie_server'), 'xmum_server');
         $this->server_item->setRequired(true);
         $this->addItem($this->server_item);
 
         if (!$is_creation_mode) {
             require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
             $add_server_button = new ilMumieTaskFormButtonGUI("", "xmum_add_server_btn");
-            $add_server_button->setButtonLabel($this->lng->txt('rep_robj_xmum_add_server'));
+            $add_server_button->setButtonLabel($plugin->txt('add_server'));
             $add_server_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'addServer'));
-            $add_server_button->setInfo($this->lng->txt('rep_robj_xmum_add_server_desc'));
+            $add_server_button->setInfo($plugin->txt('add_server_desc'));
             $this->addItem($add_server_button);
         }
 
         $this->language_item = new ilHiddenInputGUI('xmum_language');
         $this->addItem($this->language_item);
 
-        $this->course_item = new ilSelectInputGUI($lng->txt('rep_robj_xmum_mumie_course'), 'xmum_course');
+        $this->course_item = new ilSelectInputGUI($plugin->txt('mumie_course'), 'xmum_course');
         $this->course_item->setRequired(true);
         $this->addItem($this->course_item);
 
-        $this->launchcontainer_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_launchcontainer'), 'xmum_launchcontainer');
-        $opt_window = new ilRadioOption($lng->txt('rep_robj_xmum_window'), '0');
-        $opt_embedded = new ilRadioOption($lng->txt('rep_robj_xmum_embedded'), '1');
+        $this->launchcontainer_item = new ilRadioGroupInputGUI($plugin->txt('launchcontainer'), 'xmum_launchcontainer');
+        $opt_window = new ilRadioOption($plugin->txt('window'), '0');
+        $opt_embedded = new ilRadioOption($plugin->txt('embedded'), '1');
         $this->launchcontainer_item->setRequired(true);
         $this->launchcontainer_item->addOption($opt_window);
         $this->launchcontainer_item->addOption($opt_embedded);
-        $this->launchcontainer_item->setInfo($lng->txt('rep_robj_xmum_launchcontainer_desc'));
+        $this->launchcontainer_item->setInfo($plugin->txt('launchcontainer_desc'));
         $this->addItem($this->launchcontainer_item);
 
         $select_task_header_item = new ilFormSectionHeaderGUI();
-        $select_task_header_item->setTitle($lng->txt("rep_robj_xmum_mumie_select_problem"));
+        $select_task_header_item->setTitle($plugin->txt("mumie_select_problem"));
         $this->addItem($select_task_header_item);
 
-        $this->problem_display_item = new ilTextInputGUI($lng->txt('rep_robj_xmum_mumie_problem'), 'xmum_display_task');
-        $this->problem_display_item->setInfo($lng->txt('rep_robj_xmum_mumie_problem_desc'));
+        $this->problem_display_item = new ilTextInputGUI($plugin->txt('mumie_problem'), 'xmum_display_task');
+        $this->problem_display_item->setInfo($plugin->txt('mumie_problem_desc'));
         $this->problem_display_item->setDisabled(true);
         $this->addItem($this->problem_display_item);
 
@@ -88,8 +94,8 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->addItem($this->problem_item);
 
         $problem_selector_button = new ilMumieTaskFormButtonGUI("", "xmum_prb_sel");
-        $problem_selector_button->setButtonLabel($this->lng->txt('rep_robj_xmum_open_prb_selector'));
-        $problem_selector_button->setInfo($this->lng->txt('rep_robj_xmum_open_prb_selector_desc'));
+        $problem_selector_button->setButtonLabel($plugin->txt('open_prb_selector'));
+        $problem_selector_button->setInfo($plugin->txt('open_prb_selector_desc'));
         $this->addItem($problem_selector_button);
 
         $servers = ilMumieTaskServer::getAllServers();
@@ -108,11 +114,11 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->populateOptions($servers);
 
         $select_task_header_item = new ilFormSectionHeaderGUI();
-        $select_task_header_item->setTitle($lng->txt('rep_robj_xmum_frm_multi_problem_header'));
+        $select_task_header_item->setTitle($plugin->txt('frm_multi_problem_header'));
         $this->addItem($select_task_header_item);
-        $multi_problem_selector_btn = new ilMumieTaskFormButtonGUI($lng->txt('rep_robj_xmum_mumie_problems'), "xmum_multi_prb_sel");
-        $multi_problem_selector_btn->setButtonLabel($lng->txt('rep_robj_xmum_open_dnd_prb_selector'));
-        $multi_problem_selector_btn->setInfo($lng->txt('rep_robj_xmum_dnd_prb_selector_desc'));
+        $multi_problem_selector_btn = new ilMumieTaskFormButtonGUI($plugin->txt('mumie_problems'), "xmum_multi_prb_sel");
+        $multi_problem_selector_btn->setButtonLabel($plugin->txt('open_dnd_prb_selector'));
+        $multi_problem_selector_btn->setInfo($plugin->txt('dnd_prb_selector_desc'));
         $this->addItem($multi_problem_selector_btn);
 
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZoneGUI.php');
@@ -122,7 +128,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     public function checkInput(): bool
     {
-        global $lng;
+        $plugin = $this->plugin;
         $ok = parent::checkInput();
         $is_dummy = $this->getInput('title') == ilObjMumieTask::DUMMY_TITLE;
         $server = new ilMumieTaskServer();
@@ -133,38 +139,38 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         if ($is_dummy && $task != null) {
             $ok = false;
-            $this->title_item->setAlert($lng->txt('rep_robj_xmum_title_not_valid'));
+            $this->title_item->setAlert($plugin->txt('title_not_valid'));
         }
         if (!$server->isValidMumieServer()) {
             $ok = false;
-            $this->server_item->setAlert($lng->txt('rep_robj_xmum_server_not_valid'));
+            $this->server_item->setAlert($plugin->txt('server_not_valid'));
             return $ok;
         }
         if ($course == null || !$this->getInput('xmum_coursefile')) {
             $ok = false;
-            $this->course_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_course_not_found'));
+            $this->course_item->setAlert($plugin->txt('frm_tsk_course_not_found'));
             return $ok;
         }
 
         if ($task == null && $is_dummy) {
             $ok = false;
-            $this->problem_display_item->setAlert($lng->txt('required_field'));
+            $this->problem_display_item->setAlert($this->lng->txt('required_field'));
             return $ok;
         } elseif ($task == null) {
             $ok = false;
-            $this->problem_display_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_problem_not_found'));
+            $this->problem_display_item->setAlert($plugin->txt('frm_tsk_problem_not_found'));
             return $ok;
         }
         if (!$is_dummy && !in_array($this->getInput("xmum_language"), $task->getLanguages())) {
             $ok = false;
-            $this->language_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_lang_not_found'));
+            $this->language_item->setAlert($plugin->txt('frm_tsk_lang_not_found'));
         }
 
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskMultiUploadProcessor.php');
         $multi_problems_input = $this->getInput("xmum_multi_problems");
         if (!empty($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input)) {
             $ok = false;
-            $this->dropzone_item->setAlert($lng->txt('rep_robj_xmum_frm_tsk_problems_not_found'));
+            $this->dropzone_item->setAlert($plugin->txt('frm_tsk_problems_not_found'));
         }
 
         return $ok;
