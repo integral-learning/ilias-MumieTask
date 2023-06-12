@@ -14,11 +14,13 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
 {
     private $text_item_first;
     private $text_item_last;
+    private ilMumieTaskI18N $i18N;
 
     public function __construct()
     {
         parent::__construct();
         $this->setDisableStandardMessage(true);
+        $this->i18N = new ilMumieTaskI18N();
     }
 
     public function setFields($parentObj, $form)
@@ -29,14 +31,14 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
 
     private function setSearch($parentObj, $form)
     {
-        global $lng, $DIC;
+        global $DIC;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverviewGUI.php');
-        $this->text_item_first = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_user_overview_list_firstname_search'), 'firstnamefield');
+        $this->text_item_first = new ilTextInputGUI($this->i18N->txt('frm_user_overview_list_firstname_search'), 'firstnamefield');
         if (!empty($this->getInput("firstnamefield"))) {
             $this->text_item_first->setValue($form->getInput("firstnamefield"));
         }
         $this->addItem($this->text_item_first);
-        $this->text_item_last = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_user_overview_list_lastname_search'), 'lastnamefield');
+        $this->text_item_last = new ilTextInputGUI($this->i18N->txt('frm_user_overview_list_lastname_search'), 'lastnamefield');
         if (!empty($this->getInput("lastnamefield"))) {
             $this->text_item_last->setValue($this->getInput("lastnamefield"));
         }
@@ -44,7 +46,7 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
 
         if ($parentObj->object->hasDeadline()) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', '<span>
-            <b>' . $lng->txt('rep_robj_xmum_frm_user_overview_list_general_deadline') . '</b>
+            <b>' . $this->i18N->txt('frm_user_overview_list_general_deadline') . '</b>
             <span style="margin-left:50px"> ' . $parentObj->object->getDeadlineDateTime() . '</span>
             </span>');
         }
@@ -52,9 +54,8 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
 
     private function setTable($parentObj, $form)
     {
-        global $lng;
         $select_task_header_item = new ilFormSectionHeaderGUI();
-        $select_task_header_item->setTitle($lng->txt('rep_robj_xmum_tab_userlist'));
+        $select_task_header_item->setTitle($this->i18N->txt('tab_userlist'));
         $this->addItem($select_task_header_item);
         $userList = new ilMumieTaskGradeOverviewGUI($parentObj);
         $userList->init($parentObj, $form);

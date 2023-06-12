@@ -12,10 +12,12 @@
  */
 class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 {
+    private ilMumieTaskI18N $i18N;
     public function __construct($disable_grade_pool_selection)
     {
         parent::__construct();
         $this->disable_grade_pool_selection = $disable_grade_pool_selection;
+        $this->i18N = new ilMumieTaskI18N();
     }
 
     private $modus_item;
@@ -27,20 +29,20 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     public function setFields()
     {
         global $lng;
-        $this->modus_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_sync_lp'), "lp_modus");
-        $this->modus_item->setInfo($lng->txt('rep_robj_xmum_frm_sync_lp_desc'));
-        $modus_option_true = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 1);
-        $modus_option_false = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 0);
+        $this->modus_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_sync_lp'), "lp_modus");
+        $this->modus_item->setInfo($this->i18N->txt('frm_sync_lp_desc'));
+        $modus_option_true = new ilRadioOption($this->i18N->txt('frm_enable'), 1);
+        $modus_option_false = new ilRadioOption($this->i18N->txt('frm_disable'), 0);
         $this->modus_item->addOption($modus_option_true);
         $this->modus_item->addOption($modus_option_false);
         $this->addItem($this->modus_item);
 
-        $this->gradepool_item = new ilRadioGroupInputGUI($lng->txt('rep_robj_xmum_frm_privategradepool'), "privategradepool");
+        $this->gradepool_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_privategradepool'), "privategradepool");
 
         $this->gradepool_item->setInfo($this->getGradepoolInfo());
-        $gradepool_option_true = new ilRadioOption($lng->txt('rep_robj_xmum_frm_enable'), 0);
-        $gradepool_option_false = new ilRadioOption($lng->txt('rep_robj_xmum_frm_disable'), 1);
-        $gradepool_option_pending = new ilRadioOption($lng->txt('rep_robj_xmum_frm_gradepool_pending'), -1);
+        $gradepool_option_true = new ilRadioOption($this->i18N->txt('frm_enable'), 0);
+        $gradepool_option_false = new ilRadioOption($this->i18N->txt('frm_disable'), 1);
+        $gradepool_option_pending = new ilRadioOption($this->i18N->txt('frm_gradepool_pending'), -1);
         $gradepool_option_true->setDisabled($this->disable_grade_pool_selection);
         $gradepool_option_false->setDisabled($this->disable_grade_pool_selection);
         $this->gradepool_item->addOption($gradepool_option_true);
@@ -50,16 +52,16 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         }
         $this->addItem($this->gradepool_item);
 
-        $this->passing_threshold_item = new ilNumberInputGUI($lng->txt('rep_robj_xmum_frm_passing_grade'), 'passing_grade');
+        $this->passing_threshold_item = new ilNumberInputGUI($this->i18N->txt('frm_passing_grade'), 'passing_grade');
         $this->passing_threshold_item->setRequired(true);
         $this->passing_threshold_item->setMinValue(0);
         $this->passing_threshold_item->setMaxValue(100);
         $this->passing_threshold_item->setDecimals(0);
         $this->addItem($this->passing_threshold_item);
-        $this->passing_threshold_item->setInfo($lng->txt('rep_robj_xmum_frm_passing_grade_desc'));
+        $this->passing_threshold_item->setInfo($this->i18N->txt('frm_passing_grade_desc'));
 
-        $this->deadline_item = new ilDateTimeInputGUI($lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'), 'deadline');
-        $this->deadline_item->setInfo($lng->txt('rep_robj_xmum_frm_lp_deadline_desc'));
+        $this->deadline_item = new ilDateTimeInputGUI($this->i18N->txt('frm_grade_overview_list_deadline'), 'deadline');
+        $this->deadline_item->setInfo($this->i18N->txt('frm_lp_deadline_desc'));
         $this->deadline_item->setShowTime(true);
 
         $this->addItem($this->deadline_item);
@@ -68,11 +70,11 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     private function getGradepoolInfo()
     {
         global $lng;
-        $gradepool_info = $lng->txt('rep_robj_xmum_frm_privategradepool_desc') . '<br><br>';
+        $gradepool_info = $this->i18N->txt('frm_privategradepool_desc') . '<br><br>';
         if (!$this->disable_grade_pool_selection) {
-            $gradepool_info .= $lng->txt('rep_robj_xmum_frm_privategradepool_undecided');
+            $gradepool_info .= $this->i18N->txt('frm_privategradepool_undecided');
         } else {
-            $gradepool_info .= $lng->txt('rep_robj_xmum_frm_privategradepool_decided');
+            $gradepool_info .= $this->i18N->txt('frm_privategradepool_decided');
         }
 
         return $gradepool_info;

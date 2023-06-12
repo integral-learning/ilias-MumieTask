@@ -10,9 +10,11 @@
 require_once('Services/Form/classes/class.ilFormPropertyGUI.php');
 class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
 {
+    private ilMumieTaskI18N $i18n;
     public function __construct($a_title = "", $post_var = "")
     {
         parent::__construct($a_title, $post_var);
+        $this->i18n = new ilMumieTaskI18N();
     }
 
     public function insert($a_tpl)
@@ -24,12 +26,12 @@ class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
 
     public function render()
     {
-        global $tpl, $lng;
+        global $tpl;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/class.ilMumieTaskTemplateEngine.php');
         $dropzone_template = ilMumieTaskTemplateEngine::getDropzoneTemplate();
-        $dropzone_template->setVariable("DESCRIPTION", $lng->txt('rep_robj_xmum_dropzone_description'));
-        $dropzone_template->setVariable("MULTI_PROBLEM_LIST_HEADER", $lng->txt('rep_robj_xmum_multi_problem_list_description'));
-        $dropzone_template->setVariable("TXT_DRAG_PROBLEMS_HERE", $lng->txt('rep_robj_xmum_form_drag_mt_here'));
+        $dropzone_template->setVariable("DESCRIPTION", $this->i18n->txt('dropzone_description'));
+        $dropzone_template->setVariable("MULTI_PROBLEM_LIST_HEADER", $this->i18n->txt('multi_problem_list_description'));
+        $dropzone_template->setVariable("TXT_DRAG_PROBLEMS_HERE", $this->i18n->txt('form_drag_mt_here'));
         $dropzone_template->setVariable("POST_VAR", $this->getPostVar());
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskDropzone.js');
 

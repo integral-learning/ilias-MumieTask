@@ -104,12 +104,13 @@ class ilMumieTaskDeadlineExtensionService
 
     private static function sendUpdateSuccessMessage(ilMumieTaskDeadlineExtension $deadline_extension)
     {
-        global $lng, $DIC;
+        global $DIC;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
+        $i18n = new ilMumieTaskI18N();
         $DIC->ui()->mainTemplate()->setOnScreenMessage(
             'success',
             sprintf(
-                $lng->txt('rep_robj_xmum_frm_deadline_extension_successfull_update'),
+                $i18n->txt('frm_deadline_extension_successfull_update'),
                 ilMumieTaskUserService::getFullName($deadline_extension->getUserId())
             )
         );

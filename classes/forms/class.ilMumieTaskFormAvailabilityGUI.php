@@ -15,6 +15,14 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
     private $online_item;
     private $act_type_item;
     private $duration_item;
+    private ilMumieTaskI18N $i18n;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->i18n = new ilMumieTaskI18N();
+    }
+
     public function setFields($disable_online_selection)
     {
         global $lng;
@@ -59,10 +67,9 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 
     private function getOnlineItemInfo($disable_online_selection)
     {
-        global $lng;
-        $online_info = $lng->txt('rep_robj_xmum_frm_online_info');
+        $online_info = $this->i18n->txt('frm_online_info');
         if ($disable_online_selection) {
-            $online_info .= '<br><br>' . $lng->txt('rep_robj_xmum_frm_online_disabled_warning');
+            $online_info .= '<br><br>' . $this->i18n->txt('frm_online_disabled_warning');
         }
 
         return $online_info;

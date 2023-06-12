@@ -14,11 +14,12 @@ class ilMumieTaskMultiUploadProcessor
     public static function process(ilObjMumieTask $base_task, string $tasks_json)
     {
         global $lng, $DIC;
+        $i18N = new ilMumieTaskI18N();
         $task_dtos = self::parseTaskDTOs($tasks_json);
         foreach ($task_dtos as $taskDTO) {
             self::generateMumieTask($taskDTO, $base_task);
         }
-        $DIC->ui()->mainTemplate()->setOnScreenMessage('info', sprintf($lng->txt("rep_robj_xmum_multi_create_success"), count($task_dtos)), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('info', sprintf($i18N->txt("multi_create_success"), count($task_dtos)), true);
     }
 
     public static function isValid(string $tasks_json): bool

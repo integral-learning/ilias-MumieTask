@@ -9,6 +9,14 @@
 
 class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 {
+    private ilMumieTaskI18N $i18n;
+
+    public function __construct(int $a_context)
+    {
+        parent::__construct($a_context);
+        $this->i18n = new ilMumieTaskI18N();
+    }
+
     public function initType()
     {
         $this->setType('xmum');
@@ -38,7 +46,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             array(
                 "permission" => "write",
                 "cmd" => "editProperties",
-                "txt" => $lng->txt('rep_robj_xmum_edit_task'),
+                "txt" => $this->i18n->txt('edit_task'),
                 "default" => false),
         );
     }
@@ -97,8 +105,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
     private function getDeadlineBadge(ilMumieTaskDateTime $deadline_date): string
     {
-        global $lng;
-        return '<span class = "mumie-deadline-badge">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline_date . "</span>";
+        return '<span class = "mumie-deadline-badge">' . $this->i18n->txt('frm_grade_overview_list_deadline'). ": " . $deadline_date . "</span>";
     }
 
     /**

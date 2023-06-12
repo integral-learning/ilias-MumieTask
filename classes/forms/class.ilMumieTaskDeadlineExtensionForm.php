@@ -27,20 +27,21 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
      * @var string
      */
     private $user_id;
+    private ilMumieTaskI18N $i18n;
 
     public function __construct($mumie_task, $user_id)
     {
         parent::__construct();
         $this->mumie_task = $mumie_task;
         $this->user_id = $user_id;
+        $this->i18n = new ilMumieTaskI18N();
     }
 
     public function setFields()
     {
-        global $lng;
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
         $this->deadline_input = new ilDateTimeInputGUI(
-            $lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'),
+            $this->i18n->txt('frm_user_overview_list_extended_deadline'),
             self::DEADLINE_PARAM
         );
         $this->deadline_input->setShowTime(true);
@@ -51,9 +52,9 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 
     public function setInfoBox()
     {
-        global $lng, $DIC;
+        global $DIC;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/class.ilMumieTaskTemplateEngine.php');
-        $description = $lng->txt('rep_robj_xmum_deadline_extension_desc');
+        $description = $this->i18n->txt('deadline_extension_desc');
         $template = ilMumieTaskTemplateEngine::getStudentGradingInfoboxTemplate($this->mumie_task, $this->user_id, $description);
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $template->get());
     }
@@ -64,7 +65,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
         $ok = parent::checkInput();
         if ($this->mumie_task->getDeadline() > strtotime($this->getInput(self::DEADLINE_PARAM))) {
             $ok = false;
-            $this->deadline_input->setAlert($lng->txt("rep_robj_xmum_frm_deadline_extension_before_general_deadline_error"));
+            $this->deadline_input->setAlert($this->i18n->txt('frm_deadline_extension_before_general_deadline_error'));
         }
         return $ok;
     }

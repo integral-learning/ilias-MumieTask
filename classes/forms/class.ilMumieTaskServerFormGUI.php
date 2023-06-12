@@ -13,9 +13,11 @@
  */
 class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 {
+    private ilMumieTaskI18N $i18N;
     public function __construct()
     {
         parent::__construct();
+        $this->i18N = new ilMumieTaskI18N();
     }
 
     private $url_item;
@@ -27,14 +29,14 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
         $this->name_item = new ilTextInputGUI($lng->txt('name'), 'name');
         $this->name_item->setRequired(true);
         parent::addItem($this->name_item);
-        $this->url_item = new ilTextInputGUI($lng->txt('rep_robj_xmum_url_prefix'), 'url_prefix');
+        $this->url_item = new ilTextInputGUI($this->i18N->txt('url_prefix'), 'url_prefix');
         $this->url_item->setRequired(true);
         parent::addItem($this->url_item);
     }
 
     public function checkInput(): bool
     {
-        global $DIC, $lng;
+        global $DIC;
         $id = $_GET['server_id'];
         $DIC->ctrl()->setParameter($this, "server_id", $id);
 
@@ -50,17 +52,17 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
             $url_prefix_exists = $server->urlPrefixExistsInDb();
             if (!$server->isValidMumieServer()) {
                 $ok = false;
-                $this->url_item->setAlert($lng->txt("rep_robj_xmum_server_not_valid"));
+                $this->url_item->setAlert($this->i18N->txt('server_not_valid'));
             }
 
             if (!isset($id)) {
                 if ($name_exists) {
                     $ok = false;
-                    $this->name_item->setAlert($lng->txt("rep_robj_xmum_name_exists"));
+                    $this->name_item->setAlert($this->i18N->txt('name_exists'));
                 }
                 if ($url_prefix_exists) {
                     $ok = false;
-                    $this->url_item->setAlert($lng->txt("rep_robj_xmum_url_exists"));
+                    $this->url_item->setAlert($this->i18N->txt('url_exists'));
                 }
             } else {
                 $old_server = new ilMumieTaskServer($id);
@@ -68,11 +70,11 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 
                 if ($name_exists && $old_server->getName() != $server->getName()) {
                     $ok = false;
-                    $this->name_item->setAlert($lng->txt("rep_robj_xmum_name_exists"));
+                    $this->name_item->setAlert($this->i18N->txt('name_exists'));
                 }
                 if ($url_prefix_exists && $old_server->getUrlPrefix() != $server->getUrlPrefix()) {
                     $ok = false;
-                    $this->url_item->setAlert($lng->txt("rep_robj_xmum_url_exists"));
+                    $this->url_item->setAlert($this->i18N->txt('url_exists'));
                 }
             }
         }
