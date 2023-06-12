@@ -70,7 +70,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
     public function setTabs(): void
     {
-        global $ilCtrl, $ilAccess, $ilTabs, $lng, $DIC;
+        global $ilCtrl, $ilAccess, $ilTabs, $DIC;
+        $lng = $DIC->language();
         $this->tabs->clearTargets();
         $this->object->read();
         if ($this->object->isDummy()) {
@@ -79,7 +80,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tabs->addTab("viewContent", $this->lng->txt("content"), $ilCtrl->getLinkTarget($this, "viewContent"));
         if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
             $this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
-            $this->tabs->addTab("userList", $lng->txt('rep_robj_xmum_tab_userlist'), $ilCtrl->getLinkTarget($this, "displayGradeOverviewPage"));
+            $this->tabs->addTab("userList", $this->txt('tab_userlist'), $ilCtrl->getLinkTarget($this, "displayGradeOverviewPage"));
         }
 
         include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
@@ -101,8 +102,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $ilTabs->clearSubTabs();
         switch ($a_tab) {
             case 'properties':
-                $ilTabs->addSubTab("edit_task", $lng->txt('rep_robj_xmum_tab_gen_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
-                $ilTabs->addSubTab("lp_settings", $lng->txt('rep_robj_xmum_tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
+                $ilTabs->addSubTab("edit_task", $this->txt('tab_gen_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
+                $ilTabs->addSubTab("lp_settings", $this->txt('tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
                 $this->lng->loadLanguageModule('rep');
                 $ilTabs->addSubTab("availability_settings", $this->lng->txt('rep_activation_availability'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
                 break;
