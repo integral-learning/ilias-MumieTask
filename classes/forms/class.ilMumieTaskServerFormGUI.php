@@ -25,8 +25,7 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 
     public function setFields()
     {
-        global $lng;
-        $this->name_item = new ilTextInputGUI($lng->txt('name'), 'name');
+        $this->name_item = new ilTextInputGUI($this->i18N->globalTxt('name'), 'name');
         $this->name_item->setRequired(true);
         parent::addItem($this->name_item);
         $this->url_item = new ilTextInputGUI($this->i18N->txt('url_prefix'), 'url_prefix');

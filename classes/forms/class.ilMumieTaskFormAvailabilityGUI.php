@@ -15,34 +15,34 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
     private $online_item;
     private $act_type_item;
     private $duration_item;
-    private ilMumieTaskI18N $i18n;
+    private ilMumieTaskI18N $i18N;
 
     public function __construct()
     {
         parent::__construct();
-        $this->i18n = new ilMumieTaskI18N();
+        $this->i18N = new ilMumieTaskI18N();
     }
 
     public function setFields($disable_online_selection)
     {
         global $lng;
-        $online_item = new ilCheckboxInputGUI($this->lng->txt('rep_activation_online'), 'online');
+        $online_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_activation_online'), 'online');
 
         $online_item->setInfo($this->getOnlineItemInfo($disable_online_selection));
         $online_item->setDisabled($disable_online_selection);
         $this->addItem($online_item);
         $this->online_item = $online_item;
 
-        $act_type_item = new ilCheckboxInputGUI($this->lng->txt('rep_visibility_until'), 'activation_type');
+        $act_type_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_visibility_until'), 'activation_type');
 
         include_once "Services/Form/classes/class.ilDateDurationInputGUI.php";
-        $duration_item = new ilDateDurationInputGUI($this->lng->txt("rep_time_period"), "access_period");
+        $duration_item = new ilDateDurationInputGUI($this->i18N->globalTxt("rep_time_period"), "access_period");
         $duration_item->setRequired(true);
         $duration_item->setShowTime(true);
         $duration_item->setStart(new ilDateTime(time(), IL_CAL_UNIX));
-        $duration_item->setStartText($this->lng->txt('rep_activation_limited_start'));
+        $duration_item->setStartText($this->i18N->globalTxt('rep_activation_limited_start'));
         $duration_item->setEnd(new ilDateTime(time(), IL_CAL_UNIX));
-        $duration_item->setEndText($this->lng->txt('rep_activation_limited_end'));
+        $duration_item->setEndText($this->i18N->globalTxt('rep_activation_limited_end'));
         $act_type_item->addSubItem($duration_item);
         $this->duration_item = $duration_item;
 
@@ -67,9 +67,9 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 
     private function getOnlineItemInfo($disable_online_selection)
     {
-        $online_info = $this->i18n->txt('frm_online_info');
+        $online_info = $this->i18N->txt('frm_online_info');
         if ($disable_online_selection) {
-            $online_info .= '<br><br>' . $this->i18n->txt('frm_online_disabled_warning');
+            $online_info .= '<br><br>' . $this->i18N->txt('frm_online_disabled_warning');
         }
 
         return $online_info;

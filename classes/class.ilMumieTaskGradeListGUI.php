@@ -16,12 +16,14 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
     private $user_id;
+    private ilMumieTaskI18N $i18N;
 
     public function __construct($parentObj)
     {
         parent::__construct($parentObj, 'displayGradeList');
         $this->user_id = $_GET['user_id'];
         $this->setId("user" . $_GET["ref_id"]);
+        $this->i18N = new ilMumieTaskI18N();
     }
 
     public function init()
@@ -33,9 +35,9 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     {
         $this->setFormName('participants');
 
-        $this->addColumn($this->txt('frm_grade_overview_list_submission_date'), 'date');
-        $this->addColumn($this->txt('frm_grade_overview_list_use_grade'), 'useGrade');
-        $this->addColumn($this->txt('frm_list_grade'), 'grade');
+        $this->addColumn($this->i18N->txt('frm_grade_overview_list_submission_date'), 'date');
+        $this->addColumn($this->i18N->txt('frm_grade_overview_list_use_grade'), 'useGrade');
+        $this->addColumn($this->i18N->txt('frm_list_grade'), 'grade');
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -70,7 +72,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->tpl->setVariable("VAL_HIDDEN", "hidden");
-        $this->tpl->setVariable("VAL_NO_GRADE", $this->txt('frm_grade_overview_no_submission_made'));
+        $this->tpl->setVariable("VAL_NO_GRADE", $this->i18N->txt('frm_grade_overview_no_submission_made'));
         $this->tpl->setCurrentBlock("tbl_content");
         $this->tpl->parseCurrentBlock();
     }
@@ -166,9 +168,5 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     public function getRequired()
     {
         return "";
-    }
-
-    private function txt($key): string {
-        return$this->parent_obj->txt($key);
     }
 }

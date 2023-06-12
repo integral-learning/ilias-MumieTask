@@ -13,6 +13,13 @@ include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
  */
 class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 {
+    private ilMumieTaskI18N $i18N;
+
+    public function __construct()
+    {
+        $this->i18N = new ilMumieTaskI18N();
+    }
+
     /**
      * Handles all commands, default is "configure"
      */
@@ -55,22 +62,23 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function setTabs()
     {
         global $ilCtrl, $ilTabs;
+        $i18N = $this->i18N;
         $ilTabs->clearTargets();
 
         $ilTabs->addTab(
             "tab_servers",
-            $this->txt("tab_servers"),
+            $i18N->txt("tab_servers"),
             $ilCtrl->getLinkTarget($this, "listServers")
         );
         $ilTabs->addTab(
             "tab_shared_data",
-            $this->txt("tab_shared_data"),
+            $i18N->txt("tab_shared_data"),
             $ilCtrl->getLinkTarget($this, "sharedData")
         );
 
         $ilTabs->addTab(
             'tab_authentication',
-            $this->txt("tab_authentication"),
+            $i18N->txt("tab_authentication"),
             $ilCtrl->getLinkTarget($this, "authentication")
         );
     }
@@ -110,24 +118,24 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
-        $form->setTitle($this->txt("tab_shared_data"));
-        $form->setDescription($this->txt("frm_shared_data_description"));
+        $form->setTitle($this->i18N->txt("tab_shared_data"));
+        $form->setDescription($this->i18N->txt("frm_shared_data_description"));
 
-        $first_name_item = new ilCheckboxInputGUI($this->txt("frm_share_first_name"), "shareFirstName");
-        $first_name_item->setInfo($this->txt("frm_share_first_name_desc"));
+        $first_name_item = new ilCheckboxInputGUI($this->i18N->txt("frm_share_first_name"), "shareFirstName");
+        $first_name_item->setInfo($this->i18N->txt("frm_share_first_name_desc"));
         if ($admin_settings->getShareFirstName() && $load_saved_values) {
             $first_name_item->setValue('1');
             $first_name_item->setChecked(true);
         }
-        $last_name_item = new ilCheckboxInputGUI($this->txt("frm_share_last_name"), "shareLastName");
-        $last_name_item->setInfo($this->txt("frm_share_last_name_desc"));
+        $last_name_item = new ilCheckboxInputGUI($this->i18N->txt("frm_share_last_name"), "shareLastName");
+        $last_name_item->setInfo($this->i18N->txt("frm_share_last_name_desc"));
         if ($admin_settings->getShareLastName() && $load_saved_values) {
             $last_name_item->setValue('1');
             $last_name_item->setChecked(true);
         }
 
-        $email_item = new ilCheckboxInputGUI($this->txt("frm_share_email"), "shareEmail");
-        $email_item->setInfo($this->txt("frm_share_email_desc"));
+        $email_item = new ilCheckboxInputGUI($this->i18N->txt("frm_share_email"), "shareEmail");
+        $email_item->setInfo($this->i18N->txt("frm_share_email_desc"));
         if ($admin_settings->getShareEmail() && $load_saved_values) {
             $email_item->setValue('1');
             $email_item->setChecked(true);
@@ -136,8 +144,8 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $form->addItem($first_name_item);
         $form->addItem($last_name_item);
         $form->addItem($email_item);
-        $form->addCommandButton('submitSharedData', $lng->txt('save'));
-        $form->addCommandButton('config', $lng->txt('cancel'));
+        $form->addCommandButton('submitSharedData', $this->i18N->globalTxt('save'));
+        $form->addCommandButton('config', $this->i18N->globalTxt('cancel'));
         $this->form = $form;
     }
 
@@ -161,7 +169,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings->setShareEmail($this->form->getInput('shareEmail'));
         $admin_settings->update();
         $cmd = "sharedData";
-        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->txt('msg_suc_saved'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
         $this->$cmd();
     }
 
@@ -186,17 +194,17 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
-        $form->setTitle($this->txt("tab_authentication"));
-        $api_item = new ilTextInputGUI($this->txt('frm_auth_api'), 'api_key');
-        $api_item->setInfo($this->txt('frm_auth_api_desc'));
-        $org_item = new ilTextInputGUI($this->txt('frm_auth_org'), 'org');
-        $org_item->setInfo($this->txt('frm_auth_org_desc'));
+        $form->setTitle($this->i18N->txt("tab_authentication"));
+        $api_item = new ilTextInputGUI($this->i18N->txt('frm_auth_api'), 'api_key');
+        $api_item->setInfo($this->i18N->txt('frm_auth_api_desc'));
+        $org_item = new ilTextInputGUI($this->i18N->txt('frm_auth_org'), 'org');
+        $org_item->setInfo($this->i18N->txt('frm_auth_org_desc'));
         if ($load_saved_values) {
             $org_item->setValue($admin_settings->getOrg());
             $api_item->setValue($admin_settings->getApiKey());
         }
-        $form->addCommandButton('submitAuthForm', $lng->txt('save'));
-        $form->addCommandButton('authentication', $lng->txt('cancel'));
+        $form->addCommandButton('submitAuthForm', $this->i18N->globalTxt('save'));
+        $form->addCommandButton('authentication', $this->i18N->globalTxt('cancel'));
         $form->addItem($org_item);
         $form->addItem($api_item);
 
@@ -222,7 +230,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings->setOrg($this->form->getInput("org"));
         $admin_settings->update();
         $cmd = "authentication";
-        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->txt('msg_suc_saved'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
         $this->$cmd();
     }
 
@@ -233,7 +241,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     {
         global $tpl;
         $this->initServerForm();
-        $this->form->setTitle($this->txt('frm_server_add_title'));
+        $this->form->setTitle($this->i18N->txt('frm_server_add_title'));
         $tpl->setContent($this->form->getHTML());
     }
 
@@ -243,12 +251,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     private function initServerForm()
     {
-        global $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
-        $form->addCommandButton('submitServer', $lng->txt('save'));
-        $form->addCommandButton('cancelServer', $lng->txt('cancel'));
+        $form->addCommandButton('submitServer', $this->i18N->globalTxt('save'));
+        $form->addCommandButton('cancelServer', $this->i18N->globalTxt('cancel'));
         $this->form = $form;
     }
 
@@ -277,7 +284,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $mumie_server->setName($input_name);
         $mumie_server->setUrlPrefix($input_url_prefix);
         $mumie_server->upsert();
-        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->txt('msg_suc_server_add'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_server_add'), true);
         $this->listServers();
     }
 
@@ -293,7 +300,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $server = new ilMumieTaskServer($_GET['server_id']);
         $server->delete();
         $cmd = "configure";
-        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->txt('msg_suc_deleted'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_deleted'), true);
         $this->$cmd();
     }
 
@@ -307,7 +314,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $DIC->ctrl()->setParameter($this, "server_id", $id);
         $this->initServerForm();
         $this->form->setValuesByArray($this->loadServerSettings($id));
-        $this->form->setTitle($this->txt('frm_server_edit_title'));
+        $this->form->setTitle($this->i18N->txt('frm_server_edit_title'));
         $this->form->setFormAction($ilCtrl->getFormAction($this));
         $tpl->setContent($this->form->getHTML());
     }
@@ -332,9 +339,5 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function cancelServer()
     {
         $this->listServers();
-    }
-
-    private function txt($key): string {
-        return $this->plugin_object->txt($key);
     }
 }

@@ -7,6 +7,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 {
     private ilMumieTaskI18N $i18n;
@@ -116,11 +117,10 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
      */
     public function getProperties(): array
     {
-        global $lng;
-
+        $i18N = new ilMumieTaskI18N();
         if (!ilObjMumieTaskAccess::_lookupOnline($this->obj_id)) {
-            $props[] = array("alert" => true, "property" => $lng->txt("status"),
-                "value" => $lng->txt("offline"));
+            $props[] = array("alert" => true, "property" => $i18N->globalTxt("status"),
+                "value" => $i18N->globalTxt("offline"));
         }
         return $props ?? array();
     }
