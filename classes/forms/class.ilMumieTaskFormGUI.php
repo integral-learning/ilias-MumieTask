@@ -7,7 +7,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This form is used to edit and validate the general settings of MumieTasks
@@ -48,7 +48,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->description_item = new ilTextInputGUI($this->i18N->globalTxt('description'), 'description');
         $this->addItem($this->description_item);
 
-        require_once ('Services/Form/classes/class.ilSelectInputGUI.php');
+        require_once('Services/Form/classes/class.ilSelectInputGUI.php');
         $this->server_item = new ilSelectInputGui($this->i18N->txt('mumie_server'), 'xmum_server');
         $this->server_item->setRequired(true);
         $this->addItem($this->server_item);

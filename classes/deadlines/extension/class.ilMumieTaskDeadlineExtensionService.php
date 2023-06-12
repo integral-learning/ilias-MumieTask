@@ -106,7 +106,7 @@ class ilMumieTaskDeadlineExtensionService
     {
         global $DIC;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-        require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
         $i18n = new ilMumieTaskI18N();
         $DIC->ui()->mainTemplate()->setOnScreenMessage(
             'success',

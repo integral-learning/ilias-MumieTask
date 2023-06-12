@@ -18,7 +18,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
-require_once ('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 
 
@@ -29,7 +29,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
         $this->i18N = new ilMumieTaskI18N();
-
     }
 
     /**

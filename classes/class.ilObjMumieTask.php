@@ -46,7 +46,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         parent::__construct($a_ref_id);
     }
 
-    public static function constructDummy() : ilObjMumieTask
+    public static function constructDummy(): ilObjMumieTask
     {
         $task = new ilObjMumieTask();
         $task->setTitle(self::DUMMY_TITLE);
