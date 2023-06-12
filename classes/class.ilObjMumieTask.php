@@ -267,7 +267,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function getLPStatusForUser($a_user_id): int
     {
-        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         return ilMumieTaskLPStatus::getLPStatusForUser($this, $a_user_id);
     }
 
