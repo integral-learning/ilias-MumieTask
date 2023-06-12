@@ -336,7 +336,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function displayLearningProgress()
     {
         global $ilCtrl;
-        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         require_once('Services/User/classes/class.ilObjUser.php');
         ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
@@ -755,7 +754,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $user_id = $_GET["user_id"];
         ilMumieTaskGradeOverrideService::deleteGradeOverride($this->object, $user_id);
-        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGradeForUser($this->object, $user_id, true);
         $DIC->ui()->mainTemplate()->setOnScreenMessage(
             'success',
@@ -776,7 +774,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function forceGradeUpdate()
     {
         global $DIC;
-        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         ilMumieTaskLPStatus::updateGrades($this->object, true);
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), false);
