@@ -17,12 +17,14 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
     private $text_item_first;
     private $text_item_last;
     private ilMumieTaskI18N $i18N;
+    private ilObjMumieTask $objMumieTask;
 
-    public function __construct()
+    public function __construct(ilObjMumieTask $objMumieTask)
     {
         parent::__construct();
         $this->setDisableStandardMessage(true);
         $this->i18N = new ilMumieTaskI18N();
+        $this->objMumieTask = $objMumieTask;
     }
 
     public function setFields($parentObj, $form)
@@ -46,7 +48,7 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         }
         $this->addItem($this->text_item_last);
 
-        if ($parentObj->object->hasDeadline()) {
+        if ($this->objMumieTask->hasDeadline()) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', '<span>
             <b>' . $this->i18N->txt('frm_user_overview_list_general_deadline') . '</b>
             <span style="margin-left:50px"> ' . $parentObj->object->getDeadlineDateTime() . '</span>
@@ -59,7 +61,7 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         $select_task_header_item = new ilFormSectionHeaderGUI();
         $select_task_header_item->setTitle($this->i18N->txt('tab_userlist'));
         $this->addItem($select_task_header_item);
-        $userList = new ilMumieTaskGradeOverviewGUI($parentObj);
+        $userList = new ilMumieTaskGradeOverviewGUI($parentObj, $this->objMumieTask);
         $userList->init($parentObj, $form);
         $this->addItem($userList);
     }

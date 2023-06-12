@@ -17,12 +17,14 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 {
     public const EMPTY_CELL = "-";
     private ilMumieTaskI18N $i18n;
+    private ilObjMumieTask $objMumieTask;
 
-    public function __construct($parentObj)
+    public function __construct($parentObj, ilObjMumieTask $objMumieTask)
     {
         $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayUserList');
         $this->i18n = new ilMumieTaskI18N();
+        $this->objMumieTask = $objMumieTask;
     }
 
     public function init($parentObj, $form)
@@ -35,10 +37,10 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->addColumn($i18n->txt('user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
-        $members = ilMumieTaskParticipantService::filter($parentObj->object, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
+        $members = ilMumieTaskParticipantService::filter($this->objMumieTask, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-        ilMumieTaskLPStatus::updateGrades($parentObj->object);
+        ilMumieTaskLPStatus::updateGrades($this->objMumieTask);
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -65,8 +67,8 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object);
-        $this->tpl->setVariable('DEADLINE_CELL_CONTENT', $this->getDeadlineCellContent($user_id, $parentObj->object));
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $this->objMumieTask);
+        $this->tpl->setVariable('DEADLINE_CELL_CONTENT', $this->getDeadlineCellContent($user_id, $this->objMumieTask));
         $this->tpl->setVariable('LINK_GRADE_OVERVIEW', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
         $this->tpl->setVariable('VAL_GRADE', $this->getGradeCellContent($grade));
         $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserService::getFullName($user_id));

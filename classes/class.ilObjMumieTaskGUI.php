@@ -238,7 +238,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->saveFormValues();
 
         if ($force_grade_update) {
-            $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
             require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
             ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
@@ -505,7 +504,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function submitLPSettings()
     {
         global $DIC;
-        $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
         $this->initLPSettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -620,7 +618,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $mumieTask->doUpdate();
 
         if ($force_grade_update) {
-            $this->plugin->includeClass('class.ilMumieTaskLPStatus.php');
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
 
@@ -645,7 +642,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilCtrl;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskGradeOverviewFormGUI.php');
-        $form =  new ilMumieTaskGradeOverviewFormGUI();
+        $form =  new ilMumieTaskGradeOverviewFormGUI($this->object);
         $form->setTitle($this->i18N->txt('frm_user_overview_list_search_title'));
         $form->addCommandButton('displayGradeOverviewPage', $this->i18N->txt('frm_user_overview_list_search'));
         $form->setFormAction($ilCtrl->getFormAction($this));
