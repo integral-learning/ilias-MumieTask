@@ -15,21 +15,23 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 {
     public const EMPTY_CELL = "-";
+    private ilMumieTaskI18N $i18n;
 
     public function __construct($parentObj)
     {
         $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayUserList');
+        $this->i18n = new ilMumieTaskI18N();
     }
 
     public function init($parentObj, $form)
     {
-        global $lng;
+        $i18n = $this->i18n;
         $this->setFormName('participants');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'));
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
+        $this->addColumn($i18n->txt('user_overview_list_name'), 'name');
+        $this->addColumn($i18n->txt('user_overview_list_extended_deadline'));
+        $this->addColumn($i18n->txt('list_grade'), 'note');
+        $this->addColumn($i18n->txt('user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
         $members = ilMumieTaskParticipantService::filter($parentObj->object, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
@@ -108,7 +110,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
             $tpl = new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html", true, true, true, "DEFAULT", true);
             $tpl->setVariable("VAL_GRADE", $grade->getPercentileScore());
-            $tpl->setVariable("OVERRIDDEN_MOUSEOVER", $lng->txt('rep_robj_xmum_frm_user_gradeoverview_overridden_explanation'));
+            $tpl->setVariable("OVERRIDDEN_MOUSEOVER", $this->i18n->txt('user_gradeoverview_overridden_explanation'));
             return $tpl->get();
         }
         return $grade->getPercentileScore();
