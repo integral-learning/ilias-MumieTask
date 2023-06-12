@@ -18,13 +18,16 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
     private $user_id;
     private ilMumieTaskI18N $i18N;
+    private ilObjMumieTask $mumie_task;
 
-    public function __construct($parentObj)
+
+    public function __construct($parentObj, ilObjMumieTask $mumie_task)
     {
         parent::__construct($parentObj, 'displayGradeList');
         $this->user_id = $_GET['user_id'];
         $this->setId("user" . $_GET["ref_id"]);
         $this->i18N = new ilMumieTaskI18N();
+        $this->mumie_task = $mumie_task;
     }
 
     public function init()
@@ -46,8 +49,8 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj->object);
-        if ($this->privateGradepoolSet($this->parent_obj)) {
+        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->mumie_task);
+        if ($this->privateGradepoolSet($this->mumie_task)) {
             if (empty($user_grades)) {
                 $this->setEmptyTable();
             } else {
@@ -60,9 +63,9 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    private function privateGradepoolSet($parentObj)
+    private function privateGradepoolSet($mumie_task)
     {
-        return $parentObj->object->getPrivateGradepool() != -1;
+        return $mumie_task->getPrivateGradepool() != -1;
     }
 
     private function setEmptyTable()

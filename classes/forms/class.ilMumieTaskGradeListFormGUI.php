@@ -16,14 +16,14 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
     private $user_id;
     private $parent_gui;
-    private $mumie_task;
+    private ilObjMumieTask $mumie_task;
     private ilMumieTaskI18N $i18N;
-    public function __construct($parent_gui, $user_id)
+    public function __construct($parent_gui, $user_id, ilObjMumieTask $mumie_task)
     {
         parent::__construct();
         $this->parent_gui = $parent_gui;
         $this->user_id = $user_id;
-        $this->mumie_task = $parent_gui->object;
+        $this->mumie_task = $mumie_task;
         $this->i18N = new ilMumieTaskI18N();
     }
 
@@ -34,7 +34,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         $this->setInfoBox();
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeListGUI.php');
-        $grade_list = new ilMumieTaskGradeListGUI($this->parent_gui);
+        $grade_list = new ilMumieTaskGradeListGUI($this->parent_gui, $this->mumie_task);
         $grade_list->init();
         $this->addItem($grade_list);
 
