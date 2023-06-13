@@ -51,7 +51,7 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         if ($this->objMumieTask->hasDeadline()) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', '<span>
             <b>' . $this->i18N->txt('frm_user_overview_list_general_deadline') . '</b>
-            <span style="margin-left:50px"> ' . $parentObj->object->getDeadlineDateTime() . '</span>
+            <span style="margin-left:50px"> ' . $this->objMumieTask->getDeadlineDateTime() . '</span>
             </span>');
         }
     }
