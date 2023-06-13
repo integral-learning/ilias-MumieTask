@@ -355,7 +355,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilUser, $lng, $DIC;
         $status = ilMumieTaskLPStatus::getLPStatusForUser($this->object, $ilUser->getId());
-        $status_path = ilLearningProgressBaseGUI::_getImagePathForStatus($status);
+        $status_path = $this->getStatusImagePath($status);
         $lng->loadLanguageModule('trac');
 
         switch ($status) {
@@ -378,6 +378,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             default:
                 $DIC->ui()->mainTemplate()->setOnScreenMessage('question', $this->getLPMessageString($status_text, $status_path), true);
         }
+    }
+
+    private function getStatusImagePath($status): string {
+        $icons = ilLPStatusIcons::getInstance(ilLPStatusIcons::ICON_VARIANT_SHORT);
+        return $icons->getImagePathForStatus($status);
     }
 
     /**
@@ -404,7 +409,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         . $this->i18N->globalTxt('status')
             . ':</i></td>'
             . '<td style="padding-left:50px">'
-            . "<img style='margin-right: 10px' src='" . $status_path . "'>"
+            . "<img style='margin-right: 10px; width: 1em' src='" . $status_path . "'>"
             . $status_text
             . '</td></tr>'
 
