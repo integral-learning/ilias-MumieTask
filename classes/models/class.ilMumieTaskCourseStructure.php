@@ -104,7 +104,7 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
         $this->path_to_course_file = $course_and_tasks->pathToCourseFile;
         $this->tasks = [];
 
-        if(isset($course_and_tasks->link)) {
+        if (isset($course_and_tasks->link)) {
             $this->link = $course_and_tasks->link;
         }
         if ($course_and_tasks->tasks) {
