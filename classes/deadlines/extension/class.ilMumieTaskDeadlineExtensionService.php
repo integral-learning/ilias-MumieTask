@@ -21,7 +21,7 @@ class ilMumieTaskDeadlineExtensionService
 
     public static function hasDeadlineExtension($user_id, $task): bool
     {
-        return !is_null(self::getDeadlineExtension($user_id, $task)->getUserId());
+        return !is_null(self::getDeadlineExtensionAssoc($user_id, $task));
     }
 
     public static function getDeadlineExtensionDate($user_id, $task): ilMumieTaskDateTime
@@ -87,6 +87,12 @@ class ilMumieTaskDeadlineExtensionService
 
     private static function getDeadlineExtension($user_id, $task): ilMumieTaskDeadlineExtension
     {
+        $result = self::getDeadlineExtensionAssoc($user_id, $task);
+        return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
+    }
+
+    private static function getDeadlineExtensionAssoc($user_id, $task) : ?array
+    {
         global $ilDB;
         $query = "SELECT *
         FROM xmum_deadline_ext
@@ -98,8 +104,7 @@ class ilMumieTaskDeadlineExtensionService
             self::USER_ID .
             " = " .
             $ilDB->quote($user_id, "text");
-        $result = $ilDB->fetchAssoc($ilDB->query($query));
-        return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
+        return $ilDB->fetchAssoc($ilDB->query($query));
     }
 
     private static function sendUpdateSuccessMessage(ilMumieTaskDeadlineExtension $deadline_extension)
