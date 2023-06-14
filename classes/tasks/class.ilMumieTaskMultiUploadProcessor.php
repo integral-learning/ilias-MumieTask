@@ -49,7 +49,7 @@ class ilMumieTaskMultiUploadProcessor
 
     private static function generateMumieTask(ilMumieTaskTaskDTO $task_dto, ilObjMumieTask $base_task)
     {
-        $new_task = self::generateEmtyMumieTask($base_task->getParentRef(), $base_task->getType());
+        $new_task = self::generateEmptyMumieTask($base_task->getParentRef(), $base_task->getType());
 
         $new_task->setTitle($task_dto->getName());
         $new_task->setServer($task_dto->getServer());
@@ -60,10 +60,11 @@ class ilMumieTaskMultiUploadProcessor
         $new_task->setMumieCoursefile($task_dto->getPathToCoursefile());
         $new_task->setDeadline($base_task->getDeadline());
         $new_task->setOnline($base_task->getOnline());
+        $new_task->setPrivateGradepool($base_task->getPrivateGradepool());
         $new_task->update();
     }
 
-    private static function generateEmtyMumieTask($parent_ref, $type): ilObjMumieTask
+    private static function generateEmptyMumieTask($parent_ref, $type): ilObjMumieTask
     {
         $new_task = new ilObjMumieTask();
         $new_task->setType($type);
