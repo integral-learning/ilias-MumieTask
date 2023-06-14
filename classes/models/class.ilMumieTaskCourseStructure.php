@@ -103,7 +103,10 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
         $this->name = $course_and_tasks->name;
         $this->path_to_course_file = $course_and_tasks->pathToCourseFile;
         $this->tasks = [];
-        $this->link = $course_and_tasks->link;
+
+        if(isset($course_and_tasks->link)) {
+            $this->link = $course_and_tasks->link;
+        }
         if ($course_and_tasks->tasks) {
             foreach ($course_and_tasks->tasks as $task) {
                 $task_obj = new ilMumieTaskTaskStructure($task);
