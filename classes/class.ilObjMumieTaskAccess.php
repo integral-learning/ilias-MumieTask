@@ -81,7 +81,7 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
             case "visible":
                 if (!$rbacsystem->checkAccessOfUser($a_user_id, 'write', $a_ref_id)) {
                     if (!self::_lookupOnline($a_obj_id)) {
-                        $ilAccess->addInfoItem(IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
+                        $ilAccess->addInfoItem(ilAccessInfo::IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
                         return false;
                     }
                 }
