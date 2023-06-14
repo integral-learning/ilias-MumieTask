@@ -239,7 +239,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     {
         global $ilDB;
         $result = $ilDB->query(
-            "SELECT mark
+            "SELECT *
             FROM ut_lp_marks 
             WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
             " AND " .
