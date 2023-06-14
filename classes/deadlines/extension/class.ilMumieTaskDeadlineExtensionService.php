@@ -91,7 +91,7 @@ class ilMumieTaskDeadlineExtensionService
         return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
     }
 
-    private static function getDeadlineExtensionAssoc($user_id, $task) : ?array
+    private static function getDeadlineExtensionAssoc($user_id, $task): ?array
     {
         global $ilDB;
         $query = "SELECT *

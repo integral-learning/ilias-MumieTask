@@ -45,7 +45,7 @@ class ilMumieTaskGradeOverrideService
         " AND " .
         "task_id = " . $ilDB->quote($task->getId(), "integer");
         $assoc = $ilDB->fetchAssoc($ilDB->query($query));
-        return is_null($assoc) ?$assoc : $assoc[self::NEW_GRADE];
+        return is_null($assoc) ? $assoc : $assoc[self::NEW_GRADE];
     }
 
     public static function overrideGrade(ilMumieTaskGrade $grade)
