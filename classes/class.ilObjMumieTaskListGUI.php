@@ -70,7 +70,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             if ($this->getSubstitutionStatus()) {
                 $this->insertSubstitutions();
                 if (!$this->substitutions->isDescriptionEnabled()) {
-//                    return true;
+                    return;
                 }
             }
 
@@ -78,6 +78,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
             if (!$task->hasDeadline()) {
                 parent::insertDescription();
+                return;
             }
 
             $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($ilUser->getId(), $task);
