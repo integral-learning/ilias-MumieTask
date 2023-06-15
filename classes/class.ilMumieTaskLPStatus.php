@@ -230,7 +230,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
-    public static function getLPStatusForUser(ilObjMumieTask $task, $user_id) : int
+    public static function getLPStatusForUser(ilObjMumieTask $task, $user_id): int
     {
         //This is necessary because of a null offset bug in ilLPStatusPlugin::getLPDataForUser under php8
         if (is_null(self::getLpMark($user_id, $task))) {
@@ -241,7 +241,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     public static function getCurrentGradeForUser($user_id, ilObjMumieTask $mumie_task): ?ilMumieTaskGrade
     {
-
         $lp_mark = self::getLpMark($user_id, $mumie_task);
         if (is_null($lp_mark)) {
             return null;
@@ -251,7 +250,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         return new ilMumieTaskGrade($user_id, $score, $mumie_task, $timestamp);
     }
 
-    private static function getLpMark($user_id, ilObjMumieTask $mumie_task) : ?array
+    private static function getLpMark($user_id, ilObjMumieTask $mumie_task): ?array
     {
         global $ilDB;
 
