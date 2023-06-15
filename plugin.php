@@ -3,7 +3,7 @@
 $id = "xmum";
 
 // code version; must be changed for all code changes
-$version = "2.5";
+$version = "3.0";
 
 
 // ilias min and max version; must always reflect the versions that should
