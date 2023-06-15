@@ -15,20 +15,20 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  */
 class ilMumieTaskLPStatus extends ilLPStatusPlugin
 {
-    public static function updateAccess($user_id, $objId, $refId, $old_status)
+    public static function updateAccess($user_id, ilObjMumieTask $mumie_task, $refId, $old_status)
     {
         require_once('Services/Tracking/classes/class.ilChangeEvent.php');
-        ilChangeEvent::_recordReadEvent('xmum', $refId, $objId, $user_id);
+        ilChangeEvent::_recordReadEvent('xmum', $refId, $mumie_task->getId(), $user_id);
 
-        $status = self::getLPDataForUser($objId, $user_id);
+        $status = self::getLPStatusForUser($mumie_task, $user_id);
         if ($status == self::LP_STATUS_NOT_ATTEMPTED_NUM) {
-            self::writeStatus($objId, $user_id, self::LP_STATUS_IN_PROGRESS_NUM);
+            self::writeStatus($mumie_task->getId(), $user_id, self::LP_STATUS_IN_PROGRESS_NUM);
             self::raiseEvent(
-                $objId,
+                $mumie_task->getId(),
                 $user_id,
                 self::LP_STATUS_IN_PROGRESS_NUM,
                 $old_status,
-                self::getPercentageForUser($objId, $user_id)
+                self::getPercentageForUser($mumie_task->getId(), $user_id)
             );
         }
     }
@@ -230,28 +230,38 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
-    public static function getLPStatusForUser($task, $user_id)
+    public static function getLPStatusForUser(ilObjMumieTask $task, $user_id) : int
     {
+        //This is necessary because of a null offset bug in ilLPStatusPlugin::getLPDataForUser under php8
+        if (is_null(self::getLpMark($user_id, $task))) {
+            return self::LP_STATUS_NOT_ATTEMPTED_NUM;
+        }
         return self::getLPDataForUser($task->getId(), $user_id);
     }
 
     public static function getCurrentGradeForUser($user_id, ilObjMumieTask $mumie_task): ?ilMumieTaskGrade
     {
-        global $ilDB;
-        $result = $ilDB->query(
-            "SELECT *
-            FROM ut_lp_marks 
-            WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
-            " AND " .
-            "obj_id = " . $ilDB->quote($mumie_task->getId(), "integer")
-        );
-        $lp_mark = $ilDB->fetchAssoc($result);
-        if (empty($lp_mark)) {
+
+        $lp_mark = self::getLpMark($user_id, $mumie_task);
+        if (is_null($lp_mark)) {
             return null;
         }
         $score = $lp_mark['mark'] / 100;
         $timestamp = strtotime($lp_mark['status_changed']);
         return new ilMumieTaskGrade($user_id, $score, $mumie_task, $timestamp);
+    }
+
+    private static function getLpMark($user_id, ilObjMumieTask $mumie_task) : ?array
+    {
+        global $ilDB;
+
+        return $ilDB->fetchAssoc($ilDB->query(
+            "SELECT *
+            FROM ut_lp_marks 
+            WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
+            " AND " .
+            "obj_id = " . $ilDB->quote($mumie_task->getId(), "integer")
+        ));
     }
 
     private static function deleteLPForTask($task, $user_id = 0)

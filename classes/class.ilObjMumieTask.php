@@ -187,9 +187,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function doClone($a_target_id, $a_copy_id, $new_obj)
     {
-        global $ilDB;
-
-        $new_obj->setOnline($this->isOnline());
+        $new_obj->setOnline($this->getOnline());
         $new_obj->setOptionOne($this->getOptionOne());
         $new_obj->setOptionTwo($this->getOptionTwo());
         $new_obj->update();
@@ -270,7 +268,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     {
         global $ilUser;
         if ($ilUser->getId() != ANONYMOUS_USER_ID) {
-            ilMumieTaskLPStatus::updateAccess($ilUser->getId(), $this->getId(), $this->getRefId(), $this->getLPStatusForUser($ilUser->getId()));
+            ilMumieTaskLPStatus::updateAccess($ilUser->getId(), $this, $this->getRefId(), $this->getLPStatusForUser($ilUser->getId()));
         }
     }
 
@@ -431,7 +429,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function getLogoutUrl()
     {
-        ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
+        return ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
     }
 
     /**
