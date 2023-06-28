@@ -9,16 +9,18 @@
 
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskTaskDTO.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilMumieTaskMultiUploadProcessor
 {
     public static function process(ilObjMumieTask $base_task, string $tasks_json)
     {
-        global $lng;
+        global $DIC;
+        $i18N = new ilMumieTaskI18N();
         $task_dtos = self::parseTaskDTOs($tasks_json);
         foreach ($task_dtos as $taskDTO) {
             self::generateMumieTask($taskDTO, $base_task);
         }
-        ilUtil::sendInfo(sprintf($lng->txt("rep_robj_xmum_multi_create_success"), count($task_dtos)), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('info', sprintf($i18N->txt("multi_create_success"), count($task_dtos)), true);
     }
 
     public static function isValid(string $tasks_json): bool
@@ -47,7 +49,7 @@ class ilMumieTaskMultiUploadProcessor
 
     private static function generateMumieTask(ilMumieTaskTaskDTO $task_dto, ilObjMumieTask $base_task)
     {
-        $new_task = self::generateEmtyMumieTask($base_task->getParentRef(), $base_task->getType());
+        $new_task = self::generateEmptyMumieTask($base_task->getParentRef(), $base_task->getType());
 
         $new_task->setTitle($task_dto->getName());
         $new_task->setServer($task_dto->getServer());
@@ -58,10 +60,11 @@ class ilMumieTaskMultiUploadProcessor
         $new_task->setMumieCoursefile($task_dto->getPathToCoursefile());
         $new_task->setDeadline($base_task->getDeadline());
         $new_task->setOnline($base_task->getOnline());
+        $new_task->setPrivateGradepool($base_task->getPrivateGradepool());
         $new_task->update();
     }
 
-    private static function generateEmtyMumieTask($parent_ref, $type): ilObjMumieTask
+    private static function generateEmptyMumieTask($parent_ref, $type): ilObjMumieTask
     {
         $new_task = new ilObjMumieTask();
         $new_task->setType($type);

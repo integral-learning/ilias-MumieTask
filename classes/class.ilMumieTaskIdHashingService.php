@@ -22,7 +22,6 @@ class ilMumieTaskIdHashingService
     private function __construct($user_id, $task)
     {
         $this->user_id = $user_id;
-        $this->hash = $hash;
         $this->task = $task;
     }
 

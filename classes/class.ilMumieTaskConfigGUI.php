@@ -8,16 +8,27 @@
  */
 
 include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+/**
+ * @ilCtrl_IsCalledBy ilMumieTaskConfigGUI: ilObjComponentSettingsGUI
+ */
 class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 {
+    private ilMumieTaskI18N $i18N;
+
+    public function __construct()
+    {
+        $this->i18N = new ilMumieTaskI18N();
+    }
+
     /**
      * Handles all commands, default is "configure"
      */
-    public function performCommand($cmd)
+    public function performCommand(string $cmd): void
     {
-        global $tree, $rbacsystem, $ilErr, $lng, $ilCtrl, $tpl;
+        global $ilCtrl;
 
-        $cmd = $ilCtrl->getCmd($this);
+        $cmd = $ilCtrl->getCmd($cmd);
 
         $this->setTabs();
         switch ($cmd) {
@@ -42,7 +53,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function configure()
     {
-        global $tpl, $ilToolbar, $ilCtrl, $ilTabs;
+        global $ilTabs;
 
         $this->setTabs();
         $this->listServers();
@@ -51,23 +62,24 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     public function setTabs()
     {
-        global $ilCtrl, $ilTabs, $lng;
+        global $ilCtrl, $ilTabs;
+        $i18N = $this->i18N;
         $ilTabs->clearTargets();
 
         $ilTabs->addTab(
             "tab_servers",
-            $lng->txt("rep_robj_xmum_tab_servers"),
+            $i18N->txt("tab_servers"),
             $ilCtrl->getLinkTarget($this, "listServers")
         );
         $ilTabs->addTab(
             "tab_shared_data",
-            $lng->txt("rep_robj_xmum_tab_shared_data"),
+            $i18N->txt("tab_shared_data"),
             $ilCtrl->getLinkTarget($this, "sharedData")
         );
 
         $ilTabs->addTab(
             'tab_authentication',
-            $lng->txt("rep_robj_xmum_tab_authentication"),
+            $i18N->txt("tab_authentication"),
             $ilCtrl->getLinkTarget($this, "authentication")
         );
     }
@@ -102,29 +114,29 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function initShareDataForm($load_saved_values = true)
     {
-        global $lng, $tpl, $ilTabs, $ilCtrl;
+        global $lng, $ilCtrl;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
-        $form->setTitle($lng->txt("rep_robj_xmum_tab_shared_data"));
-        $form->setDescription($lng->txt("rep_robj_xmum_frm_shared_data_description"));
+        $form->setTitle($this->i18N->txt("tab_shared_data"));
+        $form->setDescription($this->i18N->txt("frm_shared_data_description"));
 
-        $first_name_item = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_frm_share_first_name"), "shareFirstName");
-        $first_name_item->setInfo($lng->txt("rep_robj_xmum_frm_share_first_name_desc"));
+        $first_name_item = new ilCheckboxInputGUI($this->i18N->txt("frm_share_first_name"), "shareFirstName");
+        $first_name_item->setInfo($this->i18N->txt("frm_share_first_name_desc"));
         if ($admin_settings->getShareFirstName() && $load_saved_values) {
             $first_name_item->setValue('1');
             $first_name_item->setChecked(true);
         }
-        $last_name_item = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_frm_share_last_name"), "shareLastName");
-        $last_name_item->setInfo($lng->txt("rep_robj_xmum_frm_share_last_name_desc"));
+        $last_name_item = new ilCheckboxInputGUI($this->i18N->txt("frm_share_last_name"), "shareLastName");
+        $last_name_item->setInfo($this->i18N->txt("frm_share_last_name_desc"));
         if ($admin_settings->getShareLastName() && $load_saved_values) {
             $last_name_item->setValue('1');
             $last_name_item->setChecked(true);
         }
 
-        $email_item = new ilCheckboxInputGUI($lng->txt("rep_robj_xmum_frm_share_email"), "shareEmail");
-        $email_item->setInfo($lng->txt("rep_robj_xmum_frm_share_email_desc"));
+        $email_item = new ilCheckboxInputGUI($this->i18N->txt("frm_share_email"), "shareEmail");
+        $email_item->setInfo($this->i18N->txt("frm_share_email_desc"));
         if ($admin_settings->getShareEmail() && $load_saved_values) {
             $email_item->setValue('1');
             $email_item->setChecked(true);
@@ -133,8 +145,8 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $form->addItem($first_name_item);
         $form->addItem($last_name_item);
         $form->addItem($email_item);
-        $form->addCommandButton('submitSharedData', $lng->txt('save'));
-        $form->addCommandButton('config', $lng->txt('cancel'));
+        $form->addCommandButton('submitSharedData', $this->i18N->globalTxt('save'));
+        $form->addCommandButton('config', $this->i18N->globalTxt('cancel'));
         $this->form = $form;
     }
 
@@ -144,7 +156,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     private function submitSharedData()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        global $tpl, $ilCtrl, $lng;
+        global $tpl, $DIC;
         $this->initShareDataForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -158,7 +170,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings->setShareEmail($this->form->getInput('shareEmail'));
         $admin_settings->update();
         $cmd = "sharedData";
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
         $this->$cmd();
     }
 
@@ -167,7 +179,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function authentication()
     {
-        global $lng, $tpl, $ilTabs;
+        global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_authentication");
         $this->initAuthForm();
         $tpl->setContent($this->form->getHTML());
@@ -178,22 +190,22 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function initAuthForm($load_saved_values = true)
     {
-        global $lng, $tpl, $ilTabs, $ilCtrl;
+        global $lng, $ilCtrl;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
-        $form->setTitle($lng->txt("rep_robj_xmum_tab_authentication"));
-        $api_item = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_auth_api'), 'api_key');
-        $api_item->setInfo($lng->txt('rep_robj_xmum_frm_auth_api_desc'));
-        $org_item = new ilTextInputGUI($lng->txt('rep_robj_xmum_frm_auth_org'), 'org');
-        $org_item->setInfo($lng->txt('rep_robj_xmum_frm_auth_org_desc'));
+        $form->setTitle($this->i18N->txt("tab_authentication"));
+        $api_item = new ilTextInputGUI($this->i18N->txt('frm_auth_api'), 'api_key');
+        $api_item->setInfo($this->i18N->txt('frm_auth_api_desc'));
+        $org_item = new ilTextInputGUI($this->i18N->txt('frm_auth_org'), 'org');
+        $org_item->setInfo($this->i18N->txt('frm_auth_org_desc'));
         if ($load_saved_values) {
             $org_item->setValue($admin_settings->getOrg());
             $api_item->setValue($admin_settings->getApiKey());
         }
-        $form->addCommandButton('submitAuthForm', $lng->txt('save'));
-        $form->addCommandButton('authentication', $lng->txt('cancel'));
+        $form->addCommandButton('submitAuthForm', $this->i18N->globalTxt('save'));
+        $form->addCommandButton('authentication', $this->i18N->globalTxt('cancel'));
         $form->addItem($org_item);
         $form->addItem($api_item);
 
@@ -206,7 +218,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function submitAuthForm()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        global $tpl, $ilCtrl, $lng;
+        global $tpl, $DIC;
         $this->initAuthForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -219,7 +231,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings->setOrg($this->form->getInput("org"));
         $admin_settings->update();
         $cmd = "authentication";
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_saved'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
         $this->$cmd();
     }
 
@@ -228,9 +240,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function addServer()
     {
-        global $tpl, $lng;
+        global $tpl;
         $this->initServerForm();
-        $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_add_title'));
+        $this->form->setTitle($this->i18N->txt('frm_server_add_title'));
         $tpl->setContent($this->form->getHTML());
     }
 
@@ -240,12 +252,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     private function initServerForm()
     {
-        global $ilCtrl, $lng;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
-        $form->addCommandButton('submitServer', $lng->txt('save'));
-        $form->addCommandButton('cancelServer', $lng->txt('cancel'));
+        $form->addCommandButton('submitServer', $this->i18N->globalTxt('save'));
+        $form->addCommandButton('cancelServer', $this->i18N->globalTxt('cancel'));
         $this->form = $form;
     }
 
@@ -257,7 +268,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function submitServer()
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-        global $tpl, $lng;
+        global $tpl, $DIC;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -274,7 +285,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $mumie_server->setName($input_name);
         $mumie_server->setUrlPrefix($input_url_prefix);
         $mumie_server->upsert();
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_server_add'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_server_add'), true);
         $this->listServers();
     }
 
@@ -285,12 +296,12 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function deleteServer()
     {
-        global $lng;
+        global $DIC;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $server = new ilMumieTaskServer($_GET['server_id']);
         $server->delete();
         $cmd = "configure";
-        ilUtil::sendSuccess($lng->txt('rep_robj_xmum_msg_suc_deleted'), true);
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_deleted'), true);
         $this->$cmd();
     }
 
@@ -299,12 +310,12 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function editServer()
     {
-        global $tpl, $DIC, $lng, $ilCtrl;
+        global $tpl, $DIC, $ilCtrl;
         $id = $_GET['server_id'];
         $DIC->ctrl()->setParameter($this, "server_id", $id);
         $this->initServerForm();
         $this->form->setValuesByArray($this->loadServerSettings($id));
-        $this->form->setTitle($lng->txt('rep_robj_xmum_frm_server_edit_title'));
+        $this->form->setTitle($this->i18N->txt('frm_server_edit_title'));
         $this->form->setFormAction($ilCtrl->getFormAction($this));
         $tpl->setContent($this->form->getHTML());
     }

@@ -24,7 +24,7 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
      *
      * @return    boolean        true, if everything is ok
      */
-    public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "")
+    public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = ""): bool
     {
         global $ilUser, $ilAccess, $ilCtrl, $DIC, $lng;
         if (!isset($a_cmd) || trim($a_cmd) === '') {
@@ -81,7 +81,7 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
             case "visible":
                 if (!$rbacsystem->checkAccessOfUser($a_user_id, 'write', $a_ref_id)) {
                     if (!self::_lookupOnline($a_obj_id)) {
-                        $ilAccess->addInfoItem(IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
+                        $ilAccess->addInfoItem(ilAccessInfo::IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
                         return false;
                     }
                 }

@@ -9,33 +9,37 @@
  */
 
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 /**
  * This GUI provides a way to list users in a MUMIE task
  */
 class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 {
     public const EMPTY_CELL = "-";
+    private ilMumieTaskI18N $i18N;
+    private ilObjMumieTask $mumie_task;
 
-    public function __construct($parentObj)
+    public function __construct($parentObj, ilObjMumieTask $mumie_task)
     {
         $this->setId("user" . $_GET["ref_id"]);
         parent::__construct($parentObj, 'displayUserList');
+        $this->i18N = new ilMumieTaskI18N();
+        $this->mumie_task = $mumie_task;
     }
 
     public function init($parentObj, $form)
     {
-        global $lng;
         $this->setFormName('participants');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_name'), 'name');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_extended_deadline'));
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'note');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_user_overview_list_submissions'), 'submission');
+        $this->addColumn($this->i18N->txt('frm_user_overview_list_name'), 'name');
+        $this->addColumn($this->i18N->txt('frm_user_overview_list_extended_deadline'));
+        $this->addColumn($this->i18N->txt('frm_list_grade'), 'note');
+        $this->addColumn($this->i18N->txt('frm_user_overview_list_submissions'), 'submission');
         $this->setDefaultFilterVisiblity(true);
 
-        $members = ilMumieTaskParticipantService::filter($parentObj->object, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
+        $members = ilMumieTaskParticipantService::filter($this->mumie_task, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
 
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-        ilMumieTaskLPStatus::updateGrades($parentObj->object);
+        ilMumieTaskLPStatus::updateGrades($this->mumie_task);
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -62,8 +66,8 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
-        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $parentObj->object);
-        $this->tpl->setVariable('DEADLINE_CELL_CONTENT', $this->getDeadlineCellContent($user_id, $parentObj->object));
+        $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $this->mumie_task);
+        $this->tpl->setVariable('DEADLINE_CELL_CONTENT', $this->getDeadlineCellContent($user_id, $this->mumie_task));
         $this->tpl->setVariable('LINK_GRADE_OVERVIEW', $this->ctrl->getLinkTarget($parentObj, 'displayGradeList'));
         $this->tpl->setVariable('VAL_GRADE', $this->getGradeCellContent($grade));
         $this->tpl->setVariable('VAL_NAME', ilMumieTaskUserService::getFullName($user_id));
@@ -100,7 +104,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     private function getGradeCellContent(?ilMumieTaskGrade $grade): string
     {
-        global $lng;
         if (is_null($grade)) {
             return self::EMPTY_CELL;
         }
@@ -108,7 +111,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
             $tpl = new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html", true, true, true, "DEFAULT", true);
             $tpl->setVariable("VAL_GRADE", $grade->getPercentileScore());
-            $tpl->setVariable("OVERRIDDEN_MOUSEOVER", $lng->txt('rep_robj_xmum_frm_user_gradeoverview_overridden_explanation'));
+            $tpl->setVariable("OVERRIDDEN_MOUSEOVER", $this->i18N->txt('user_gradeoverview_overridden_explanation'));
             return $tpl->get();
         }
         return $grade->getPercentileScore();

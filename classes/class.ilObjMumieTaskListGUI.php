@@ -7,23 +7,29 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-include_once "./Services/Repository/classes/class.ilObjectPluginListGUI.php";
-
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 {
+    private ilMumieTaskI18N $i18n;
+
+    public function __construct(int $a_context)
+    {
+        $this->i18n = new ilMumieTaskI18N();
+        parent::__construct($a_context);
+    }
+
     public function initType()
     {
         $this->setType('xmum');
     }
 
-    public function getGuiClass()
+    public function getGuiClass(): string
     {
         return 'ilObjMumieTaskGUI';
     }
 
-    public function initCommands()
+    public function initCommands(): array
     {
-        global $lng, $ctrl;
         include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         //Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
         try {
@@ -40,7 +46,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             array(
                 "permission" => "write",
                 "cmd" => "editProperties",
-                "txt" => $lng->txt('rep_robj_xmum_edit_task'),
+                "txt" => $this->i18n->txt('edit_task'),
                 "default" => false),
         );
     }
@@ -53,7 +59,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
      *
      * @return true|void
      */
-    public function insertDescription()
+    public function insertDescription(): void
     {
         global $ilUser, $tpl;
 
@@ -64,14 +70,15 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             if ($this->getSubstitutionStatus()) {
                 $this->insertSubstitutions();
                 if (!$this->substitutions->isDescriptionEnabled()) {
-                    return true;
+                    return;
                 }
             }
 
             $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
 
             if (!$task->hasDeadline()) {
-                return parent::insertDescription();
+                parent::insertDescription();
+                return;
             }
 
             $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($ilUser->getId(), $task);
@@ -99,8 +106,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
     private function getDeadlineBadge(ilMumieTaskDateTime $deadline_date): string
     {
-        global $lng;
-        return '<span class = "mumie-deadline-badge">' . $lng->txt('rep_robj_xmum_frm_grade_overview_list_deadline'). ": " . $deadline_date . "</span>";
+        return '<span class = "mumie-deadline-badge">' . $this->i18n->txt('frm_grade_overview_list_deadline'). ": " . $deadline_date . "</span>";
     }
 
     /**
@@ -111,12 +117,10 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
      */
     public function getProperties(): array
     {
-        global $lng;
-
-        $this->plugin->includeClass("class.ilObjMumieTaskAccess.php");
+        $i18N = new ilMumieTaskI18N();
         if (!ilObjMumieTaskAccess::_lookupOnline($this->obj_id)) {
-            $props[] = array("alert" => true, "property" => $lng->txt("status"),
-                "value" => $lng->txt("offline"));
+            $props[] = array("alert" => true, "property" => $i18N->globalTxt("status"),
+                "value" => $i18N->globalTxt("offline"));
         }
         return $props ?? array();
     }
