@@ -13,15 +13,21 @@
  */
 
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
     private $user_id;
+    private ilMumieTaskI18N $i18N;
+    private ilObjMumieTask $mumie_task;
 
-    public function __construct($parentObj)
+
+    public function __construct($parentObj, ilObjMumieTask $mumie_task)
     {
         parent::__construct($parentObj, 'displayGradeList');
         $this->user_id = $_GET['user_id'];
         $this->setId("user" . $_GET["ref_id"]);
+        $this->i18N = new ilMumieTaskI18N();
+        $this->mumie_task = $mumie_task;
     }
 
     public function init()
@@ -31,13 +37,11 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     private function createList()
     {
-        global $lng;
-
         $this->setFormName('participants');
 
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_grade_overview_list_submission_date'), 'date');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_grade_overview_list_use_grade'), 'useGrade');
-        $this->addColumn($lng->txt('rep_robj_xmum_frm_list_grade'), 'grade');
+        $this->addColumn($this->i18N->txt('frm_grade_overview_list_submission_date'), 'date');
+        $this->addColumn($this->i18N->txt('frm_grade_overview_list_use_grade'), 'useGrade');
+        $this->addColumn($this->i18N->txt('frm_list_grade'), 'grade');
 
         $this->tpl->addBlockFile(
             "TBL_CONTENT",
@@ -45,8 +49,8 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "tpl.mumie_grade_list.html",
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
         );
-        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->parent_obj->object);
-        if ($this->privateGradepoolSet($this->parent_obj)) {
+        $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->mumie_task);
+        if ($this->privateGradepoolSet($this->mumie_task)) {
             if (empty($user_grades)) {
                 $this->setEmptyTable();
             } else {
@@ -59,21 +63,20 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    private function privateGradepoolSet($parentObj)
+    private function privateGradepoolSet($mumie_task)
     {
-        return $parentObj->object->getPrivateGradepool() != -1;
+        return $mumie_task->getPrivateGradepool() != -1;
     }
 
     private function setEmptyTable()
     {
-        global $lng;
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
             ? "tblrow1"
             : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->tpl->setVariable("VAL_HIDDEN", "hidden");
-        $this->tpl->setVariable("VAL_NO_GRADE", $lng->txt('rep_robj_xmum_frm_grade_overview_no_submission_made'));
+        $this->tpl->setVariable("VAL_NO_GRADE", $this->i18N->txt('frm_grade_overview_no_submission_made'));
         $this->tpl->setCurrentBlock("tbl_content");
         $this->tpl->parseCurrentBlock();
     }

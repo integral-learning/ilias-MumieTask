@@ -21,7 +21,7 @@ class ilMumieTaskDeadlineExtensionService
 
     public static function hasDeadlineExtension($user_id, $task): bool
     {
-        return !is_null(self::getDeadlineExtension($user_id, $task)->getUserId());
+        return !is_null(self::getDeadlineExtensionAssoc($user_id, $task));
     }
 
     public static function getDeadlineExtensionDate($user_id, $task): ilMumieTaskDateTime
@@ -87,6 +87,12 @@ class ilMumieTaskDeadlineExtensionService
 
     private static function getDeadlineExtension($user_id, $task): ilMumieTaskDeadlineExtension
     {
+        $result = self::getDeadlineExtensionAssoc($user_id, $task);
+        return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
+    }
+
+    private static function getDeadlineExtensionAssoc($user_id, $task): ?array
+    {
         global $ilDB;
         $query = "SELECT *
         FROM xmum_deadline_ext
@@ -98,17 +104,19 @@ class ilMumieTaskDeadlineExtensionService
             self::USER_ID .
             " = " .
             $ilDB->quote($user_id, "text");
-        $result = $ilDB->fetchAssoc($ilDB->query($query));
-        return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
+        return $ilDB->fetchAssoc($ilDB->query($query));
     }
 
     private static function sendUpdateSuccessMessage(ilMumieTaskDeadlineExtension $deadline_extension)
     {
-        global $lng;
+        global $DIC;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-        ilUtil::sendSuccess(
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+        $i18n = new ilMumieTaskI18N();
+        $DIC->ui()->mainTemplate()->setOnScreenMessage(
+            'success',
             sprintf(
-                $lng->txt('rep_robj_xmum_frm_deadline_extension_successfull_update'),
+                $i18n->txt('frm_deadline_extension_successfull_update'),
                 ilMumieTaskUserService::getFullName($deadline_extension->getUserId())
             )
         );

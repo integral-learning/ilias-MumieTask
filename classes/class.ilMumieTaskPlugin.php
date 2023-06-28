@@ -7,19 +7,17 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-include_once("./Services/Repository/classes/class.ilRepositoryObjectPlugin.php");
-
 class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
 {
     public const ID = "xmum";
 
     // must correspond to the plugin subdirectory
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return "MumieTask";
     }
 
-    protected function uninstallCustom()
+    protected function uninstallCustom(): void
     {
         // TODO: Nothing to do here.
     }

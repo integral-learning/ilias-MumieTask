@@ -17,3 +17,11 @@
 .mumie-icon {
     margin-left: 0.5em;
 }
+
+#xmum_dropzone_description {
+    margin-top: 10px;
+}
+
+#xmum-dropzone {
+    padding: 15px;
+}

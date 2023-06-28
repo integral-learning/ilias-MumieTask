@@ -2,6 +2,13 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v3.0] - XXX
+### Changed 
+- Plugin now supports Ilias 8.2
+
+### Removed
+- Plugin no longer supports Ilias 7
+
 ## [v2.5] - 2023-06-15
 ### Changed
 - Plugin now supports Ilias v7.22

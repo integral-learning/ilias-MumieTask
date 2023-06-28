@@ -61,8 +61,10 @@ class ilMumieTaskSSOToken
         . $ilDB->quote($this->user, 'text');
 
         $result = $ilDB->fetchAssoc($ilDB->query($query));
-        $this->setToken($result["token"]);
-        $this->setTimecreated($result["timecreated"]);
+        if (!is_null($result)) {
+            $this->setToken($result["token"]);
+            $this->setTimecreated($result["timecreated"]);
+        }
     }
 
     private function update()

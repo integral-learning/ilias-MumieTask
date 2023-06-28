@@ -180,10 +180,11 @@ class ilMumieTaskGradeSync
         $grades_by_user = new stdClass();
         if ($response) {
             foreach ($response as $xapi_grade) {
-                if (!is_array($grades_by_user->{$this->getIliasId($xapi_grade)})) {
-                    $grades_by_user->{$this->getIliasId($xapi_grade)} = array();
+                $ilias_id = $this->getIliasId($xapi_grade);
+                if (!isset($grades_by_user->$ilias_id)) {
+                    $grades_by_user->{$ilias_id} = array();
                 }
-                array_push($grades_by_user->{$this->getIliasId($xapi_grade)}, $xapi_grade);
+                array_push($grades_by_user->{$ilias_id}, $xapi_grade);
             }
         }
 
