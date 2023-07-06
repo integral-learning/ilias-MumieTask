@@ -189,7 +189,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         parent::setValuesByArray($a_values);
         $servers = ilMumieTaskServer::getAllServers();
         $this->server_data_item->setValue(json_encode($servers));
-        $this->course_display_item->setValue($a_values['xmum_course']);
+        $course_name = $a_values['xmum_course'];
+        if (!is_null($course_name)) {
+            $this->course_display_item->setValue($course_name);
+        }
         $this->setDefault();
     }
 
