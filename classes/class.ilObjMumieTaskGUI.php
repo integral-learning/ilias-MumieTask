@@ -260,6 +260,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $mumieTask->setLanguage($this->form->getInput('xmum_language'));
         $mumieTask->setLaunchcontainer($this->form->getInput('xmum_launchcontainer'));
         $mumieTask->setMumieCoursefile($this->form->getInput('xmum_coursefile'));
+        $mumieTask->setWorksheet($this->form->getInput('xmum_worksheet'));
 
         $mumieTask->setDescription($this->form->getInput('description'));
         $mumieTask->update();
@@ -380,7 +381,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
     }
 
-    private function getStatusImagePath($status): string {
+    private function getStatusImagePath($status): string
+    {
         $icons = ilLPStatusIcons::getInstance(ilLPStatusIcons::ICON_VARIANT_SHORT);
         return $icons->getImagePathForStatus($status);
     }

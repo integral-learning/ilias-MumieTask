@@ -19,11 +19,6 @@
             return {
                 init: function (structure) {
                     serverStructure = structure;
-                    serverDropDown.onchange = function () {
-                        courseController.updateOptions();
-                        langController.updateOptions();
-                        taskController.updateOptions();
-                    };
                 },
                 getSelectedServer: function () {
                     const selectedServerName = serverDropDown.options[serverDropDown.selectedIndex].text;
@@ -33,75 +28,52 @@
                     serverDropDown.disabled = true;
                     removeChildElements(serverDropDown);
                 },
-                getAllServers: function () {
-                    return serverStructure;
-                }
             };
         })();
 
         const courseController = (function () {
-            const courseDropDown = document.getElementById("xmum_course");
+            const courseNameElement = document.getElementById("xmum_course");
+            const courseNameDisplayElement = document.getElementById("xmum_course_display");
             const coursefileElem = document.getElementById('xmum_coursefile');
 
-            /**
-             * Add a new option the the 'MUMIE Course' drop down menu
-             * @param {Object} course
-             */
-            function addOptionForCourse(course) {
-                const optionCourse = document.createElement("option");
-                const selectedLanguage = langController.getSelectedLanguage();
-                let name;
-                // If the currently selected server is not available on the server, we need to select another one.
-                if (!course.languages.includes(selectedLanguage)) {
-                    name = course.name[0];
-                } else {
-                    name = course.name.find(n => n.language === selectedLanguage);
-                }
-                optionCourse.setAttribute("value", name.value);
-                optionCourse.text = name.value;
-                courseDropDown.append(optionCourse);
-            }
 
             /**
              * Update the hidden input field with the selected course's course file path
              */
-            function updateCoursefilePath() {
-                coursefileElem.value = courseController.getSelectedCourse().path_to_course_file;
+            function updateCoursefilePath(courseFile) {
+                coursefileElem.value = courseFile;
+                updateCourseName();
+            }
+
+            /**
+             * Update displayed course name.
+             */
+            function updateCourseName() {
+                const selectedCourse = courseController.getSelectedCourse();
+                const selectedLanguage = langController.getSelectedLanguage();
+                if (!selectedCourse || !selectedLanguage) {
+                    return;
+                }
+                const name = selectedCourse.name
+                .find(translation => translation.language === selectedLanguage)?.value;
+                courseNameElement.value = name;
+                courseNameDisplayElement.value = name;
             }
 
             return {
                 init: function (isEdit) {
-                    courseDropDown.onchange = function () {
-                        updateCoursefilePath();
-                        langController.updateOptions();
-                        taskController.updateOptions();
-                    };
-                    courseController.updateOptions(isEdit ? coursefileElem.value : false);
+                    if (isEdit) {
+                        updateCourseName();
+                    }
                 },
                 getSelectedCourse: function () {
-                    const selectedCourseName = courseDropDown.options[courseDropDown.selectedIndex].text;
                     const courses = serverController.getSelectedServer().courses;
-
                     return courses.find(course => {
-                        return course.name.some(name => name.value === selectedCourseName)
+                        return course.path_to_course_file === coursefileElem.value;
                     })
                 },
-                disable: function () {
-                    courseDropDown.disabled = true;
-                    removeChildElements(courseDropDown);
-                },
-                updateOptions: function () {
-                    const selectedCourseFile = coursefileElem.value;
-                    removeChildElements(courseDropDown);
-                    courseDropDown.selectedIndex = 0;
-                    serverController.getSelectedServer().courses
-                        .forEach(course => {
-                            addOptionForCourse(course);
-                            if (course.path_to_course_file === selectedCourseFile) {
-                                courseDropDown.selectedIndex = courseDropDown.childElementCount - 1;
-                            }
-                        })
-                    updateCoursefilePath();
+                setCourse: function(courseFile) {
+                    updateCoursefilePath(courseFile);
                 }
             };
         })();
@@ -110,26 +82,11 @@
             const languageElement = document.getElementById("xmum_language");
 
             return {
-                init: function () {
-                    langController.updateOptions();
-                },
-                updateOptions: function () {
-                    const availableLanguages = courseController.getSelectedCourse().languages;
-                    const currentLang = langController.getSelectedLanguage();
-                    if (!availableLanguages.includes(currentLang)) {
-                        langController.setLanguage(availableLanguages[0]);
-                    }
-                },
                 getSelectedLanguage: function () {
                     return languageElement.value;
                 },
                 setLanguage: function (lang) {
-                    if (!courseController.getSelectedCourse().languages.includes(lang)) {
-                        throw new Error("Selected language not available");
-                    }
                     languageElement.value = lang;
-                    taskController.updateOptions();
-                    courseController.updateOptions();
                 }
             };
         })();
@@ -185,9 +142,12 @@
                         return;
                     }
                     const importObj = JSON.parse(event.data);
+                    const worksheet = importObj.worksheet ?? null;
                     try {
                         langController.setLanguage(importObj.language);
-                        taskController.updateOptions(importObj.link);
+                        courseController.setCourse(importObj.path_to_coursefile)
+                        taskController.setSelection(importObj.link, importObj.language, importObj.name);
+                        worksheetController.setWorksheet(worksheet);
                         sendSuccess();
                         window.focus();
                     } catch (error) {
@@ -200,7 +160,6 @@
                 init: function () {
                     problemSelectorButton.onclick = function (e) {
                         e.preventDefault();
-                        const selectedTask = taskController.getSelectedTask();
                         problemSelectorWindow = window.open(
                             lmsSelectorUrl
                             + '/lms-problem-selector?'
@@ -210,7 +169,6 @@
                             + encodeURIComponent(serverController.getSelectedServer().url_prefix)
                             + "&problemLang="
                             + langController.getSelectedLanguage()
-                            + (selectedTask ? "&problem=" + selectedTask.link : '')
                             + "&origin=" + encodeURIComponent(window.location.origin)
                             , '_blank'
                         );
@@ -247,65 +205,31 @@
         const taskController = (function () {
             const task_element = document.getElementById("xmum_task");
             const display_task_element = document.getElementById("xmum_display_task");
-            const taskCount = document.getElementById('xmum_task_count');
             const nameElem = document.getElementById("title");
 
             /**
              * Update the activity's name in the input field
              */
-            function updateName() {
-                const newHeadline = getHeadline(taskController.getSelectedTask());
-                if (!isCustomName()) {
-                    nameElem.value = newHeadline;
-                }
-                display_task_element.value = newHeadline;
+            function updateName(name) {
+                nameElem.value = name;
             }
 
             /**
-             * Check whether the activity has a custom name
-             *
-             * @return {boolean} True, if there is no headline with that name in all tasks
+             * @param {string} localizedLink
              */
-            function isCustomName() {
-                if (nameElem.value.length === 0) {
-                    return false;
-                }
-                return !isDummyTask() && !getAllHeadlines().includes(nameElem.value);
+            function updateTaskDisplayElement(localizedLink) {
+                display_task_element.value = localizedLink;
             }
 
             /**
-             * Get the task's headline for the currently selected language
-             * @param {Object} task
-             * @returns  {string} the headline
+             * Update task uri
+             * @param {string} link
+             * @param {string} language
              */
-            function getHeadline(task) {
-                if (!task) {
-                    return null;
-                }
-                const selectedLanguage = langController.getSelectedLanguage();
-                const headlineWrapper = task.headline.find(localHeadline => localHeadline.language === selectedLanguage);
-                return headlineWrapper ? headlineWrapper.name : null;
-            }
-
-            /**
-             * Get all tasks that are available on all servers
-             *
-             * @return {Object} Array containing all available tasks
-             */
-            function getAllTasks() {
-                return serverController.getAllServers()
-                    .flatMap(server => server.courses)
-                    .flatMap(course => course.tasks);
-            }
-
-            /**
-             * Get all possible headlines in all languages
-             * @returns {Object} Array containing all headlines
-             */
-            function getAllHeadlines() {
-                return getAllTasks().flatMap(task => task.headline)
-                    .map(headline => headline.name)
-                    .concat(courseController.getSelectedCourse().name.map(n => n.value))
+            function updateTaskUri(link, language) {
+                const localizedLink = link + "?lang=" + language;
+                task_element.value = localizedLink;
+                updateTaskDisplayElement(localizedLink)
             }
 
             /**
@@ -318,21 +242,26 @@
 
             return {
                 init: function () {
-                    taskController.updateOptions(!isDummyTask() ?
-                        task_element?.value : undefined
-                    );
+                    if (!isDummyTask()) {
+                        updateTaskDisplayElement(task_element.value)
+                    }
                 },
-                getSelectedTask: function () {
-                    const selectedLink = task_element.value
-                    return courseController.getSelectedCourse()
-                        .tasks
-                        .slice()
-                        .find(task => task.link === selectedLink);
+                setSelection: function(link, language, name) {
+                    updateTaskUri(link, language);
+                    updateName(name);
                 },
-                updateOptions: function (selectTaskByLink) {
-                    task_element.value = selectTaskByLink;
-                    taskCount.textContent = '' + courseController.getSelectedCourse().tasks.length;
-                    updateName();
+            };
+        })();
+
+        const worksheetController = (function() {
+            const worksheetElement = document.getElementById("xmum_worksheet");
+            return {
+                setWorksheet: function(worksheet) {
+                    if (worksheet) {
+                        worksheetElement.setAttribute("value", JSON.stringify(worksheet));
+                    } else {
+                        worksheetElement.removeAttribute("value");
+                    }
                 }
             };
         })();
@@ -350,7 +279,6 @@
         serverController.init(structure);
         courseController.init();
         taskController.init();
-        langController.init();
         problemSelectorController.init();
     });
 })(jQuery)

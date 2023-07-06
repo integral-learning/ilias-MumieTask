@@ -25,6 +25,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $launchcontainer;
     private $language;
     private $mumie_coursefile;
+    private $worksheet;
     private $lp_modus = 1;
     private $passing_grade = 60;
     private $private_gradepool;
@@ -97,6 +98,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setOnline($rec['online']);
             $this->setPrivateGradepool($rec['privategradepool']);
             $this->setDeadline($rec['deadline']);
+            $this->setWorksheet($rec['worksheet']);
         }
 
         /**
@@ -125,7 +127,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function doUpdate(): void
     {
-        global $DIC, $ilDB;
+        global $DIC;
 
         $DIC->database()->update(
             ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
@@ -140,7 +142,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'lp_modus' => array('integer', $this->getLpModus()),
                 'privategradepool' => array('integer', $this->getPrivateGradepool()),
                 'online' => array('integer', $this->getOnline()),
-                'deadline' => array('integer', $this->getDeadline())
+                'deadline' => array('integer', $this->getDeadline()),
+                'worksheet' => array('text', $this->getWorksheet())
     ),
             array(
                 'id' => array("int", $this->getId()),
@@ -583,5 +586,21 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function getDeadlineDateTime(): ilMumieTaskDateTime
     {
         return new ilMumieTaskDateTime($this->deadline);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWorksheet()
+    {
+        return $this->worksheet;
+    }
+
+    /**
+     * @param string $worksheet
+     */
+    public function setWorksheet($worksheet): void
+    {
+        $this->worksheet = $worksheet;
     }
 }

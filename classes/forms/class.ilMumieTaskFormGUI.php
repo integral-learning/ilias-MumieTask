@@ -25,6 +25,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $description_item;
     private $server_item;
     private $course_item;
+    private $course_display_item;
     private $problem_display_item;
     private $problem_item;
     private $launchcontainer_item;
@@ -32,10 +33,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $server_data_item;
     private $course_file_item;
     private $org_item;
+    private $worksheet_item;
     private $dropzone_item;
 
     private $server_options = array();
-    private $course_options = array();
 
     public function setFields($is_creation_mode = false)
     {
@@ -65,9 +66,12 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->language_item = new ilHiddenInputGUI('xmum_language');
         $this->addItem($this->language_item);
 
-        $this->course_item = new ilSelectInputGUI($this->i18N->txt('mumie_course'), 'xmum_course');
-        $this->course_item->setRequired(true);
+        $this->course_item = new ilHiddenInputGUI('xmum_course');
         $this->addItem($this->course_item);
+
+        $this->course_display_item = new ilTextInputGUI($this->i18N->txt('mumie_course'), 'xmum_course_display');
+        $this->course_display_item->setDisabled(true);
+        $this->addItem($this->course_display_item);
 
         $this->launchcontainer_item = new ilRadioGroupInputGUI($this->i18N->txt('launchcontainer'), 'xmum_launchcontainer');
         $opt_window = new ilRadioOption($this->i18N->txt('window'), '0');
@@ -107,8 +111,10 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->org_item = new ilHiddenInputGUI('mumie_org');
         $this->addItem($this->org_item);
 
+        $this->worksheet_item = new ilHiddenInputGUI('xmum_worksheet');
+        $this->addItem($this->worksheet_item);
 
-        $this->populateOptions($servers);
+        $this->populateServerOptions($servers);
 
         $select_task_header_item = new ilFormSectionHeaderGUI();
         $select_task_header_item->setTitle($this->i18N->txt('frm_multi_problem_header'));
@@ -130,8 +136,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $server = new ilMumieTaskServer();
         $server->setUrlPrefix($this->getInput('xmum_server'));
         $server->buildStructure();
-        $course = $server->getCoursebyName($this->getInput('xmum_course'));
-        $task = $course->getTaskByLink($this->getInput('xmum_task'));
+        $task = $this->getInput('xmum_task');
 
         if ($is_dummy && $task != null) {
             $ok = false;
@@ -140,11 +145,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         if (!$server->isValidMumieServer()) {
             $ok = false;
             $this->server_item->setAlert($this->i18N->txt('server_not_valid'));
-            return $ok;
-        }
-        if ($course == null || !$this->getInput('xmum_coursefile')) {
-            $ok = false;
-            $this->course_item->setAlert($this->i18N->txt('frm_tsk_course_not_found'));
             return $ok;
         }
 
@@ -156,10 +156,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             $ok = false;
             $this->problem_display_item->setAlert($this->i18N->txt('frm_tsk_problem_not_found'));
             return $ok;
-        }
-        if (!$is_dummy && !in_array($this->getInput("xmum_language"), $task->getLanguages())) {
-            $ok = false;
-            $this->language_item->setAlert($this->i18N->txt('frm_tsk_lang_not_found'));
         }
 
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskMultiUploadProcessor.php');
@@ -177,29 +173,12 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
      *
      * js/ilMumieTaskForm.js removes incorrect options for any given selection
      */
-    private function populateOptions($servers)
+    private function populateServerOptions($servers)
     {
         foreach ($servers as $server) {
-            $this->compileServerOption($server);
+            $this->server_options[$server->getUrlprefix()] = $server->getName();
         }
         $this->server_item->setOptions($this->server_options);
-        $this->course_item->setOptions($this->course_options);
-    }
-
-    private function compileServerOption($server)
-    {
-        $this->server_options[$server->getUrlprefix()] = $server->getName();
-
-        foreach ($server->getCourses() as $course) {
-            $this->compileCourseOption($course);
-        }
-    }
-
-    private function compileCourseOption($course)
-    {
-        foreach ($course->getName() as $name) {
-            $this->course_options[$name->value] = $name->value;
-        }
     }
 
     /**
@@ -208,9 +187,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     public function setValuesByArray($a_values, $a_restrict_to_value_keys = false): void
     {
         parent::setValuesByArray($a_values);
-        $servers = (array) ilMumieTaskServer::getAllServers();
-
+        $servers = ilMumieTaskServer::getAllServers();
         $this->server_data_item->setValue(json_encode($servers));
+        $this->course_display_item->setValue($a_values['xmum_course']);
         $this->setDefault();
     }
 
