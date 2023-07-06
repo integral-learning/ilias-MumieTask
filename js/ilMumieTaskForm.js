@@ -146,7 +146,7 @@
                     try {
                         langController.setLanguage(importObj.language);
                         courseController.setCourse(importObj.path_to_coursefile)
-                        taskController.setSelection(importObj.link, importObj.language, importObj.name);
+                        taskController.setSelection(importObj.link, importObj.name);
                         worksheetController.setWorksheet(worksheet);
                         sendSuccess();
                         window.focus();
@@ -215,21 +215,18 @@
             }
 
             /**
-             * @param {string} localizedLink
+             * @param {string} uri
              */
-            function updateTaskDisplayElement(localizedLink) {
-                display_task_element.value = localizedLink;
+            function updateTaskDisplayElement(uri) {
+                display_task_element.value = uri;
             }
 
             /**
              * Update task uri
-             * @param {string} link
-             * @param {string} language
+             * @param {string} uri
              */
-            function updateTaskUri(link, language) {
-                const localizedLink = link + "?lang=" + language;
-                task_element.value = localizedLink;
-                updateTaskDisplayElement(localizedLink)
+            function updateTaskUri(uri) {
+                task_element.value = uri;
             }
 
             /**
@@ -246,8 +243,9 @@
                         updateTaskDisplayElement(task_element.value)
                     }
                 },
-                setSelection: function(link, language, name) {
-                    updateTaskUri(link, language);
+                setSelection: function(link, name) {
+                    updateTaskUri(link);
+                    updateTaskDisplayElement(link);
                     updateName(name);
                 },
             };
