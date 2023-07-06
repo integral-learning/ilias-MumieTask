@@ -96,7 +96,7 @@ class ilMumieTaskSSOService
         $tpl->setVariable("TOKEN", $ssotoken->getToken());
         $tpl->setVariable("ORG", htmlspecialchars(ilMumieTaskAdminSettings::getInstance()->getOrg()));
         $tpl->setVariable("PROBLEMURL", $taskObj->getProblemUrl());
-        $tpl->setVariable("LANG", $taskObj->getLanguage());
+        $tpl->setVariable("LANGUAGE", $taskObj->getLanguage());
         $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
         $tpl->setVariable("WIDTH", '100%');
         $tpl->setVariable("HEIGHT", $height);
