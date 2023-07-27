@@ -377,3 +377,16 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task", "deadline")) {
     }
 }
 ?>
+<#15>
+<?php
+if (!$ilDB->tableColumnExists("xmum_mumie_task", "worksheet")) {
+    $ilDB->addTableColumn(
+        'xmum_mumie_task',
+        'worksheet',
+        array(
+            'type' => 'text',
+            'notnull' => false
+        )
+    );
+}
+?>

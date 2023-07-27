@@ -35,10 +35,8 @@ mumie_server_desc#:#Bitte wählen sie einen MUMIE-Server um eine aktuelle Liste 
 mumie_course#:#MUMIE-Kurs
 mumie_select_problem#:#Wählen Sie ein MUMIE-Problem
 mumie_problem#:#MUMIE-Problem
-mumie_problem_desc#:#Wählen Sie aus <b><span id='xmum_task_count'></span></b> MUMIE-Problemen! <br><br>Ein MUMIE-Problem ist eine benotete Übung auf der MUMIE-Plattform
-frm_tsk_course_not_found#:#Dieser Kurs konnte auf dem ausgewählten server nicht gefunden werden.
+mumie_problem_desc#:#Ein MUMIE-Problem ist eine benotete Übung auf der MUMIE-Plattform
 frm_tsk_problem_not_found#:#Dieses Problem konnte auf dem ausgewählten Server nicht gefunden werden.
-frm_tsk_lang_not_found#:#Es gibt keine Übersetzung in die gewünschte Sprache für das ausgewählte Problem
 launchcontainer#:#Start-Container
 launchcontainer_desc#:#Bitte wählen Sie, ob diese Aktivität in einem neuen Browser-Tab geöffnet oder in die Ilias-Umgebung eingebettet werden soll.
 window#:#Neues Fenster

@@ -35,10 +35,8 @@ mumie_server_desc#:#Please select a MUMIE server to get an updated list of avail
 mumie_course#:#MUMIE course
 mumie_select_problem#:#Select a MUMIE Problem
 mumie_problem#:#MUMIE problem
-mumie_problem_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE problems! <br><br>A MUMIE problem is a single graded exercise on MUMIE
-frm_tsk_course_not_found#:#This course doesn't exist on the chosen server
+mumie_problem_desc#:#A MUMIE problem is a single graded exercise on MUMIE
 frm_tsk_problem_not_found#:#This problem doesn't exist in the selected course
-frm_tsk_lang_not_found#:#There is no translation in this language for the selected problem
 launchcontainer#:#Launch container
 launchcontainer_desc#:#Please select whether the activity should be opened in a new browser tab or embedded into the ILIAS environment
 window#:#New window
