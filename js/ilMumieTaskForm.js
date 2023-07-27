@@ -51,13 +51,12 @@
             function updateCourseName() {
                 const selectedCourse = courseController.getSelectedCourse();
                 const selectedLanguage = langController.getSelectedLanguage();
-                if (!selectedCourse || !selectedLanguage) {
-                    return;
+                if (selectedCourse && selectedLanguage) {
+                    const name = selectedCourse.name
+                    .find(translation => translation.language === selectedLanguage)?.value;
+                    courseNameElement.value = name;
+                    courseNameDisplayElement.value = name;
                 }
-                const name = selectedCourse.name
-                .find(translation => translation.language === selectedLanguage)?.value;
-                courseNameElement.value = name;
-                courseNameDisplayElement.value = name;
             }
 
             return {
