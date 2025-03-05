@@ -16,6 +16,7 @@ class ilMumieTaskAdminSettings
 {
     public const TABLE_NAME = 'xmum_admin_settings';
 
+    protected $problem_selector_url;
     protected $share_first_name;
     protected $share_last_name;
     protected $share_email;
@@ -41,6 +42,7 @@ class ilMumieTaskAdminSettings
         global $ilDB;
         $result = $ilDB->fetchObject($ilDB->query("SELECT * FROM " . ilMumieTaskAdminSettings::TABLE_NAME . " WHERE id = 1"));
         $this->id = $result->id;
+        $this->problem_selector_url = $result->problem_selector_url;
         $this->share_first_name = $result->share_first_name;
         $this->share_last_name = $result->share_last_name;
         $this->share_email = $result->share_email;
@@ -54,6 +56,7 @@ class ilMumieTaskAdminSettings
         $ilDB->update(
             ilMumieTaskAdminSettings::TABLE_NAME,
             array(
+            "problem_selector_url" => array("text", $this->problem_selector_url),
             "share_first_name" => array("integer", $this->share_first_name),
             "share_last_name" => array("integer", $this->share_last_name),
             "share_email" => array("integer", $this->share_email),
@@ -122,6 +125,18 @@ class ilMumieTaskAdminSettings
     public function setOrg($org)
     {
         $this->org = $org;
+
+        return $this;
+    }
+
+    public function getProblem_selector_url()
+    {
+        return $this->problem_selector_url;
+    }
+
+    public function setProblem_selector_url($problem_selector_url)
+    {
+        $this->problem_selector_url = $problem_selector_url;
 
         return $this;
     }

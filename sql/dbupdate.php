@@ -140,6 +140,10 @@ if (!$ilDB->tableExists('xmum_admin_settings')) {
             'type' => 'text',
             'length' => '7',
         ),
+        'problem_selector_url' => array(
+            'type' => 'text',
+            'length' => '255',
+        ),
     );
     $ilDB->createTable("xmum_admin_settings", $fieldsAminSettings);
     $ilDB->addPrimaryKey("xmum_admin_settings", array("id"));
@@ -152,13 +156,14 @@ $result = $ilDB->query($query);
 if ($ilDB->numRows($result) < 1) {
     $ilDB->manipulate(
         "INSERT INTO xmum_admin_settings "
-        . '(id, share_first_name, share_last_name, share_email, api_key, org) VALUES('
+        . '(id, share_first_name, share_last_name, share_email, api_key, org, problem_selector_url) VALUES('
         . $ilDB->quote(1, 'integer') . ','
         . $ilDB->quote(0, 'integer') . ','
         . $ilDB->quote(0, 'integer') . ','
         . $ilDB->quote(0, 'integer') . ','
         . $ilDB->quote('', 'text') . ','
-        . $ilDB->quote('', 'text')
+        . $ilDB->quote('', 'text') . ','
+        . $ilDB->quote('https://pool.mumie.net', 'text')
         . ')'
     );
 }
@@ -388,5 +393,19 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task", "worksheet")) {
             'notnull' => false
         )
     );
+}
+?>
+<#16>
+<?php
+if (!$ilDB->tableColumnExists("xmum_admin_settings", "problem_selector_url")) {
+    $ilDB->addTableColumn(
+        'xmum_admin_settings',
+        'problem_selector_url',
+        array(
+            'type' => 'text',
+            'length' => '255',
+        )
+    );
+    $ilDB->manipulate("UPDATE xmum_admin_settings SET problem_selector_url = 'https://pool.mumie.net'");
 }
 ?>

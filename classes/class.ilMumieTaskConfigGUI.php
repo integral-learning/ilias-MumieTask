@@ -39,6 +39,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
             case 'listServers':
             case 'sharedData':
             case 'authentication':
+            case 'problem_selector':
             default:
                 if (!$cmd) {
                     $cmd = "configure";
@@ -81,6 +82,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
             'tab_authentication',
             $i18N->txt("tab_authentication"),
             $ilCtrl->getLinkTarget($this, "authentication")
+        );
+        $ilTabs->addTab(
+            'tab_ProblemSelector',
+            $i18N->txt("tab_problem_selector"),
+            $ilCtrl->getLinkTarget($this, "problem_selector")
         );
     }
 
@@ -213,6 +219,47 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     }
 
     /**
+     * Configured standard URL to problem selector, with option to change
+     */
+    public function problem_selector()
+    {
+        global $tpl, $ilTabs;
+        $ilTabs->activateTab("tab_problem_selector");
+        $this->initProblemSelectorUrl();
+        $tpl->setContent($this->form->getHTML());
+    }
+
+    public function initProblemSelectorUrl($load_saved_values = true)
+    {
+        global $lng, $ilCtrl;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+        $admin_settings = ilMumieTaskAdminSettings::getInstance();
+
+        $form = new ilPropertyFormGUI();
+        $form->setFormAction($ilCtrl->getFormAction($this));
+
+        $form->setTitle($this->i18N->txt('tab_problem_selector'));
+        $form->setDescription($this->i18N->txt('tab_problem_selector_no_change'));
+
+        $url_input = new ilTextInputGUI($this->i18N->txt("tab_problem_selector_label_text"),
+        "problem_selector_url");
+        $url_input->setRequired(true); // Eingabe ist erforderlich
+        if ($load_saved_values) {
+            $url_input->setValue($admin_settings->getProblem_selector_url());
+        }
+        $url_input->setInfo($this->i18N->txt("tab_problem_selector_info_text"));
+
+        $url_input->setValidationRegexp('/^http?[s]+:\/\/[^\s$.?#].[^\s]*$/i');
+        $url_input->setValidationFailureMessage("Bitte eine gültige URL eingeben!");
+        $form->addItem($url_input);
+
+        $form->addCommandButton("saveProblemSelectorUrl", $this->i18N->txt("frm_save"));
+        $form->addCommandButton("problem_selector", $this->i18N->txt("frm_cancel"));
+
+        $this->form = $form;
+    }
+
+    /**
      * Submit changes made in the authentication form
      */
     public function submitAuthForm()
@@ -244,6 +291,25 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $this->initServerForm();
         $this->form->setTitle($this->i18N->txt('frm_server_add_title'));
         $tpl->setContent($this->form->getHTML());
+    }
+
+    public function saveProblemSelectorUrl(): void
+    {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+        global $tpl, $DIC;
+        $this->initProblemSelectorUrl(false);
+        if (!$this->form->checkInput()) {
+             $this->form->setValuesByPost();
+             $tpl->setContent($this->form->getHTML());
+             return;
+        }
+
+        $admin_settings = ilMumieTaskAdminSettings::getInstance();
+        $admin_settings->setProblem_selector_url($this->form->getInput("problem_selector_url"));
+        $admin_settings->update();
+        $cmd = "problem_selector";
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
+        $this->$cmd();
     }
 
 
