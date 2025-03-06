@@ -250,7 +250,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $url_input->setInfo($this->i18N->txt("tab_problem_selector_info_text"));
 
         $url_input->setValidationRegexp('/^http?[s]+:\/\/[^\s$.?#].[^\s]*$/i');
-        $url_input->setValidationFailureMessage("Bitte eine gültige URL eingeben!");
+        $url_input->setValidationFailureMessage($this->i18N->txt("tab_problem_selector_info_text"));
         $form->addItem($url_input);
 
         $form->addCommandButton("saveProblemSelectorUrl", $this->i18N->txt("frm_save"));
