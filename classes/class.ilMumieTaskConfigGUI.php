@@ -41,7 +41,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
             case 'listServers':
             case 'sharedData':
             case 'authentication':
-            case 'problem_selector':
+            case 'problemSelector':
             default:
                 if (!$cmd) {
                     $cmd = "configure";
@@ -86,9 +86,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
             $ilCtrl->getLinkTarget($this, "authentication")
         );
         $ilTabs->addTab(
-            'tab_ProblemSelector',
+            'tab_problem_selector',
             $i18N->txt("tab_problem_selector"),
-            $ilCtrl->getLinkTarget($this, "problem_selector")
+            $ilCtrl->getLinkTarget($this, "problemSelector")
         );
     }
 
@@ -218,9 +218,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     }
 
     /**
-     * Configured standard URL to problem selector, with option to change
+     * Display form for problem selector
      */
-    public function problem_selector()
+    public function problemSelector()
     {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_problem_selector");
