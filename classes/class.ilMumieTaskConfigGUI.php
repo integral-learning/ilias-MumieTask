@@ -229,6 +229,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Define and initialize the form for problem selector
+     */
     public function initProblemSelectorUrl($load_saved_values = true)
     {
         global $lng, $ilCtrl;
