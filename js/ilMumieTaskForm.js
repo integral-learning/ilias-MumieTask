@@ -10,7 +10,7 @@
 (function ($) {
     $(document).ready(function () {
         const structure = JSON.parse(document.getElementById('server_data').getAttribute('value'));
-        const lmsSelectorUrl = 'https://pool.mumie.net';
+        const lmsSelectorUrl = document.getElementById('problem_selector').getAttribute('value');
 
         const serverController = (function () {
             let serverStructure;

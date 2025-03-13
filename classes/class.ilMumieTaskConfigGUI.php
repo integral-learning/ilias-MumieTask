@@ -9,6 +9,8 @@
 
 include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 /**
  * @ilCtrl_IsCalledBy ilMumieTaskConfigGUI: ilObjComponentSettingsGUI
  */
@@ -39,6 +41,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
             case 'listServers':
             case 'sharedData':
             case 'authentication':
+            case 'problemSelector':
             default:
                 if (!$cmd) {
                     $cmd = "configure";
@@ -82,6 +85,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
             $i18N->txt("tab_authentication"),
             $ilCtrl->getLinkTarget($this, "authentication")
         );
+        $ilTabs->addTab(
+            'tab_problem_selector',
+            $i18N->txt("tab_problem_selector"),
+            $ilCtrl->getLinkTarget($this, "problemSelector")
+        );
     }
 
     /**
@@ -115,7 +123,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function initShareDataForm($load_saved_values = true)
     {
         global $lng, $ilCtrl;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -155,7 +162,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     private function submitSharedData()
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         global $tpl, $DIC;
         $this->initShareDataForm(false);
         if (!$this->form->checkInput()) {
@@ -191,7 +197,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function initAuthForm($load_saved_values = true)
     {
         global $lng, $ilCtrl;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -213,11 +218,53 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     }
 
     /**
+     * Display form for problem selector
+     */
+    public function problemSelector()
+    {
+        global $tpl, $ilTabs;
+        $ilTabs->activateTab("tab_problem_selector");
+        $this->initProblemSelectorUrl();
+        $tpl->setContent($this->form->getHTML());
+    }
+
+    /**
+     * Define and initialize the form for problem selector
+     */
+    public function initProblemSelectorUrl($load_saved_values = true)
+    {
+        global $lng, $ilCtrl;
+        $admin_settings = ilMumieTaskAdminSettings::getInstance();
+
+        $form = new ilPropertyFormGUI();
+        $form->setFormAction($ilCtrl->getFormAction($this));
+
+        $form->setTitle($this->i18N->txt('tab_problem_selector'));
+        $form->setDescription($this->i18N->txt('tab_problem_selector_no_change'));
+
+        $url_input = new ilTextInputGUI($this->i18N->txt("tab_problem_selector_label_text"),
+        "problem_selector_url");
+        $url_input->setRequired(true);
+        if ($load_saved_values) {
+            $url_input->setValue($admin_settings->getProblemSelectorUrl());
+        }
+        $url_input->setInfo($this->i18N->txt("tab_problem_selector_info_text"));
+
+        $url_input->setValidationRegexp('/^http?[s]+:\/\/[^\s$.?#].[^\s]*$/i');
+        $url_input->setValidationFailureMessage($this->i18N->txt("tab_problem_selector_info_text"));
+        $form->addItem($url_input);
+
+        $form->addCommandButton("saveProblemSelectorUrl", $this->i18N->txt("frm_save"));
+        $form->addCommandButton("problemSelector", $this->i18N->txt("frm_cancel"));
+
+        $this->form = $form;
+    }
+
+    /**
      * Submit changes made in the authentication form
      */
     public function submitAuthForm()
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         global $tpl, $DIC;
         $this->initAuthForm(false);
         if (!$this->form->checkInput()) {
@@ -246,6 +293,27 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Submit changes made in the problem selector form
+     */
+    public function saveProblemSelectorUrl(): void
+    {
+        global $tpl, $DIC;
+        $this->initProblemSelectorUrl(false);
+        if (!$this->form->checkInput()) {
+             $this->form->setValuesByPost();
+             $tpl->setContent($this->form->getHTML());
+             return;
+        }
+
+        $admin_settings = ilMumieTaskAdminSettings::getInstance();
+        $admin_settings->setProblemSelectorUrl($this->form->getInput("problem_selector_url"));
+        $admin_settings->update();
+        $cmd = "problemSelector";
+        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
+        $this->$cmd();
+    }
+
 
     /**
      * Initialize and set command buttons for the MUMIE server form
@@ -267,7 +335,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function submitServer()
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         global $tpl, $DIC;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
@@ -297,7 +364,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     public function deleteServer()
     {
         global $DIC;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $server = new ilMumieTaskServer($_GET['server_id']);
         $server->delete();
         $cmd = "configure";
@@ -325,7 +391,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     protected function loadServerSettings($id)
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $values = array();
         $server = new ilMumieTaskServer($id);
         $server->load();

@@ -35,6 +35,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $org_item;
     private $worksheet_item;
     private $dropzone_item;
+    private $problem_selector_item;
 
     private $server_options = array();
 
@@ -110,6 +111,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         $this->org_item = new ilHiddenInputGUI('mumie_org');
         $this->addItem($this->org_item);
+
+        $this->problem_selector_item = new ilHiddenInputGUI('problem_selector');
+        $this->addItem($this->problem_selector_item);
 
         $this->worksheet_item = new ilHiddenInputGUI('xmum_worksheet');
         $this->addItem($this->worksheet_item);
@@ -208,6 +212,8 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         if ($this->language_item->getValue() == null) {
             $this->language_item->setValue($ilUser->getLanguage());
         }
+        $this->problem_selector_item->setValue(ilMumieTaskAdminSettings::getInstance()
+        ->getProblemSelectorUrl());
     }
 
     /**

@@ -11,6 +11,10 @@ frm_share_email_desc#:#Legen Sie fest, ob die E-Mail-Adressen der Nutzer an die 
 tab_shared_data#:#Datenschutz
 tab_servers#:#Server
 tab_authentication#:#Authentifizierung
+tab_problem_selector#:#Developer Optionen
+tab_problem_selector_no_change#:#Diese Einstellungen sind nur für Entwickler. Es sind keine Anpassungen notwendig!
+tab_problem_selector_label_text#:#Problem Selektor URL
+tab_problem_selector_info_text#:#Bitte geben Sie eine gültige URL ein. Default: https://pool.mumie.net
 tab_userlist#:#Bewertungsübersicht
 frm_auth_api#:#MUMIE-API-Key
 frm_auth_api_desc#:#Geben Sie den MUMIE-API-Key für die Bewertungssychnonisierung ein
