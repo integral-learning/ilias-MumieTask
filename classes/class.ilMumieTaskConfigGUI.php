@@ -248,7 +248,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         "problem_selector_url");
         $url_input->setRequired(true);
         if ($load_saved_values) {
-            $url_input->setValue($admin_settings->getProblem_selector_url());
+            $url_input->setValue($admin_settings->getProblemSelectorUrl());
         }
         $url_input->setInfo($this->i18N->txt("tab_problem_selector_info_text"));
 
@@ -308,7 +308,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         }
 
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
-        $admin_settings->setProblem_selector_url($this->form->getInput("problem_selector_url"));
+        $admin_settings->setProblemSelectorUrl($this->form->getInput("problem_selector_url"));
         $admin_settings->update();
         $cmd = "problem_selector";
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);

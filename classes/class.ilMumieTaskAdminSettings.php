@@ -129,12 +129,12 @@ class ilMumieTaskAdminSettings
         return $this;
     }
 
-    public function getProblem_selector_url()
+    public function getProblemSelectorUrl()
     {
         return $this->problem_selector_url;
     }
 
-    public function setProblem_selector_url($problem_selector_url)
+    public function setProblemSelectorUrl($problem_selector_url)
     {
         $this->problem_selector_url = $problem_selector_url;
 

@@ -213,7 +213,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             $this->language_item->setValue($ilUser->getLanguage());
         }
         $this->problem_selector_item->setValue(ilMumieTaskAdminSettings::getInstance()
-        ->getProblem_selector_url());
+        ->getProblemSelectorUrl());
     }
 
     /**
