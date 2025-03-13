@@ -246,7 +246,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
         $url_input = new ilTextInputGUI($this->i18N->txt("tab_problem_selector_label_text"),
         "problem_selector_url");
-        $url_input->setRequired(true); // Eingabe ist erforderlich
+        $url_input->setRequired(true);
         if ($load_saved_values) {
             $url_input->setValue($admin_settings->getProblem_selector_url());
         }
