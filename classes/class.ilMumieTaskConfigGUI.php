@@ -255,7 +255,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $form->addItem($url_input);
 
         $form->addCommandButton("saveProblemSelectorUrl", $this->i18N->txt("frm_save"));
-        $form->addCommandButton("problem_selector", $this->i18N->txt("frm_cancel"));
+        $form->addCommandButton("problemSelector", $this->i18N->txt("frm_cancel"));
 
         $this->form = $form;
     }
@@ -309,7 +309,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $admin_settings->setProblemSelectorUrl($this->form->getInput("problem_selector_url"));
         $admin_settings->update();
-        $cmd = "problem_selector";
+        $cmd = "problemSelector";
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
         $this->$cmd();
     }
