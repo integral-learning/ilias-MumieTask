@@ -296,6 +296,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tpl->setContent($this->form->getHTML());
     }
 
+    /**
+     * Submit changes made in the problem selector form
+     */
     public function saveProblemSelectorUrl(): void
     {
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
