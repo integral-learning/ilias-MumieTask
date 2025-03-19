@@ -14,6 +14,7 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/synchronization/context/class.ilMumieTaskContextProvider.php');
 
 /**
  * This class pulls grades for a given task from its MUMIE server
@@ -24,6 +25,7 @@ class ilMumieTaskGradeSync
     private $task;
     private $admin_settings;
     private $force_update;
+    private $contextProvider;
 
     public function __construct($task, $force_update)
     {
@@ -31,6 +33,7 @@ class ilMumieTaskGradeSync
         $this->task = $task;
         $this->force_update = $force_update;
         $this->user_ids = ilMumieTaskParticipantService::getAllMemberIds($task);
+        $this->contextProvider = new ilMumieTaskContextProvider();
     }
 
     public function getSyncIdForUser($user_id)
@@ -95,12 +98,15 @@ class ilMumieTaskGradeSync
 
     private function getXapiRequestBody($getOnlyChangedGrades)
     {
+        $mumietasksids = array(self::getMumieId($this->task));
+        $user_ids = $this->getSyncIds($this->user_ids);
         $params = array(
-            "users" => $this->getSyncIds($this->user_ids),
+            "users" => $user_ids,
             "course" => $this->task->getMumieCoursefile(),
-            "objectIds" => array(self::getMumieId($this->task)),
+            "objectIds" => $mumietasksids,
             'lastSync' => $getOnlyChangedGrades ? $this->getLastSync() : 1,
-            'includeAll' => true
+            'includeAll' => true,
+            'context' => $this->contextProvider->get_context(array($this->task), $mumietasksids, $user_ids)
         );
         return $params;
     }
