@@ -29,9 +29,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function __construct(int $a_ref_id = 0, int $a_id_type = self::REPOSITORY_NODE_ID, int $a_parent_node_id = 0)
     {
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
-//         ilLoggerFactory::getLogger('xmum')->info("__construct 1" . json_encode($a_ref_id));
-//         ilLoggerFactory::getLogger('xmum')->info("__construct 2" . json_encode($a_id_type));
-//         ilLoggerFactory::getLogger('xmum')->info("__construct 3" . json_encode($a_parent_node_id));
+        //         ilLoggerFactory::getLogger('xmum')->info("__construct 1" . json_encode($a_ref_id));
+        //         ilLoggerFactory::getLogger('xmum')->info("__construct 2" . json_encode($a_id_type));
+        //         ilLoggerFactory::getLogger('xmum')->info("__construct 3" . json_encode($a_parent_node_id));
         $this->i18N = new ilMumieTaskI18N();
     }
 
@@ -85,10 +85,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilCtrl, $ilAccess, $ilTabs, $DIC;
         $lng = $DIC->language();
         $this->tabs->clearTargets();
-//         ilLoggerFactory::getLogger('xmum')->info("setTabs " . json_encode($this->object));
+        //         ilLoggerFactory::getLogger('xmum')->info("setTabs " . json_encode($this->object));
 
         $this->object->read();
-//         ilLoggerFactory::getLogger('xmum')->info("setTabs " . json_encode($this->object));
+        //         ilLoggerFactory::getLogger('xmum')->info("setTabs " . json_encode($this->object));
         if ($this->object->isDummy()) {
             return;
         }
@@ -457,8 +457,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
 
         $ilTabs->activateTab('viewContent');
-//         $this->object->doRead();
-//         ilLoggerFactory::getLogger('xmum')->info("viewContent " . json_encode($this->object));
+        //         $this->object->doRead();
+        //         ilLoggerFactory::getLogger('xmum')->info("viewContent " . json_encode($this->object));
         $this->object->updateAccess();
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
         if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {

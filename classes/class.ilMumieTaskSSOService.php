@@ -93,8 +93,8 @@ class ilMumieTaskSSOService
 
         $contextProvider = new ilMumieTaskContextProvider();
         $mumietasksids = array(locallib::getMumieId($taskObj));
-//         ilLoggerFactory::getLogger('xmum')->info("what ist taskObj " . json_encode($taskObj));
-//         ilLoggerFactory::getLogger('xmum')->info("what ist mumietasksids " . json_encode($mumietasksids));
+        //         ilLoggerFactory::getLogger('xmum')->info("what ist taskObj " . json_encode($taskObj));
+        //         ilLoggerFactory::getLogger('xmum')->info("what ist mumietasksids " . json_encode($mumietasksids));
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
         // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
         // the other "true"s should always be set that way according to the ilias documentation
@@ -108,8 +108,11 @@ class ilMumieTaskSSOService
         $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
         $tpl->setVariable("WIDTH", '100%');
         $tpl->setVariable("HEIGHT", $height);
-        $tpl->setVariable("CONTEXT", json_encode($contextProvider->get_context(array($taskObj),
-        $mumietasksids, array($hashed_user))));
+        $tpl->setVariable("CONTEXT", json_encode($contextProvider->get_context(
+            array($taskObj),
+            $mumietasksids,
+            array($hashed_user)
+        )));
 
         if ($taskObj->getLaunchcontainer() == 1) {
             $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the iframe and launch it immediately via $script

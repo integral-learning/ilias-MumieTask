@@ -79,7 +79,7 @@ class ilMumieTaskGradeSync
         require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
         $curl = new ilCurlConnection($this->task->getGradeSyncURL());
-//         ilLoggerFactory::getLogger('xmum')->info("getGradeSyncURL: " . $this->task->getGradeSyncURL());
+        //         ilLoggerFactory::getLogger('xmum')->info("getGradeSyncURL: " . $this->task->getGradeSyncURL());
         $curl->init();
         if ($proxy_settings->isActive()) {
             $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
@@ -111,7 +111,7 @@ class ilMumieTaskGradeSync
             'includeAll' => true,
             'context' => $this->contextProvider->get_context(array($this->task), $mumietasksids, $user_ids)
         );
-//         ilLoggerFactory::getLogger('xmum')->info("getXapiRequestBody: " . json_encode($params));
+        //         ilLoggerFactory::getLogger('xmum')->info("getXapiRequestBody: " . json_encode($params));
         return $params;
     }
 
@@ -138,21 +138,21 @@ class ilMumieTaskGradeSync
         return $grades_by_user[$user_id];
     }
 
-//     /**
-//      * Get the unique identifier for a MUMIE task
-//      *
-//      * @param stdClass $mumietask
-//      * @return string id for MUMIE task on MUMIE server
-//      */
-//     private function getMumieId($mumietask)
-//     {
-//         $id = $mumietask->getTaskurl();
-//         $prefix = "link/";
-//         if (strpos($id, $prefix) === 0) {
-//             $id = substr($id, strlen($prefix));
-//         }
-//         return $id;
-//     }
+    //     /**
+    //      * Get the unique identifier for a MUMIE task
+    //      *
+    //      * @param stdClass $mumietask
+    //      * @return string id for MUMIE task on MUMIE server
+    //      */
+    //     private function getMumieId($mumietask)
+    //     {
+    //         $id = $mumietask->getTaskurl();
+    //         $prefix = "link/";
+    //         if (strpos($id, $prefix) === 0) {
+    //             $id = substr($id, strlen($prefix));
+    //         }
+    //         return $id;
+    //     }
 
     /**
      * LastSync is used to improve performance. We don't need to check grades that were awarded before the last time we synced
@@ -187,11 +187,11 @@ class ilMumieTaskGradeSync
      */
     private function getValidGradeByUser($response)
     {
-//         ilLoggerFactory::getLogger('xmum')->info("what ist response: " . json_encode($response));
+        //         ilLoggerFactory::getLogger('xmum')->info("what ist response: " . json_encode($response));
         $grades_by_user = new stdClass();
         if ($response) {
             foreach ($response as $xapi_grade) {
-//                 ilLoggerFactory::getLogger('xmum')->info("what ist xapi_grade: " . json_encode($xapi_grade));
+                //                 ilLoggerFactory::getLogger('xmum')->info("what ist xapi_grade: " . json_encode($xapi_grade));
                 $ilias_id = $this->getIliasId($xapi_grade);
                 if (!isset($grades_by_user->$ilias_id)) {
                     $grades_by_user->{$ilias_id} = array();

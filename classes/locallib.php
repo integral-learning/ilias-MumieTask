@@ -1,17 +1,20 @@
 <?php
 
-class locallib {
-   /**
-     * Get the unique identifier for a MUMIE task
-     *
-     * @param stdClass $mumietask
-     * @return string id for MUMIE task on MUMIE/LEMON server
-     */
-    public static function getMumieId($mumietask): string {
+class locallib
+{
+    /**
+      * Get the unique identifier for a MUMIE task
+      *
+      * @param stdClass $mumietask
+      * @return string id for MUMIE task on MUMIE/LEMON server
+      */
+    public static function getMumieId($mumietask): string
+    {
         return self::transformMumieId($mumietask->getTaskurl());
     }
 
-    public static function transformMumieId($mumietask_taskurl): string {
+    public static function transformMumieId($mumietask_taskurl): string
+    {
         $id = $mumietask_taskurl;
         $prefix = "link/";
         if (strpos($id, $prefix) > 0) {
