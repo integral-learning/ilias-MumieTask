@@ -9,7 +9,8 @@
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ilMumieTaskObjectContext implements JsonSerializable {
+class ilMumieTaskObjectContext implements JsonSerializable
+{
     /**
      * @var array
      */
@@ -24,7 +25,8 @@ class ilMumieTaskObjectContext implements JsonSerializable {
      * Create a new instance.
      * @param string       $lang
      */
-    public function __construct($lang) {
+    public function __construct($lang)
+    {
         $this->usercontexts = array();
         $this->language = $lang;
     }
@@ -35,7 +37,8 @@ class ilMumieTaskObjectContext implements JsonSerializable {
      * @param ilMumieTaskUserContext $usercontext
      * @return void
      */
-    public function add_user_context(string $userid,  ilMumieTaskUserContext $usercontext): void {
+    public function add_user_context(string $userid, ilMumieTaskUserContext $usercontext): void
+    {
         $this->usercontexts[$userid] = $usercontext;
     }
 
@@ -43,7 +46,8 @@ class ilMumieTaskObjectContext implements JsonSerializable {
      * Custom JSON serializer.
      * @return array
      */
-    public function jsonSerialize(): array {
+    public function jsonSerialize(): array
+    {
         return ['language' => $this->language, 'userContexts' => $this->usercontexts];
     }
 }

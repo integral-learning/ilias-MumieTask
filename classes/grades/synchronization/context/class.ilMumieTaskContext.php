@@ -1,6 +1,7 @@
 <?php
 
-class ilMumieTaskContext implements JsonSerializable {
+class ilMumieTaskContext implements JsonSerializable
+{
     /**
      * @var array
      */
@@ -9,7 +10,8 @@ class ilMumieTaskContext implements JsonSerializable {
     /**
      * Create a new instance.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->objectcontexts = array();
     }
 
@@ -19,7 +21,8 @@ class ilMumieTaskContext implements JsonSerializable {
      * @param ilMumieTaskObjectContext $objectcontext
      * @return void
      */
-    public function add_object_context(string $objectid, ilMumieTaskObjectContext $objectcontext): void {
+    public function add_object_context(string $objectid, ilMumieTaskObjectContext $objectcontext): void
+    {
         $this->objectcontexts[$objectid] = $objectcontext;
     }
 
@@ -27,7 +30,8 @@ class ilMumieTaskContext implements JsonSerializable {
      * Custom json serialization.
      * @return array
      */
-    public function jsonSerialize() : array {
+    public function jsonSerialize(): array
+    {
         return $this->objectcontexts;
     }
 }

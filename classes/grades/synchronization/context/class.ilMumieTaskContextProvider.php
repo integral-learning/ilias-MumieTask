@@ -8,7 +8,8 @@
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ilMumieTaskContextProvider {
+class ilMumieTaskContextProvider
+{
     /**
      * Get context for a given list of MUMIE Tasks and users.
      *
@@ -16,7 +17,8 @@ class ilMumieTaskContextProvider {
      * @param array $users
      * @return ilMumieTaskContext
      */
-    public static function get_context(array $mumietasks, array $mumietasksids, array $user_ids): ilMumieTaskContext {
+    public static function get_context(array $mumietasks, array $mumietasksids, array $user_ids): ilMumieTaskContext
+    {
         $context = new ilMumieTaskContext();
         $index = 0;
         foreach ($mumietasks as $mumietask) {
@@ -36,10 +38,11 @@ class ilMumieTaskContextProvider {
      * @param ilObjMumieTask $mumie
      * @return bool
      */
-    public static function requires_context(ilObjMumieTask $mumie_task): bool {
-        return (substr( $mumie_task->getTaskurl(), 0, 10 ) === "worksheet_")
+    public static function requires_context(ilObjMumieTask $mumie_task): bool
+    {
+        return (substr($mumie_task->getTaskurl(), 0, 10) === "worksheet_")
             && ($mumie_task->getDeadline() > 0); //?? TODO duedate or deadline ??
-            // ||            $mumie->timelimit > 0
+        // ||            $mumie->timelimit > 0
     }
 
     /**
@@ -49,7 +52,8 @@ class ilMumieTaskContextProvider {
      * @param array    user_ids
      * @return ilMumieTaskObjectContext
      */
-    private static function create_object_context(ilObjMumieTask $mumie_task, array $user_ids): ilMumieTaskObjectContext {
+    private static function create_object_context(ilObjMumieTask $mumie_task, array $user_ids): ilMumieTaskObjectContext
+    {
         $context = new ilMumieTaskObjectContext($mumie_task->getLanguage());
         foreach ($user_ids as $user_id) {
             $context->add_user_context($user_id, self::create_user_context($mumie_task, $user_id));
@@ -63,7 +67,8 @@ class ilMumieTaskContextProvider {
      * @param ilMumieTaskUser $user
      * @return ilMumieTaskUserContext
      */
-    private static function create_user_context(ilObjMumieTask $mumie_task, string $user_id): ilMumieTaskUserContext {
+    private static function create_user_context(ilObjMumieTask $mumie_task, string $user_id): ilMumieTaskUserContext
+    {
         $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($user_id, $mumie_task);
         return new ilMumieTaskUserContext($deadline->getUnixTime());
         /* ?? moodle_id !== sync_id ?? */

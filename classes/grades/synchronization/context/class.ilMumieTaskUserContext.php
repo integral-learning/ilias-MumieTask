@@ -9,7 +9,8 @@
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ilMumieTaskUserContext implements JsonSerializable {
+class ilMumieTaskUserContext implements JsonSerializable
+{
     /**
      * @var int
      */
@@ -19,7 +20,8 @@ class ilMumieTaskUserContext implements JsonSerializable {
      * Create new instance.
      * @param int $deadline
      */
-    public function __construct(int $deadline) {
+    public function __construct(int $deadline)
+    {
         $this->deadline = $deadline;
     }
 
@@ -27,7 +29,8 @@ class ilMumieTaskUserContext implements JsonSerializable {
      * Custom JSON serializer.
      * @return array
      */
-    public function jsonSerialize(): array {
+    public function jsonSerialize(): array
+    {
         return get_object_vars($this);
     }
 }
