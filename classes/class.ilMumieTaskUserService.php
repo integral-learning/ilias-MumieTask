@@ -30,13 +30,14 @@ class ilMumieTaskUserService
         return new ilMumieTaskUser($user['usr_id'], $user["firstname"], $user['lastname']);
     }
 
-/**
-     * Get a ilMumieTaskUser instance for a given moodle user and MUMIE Task
-     * @param string    $moodleid
-     * @param ilObjMumieTask $mumietask
-     * @return ilMumieTaskUser
-     */
-    public static function get_user(string $moodleid, ilObjMumieTask $mumietask) : ilMumieTaskUser {
+    /**
+         * Get a ilMumieTaskUser instance for a given moodle user and MUMIE Task
+         * @param string    $moodleid
+         * @param ilObjMumieTask $mumietask
+         * @return ilMumieTaskUser
+         */
+    public static function get_user(string $moodleid, ilObjMumieTask $mumietask): ilMumieTaskUser
+    {
         $mumieid = self::use_id_masking($mumietask)
             ? hashing_service::generate_hash($moodleid, $mumietask)->get_hash()
             : $moodleid;
@@ -49,7 +50,8 @@ class ilMumieTaskUserService
      * @param string $moodleid The Moodle user id
      * @return ilMumieTaskUser The Problem selector user
      */
-    public static function get_problem_selector_user(string $moodleid) : ilMumieTaskUser {
+    public static function get_problem_selector_user(string $moodleid): ilMumieTaskUser
+    {
         $mumieid = hashing_service::generate_hash_with_lecturer_postfix($moodleid)->get_hash();
         return new ilMumieTaskUser($moodleid, $mumieid);
     }
@@ -60,7 +62,8 @@ class ilMumieTaskUserService
      * @return ilMumieTaskUser
      * @throws \dml_exception
      */
-    public static function get_user_from_mumie_id(string $mumieid) : ?ilMumieTaskUser {
+    public static function get_user_from_mumie_id(string $mumieid): ?ilMumieTaskUser
+    {
         if (self::is_mumie_id_masked($mumieid)) {
             $moodleid = mumie_id_hash::find_by_hash($mumieid)->get_user();
         } else {
@@ -81,7 +84,8 @@ class ilMumieTaskUserService
      * @param mixed $mumietask
      * @return bool
      */
-    private static function use_id_masking(mixed $mumietask) : bool {
+    private static function use_id_masking(mixed $mumietask): bool
+    {
         return isset($mumietask->use_hashed_id) && $mumietask->use_hashed_id == 1;
     }
 
@@ -90,7 +94,8 @@ class ilMumieTaskUserService
      * @param string $mumieid
      * @return bool
      */
-    private static function is_mumie_id_masked(string $mumieid) : bool {
+    private static function is_mumie_id_masked(string $mumieid): bool
+    {
         return strlen($mumieid) >= 128;
     }
 }

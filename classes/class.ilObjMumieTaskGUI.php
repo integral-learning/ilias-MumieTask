@@ -169,7 +169,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $ilTabs->activateTab('properties');
         $ilTabs->activateSubTab("edit_task");
-//         ilLoggerFactory::getLogger('xmum')->info("will read task from db: " . json_encode($myquery));
+        //         ilLoggerFactory::getLogger('xmum')->info("will read task from db: " . json_encode($myquery));
         $this->object->doRead();
         $this->initPropertiesForm();
         if (!$this->object->isDummy() && !ilMumieTaskServer::serverConfigExistsForUrl($this->object->getServer())) {
@@ -459,10 +459,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
-//         $this->object->doRead();
-//         ilLoggerFactory::getLogger('xmum')->info("####################### viewContent " .
-//         json_encode($this->object));
-//         $this->object->doRead()
+        //         $this->object->doRead();
+        //         ilLoggerFactory::getLogger('xmum')->info("####################### viewContent " .
+        //         json_encode($this->object));
+        //         $this->object->doRead()
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
         if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt('frm_list_grade_overview_after_deadline'));

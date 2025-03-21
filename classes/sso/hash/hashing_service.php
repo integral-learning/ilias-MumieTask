@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,14 +26,16 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class hashing_service {
+class hashing_service
+{
     /**
      * Generate a hash of the userid for a given MUMIE Task
      * @param string    $user
      * @param ilObjMumieTask $mumietask
      * @return mumie_id_hash
      */
-    public static function generate_hash(string $user, ilObjMumieTask $mumietask) : mumie_id_hash {
+    public static function generate_hash(string $user, ilObjMumieTask $mumietask): mumie_id_hash
+    {
         $mumieidhash = new mumie_id_hash($user, self::get_hash_with_suffix($user, $mumietask));
         $mumieidhash->save();
         return $mumieidhash;
@@ -44,7 +47,8 @@ class hashing_service {
      * @param string $userid The user id for which to generate the hash
      * @return mumie_id_hash The generated mumie_id_hash
      */
-    public static function generate_hash_with_lecturer_postfix(string $userid) : mumie_id_hash {
+    public static function generate_hash_with_lecturer_postfix(string $userid): mumie_id_hash
+    {
         $hash = self::auth_mumie_get_hashed_id($userid);
         $hash .= '@lecturer@';
         $mumieidhash = new mumie_id_hash($userid, $hash);
@@ -60,7 +64,8 @@ class hashing_service {
      * @param ilObjMumieTask $mumietask
      * @return string
      */
-    private static function get_hash_with_suffix(string $userid, ilObjMumieTask $mumietask) : string {
+    private static function get_hash_with_suffix(string $userid, ilObjMumieTask $mumietask): string
+    {
         $hash = self::auth_mumie_get_hashed_id($userid);
         if ($mumietask->privategradepool) {
             $hash .= '@gradepool' . $mumietask->course . '@';
@@ -78,7 +83,8 @@ class hashing_service {
      * @param string $id userId that should be hashed
      * @return string Hashed string with 128 characters
      */
-    private static function auth_mumie_get_hashed_id($id) {
+    private static function auth_mumie_get_hashed_id($id)
+    {
         // xmum_admin_settings
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         return hash("sha512", $id . substr($admin_settings->getApiKey(), 0, 10));

@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,7 +27,8 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class launch_form_builder {
+class launch_form_builder
+{
     private sso_token $ssotoken;
     private ilObjMumieTask $mumietask;
     private ilMumieTaskUser$user;
@@ -38,7 +40,8 @@ class launch_form_builder {
      * @param ilObjMumieTask  $mumieTask
      * @param ilMumieTaskUser$user
      */
-    public function __construct(sso_token $ssotoken, ilObjMumieTask $mumieTask, ilMumieTaskUser$user) {
+    public function __construct(sso_token $ssotoken, ilObjMumieTask $mumieTask, ilMumieTaskUser$user)
+    {
         $this->ssotoken = $ssotoken;
         $this->mumietask = $mumieTask;
         $this->user = $user;
@@ -50,7 +53,8 @@ class launch_form_builder {
      * @param int $deadline
      * @return $this
      */
-    public function with_deadline(int $deadline) : launch_form_builder {
+    public function with_deadline(int $deadline): launch_form_builder
+    {
         $this->deadlinefragment = $this->get_deadline_signature_inputs($deadline);
         return $this;
     }
@@ -60,7 +64,8 @@ class launch_form_builder {
      * @param int $deadline
      * @return string
      */
-    private function get_deadline_signature_inputs(int $deadline) : string {
+    private function get_deadline_signature_inputs(int $deadline): string
+    {
         $deadlineinmilliseconds = auth_mumie_get_deadline_in_ms($deadline);
         $syncidlowercase = strtolower($this->user->get_sync_id());
         $signeddata = \mumie_cryptography_service::sign_data(
@@ -76,7 +81,8 @@ class launch_form_builder {
      * Get worksheet id from problem path
      * @return string
      */
-    private function get_worksheet_id() : string {
+    private function get_worksheet_id(): string
+    {
         $problempath = auth_mumie_get_problem_path($this->mumietask);
         return str_replace(sso_service::WORKSHEET_PREFIX, "", $problempath);
     }
@@ -86,7 +92,8 @@ class launch_form_builder {
      * @return string
      * @throws \dml_exception
      */
-    public function build() : string {
+    public function build(): string
+    {
         $loginurl = auth_mumie_get_login_url($this->mumietask);
         $org = get_config("auth_mumie", "mumie_org"); /* TODO */
         $problemurl = auth_mumie_get_problem_url($this->mumietask);

@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,14 +25,16 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class token_service {
+class token_service
+{
     /**
      * Generate a new SSO Token for a given user
      * @param ilMumieTaskUser$user
      * @return sso_token
      * @throws \dml_exception
      */
-    public static function generate_sso_token(ilMumieTaskUser $user) : sso_token {
+    public static function generate_sso_token(ilMumieTaskUser $user): sso_token
+    {
         if ($token = sso_token::find_by_user($user->get_mumie_id())) {
             $token->set_token(self::generate_token());
             $token->set_timecreated(time());
@@ -50,7 +53,8 @@ class token_service {
      * @return bool
      * @throws \dml_exception
      */
-    public static function is_token_valid(?ilMumieTaskUser$user, string $token): bool {
+    public static function is_token_valid(?ilMumieTaskUser$user, string $token): bool
+    {
         if ($user == null) {
             return false;
         }
@@ -65,7 +69,8 @@ class token_service {
      * @param sso_token $token
      * @return bool
      */
-    private static function has_token_timed_out(sso_token $token) : bool {
+    private static function has_token_timed_out(sso_token $token): bool
+    {
         $current = time();
         return $current - $token->get_timecreated() > 60;
     }
@@ -74,7 +79,8 @@ class token_service {
      * Generate a new token value
      * @return string
      */
-    private static function generate_token() : string {
+    private static function generate_token(): string
+    {
         return self::auth_mumie_get_token(20);
     }
 
@@ -84,7 +90,8 @@ class token_service {
      * @param int $length word length of the token
      * @return string token
      */
-    private static function auth_mumie_get_token($length) {
+    private static function auth_mumie_get_token($length)
+    {
         $token = "";
         $codealphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $codealphabet .= "abcdefghijklmnopqrstuvwxyz";

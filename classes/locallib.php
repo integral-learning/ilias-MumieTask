@@ -13,12 +13,12 @@ class locallib
     public static function getMumieId($mumietask): string
     {
         ilLoggerFactory::getLogger('xmum')->info("getMumieId " . $mumietask->getDeadline());
-               return self::transformMumieId($mumietask->getTaskurl());
+        return self::transformMumieId($mumietask->getTaskurl());
     }
 
     public static function transformMumieId($mumietask_taskurl): string
     {
-//         ilLoggerFactory::getLogger('xmum')->info("transformMumieId " . json_encode($mumietask_taskurl));
+        //         ilLoggerFactory::getLogger('xmum')->info("transformMumieId " . json_encode($mumietask_taskurl));
         $id = $mumietask_taskurl;
         $prefix = "link/";
         if (strpos($id, $prefix) > 0) {
@@ -38,8 +38,8 @@ class locallib
      * @param  ilObjMumieTask $mumietask
      * @return int
      */
-    public static function mumie_get_effective_duedate(int $userid, ilObjMumieTask $mumietask):
-    int {
+    public static function mumie_get_effective_duedate(int $userid, ilObjMumieTask $mumietask): int
+    {
         return self::get_effective_duedate($userid, $mumietask);
     }
 
@@ -52,14 +52,15 @@ class locallib
      * @param  ilObjMumieTask $mumietask
      * @return int
      */
-    private static function get_effective_duedate($userid, $mumietask) {
+    private static function get_effective_duedate($userid, $mumietask)
+    {
         $extension = new ilMumieTaskDeadlineExtensionService();
         return $extension->getDeadlineExtensionDate($userid, $mumietask);
-//         $extension->load();
-//         if ($extension->get_duedate()) {
-//             return $extension->get_duedate();
-//         }
-//         return $mumie->duedate;
+        //         $extension->load();
+        //         if ($extension->get_duedate()) {
+        //             return $extension->get_duedate();
+        //         }
+        //         return $mumie->duedate;
     }
 
 }

@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,11 +23,12 @@
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mumie_cryptographic_key {
+class mumie_cryptographic_key
+{
     /**
      * Name of table used to store keys
      */
-    const MUMIE_CRYPTOGRAPHIC_KEY_TABLE = "xmum_cryptographic_key";
+    public const MUMIE_CRYPTOGRAPHIC_KEY_TABLE = "xmum_cryptographic_key";
     /**
      * @var string
      */
@@ -45,7 +47,8 @@ class mumie_cryptographic_key {
      * @param string $name
      * @param string $key
      */
-    public function __construct(string $name, string $key) {
+    public function __construct(string $name, string $key)
+    {
         $this->name = $name;
         $this->key = $key;
     }
@@ -55,7 +58,8 @@ class mumie_cryptographic_key {
      * @return void
      * @throws dml_exception
      */
-    public function create() {
+    public function create()
+    {
         global $DB;
         $DB->insert_record(self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE, ["name" => $this->name, "key" => $this->key]);
     }
@@ -65,7 +69,8 @@ class mumie_cryptographic_key {
      * @return void
      * @throws dml_exception
      */
-    public function update() {
+    public function update()
+    {
         global $DB;
         $DB->update_record(self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE, ["name" => $this->name, "key" => $this->key, "id" => $this->id]);
     }
@@ -76,7 +81,8 @@ class mumie_cryptographic_key {
      * @return mumie_cryptographic_key|null
      * @throws dml_exception
      */
-    public static function get_by_name(string $name) : ?mumie_cryptographic_key {
+    public static function get_by_name(string $name): ?mumie_cryptographic_key
+    {
         global $DB;
         $record = $DB->get_record(self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE, ["name" => $name]);
         return self::from_record($record);
@@ -87,7 +93,8 @@ class mumie_cryptographic_key {
      * @param mixed $record
      * @return mumie_cryptographic_key|null
      */
-    private static function from_record($record) : ?mumie_cryptographic_key {
+    private static function from_record($record): ?mumie_cryptographic_key
+    {
         if (!$record) {
             return null;
         }
@@ -100,7 +107,8 @@ class mumie_cryptographic_key {
      * Get the id
      * @return string
      */
-    public function get_id() : string {
+    public function get_id(): string
+    {
         return $this->id;
     }
 
@@ -108,7 +116,8 @@ class mumie_cryptographic_key {
      * Set a new id
      * @param string $id
      */
-    public function set_id(string $id) : void {
+    public function set_id(string $id): void
+    {
         $this->id = $id;
     }
 
@@ -116,7 +125,8 @@ class mumie_cryptographic_key {
      * Get the name
      * @return string
      */
-    public function get_name() : string {
+    public function get_name(): string
+    {
         return $this->name;
     }
 
@@ -124,7 +134,8 @@ class mumie_cryptographic_key {
      * Set a new name
      * @param string $name
      */
-    public function set_name(string $name) : void {
+    public function set_name(string $name): void
+    {
         $this->name = $name;
     }
 
@@ -132,7 +143,8 @@ class mumie_cryptographic_key {
      * Get the key
      * @return string
      */
-    public function get_key() : string {
+    public function get_key(): string
+    {
         return $this->key;
     }
 
@@ -140,7 +152,8 @@ class mumie_cryptographic_key {
      * Set a new key
      * @param string $key
      */
-    public function set_key(string $key) : void {
+    public function set_key(string $key): void
+    {
         $this->key = $key;
     }
 }

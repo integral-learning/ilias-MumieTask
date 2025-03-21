@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,11 +24,12 @@
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sso_token {
+class sso_token
+{
     /**
      * Name of the database table
      */
-    const SSO_TOKEN_TABLE = "xmum_sso_tokens";
+    public const SSO_TOKEN_TABLE = "xmum_sso_tokens";
 
     /**
      * @var int
@@ -52,7 +54,8 @@ class sso_token {
      * @param string $user
      * @param int    $timecreated
      */
-    public function __construct(string $token, string $user, int $timecreated) {
+    public function __construct(string $token, string $user, int $timecreated)
+    {
         $this->token = $token;
         $this->user = $user;
         $this->timecreated = $timecreated;
@@ -63,16 +66,17 @@ class sso_token {
      * @return void
      * @throws \dml_exception
      */
-    public function create() : void {
+    public function create(): void
+    {
         global $ilDB;
-                $ilDB->insert(
-                    self::SSO_TOKEN_TABLE,
-                    array(
-                        'id' => array('integer', $ilDB->nextID(self::SSO_TOKEN_TABLE)),
-                        'token' => array('text', $this->token),
-                        'timecreated' => array('integer', time()),
-                        'user' => array('text',  $this->user))
-                );
+        $ilDB->insert(
+            self::SSO_TOKEN_TABLE,
+            array(
+                'id' => array('integer', $ilDB->nextID(self::SSO_TOKEN_TABLE)),
+                'token' => array('text', $this->token),
+                'timecreated' => array('integer', time()),
+                'user' => array('text',  $this->user))
+        );
     }
 
     /**
@@ -80,18 +84,19 @@ class sso_token {
      * @return void
      * @throws \dml_exception
      */
-    public function update() : void {
-         global $ilDB;
-                $ilDB->update(
-                    self::SSO_TOKEN_TABLE,
-                    array(
-                        'token' => array('text', $this->token),
-                        'timecreated' => array('integer', time()),
-                    ),
-                    array(
-                        'user' => array('text', $this->user),
-                    )
-                );
+    public function update(): void
+    {
+        global $ilDB;
+        $ilDB->update(
+            self::SSO_TOKEN_TABLE,
+            array(
+                'token' => array('text', $this->token),
+                'timecreated' => array('integer', time()),
+            ),
+            array(
+                'user' => array('text', $this->user),
+            )
+        );
     }
 
     /**
@@ -100,13 +105,14 @@ class sso_token {
      * @return sso_token|null
      * @throws \dml_exception
      */
-    public static function find_by_user(string $user) : ?sso_token {
+    public static function find_by_user(string $user): ?sso_token
+    {
         global $ilDB;
-                $query = "SELECT * FROM "
-                . self::SSO_TOKEN_TABLE
-                . " WHERE user = "
-                . $ilDB->quote($user, 'text');
-                $result = $ilDB->fetchAssoc($ilDB->query($query));
+        $query = "SELECT * FROM "
+        . self::SSO_TOKEN_TABLE
+        . " WHERE user = "
+        . $ilDB->quote($user, 'text');
+        $result = $ilDB->fetchAssoc($ilDB->query($query));
         return self::from_record($result);
     }
 
@@ -115,7 +121,8 @@ class sso_token {
      * @param mixed $record
      * @return sso_token|null
      */
-    private static function from_record(mixed $record) : ?sso_token {
+    private static function from_record(mixed $record): ?sso_token
+    {
         if (!$record) {
             return null;
         }
@@ -135,7 +142,8 @@ class sso_token {
      * Get the id
      * @return int
      */
-    public function get_id() : int {
+    public function get_id(): int
+    {
         return $this->id;
     }
 
@@ -143,7 +151,8 @@ class sso_token {
      * Set the id
      * @param int $id
      */
-    public function set_id(int $id) : void {
+    public function set_id(int $id): void
+    {
         $this->id = $id;
     }
 
@@ -151,7 +160,8 @@ class sso_token {
      * Get the token
      * @return string
      */
-    public function get_token() : string {
+    public function get_token(): string
+    {
         return $this->token;
     }
 
@@ -159,7 +169,8 @@ class sso_token {
      * Set the token
      * @param string $token
      */
-    public function set_token(string $token) : void {
+    public function set_token(string $token): void
+    {
         $this->token = $token;
     }
 
@@ -167,7 +178,8 @@ class sso_token {
      * Get the user.
      * @return string
      */
-    public function get_user() : string {
+    public function get_user(): string
+    {
         return $this->user;
     }
 
@@ -175,7 +187,8 @@ class sso_token {
      * Set the user
      * @param string $user
      */
-    public function set_user(string $user) : void {
+    public function set_user(string $user): void
+    {
         $this->user = $user;
     }
 
@@ -183,7 +196,8 @@ class sso_token {
      * Get time created
      * @return int
      */
-    public function get_timecreated() : int {
+    public function get_timecreated(): int
+    {
         return $this->timecreated;
     }
 
@@ -191,7 +205,8 @@ class sso_token {
      * Set time created
      * @param int $timecreated
      */
-    public function set_timecreated(int $timecreated) : void {
+    public function set_timecreated(int $timecreated): void
+    {
         $this->timecreated = $timecreated;
     }
 }

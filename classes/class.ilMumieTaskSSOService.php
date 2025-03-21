@@ -79,17 +79,22 @@ class ilMumieTaskSSOService
         $ssotoken->insertOrRefreshToken();
         $deadline = locallib::mumie_get_effective_duedate($ilUser->getId(), $task);
         ilLoggerFactory::getLogger('xmum')->info("setUpTokenAndLaunchForm deadline: " . $deadline);
-//         ilLoggerFactory::getLogger('xmum')->info("setUpTokenAndLaunchForm task: " . json_encode($task));
+        //         ilLoggerFactory::getLogger('xmum')->info("setUpTokenAndLaunchForm task: " . json_encode($task));
         return $this->getHTMLCode($task, $ssotoken, $hashed_user, $deadline);
     }
 
     /**
      * Get html code for the MUMIE task launcher
      */
-    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $deadline, $width = 800,
-    $height = 600)
-    {
-//         ilLoggerFactory::getLogger('xmum')->info("what ist taskObj " . json_encode($taskObj));
+    private function getHTMLCode(
+        $taskObj,
+        $ssotoken,
+        $hashed_user,
+        $deadline,
+        $width = 800,
+        $height = 600
+    ) {
+        //         ilLoggerFactory::getLogger('xmum')->info("what ist taskObj " . json_encode($taskObj));
         require_once("./Services/UICore/classes/class.ilTemplate.php");
         require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/synchronization/context/class.ilMumieTaskContextProvider.php");

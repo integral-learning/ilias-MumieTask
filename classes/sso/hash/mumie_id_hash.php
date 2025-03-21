@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,11 +24,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class mumie_id_hash {
+class mumie_id_hash
+{
     /**
      * Name of the database table
      */
-    const HASH_ID_TABLE = "xmum_id_hashes";
+    public const HASH_ID_TABLE = "xmum_id_hashes";
     /**
      * @var int
      */
@@ -46,7 +48,8 @@ class mumie_id_hash {
      * @param int    $user_id
      * @param string $hash
      */
-    public function __construct(int $user_id, string $hash) {
+    public function __construct(int $user_id, string $hash)
+    {
         $this->user_id = $user_id;
         $this->hash = $hash;
     }
@@ -55,7 +58,8 @@ class mumie_id_hash {
      * Create a database entry, if none exists.
      * @return void
      */
-    public function save() : void {
+    public function save(): void
+    {
         if (!self::find($this->user_id, $this->hash)) {
             $this->create();
         }
@@ -66,8 +70,9 @@ class mumie_id_hash {
      * @return void
      * @throws \dml_exception
      */
-    public function create() : void {
-         global $ilDB;
+    public function create(): void
+    {
+        global $ilDB;
         $ilDB->insert(
             self::HASH_ID_TABLE,
             array(
@@ -83,18 +88,19 @@ class mumie_id_hash {
      * @return void
      * @throws \dml_exception
      */
-    public function update() : void {
+    public function update(): void
+    {
         global $ilDB;
-                $ilDB->update(
-                    self::HASH_ID_TABLE,
-                    array(
-                        'hash' => array('text', $this->hash),
-                        "usr_id" => array('integer', $this->user_id),
-                    ),
-                    array(
-                        'id' => array('integer', $this->id)
-                    )
-                );
+        $ilDB->update(
+            self::HASH_ID_TABLE,
+            array(
+                'hash' => array('text', $this->hash),
+                "usr_id" => array('integer', $this->user_id),
+            ),
+            array(
+                'id' => array('integer', $this->id)
+            )
+        );
     }
 
     /**
@@ -103,18 +109,19 @@ class mumie_id_hash {
      * @return mumie_id_hash|null
      * @throws \dml_exception
      */
-    public static function find_by_user(string $user_id) : ?mumie_id_hash {
+    public static function find_by_user(string $user_id): ?mumie_id_hash
+    {
         global $ilDB;
         $result = $ilDB->fetchObject(
-                $ilDB->query(
-                    'SELECT * FROM '
+            $ilDB->query(
+                'SELECT * FROM '
                     . self::HASH_ID_TABLE
                     . " WHERE usr_id = "
                     . $ilDB->quote($user_id, "integer")
-                )
-                );
+            )
+        );
 
-                return self::from_record($result);
+        return self::from_record($result);
     }
 
     /**
@@ -124,17 +131,18 @@ class mumie_id_hash {
      * @return mumie_id_hash|null
      * @throws \dml_exception
      */
-    private static function find(int $user_id, string $hash) : ?mumie_id_hash {
+    private static function find(int $user_id, string $hash): ?mumie_id_hash
+    {
         global $ilDB;
         $result = $ilDB->fetchObject(
-        $ilDB->query(
-            'SELECT * FROM '
+            $ilDB->query(
+                'SELECT * FROM '
             . self::HASH_ID_TABLE
             . " WHERE hash = "
             . $ilDB->quote($hash, "text")
             . " and usr_id = "
             . $ilDB->quote($user_id, "integer")
-        )
+            )
         );
 
         return self::from_record($result);
@@ -146,18 +154,19 @@ class mumie_id_hash {
      * @return mumie_id_hash|null
      * @throws \dml_exception
      */
-    public static function find_by_hash(string $hash) : ?mumie_id_hash {
+    public static function find_by_hash(string $hash): ?mumie_id_hash
+    {
         global $ilDB;
         $result = $ilDB->fetchObject(
-                $ilDB->query(
-                    'SELECT * FROM '
+            $ilDB->query(
+                'SELECT * FROM '
                     . self::HASH_ID_TABLE
                     . " WHERE hash = "
                     . $ilDB->quote($hash, "text")
-                )
-                );
+            )
+        );
 
-                return self::from_record($result);
+        return self::from_record($result);
     }
 
     /**
@@ -165,7 +174,8 @@ class mumie_id_hash {
      * @param  mixed $record
      * @return mumie_id_hash|null
      */
-    private static function from_record(mixed $record) : ?mumie_id_hash {
+    private static function from_record(mixed $record): ?mumie_id_hash
+    {
         if (!$record) {
             return null;
         }
@@ -178,7 +188,8 @@ class mumie_id_hash {
      * Get the id.
      * @return int
      */
-    public function get_id() : int {
+    public function get_id(): int
+    {
         return $this->id;
     }
 
@@ -186,7 +197,8 @@ class mumie_id_hash {
      * Set the id
      * @param int $id
      */
-    public function set_id(int $id) : void {
+    public function set_id(int $id): void
+    {
         $this->id = $id;
     }
 
@@ -194,7 +206,8 @@ class mumie_id_hash {
      * Get the moodle user id
      * @return int
      */
-    public function get_user_id() : int {
+    public function get_user_id(): int
+    {
         return $this->user_id;
     }
 
@@ -202,7 +215,8 @@ class mumie_id_hash {
      * Set the moodle user id
      * @param int $user_id
      */
-    public function set_user(int $user_id) : void {
+    public function set_user(int $user_id): void
+    {
         $this->user_id = $user_id;
     }
 
@@ -210,7 +224,8 @@ class mumie_id_hash {
      * Get the hash
      * @return string
      */
-    public function get_hash() : string {
+    public function get_hash(): string
+    {
         return $this->hash;
     }
 
@@ -218,7 +233,8 @@ class mumie_id_hash {
      * Set the hash
      * @param string $hash
      */
-    public function set_hash(string $hash) : void {
+    public function set_hash(string $hash): void
+    {
         $this->hash = $hash;
     }
 }

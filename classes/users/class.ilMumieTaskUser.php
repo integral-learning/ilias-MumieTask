@@ -29,81 +29,90 @@ class ilMumieTaskUser
         $this->org = ilMumieTaskAdminSettings::getInstance()->getOrg();
     }
 
-     public function load() : bool {
-            global $DB;
-            $user = $DB->get_record('user', array('id' => $this->moodleid));
-            if (!$user) {
-                return false;
-            }
-            $this->firstname = $user->firstname;
-            $this->lastname = $user->lastname;
-            $this->email = $user->email;
-            return true;
+    public function load(): bool
+    {
+        global $DB;
+        $user = $DB->get_record('user', array('id' => $this->moodleid));
+        if (!$user) {
+            return false;
         }
+        $this->firstname = $user->firstname;
+        $this->lastname = $user->lastname;
+        $this->email = $user->email;
+        return true;
+    }
 
-        /**
-         * Get the sync id.
-         *
-         * The sync id is the full username on a MUMIE / Lemon server
-         * @return string
-         */
-        public function get_sync_id() : string {
-            return "gsso_" . $this->org . "_" . $this->mumieid;
-        }
+    /**
+     * Get the sync id.
+     *
+     * The sync id is the full username on a MUMIE / Lemon server
+     * @return string
+     */
+    public function get_sync_id(): string
+    {
+        return "gsso_" . $this->org . "_" . $this->mumieid;
+    }
 
-        /**
-         * Set moodle id
-         * @return int
-         */
-        public function get_moodle_id() : int {
-            return $this->moodleid;
-        }
+    /**
+     * Set moodle id
+     * @return int
+     */
+    public function get_moodle_id(): int
+    {
+        return $this->moodleid;
+    }
 
-        /**
-         * Get moodle id
-         * @param int $moodleid
-         */
-        public function set_moodle_id(int $moodleid) : void {
-            $this->moodleid = $moodleid;
-        }
+    /**
+     * Get moodle id
+     * @param int $moodleid
+     */
+    public function set_moodle_id(int $moodleid): void
+    {
+        $this->moodleid = $moodleid;
+    }
 
-        /**
-         * Get mumie id
-         * @return string
-         */
-        public function get_mumie_id() : string {
-            return $this->mumieid;
-        }
+    /**
+     * Get mumie id
+     * @return string
+     */
+    public function get_mumie_id(): string
+    {
+        return $this->mumieid;
+    }
 
-        /**
-         * Set mumie id
-         * @param string $mumieid
-         */
-        public function set_mumie_id(string $mumieid) : void {
-            $this->mumieid = $mumieid;
-        }
+    /**
+     * Set mumie id
+     * @param string $mumieid
+     */
+    public function set_mumie_id(string $mumieid): void
+    {
+        $this->mumieid = $mumieid;
+    }
 
-        /**
-         * Get first name
-         * @return string
-         */
-        public function get_firstname() : string {
-            return $this->firstname;
-        }
+    /**
+     * Get first name
+     * @return string
+     */
+    public function get_firstname(): string
+    {
+        return $this->firstname;
+    }
 
-        /**
-         * get lastname
-         * @return string
-         */
-        public function get_lastname() : string {
-            return $this->lastname;
-        }
+    /**
+     * get lastname
+     * @return string
+     */
+    public function get_lastname(): string
+    {
+        return $this->lastname;
+    }
 
-        /**
-         * Get email
-         * @return string
-         */
-        public function get_email() : string {
-            return $this->email;
-        }
+    /**
+     * Get email
+     * @return string
+     */
+    public function get_email(): string
+    {
+        return $this->email;
+    }
 }

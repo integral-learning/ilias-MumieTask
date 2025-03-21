@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,11 +28,12 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  * @author Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sso_service {
+class sso_service
+{
     /**
      * A prefix used in task_urls indicating that the task is a worksheet
      */
-    const WORKSHEET_PREFIX = "worksheet_";
+    public const WORKSHEET_PREFIX = "worksheet_";
 
     /**
      * Perform sso attempt for a given user and mumie task
@@ -40,7 +42,8 @@ class sso_service {
      * @return void
      * @throws \dml_exception
      */
-    public static function sso(string $moodleid, ilObjMumieTask $mumietask) : void {
+    public static function sso(string $moodleid, ilObjMumieTask $mumietask): void
+    {
         $mumieuser = mumie_user_service::get_user_id($moodleid, $mumietask);
         $ssotoken = token_service::generate_sso_token($mumieuser);
         $deadline = locallib::mumie_get_effective_duedate($moodleid, $mumietask);
@@ -56,7 +59,8 @@ class sso_service {
      * @return string
      * @throws \dml_exception
      */
-    private static function get_launch_form(sso_token $token, ilObjMumieTask $mumietask, int $deadline, ilMumieTaskUser $user) : string {
+    private static function get_launch_form(sso_token $token, ilObjMumieTask $mumietask, int $deadline, ilMumieTaskUser $user): string
+    {
         $launchformbuilder = new launch_form_builder($token, $mumietask, $user);
 
         $problempath = auth_mumie_get_problem_path($mumietask);
@@ -72,9 +76,9 @@ class sso_service {
      * @param int    $deadline
      * @return bool
      */
-    private static function include_signed_deadline(string $problempath, int $deadline) : bool {
+    private static function include_signed_deadline(string $problempath, int $deadline): bool
+    {
         return str_starts_with($problempath, self::WORKSHEET_PREFIX)
             && $deadline > 0;
     }
 }
-
