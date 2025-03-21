@@ -87,8 +87,14 @@ class ilMumieTaskDeadlineExtensionService
 
     private static function getDeadlineExtension($user_id, $task): ilMumieTaskDeadlineExtension
     {
+        ilLoggerFactory::getLogger('xmum')->info("getDeadlineExtension from user_id: " . $user_id);
+//         ilLoggerFactory::getLogger('xmum')->info("getDeadlineExtension from task: " .
+//         json_encode($task));
         $result = self::getDeadlineExtensionAssoc($user_id, $task);
-        return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
+         if (!is_null($result)) {
+            return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
+        }
+        return null;
     }
 
     private static function getDeadlineExtensionAssoc($user_id, $task): ?array

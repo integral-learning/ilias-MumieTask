@@ -11,6 +11,7 @@
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOToken.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/locallib.php');
 /**
  * This class provides functions for SSO between MUMIE servers and ILIAS
  */
@@ -76,16 +77,19 @@ class ilMumieTaskSSOService
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($ilUser->getId(), $task);
         $ssotoken = new ilMumieTaskSSOToken($hashed_user);
         $ssotoken->insertOrRefreshToken();
-
-        return $this->getHTMLCode($task, $ssotoken, $hashed_user);
+        $deadline = locallib::mumie_get_effective_duedate($ilUser->getId(), $task);
+        ilLoggerFactory::getLogger('xmum')->info("setUpTokenAndLaunchForm deadline: " . $deadline);
+//         ilLoggerFactory::getLogger('xmum')->info("setUpTokenAndLaunchForm task: " . json_encode($task));
+        return $this->getHTMLCode($task, $ssotoken, $hashed_user, $deadline);
     }
-
 
     /**
      * Get html code for the MUMIE task launcher
      */
-    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $width = 800, $height = 600)
+    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $deadline, $width = 800,
+    $height = 600)
     {
+//         ilLoggerFactory::getLogger('xmum')->info("what ist taskObj " . json_encode($taskObj));
         require_once("./Services/UICore/classes/class.ilTemplate.php");
         require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/synchronization/context/class.ilMumieTaskContextProvider.php");
@@ -93,7 +97,7 @@ class ilMumieTaskSSOService
 
         $contextProvider = new ilMumieTaskContextProvider();
         $mumietasksids = array(locallib::getMumieId($taskObj));
-        //         ilLoggerFactory::getLogger('xmum')->info("what ist taskObj " . json_encode($taskObj));
+
         //         ilLoggerFactory::getLogger('xmum')->info("what ist mumietasksids " . json_encode($mumietasksids));
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
         // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
@@ -108,11 +112,8 @@ class ilMumieTaskSSOService
         $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
         $tpl->setVariable("WIDTH", '100%');
         $tpl->setVariable("HEIGHT", $height);
-        $tpl->setVariable("CONTEXT", json_encode($contextProvider->get_context(
-            array($taskObj),
-            $mumietasksids,
-            array($hashed_user)
-        )));
+        $tpl->setVariable("DEADLINE", '1742308800');
+        $tpl->setVariable("DEADLINESIGNATURE", 'xxx1742308800xxx');
 
         if ($taskObj->getLaunchcontainer() == 1) {
             $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the iframe and launch it immediately via $script

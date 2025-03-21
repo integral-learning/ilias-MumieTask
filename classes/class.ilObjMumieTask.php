@@ -82,24 +82,28 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     {
         global $ilDB;
 
-        $result = $ilDB->query(
-            "SELECT * FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME .
-            " WHERE id = " . $ilDB->quote($this->getId(), "integer")
-        );
+        $myquery = "SELECT * FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME .
+                               " WHERE id = " . $ilDB->quote($this->getId(), "integer");
+        $result = $ilDB->query($myquery);
+        ilLoggerFactory::getLogger('xmum')->info("doRead " . json_encode($myquery));
+//         ilLoggerFactory::getLogger('xmum')->info("doRead result " . json_encode($result));
         if (!is_null($result)) {
             $rec = $ilDB->fetchAssoc($result);
-            $this->setTaskurl($rec['taskurl']);
-            $this->setLaunchcontainer($rec['launchcontainer']);
-            $this->setMumieCourse($rec['mumie_course']);
-            $this->setMumieCoursefile($rec['mumie_coursefile']);
-            $this->setLanguage($rec['language']);
-            $this->setServer($rec['server']);
-            $this->setLpModus($rec['lp_modus']);
-            $this->setPassingGrade($rec['passing_grade']);
-            $this->setOnline($rec['online']);
-            $this->setPrivateGradepool($rec['privategradepool']);
-            $this->setDeadline($rec['deadline']);
-            $this->setWorksheet($rec['worksheet']);
+            ilLoggerFactory::getLogger('xmum')->info("fetchAssoc " . json_encode($rec));
+             if (!is_null($rec)) {
+                $this->setTaskurl($rec['taskurl']);
+                $this->setLaunchcontainer($rec['launchcontainer']);
+                $this->setMumieCourse($rec['mumie_course']);
+                $this->setMumieCoursefile($rec['mumie_coursefile']);
+                $this->setLanguage($rec['language']);
+                $this->setServer($rec['server']);
+                $this->setLpModus($rec['lp_modus']);
+                $this->setPassingGrade($rec['passing_grade']);
+                $this->setOnline($rec['online']);
+                $this->setPrivateGradepool($rec['privategradepool']);
+                $this->setDeadline($rec['deadline']);
+                $this->setWorksheet($rec['worksheet']);
+            }
         }
 
         /**

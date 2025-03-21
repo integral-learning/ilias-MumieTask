@@ -7,31 +7,30 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-(function ($) {
-    $(document).ready(function () {
+(function($) {
+    $(document).ready(function() {
         const structure = JSON.parse(document.getElementById('server_data').getAttribute('value'));
-        const lmsSelectorUrl = document.getElementById('problem_selector').getAttribute('value');
 
-        const serverController = (function () {
+        const serverController = (function() {
             let serverStructure;
             const serverDropDown = document.getElementById("xmum_server");
 
             return {
-                init: function (structure) {
+                init: function(structure) {
                     serverStructure = structure;
                 },
-                getSelectedServer: function () {
+                getSelectedServer: function() {
                     const selectedServerName = serverDropDown.options[serverDropDown.selectedIndex].text;
                     return serverStructure.find(server => server.name === selectedServerName);
                 },
-                disable: function () {
+                disable: function() {
                     serverDropDown.disabled = true;
                     removeChildElements(serverDropDown);
                 },
             };
         })();
 
-        const courseController = (function () {
+        const courseController = (function() {
             const courseNameElement = document.getElementById("xmum_course");
             const courseNameDisplayElement = document.getElementById("xmum_course_display");
             const coursefileElem = document.getElementById('xmum_coursefile');
@@ -53,19 +52,19 @@
                 const selectedLanguage = langController.getSelectedLanguage();
                 if (selectedCourse && selectedLanguage) {
                     const name = selectedCourse.name
-                    .find(translation => translation.language === selectedLanguage)?.value;
+                        .find(translation => translation.language === selectedLanguage)?.value;
                     courseNameElement.value = name;
                     courseNameDisplayElement.value = name;
                 }
             }
 
             return {
-                init: function (isEdit) {
+                init: function(isEdit) {
                     if (isEdit) {
                         updateCourseName();
                     }
                 },
-                getSelectedCourse: function () {
+                getSelectedCourse: function() {
                     const courses = serverController.getSelectedServer().courses;
                     return courses.find(course => {
                         return course.path_to_course_file === coursefileElem.value;
@@ -77,24 +76,31 @@
             };
         })();
 
-        const langController = (function () {
+        const langController = (function() {
             const languageElement = document.getElementById("xmum_language");
 
             return {
-                getSelectedLanguage: function () {
+                getSelectedLanguage: function() {
                     return languageElement.value;
                 },
-                setLanguage: function (lang) {
+                setLanguage: function(lang) {
                     languageElement.value = lang;
                 }
             };
         })();
 
-        const problemSelectorController = (function () {
+        const problemSelectorController = (function() {
             const problemSelectorButton = document.getElementById('xmum_prb_sel');
             const multiProblemSelectorButton = document.getElementById('xmum_multi_prb_sel');
             let problemSelectorWindow;
             const mumieOrg = document.getElementById('mumie_org').value;
+            const lmsSelectorUrl = document.getElementById('problem_selector_url').getAttribute('value');
+            const user_id = document.getElementById('user_id').getAttribute('value');
+            const user_token = document.getElementById('user_token').getAttribute('value');
+            const user_lang = document.getElementById('user_lang').getAttribute('value');
+            // const selectedServer = serverController.getSelectedServer().url_prefix;
+            // const useSSO = shouldUseSSO(lmsSelectorUrl, selectedServer);
+
 
             /**
              * Send a message to the problem selector window.
@@ -155,53 +161,110 @@
                 }, false);
             }
 
+            /**
+             * Determines whether the Single Sign-On (SSO) should be used when opening the Problem Selector.
+             * SSO is only supposed to be used when the Problem Selector URL has the same origin as the
+             * URL of the selected MUMIE server.
+             *
+             * @param {string} problemSelectorUrl - The URL of the problem selector.
+             * @param {string} selectedServerUrl - The URL of the selected MUMIE server
+             * @returns {boolean} Whether SSO should be used for the Problem Selector or not
+             */
+            function shouldUseSSO(problemSelectorUrl, selectedServerUrl) {
+                return new URL(problemSelectorUrl).origin === new URL(selectedServerUrl).origin;
+            }
+
             return {
-                init: function () {
-                    problemSelectorButton.onclick = function (e) {
+                init: function() {
+                    problemSelectorButton.onclick = function(e) {
+
+
                         e.preventDefault();
-                        problemSelectorWindow = window.open(
-                            lmsSelectorUrl
-                            + '/lms-problem-selector?'
-                            + 'org='
-                            + mumieOrg
-                            + '&serverUrl='
-                            + encodeURIComponent(serverController.getSelectedServer().url_prefix)
-                            + "&problemLang="
-                            + langController.getSelectedLanguage()
-                            + "&origin=" + encodeURIComponent(window.location.origin)
-                            , '_blank'
-                        );
+
+
+
+                        function openWithPost(url, data) {
+                            let form = document.createElement("form");
+                            form.method = "POST";
+                            form.action = url;
+                            form.target = "_blank";
+
+                            for (let key in data) {
+                                if (data.hasOwnProperty(key)) {
+                                    let input = document.createElement("input");
+                                    input.type = "hidden";
+                                    input.name = key;
+                                    input.value = data[key];
+                                    form.appendChild(input);
+                                }
+                            }
+
+                            document.body.appendChild(form);
+                            form.submit();
+                            document.body.removeChild(form);
+                        }
+
+                        openWithPost(lmsSelectorUrl + '/api/sso/problem-selector', {
+                            userId: user_id,
+                            token: user_token,
+                            uiLang: user_lang,
+                            org: mumieOrg,
+                            serverUrl: encodeURIComponent(serverController.getSelectedServer().url_prefix),
+                            problemLang: langController.getSelectedLanguage(),
+                            origin: encodeURIComponent(window.location.origin),
+                            gradingType: 'graded'
+                        });
+
+
+
+
+                        // problemSelectorWindow = window.open(
+                        //     lmsSelectorUrl
+                        //     + '/api/sso/problem-selector?'
+                        //     + 'userId=' + user_id
+                        //     + '&token=' + user_token
+                        //     + '&uiLang=' + user_lang
+                        //     // + '&gradingType=' + gradingtype
+                        //     + '&org='
+                        //     + mumieOrg
+                        //     + '&serverUrl='
+                        //     + encodeURIComponent(serverController.getSelectedServer().url_prefix)
+                        //     + "&problemLang="
+                        //     + langController.getSelectedLanguage()
+                        //     + "&origin=" + encodeURIComponent(window.location.origin)
+                        //     , '_blank'
+                        // );
                     };
 
                     multiProblemSelectorButton.onclick = function(e) {
                         e.preventDefault();
                         problemSelectorWindow = window.open(
-                          lmsSelectorUrl
-                          + '/lms-problem-selector?'
-                          + "serverUrl="
-                          + encodeURIComponent(serverController.getSelectedServer().url_prefix),
-                          "_blank",
-                          'toolbar=0,location=0,menubar=0'
+                            lmsSelectorUrl +
+                            '/lms-problem-selector?' +
+                            "serverUrl=" +
+                            encodeURIComponent(serverController.getSelectedServer().url_prefix),
+                            "_blank",
+                            'toolbar=0,location=0,menubar=0'
                         );
                     }
 
-                    window.onclose = function () {
+                    window.onclose = function() {
                         sendSuccess();
                     };
 
-                    window.addEventListener("beforeunload", function () {
+                    window.addEventListener("beforeunload", function() {
                         sendSuccess();
                     }, false);
 
                     addMessageListener();
                 },
-                disable: function () {
+                disable: function() {
                     problemSelectorButton.disabled = true;
                 }
             };
         })();
 
-        const taskController = (function () {
+        const taskController = (function() {
             const task_element = document.getElementById("xmum_task");
             const display_task_element = document.getElementById("xmum_display_task");
             const nameElem = document.getElementById("title");
@@ -237,7 +300,7 @@
             }
 
             return {
-                init: function () {
+                init: function() {
                     if (!isDummyTask()) {
                         updateTaskDisplayElement(task_element.value)
                     }

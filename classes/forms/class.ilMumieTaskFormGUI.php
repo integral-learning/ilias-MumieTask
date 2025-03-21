@@ -8,7 +8,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
 
 /**
  * This form is used to edit and validate the general settings of MumieTasks
@@ -36,13 +37,16 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $org_item;
     private $worksheet_item;
     private $dropzone_item;
-    private $problem_selector_item;
+    private $problem_selector_url_item;
+    private $user_id_item;
+    private $user_token_item;
+    private $user_lang_item;
 
     private $server_options = array();
 
     public function setFields($is_creation_mode = false)
     {
-        global $ilCtrl;
+        global $ilCtrl, $ilUser;
 
         $this->title_item = new ilTextInputGUI($this->i18N->globalTxt('title'), 'title');
         $this->title_item->setRequired(true);
@@ -113,8 +117,17 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->org_item = new ilHiddenInputGUI('mumie_org');
         $this->addItem($this->org_item);
 
-        $this->problem_selector_item = new ilHiddenInputGUI('problem_selector');
-        $this->addItem($this->problem_selector_item);
+        $this->problem_selector_url_item = new ilHiddenInputGUI('problem_selector_url');
+        $this->addItem($this->problem_selector_url_item);
+
+        $this->user_id_item = new ilHiddenInputGUI('user_id');
+        $this->addItem($this->user_id_item);
+
+        $this->user_token_item = new ilHiddenInputGUI('user_token');
+        $this->addItem($this->user_token_item);
+
+        $this->user_lang_item = new ilHiddenInputGUI('user_lang');
+        $this->addItem($this->user_lang_item);
 
         $this->worksheet_item = new ilHiddenInputGUI('xmum_worksheet');
         $this->addItem($this->worksheet_item);
@@ -209,12 +222,19 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         }
 
         include_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
-        $this->org_item->setValue(ilMumieTaskAdminSettings::getInstance()->getOrg());
+        include_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/token/token_service.php");
+        $userx = ilMumieTaskUserService::get_problem_selector_user($ilUser->getId());
+        $adminSettings = ilMumieTaskAdminSettings::getInstance();
+        $sso_token = token_service::generate_sso_token($userx);
+
+        $this->org_item->setValue($adminSettings->getOrg());
         if ($this->language_item->getValue() == null) {
             $this->language_item->setValue($ilUser->getLanguage());
         }
-        $this->problem_selector_item->setValue(ilMumieTaskAdminSettings::getInstance()
-        ->getProblemSelectorUrl());
+        $this->problem_selector_url_item->setValue($adminSettings->getProblemSelectorUrl());
+        $this->user_id_item->setValue($userx->get_mumie_id());
+        $this->user_token_item->setValue($sso_token->get_token());
+        $this->user_lang_item->setValue($ilUser->getLanguage());
     }
 
     /**

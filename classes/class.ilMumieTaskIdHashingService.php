@@ -115,4 +115,13 @@ class ilMumieTaskIdHashingService
     {
         return $this->hash;
     }
+
+    /**
+     * Transforms the deadline(Unix Timestamp) from seconds to milliseconds.
+     * @param int $deadline timestamp in s
+     * @return int timestamp in ms
+     */
+    function auth_mumie_get_deadline_in_ms($deadline) {
+        return $deadline * 1000;
+    }
 }
