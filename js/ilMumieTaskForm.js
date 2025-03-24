@@ -433,6 +433,7 @@
             const worksheetElement = document.getElementById("xmum_worksheet");
             return {
                 setWorksheet: function(worksheet) {
+                    console.log('will set worksheet data to worksheetElement', worksheet);
                     if (worksheet) {
                         worksheetElement.setAttribute("value", JSON.stringify(worksheet));
                     } else {
