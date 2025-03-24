@@ -166,26 +166,26 @@
             }
 
 
-            function openWithPost(url, data) {
-                let form = document.createElement("form");
-                form.method = "POST";
-                form.action = url;
-                form.target = "_blank";
-
-                for (let key in data) {
-                    if (data.hasOwnProperty(key)) {
-                        let input = document.createElement("input");
-                        input.type = "hidden";
-                        input.name = key;
-                        input.value = data[key];
-                        form.appendChild(input);
-                    }
-                }
-
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-            }
+            // function openWithPost(url, data) {
+            //     let form = document.createElement("form");
+            //     form.method = "POST";
+            //     form.action = url;
+            //     form.target = "_blank";
+            //
+            //     for (let key in data) {
+            //         if (data.hasOwnProperty(key)) {
+            //             let input = document.createElement("input");
+            //             input.type = "hidden";
+            //             input.name = key;
+            //             input.value = data[key];
+            //             form.appendChild(input);
+            //         }
+            //     }
+            //
+            //     document.body.appendChild(form);
+            //     form.submit();
+            //     document.body.removeChild(form);
+            // }
 
 
             /**
@@ -200,17 +200,32 @@
                 console.log('useSSO: ', lmsSelectorUrl, ' - ', selectedServer, useSSO);
 
                 if (useSSO) {
-
-                    openWithPost(lmsSelectorUrl + '/api/sso/problem-selector', {
-                        userId: user_id,
-                        token: user_token,
-                        uiLang: user_lang,
-                        org: mumieOrg,
-                        serverUrl: encodeURIComponent(serverController.getSelectedServer().url_prefix),
-                        problemLang: langController.getSelectedLanguage(),
-                        origin: encodeURIComponent(window.location.origin),
-                        gradingType: 'graded'
-                    });
+                    window.open('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/openProblemSelector.php?' +
+                        'org=' +
+                        mumieOrg +
+                        '&serverurl=' +
+                        encodeURIComponent(serverController.getSelectedServer().url_prefix) +
+                        '&problemlang=' +
+                        langController.getSelectedLanguage() +
+                        '&origin=' + encodeURIComponent(window.location.origin) +
+                        '&gradingtype=' + gradingType +
+                        '&contextid=' + contextId +
+                        '&lmsSelectorUrl=' + lmsSelectorUrl +
+                        '&user_id=' + user_id +
+                        '&user_token=' + user_token +
+                        '&user_lang=' + user_lang +
+                        (selection ? '&selection=' + selection : ''));
+                    //
+                    // openWithPost(lmsSelectorUrl + '/api/sso/problem-selector', {
+                    //     userId: user_id,
+                    //     token: user_token,
+                    //     uiLang: user_lang,
+                    //     org: mumieOrg,
+                    //     serverUrl: encodeURIComponent(serverController.getSelectedServer().url_prefix),
+                    //     problemLang: langController.getSelectedLanguage(),
+                    //     origin: encodeURIComponent(window.location.origin),
+                    //     gradingType: 'graded'
+                    // });
 
                     // openWithPost();
                     // return  '/auth/mumie/problem_selector.php?' +
