@@ -121,6 +121,7 @@
              * @param {string} message
              */
             function sendSuccess(message = '') {
+                console.log('sendSuccess: ', message);
                 sendResponse({
                     success: true,
                     message: message
