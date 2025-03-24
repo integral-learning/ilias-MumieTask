@@ -146,11 +146,12 @@
                 window.addEventListener('message', (event) => {
                     event.preventDefault();
 
-                    console.log('Received message: ',event, event.origin !== lmsSelectorUrl);
+
                     if (event.origin !== lmsSelectorUrl) {
                         return;
                     }
                     const importObj = JSON.parse(event.data);
+                    console.log('Received message: ', importObj);
                     const isGraded = importObj.isGraded !== false;
                     const worksheet = importObj.worksheet ?? null;
                     try {
@@ -258,6 +259,7 @@
                         (selection ? '&selection=' + selection : '');
                     problemSelectorWindow = window.open(withoutSSO, '_blank');
                 }
+
             }
 
 
