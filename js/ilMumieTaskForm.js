@@ -156,10 +156,15 @@
                     const worksheet = importObj.worksheet ?? null;
                     try {
                         langController.setLanguage(importObj.language);
+                        console.log('Received message: ',' 001');
                         courseController.setCourse(importObj.path_to_coursefile);
+                        console.log('Received message: ',' 002');
                         taskController.setSelection(importObj.link, importObj.name);
+                        console.log('Received message: ',' 003');
                         worksheetController.setWorksheet(worksheet);
+                        console.log('Received message: ',' 004');
                         taskController.setIsGraded(isGraded);
+                        console.log('Received message: ',' 005');
                         sendSuccess();
                         window.focus();
                         // displayProblemSelectedMessage();
