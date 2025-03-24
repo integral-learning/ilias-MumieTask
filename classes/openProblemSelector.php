@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -29,10 +30,9 @@
  *
  * @return string The HTML representation of the hidden input field for the selection value
  */
-function selection_input( ? string $selection) : string
+function selection_input(?string $selection): string
 {
-    if ($selection === null)
-    {
+    if ($selection === null) {
         return '';
     }
     return "<input type='hidden' name='selection' id='selection' type ='text' value='{$selection}'/>";
@@ -51,17 +51,24 @@ function selection_input( ? string $selection) : string
  * @return string The HTML representation of the problem selector form
  * @throws \dml_exception
  */
-function open_problem_selector(string $user_id, string $user_token, string $user_lang, string $serverurl,
-string $gradingtype, string $problemlang, string $origin, string $selection = null,
-string $lmsSelectorUrl) :      string
-    {
-        //     $problemselectorurl = get_config('auth_mumie', 'mumie_problem_selector_url');
-        //     $mumieuser = mumie_user_service::get_problem_selector_user($user->id);
-        //     $ssotoken = token_service::generate_sso_token($mumieuser);
-        //     $org = get_config("auth_mumie", "mumie_org");
-        $selectioninput = selection_input($selection);
+function open_problem_selector(
+    string $user_id,
+    string $user_token,
+    string $user_lang,
+    string $serverurl,
+    string $gradingtype,
+    string $problemlang,
+    string $origin,
+    string $selection = null,
+    string $lmsSelectorUrl
+): string {
+    //     $problemselectorurl = get_config('auth_mumie', 'mumie_problem_selector_url');
+    //     $mumieuser = mumie_user_service::get_problem_selector_user($user->id);
+    //     $ssotoken = token_service::generate_sso_token($mumieuser);
+    //     $org = get_config("auth_mumie", "mumie_org");
+    $selectioninput = selection_input($selection);
 
-        return "
+    return "
             <form id='mumie_problem_selector_form' name='mumie_problem_selector_form'
             method='post' action='{$lmsSelectorUrl}/api/sso/problem-selector'>
                 <input type='hidden' name='userId' id='userId' type ='text' value='{$user_id}'/>
@@ -78,26 +85,25 @@ string $lmsSelectorUrl) :      string
             document.forms['mumie_problem_selector_form'].submit();
             </script>
         ";
-    }
+}
 
-    $queries = array();
-    parse_str($_SERVER['QUERY_STRING'], $queries);
+$queries = array();
+parse_str($_SERVER['QUERY_STRING'], $queries);
 
-    $serverurl = $queries['serverurl'];
-    $gradingtype = $queries['gradingtype'];
-    $problemlang = $queries['problemlang'];
-    $origin = $queries['origin'];
-    $contextid = $queries['contextid'];
-    $selection = $queries['selection'];
-    $lmsSelectorUrl = $queries['lmsSelectorUrl'];
-    $user_id = $queries['user_id'];
-    $user_token = $queries['user_token'];
-    $user_lang = $queries['user_lang'];
+$serverurl = $queries['serverurl'];
+$gradingtype = $queries['gradingtype'];
+$problemlang = $queries['problemlang'];
+$origin = $queries['origin'];
+$contextid = $queries['contextid'];
+$selection = $queries['selection'];
+$lmsSelectorUrl = $queries['lmsSelectorUrl'];
+$user_id = $queries['user_id'];
+$user_token = $queries['user_token'];
+$user_lang = $queries['user_lang'];
 
 
 
-    // TODO
-    // $context = \context::instance_by_id($contextid);
-    // require_capability('auth/mumie:ssotoproblemselector', $context);
-    echo open_problem_selector($user_id, $user_token, $user_lang, $serverurl, $gradingtype, $problemlang, $origin, $selection, $lmsSelectorUrl);
-
+// TODO
+// $context = \context::instance_by_id($contextid);
+// require_capability('auth/mumie:ssotoproblemselector', $context);
+echo open_problem_selector($user_id, $user_token, $user_lang, $serverurl, $gradingtype, $problemlang, $origin, $selection, $lmsSelectorUrl);
