@@ -144,6 +144,8 @@
             function addMessageListener() {
                 window.addEventListener('message', (event) => {
                     event.preventDefault();
+
+                    console.log('Received message: ',event, event.origin !== lmsSelectorUrl);
                     if (event.origin !== lmsSelectorUrl) {
                         return;
                     }
@@ -197,7 +199,6 @@
                 const selection = taskController.getDelocalizedTaskLink();
                 const selectedServer = serverController.getSelectedServer().url_prefix;
                 const useSSO = shouldUseSSO(lmsSelectorUrl, selectedServer);
-                console.log('useSSO: ', lmsSelectorUrl, ' - ', selectedServer, useSSO);
 
                 if (useSSO) {
                     window.open('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/openProblemSelector.php?' +
