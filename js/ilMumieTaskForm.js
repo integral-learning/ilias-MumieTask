@@ -339,6 +339,7 @@
 
         const taskController = (function() {
             const taskSelectionInput = document.getElementsByName("taskurl")[0];
+            console.log('taskSelectionInput base', taskSelectionInput);
             const nameElem = document.getElementById("title");
             const taskDisplayElement = document.getElementById("xmum_display_task");
             const isGradedElem = document.getElementById('id_mumie_isgraded');
@@ -368,7 +369,8 @@
             function updateTaskUri(link, language) {
                 console.log('updateTaskUri #1', link, language);
                 const localizedLink = localizeLink(link, language);
-                console.log('updateTaskUri #2');
+                console.log('updateTaskUri #2', localizedLink);
+                console.log('updateTaskUri #2_1', taskSelectionInput);
                 taskSelectionInput.value = localizedLink;
                 console.log('updateTaskUri #3', link, language);
                 updateTaskDisplayElement(localizedLink);
