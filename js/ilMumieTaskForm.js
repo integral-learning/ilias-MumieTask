@@ -408,9 +408,13 @@
                     }
                 },
                 setSelection: function(link, name) {
+                    console.log('setSelection a', link, name);
                     updateTaskUri(link);
+                    console.log('setSelection b', link, name);
                     updateTaskDisplayElement(link);
+                    console.log('setSelection c', link, name);
                     updateName(name);
+                    console.log('setSelection d', link, name);
                 },
                 setIsGraded: function(isGraded) {
                     if (isGraded === null) {
