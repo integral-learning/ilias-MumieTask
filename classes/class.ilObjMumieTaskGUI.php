@@ -213,7 +213,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $lng = $DIC->language();
 
         $form = new ilMumieTaskFormGUI();
-        $form->setFields();
+        $form->setFields($this->object->getTaskurl());
         $form->setTitle($this->i18N->txt('obj_xmum'));
         $form->addCommandButton("submitMumieTask", $this->i18N->globalTxt('save'));
         $form->addCommandButton($this->object->isDummy() ? 'cancelDummy' : 'viewContent', $this->i18N->globalTxt('cancel'));

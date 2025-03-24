@@ -46,7 +46,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     private $server_options = array();
 
-    public function setFields($is_creation_mode = false)
+    public function setFields($taskurl, $is_creation_mode = false)
     {
         global $ilCtrl, $ilUser;
 
@@ -100,6 +100,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->addItem($this->problem_display_item);
 
         $this->problem_item = new ilHiddenInputGUI('xmum_task');
+        $this->problem_item.setValue($taskurl);
         $this->addItem($this->problem_item);
 
         $problem_selector_button = new ilMumieTaskFormButtonGUI("", "xmum_prb_sel");

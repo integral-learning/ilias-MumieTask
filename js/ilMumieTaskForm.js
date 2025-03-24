@@ -151,7 +151,49 @@
                         return;
                     }
                     const importObj = JSON.parse(event.data);
-                    console.log('Received message: ', importObj);
+
+                    /*
+                    {
+    "link": "worksheet_26267",
+    "path_to_coursefile": "pool",
+    "language": "de",
+    "name": "Komplexe Zahlen mit Deadline",
+    "server": "https://lemon.mumie.net/api",
+    "isGraded": true,
+    "course": "Problem Pool",
+    "worksheet": {
+        "id": 26267,
+        "template": {
+            "id": 26268,
+            "documents": [
+                {
+                    "path": "content/pool/il/g_prb_complex_numbers.meta.xml"
+                }
+            ],
+            "title": {
+                "de": "Komplexe Zahlen mit Deadline",
+                "en": "Complex numbers with Deadline"
+            }
+        },
+        "configuration": {
+            "id": 18136,
+            "weightedDocuments": [
+                {
+                    "weight": 1,
+                    "path": "content/pool/il/g_prb_complex_numbers.meta.xml"
+                }
+            ],
+            "correction": {
+                "allowNewDataGenerationNTimes": -1,
+                "allowTriggerCorrectionNTimes": 0,
+                "correctorType": "AFTER_DEADLINE",
+                "canUserViewCorrection": true
+            },
+            "createdDate": 1706523562363
+        }
+    }
+}
+                    * */
                     const isGraded = importObj.isGraded !== false;
                     const worksheet = importObj.worksheet ?? null;
                     try {
@@ -338,13 +380,14 @@
         })();
 
         const taskController = (function() {
-            const taskSelectionInput = document.getElementsByName("taskurl")[0];
-            console.log('taskSelectionInput base', taskSelectionInput);
+            const taskSelectionInput = document.getElementById("xmum_task");
             const nameElem = document.getElementById("title");
             const taskDisplayElement = document.getElementById("xmum_display_task");
             const isGradedElem = document.getElementById('id_mumie_isgraded');
             const LANG_REQUEST_PARAM_PREFIX = "?lang=";
-            const task_element = document.getElementById("xmum_task");
+            // const task_element = document.getElementById("xmum_task");
+            console.log('taskSelectionInput base', taskSelectionInput);
+            // console.log('task_element base', task_element);
 
             console.log('updateTaskUri', document.getElementsByName("taskurl"));
             /**
@@ -410,7 +453,7 @@
             return {
                 init: function() {
                     if (!isDummyTask()) {
-                        updateTaskDisplayElement(task_element.value)
+                        updateTaskDisplayElement(taskSelectionInput.value)
                     }
                 },
                 setSelection: function(link, name) {
