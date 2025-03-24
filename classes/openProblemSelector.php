@@ -108,5 +108,15 @@ $org = $queries['org'];
 // TODO
 // $context = \context::instance_by_id($contextid);
 // require_capability('auth/mumie:ssotoproblemselector', $context);
-echo open_problem_selector($user_id, $user_token, $user_lang, $serverurl, $gradingtype,
-$problemlang, $origin, $selection, $org, $lmsSelectorUrl);
+echo open_problem_selector(
+    $user_id,
+    $user_token,
+    $user_lang,
+    $serverurl,
+    $gradingtype,
+    $problemlang,
+    $origin,
+    $selection,
+    $org,
+    $lmsSelectorUrl
+);
