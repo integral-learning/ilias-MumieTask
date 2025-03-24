@@ -52,8 +52,7 @@ function selection_input( ? string $selection) : string
  * @throws \dml_exception
  */
 function open_problem_selector(string $user_id, string $user_token, string $user_lang, string $serverurl,
-string $gradingtype, string $problemlang, string $origin, string $selection = null,
-string $lmsSelectorUrl) :      string
+string $gradingtype, string $problemlang, string $origin, string $selection = null, string $org, string $lmsSelectorUrl) :      string
     {
         //     $problemselectorurl = get_config('auth_mumie', 'mumie_problem_selector_url');
         //     $mumieuser = mumie_user_service::get_problem_selector_user($user->id);
@@ -93,11 +92,13 @@ string $lmsSelectorUrl) :      string
     $user_id = $queries['user_id'];
     $user_token = $queries['user_token'];
     $user_lang = $queries['user_lang'];
+    $org = $queries['org'];
 
 
 
     // TODO
     // $context = \context::instance_by_id($contextid);
     // require_capability('auth/mumie:ssotoproblemselector', $context);
-    echo open_problem_selector($user_id, $user_token, $user_lang, $serverurl, $gradingtype, $problemlang, $origin, $selection, $lmsSelectorUrl);
+    echo open_problem_selector($user_id, $user_token, $user_lang, $serverurl, $gradingtype,
+    $problemlang, $origin, $selection, $org, $lmsSelectorUrl);
 
