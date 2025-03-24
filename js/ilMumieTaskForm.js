@@ -166,11 +166,33 @@
             }
 
 
+            function openWithPost(url, data) {
+                let form = document.createElement("form");
+                form.method = "POST";
+                form.action = url;
+                form.target = "_blank";
+
+                for (let key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        let input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = key;
+                        input.value = data[key];
+                        form.appendChild(input);
+                    }
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            }
+
+
             /**
              * Builds the URL to the Problem Selector
              * @returns {string} URL to the Problem Selector
              */
-            function buildURL() {
+            function openProblemSelector() {
                 const gradingType = taskController.getGradingType();
                 const selection = taskController.getDelocalizedTaskLink();
                 const selectedServer = serverController.getSelectedServer().url_prefix;
@@ -178,32 +200,47 @@
                 console.log('useSSO: ', lmsSelectorUrl, ' - ', selectedServer, useSSO);
 
                 if (useSSO) {
-                    return  '/auth/mumie/problem_selector.php?' +
+
+                    openWithPost(lmsSelectorUrl + '/api/sso/problem-selector', {
+                        userId: user_id,
+                        token: user_token,
+                        uiLang: user_lang,
+                        org: mumieOrg,
+                        serverUrl: encodeURIComponent(serverController.getSelectedServer().url_prefix),
+                        problemLang: langController.getSelectedLanguage(),
+                        origin: encodeURIComponent(window.location.origin),
+                        gradingType: 'graded'
+                    });
+
+                    // openWithPost();
+                    // return  '/auth/mumie/problem_selector.php?' +
+                    //     'org=' +
+                    //     mumieOrg +
+                    //     '&serverurl=' +
+                    //     encodeURIComponent(selectedServer) +
+                    //     '&problemlang=' +
+                    //     langController.getSelectedLanguage() +
+                    //     '&origin=' + encodeURIComponent(window.location.origin) +
+                    //     '&gradingtype=' + gradingType +
+                    //     '&contextid=' + contextId +
+                    //     (selection ? '&selection=' + selection : '');
+                } else {
+                    const withoutSSO = lmsSelectorUrl +
+                        '/lms-problem-selector?' +
                         'org=' +
                         mumieOrg +
-                        '&serverurl=' +
+                        '&serverUrl=' +
                         encodeURIComponent(selectedServer) +
-                        '&problemlang=' +
+                        '&problemLang=' +
                         langController.getSelectedLanguage() +
                         '&origin=' + encodeURIComponent(window.location.origin) +
-                        '&gradingtype=' + gradingType +
-                        '&contextid=' + contextId +
+                        '&uiLang=' + user_lang +
+                        '&gradingType=' + gradingType +
+                        '&multiCourse=true' +
+                        '&worksheet=true' +
                         (selection ? '&selection=' + selection : '');
+                    problemSelectorWindow = window.open(withoutSSO, '_blank');
                 }
-                return lmsSelectorUrl +
-                    '/lms-problem-selector?' +
-                    'org=' +
-                    mumieOrg +
-                    '&serverUrl=' +
-                    encodeURIComponent(selectedServer) +
-                    '&problemLang=' +
-                    langController.getSelectedLanguage() +
-                    '&origin=' + encodeURIComponent(window.location.origin) +
-                    '&uiLang=' + systemLanguage +
-                    '&gradingType=' + gradingType +
-                    '&multiCourse=true' +
-                    '&worksheet=true' +
-                    (selection ? '&selection=' + selection : '');
             }
 
 
@@ -224,40 +261,7 @@
                 init: function() {
                     problemSelectorButton.onclick = function(e) {
                         e.preventDefault();
-                        problemSelectorButton.onclick = function() {
-                            problemSelectorWindow = window.open(buildURL(), '_blank');
-                        };
-                        // function openWithPost(url, data) {
-                        //     let form = document.createElement("form");
-                        //     form.method = "POST";
-                        //     form.action = url;
-                        //     form.target = "_blank";
-                        //
-                        //     for (let key in data) {
-                        //         if (data.hasOwnProperty(key)) {
-                        //             let input = document.createElement("input");
-                        //             input.type = "hidden";
-                        //             input.name = key;
-                        //             input.value = data[key];
-                        //             form.appendChild(input);
-                        //         }
-                        //     }
-                        //
-                        //     document.body.appendChild(form);
-                        //     form.submit();
-                        //     document.body.removeChild(form);
-                        // }
-                        //
-                        // openWithPost(lmsSelectorUrl + '/api/sso/problem-selector', {
-                        //     userId: user_id,
-                        //     token: user_token,
-                        //     uiLang: user_lang,
-                        //     org: mumieOrg,
-                        //     serverUrl: encodeURIComponent(serverController.getSelectedServer().url_prefix),
-                        //     problemLang: langController.getSelectedLanguage(),
-                        //     origin: encodeURIComponent(window.location.origin),
-                        //     gradingType: 'graded'
-                        // });
+                        openProblemSelector()
 
 
 
