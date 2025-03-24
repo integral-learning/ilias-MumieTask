@@ -100,7 +100,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->addItem($this->problem_display_item);
 
         $this->problem_item = new ilHiddenInputGUI('xmum_task');
-        $this->problem_item.setValue($taskurl);
+        $this->problem_item->setValue($taskurl);
         $this->addItem($this->problem_item);
 
         $problem_selector_button = new ilMumieTaskFormButtonGUI("", "xmum_prb_sel");
