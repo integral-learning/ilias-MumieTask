@@ -75,7 +75,7 @@ function open_problem_selector(
                 <input type='hidden' name='userId' id='userId' type ='text' value='{$user_id}'/>
                 <input type='hidden' name='token' id='token' type ='text' value='{$user_token}'/>
                 <input type='hidden' name='org' id='org' type ='text' value='{$org}'/>
-                <input type='hidden' name='uiLang' id='uiLang' type ='text' value='{$user->lang}'/>
+                <input type='hidden' name='uiLang' id='uiLang' type ='text' value='{$user_lang}'/>
                 <input type='hidden' name='serverUrl' id='serverUrl' type ='text' value='{$serverurl}'/>
                 <input type='hidden' name='gradingType' id='gradingType' type ='text' value='{$gradingtype}'/>
                 <input type='hidden' name='problemLang' id='problemLang' type ='text' value='{$problemlang}'/>
