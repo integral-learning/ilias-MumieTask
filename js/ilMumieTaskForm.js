@@ -366,9 +366,13 @@
              * @param {string} language
              */
             function updateTaskUri(link, language) {
+                console.log('updateTaskUri #1', link, language);
                 const localizedLink = localizeLink(link, language);
+                console.log('updateTaskUri #2');
                 taskSelectionInput.value = localizedLink;
+                console.log('updateTaskUri #3', link, language);
                 updateTaskDisplayElement(localizedLink);
+                console.log('updateTaskUri #4', link, language);
             }
 
             /**
