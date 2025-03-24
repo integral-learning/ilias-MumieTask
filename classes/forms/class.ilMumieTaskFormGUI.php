@@ -41,6 +41,8 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $user_id_item;
     private $user_token_item;
     private $user_lang_item;
+    private $context_id_item;
+    private $id_mumie_isgraded_item;
 
     private $server_options = array();
 
@@ -128,6 +130,12 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         $this->user_lang_item = new ilHiddenInputGUI('user_lang');
         $this->addItem($this->user_lang_item);
+
+        $this->context_id_item = new ilHiddenInputGUI('contextId');
+        $this->addItem($this->context_id_item);
+
+        $this->id_mumie_isgraded_item = new ilHiddenInputGUI('id_mumie_isgraded');
+        $this->addItem($this->id_mumie_isgraded_item);
 
         $this->worksheet_item = new ilHiddenInputGUI('xmum_worksheet');
         $this->addItem($this->worksheet_item);
@@ -235,6 +243,8 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->user_id_item->setValue($userx->get_mumie_id());
         $this->user_token_item->setValue($sso_token->get_token());
         $this->user_lang_item->setValue($ilUser->getLanguage());
+        $this->context_id_item->setValue(4); // TODO
+        $this->id_mumie_isgraded_item->setValue('1'); // TODO
     }
 
     /**

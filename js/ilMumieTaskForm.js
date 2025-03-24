@@ -98,6 +98,7 @@
             const user_id = document.getElementById('user_id').getAttribute('value');
             const user_token = document.getElementById('user_token').getAttribute('value');
             const user_lang = document.getElementById('user_lang').getAttribute('value');
+            const contextId = document.getElementById('contextId').getAttribute('value');
             // const selectedServer = serverController.getSelectedServer().url_prefix;
             // const useSSO = shouldUseSSO(lmsSelectorUrl, selectedServer);
 
@@ -147,19 +148,64 @@
                         return;
                     }
                     const importObj = JSON.parse(event.data);
+                    const isGraded = importObj.isGraded !== false;
                     const worksheet = importObj.worksheet ?? null;
                     try {
                         langController.setLanguage(importObj.language);
-                        courseController.setCourse(importObj.path_to_coursefile)
+                        courseController.setCourse(importObj.path_to_coursefile);
                         taskController.setSelection(importObj.link, importObj.name);
                         worksheetController.setWorksheet(worksheet);
+                        taskController.setIsGraded(isGraded);
                         sendSuccess();
                         window.focus();
+                        // displayProblemSelectedMessage();
                     } catch (error) {
                         sendFailure(error.message);
                     }
                 }, false);
             }
+
+
+            /**
+             * Builds the URL to the Problem Selector
+             * @returns {string} URL to the Problem Selector
+             */
+            function buildURL() {
+                const gradingType = taskController.getGradingType();
+                const selection = taskController.getDelocalizedTaskLink();
+                const selectedServer = serverController.getSelectedServer().url_prefix;
+                const useSSO = shouldUseSSO(lmsSelectorUrl, selectedServer);
+                console.log('useSSO: ', lmsSelectorUrl, ' - ', selectedServer, useSSO);
+
+                if (useSSO) {
+                    return  '/auth/mumie/problem_selector.php?' +
+                        'org=' +
+                        mumieOrg +
+                        '&serverurl=' +
+                        encodeURIComponent(selectedServer) +
+                        '&problemlang=' +
+                        langController.getSelectedLanguage() +
+                        '&origin=' + encodeURIComponent(window.location.origin) +
+                        '&gradingtype=' + gradingType +
+                        '&contextid=' + contextId +
+                        (selection ? '&selection=' + selection : '');
+                }
+                return lmsSelectorUrl +
+                    '/lms-problem-selector?' +
+                    'org=' +
+                    mumieOrg +
+                    '&serverUrl=' +
+                    encodeURIComponent(selectedServer) +
+                    '&problemLang=' +
+                    langController.getSelectedLanguage() +
+                    '&origin=' + encodeURIComponent(window.location.origin) +
+                    '&uiLang=' + systemLanguage +
+                    '&gradingType=' + gradingType +
+                    '&multiCourse=true' +
+                    '&worksheet=true' +
+                    (selection ? '&selection=' + selection : '');
+            }
+
 
             /**
              * Determines whether the Single Sign-On (SSO) should be used when opening the Problem Selector.
@@ -177,43 +223,41 @@
             return {
                 init: function() {
                     problemSelectorButton.onclick = function(e) {
-
-
                         e.preventDefault();
-
-
-
-                        function openWithPost(url, data) {
-                            let form = document.createElement("form");
-                            form.method = "POST";
-                            form.action = url;
-                            form.target = "_blank";
-
-                            for (let key in data) {
-                                if (data.hasOwnProperty(key)) {
-                                    let input = document.createElement("input");
-                                    input.type = "hidden";
-                                    input.name = key;
-                                    input.value = data[key];
-                                    form.appendChild(input);
-                                }
-                            }
-
-                            document.body.appendChild(form);
-                            form.submit();
-                            document.body.removeChild(form);
-                        }
-
-                        openWithPost(lmsSelectorUrl + '/api/sso/problem-selector', {
-                            userId: user_id,
-                            token: user_token,
-                            uiLang: user_lang,
-                            org: mumieOrg,
-                            serverUrl: encodeURIComponent(serverController.getSelectedServer().url_prefix),
-                            problemLang: langController.getSelectedLanguage(),
-                            origin: encodeURIComponent(window.location.origin),
-                            gradingType: 'graded'
-                        });
+                        problemSelectorButton.onclick = function() {
+                            problemSelectorWindow = window.open(buildURL(), '_blank');
+                        };
+                        // function openWithPost(url, data) {
+                        //     let form = document.createElement("form");
+                        //     form.method = "POST";
+                        //     form.action = url;
+                        //     form.target = "_blank";
+                        //
+                        //     for (let key in data) {
+                        //         if (data.hasOwnProperty(key)) {
+                        //             let input = document.createElement("input");
+                        //             input.type = "hidden";
+                        //             input.name = key;
+                        //             input.value = data[key];
+                        //             form.appendChild(input);
+                        //         }
+                        //     }
+                        //
+                        //     document.body.appendChild(form);
+                        //     form.submit();
+                        //     document.body.removeChild(form);
+                        // }
+                        //
+                        // openWithPost(lmsSelectorUrl + '/api/sso/problem-selector', {
+                        //     userId: user_id,
+                        //     token: user_token,
+                        //     uiLang: user_lang,
+                        //     org: mumieOrg,
+                        //     serverUrl: encodeURIComponent(serverController.getSelectedServer().url_prefix),
+                        //     problemLang: langController.getSelectedLanguage(),
+                        //     origin: encodeURIComponent(window.location.origin),
+                        //     gradingType: 'graded'
+                        // });
 
 
 
@@ -236,17 +280,20 @@
                         // );
                     };
 
+                    addMessageListener();
+
                     multiProblemSelectorButton.onclick = function(e) {
                         e.preventDefault();
                         problemSelectorWindow = window.open(
                             lmsSelectorUrl +
                             '/lms-problem-selector?' +
                             "serverUrl=" +
-                            encodeURIComponent(serverController.getSelectedServer().url_prefix),
+                            encodeURIComponent(serverController.getSelectedServer().urlprefix) +
+                            '&gradingType=all',
                             "_blank",
                             'toolbar=0,location=0,menubar=0'
                         );
-                    }
+                    };
 
                     window.onclose = function() {
                         sendSuccess();
@@ -255,8 +302,6 @@
                     window.addEventListener("beforeunload", function() {
                         sendSuccess();
                     }, false);
-
-                    addMessageListener();
                 },
                 disable: function() {
                     problemSelectorButton.disabled = true;
@@ -265,10 +310,14 @@
         })();
 
         const taskController = (function() {
-            const task_element = document.getElementById("xmum_task");
-            const display_task_element = document.getElementById("xmum_display_task");
+            const taskSelectionInput = document.getElementsByName("taskurl")[0];
             const nameElem = document.getElementById("title");
+            const taskDisplayElement = document.getElementById("xmum_display_task");
+            const isGradedElem = document.getElementById('id_mumie_isgraded');
+            const LANG_REQUEST_PARAM_PREFIX = "?lang=";
+            const task_element = document.getElementById("xmum_task");
 
+            console.log('updateTaskUri', document.getElementsByName("taskurl"));
             /**
              * Update the activity's name in the input field
              */
@@ -280,15 +329,18 @@
              * @param {string} uri
              */
             function updateTaskDisplayElement(uri) {
-                display_task_element.value = uri;
+                taskDisplayElement.value = uri;
             }
 
             /**
              * Update task uri
-             * @param {string} uri
+             * @param {string} link
+             * @param {string} language
              */
-            function updateTaskUri(uri) {
-                task_element.value = uri;
+            function updateTaskUri(link, language) {
+                const localizedLink = localizeLink(link, language);
+                taskSelectionInput.value = localizedLink;
+                updateTaskDisplayElement(localizedLink);
             }
 
             /**
@@ -297,6 +349,28 @@
              */
             function isDummyTask() {
                 return nameElem.value === '-- Empty MumieTask --'
+            }
+
+            /**
+             * Add lang request param to link
+             * @param {string} link
+             * @param {string} language
+             * @returns {string} Link with lang request param
+             */
+            function localizeLink(link, language) {
+                return link + LANG_REQUEST_PARAM_PREFIX + language;
+            }
+
+            /**
+             * Remove lang request param from link
+             * @param {string} link Link that may have lang request param
+             * @returns {string} Link without lang request param
+             */
+            function delocalizeLink(link) {
+                if (link && link.includes(LANG_REQUEST_PARAM_PREFIX)) {
+                    return link.split(LANG_REQUEST_PARAM_PREFIX)[0];
+                }
+                return link;
             }
 
             return {
@@ -310,6 +384,25 @@
                     updateTaskDisplayElement(link);
                     updateName(name);
                 },
+                setIsGraded: function(isGraded) {
+                    if (isGraded === null) {
+                        isGradedElem.value = null;
+                    }
+                    isGradedElem.value = isGraded ? '1' : '0';
+                    // updateGradeEditability();
+                },
+                getGradingType: function() {
+                    const isGraded = isGradedElem.value;
+                    if (isGraded === '1') {
+                        return 'graded';
+                    } else if (isGraded === '0') {
+                        return 'ungraded';
+                    }
+                    return 'all';
+                },
+                getDelocalizedTaskLink: function() {
+                    return delocalizeLink(taskSelectionInput?.value);
+                }
             };
         })();
 

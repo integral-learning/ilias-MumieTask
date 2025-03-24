@@ -86,11 +86,11 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                                " WHERE id = " . $ilDB->quote($this->getId(), "integer");
         $result = $ilDB->query($myquery);
         ilLoggerFactory::getLogger('xmum')->info("doRead " . json_encode($myquery));
-        //         ilLoggerFactory::getLogger('xmum')->info("doRead result " . json_encode($result));
+//         ilLoggerFactory::getLogger('xmum')->info("doRead result " . json_encode($result));
         if (!is_null($result)) {
             $rec = $ilDB->fetchAssoc($result);
             ilLoggerFactory::getLogger('xmum')->info("fetchAssoc " . json_encode($rec));
-            if (!is_null($rec)) {
+             if (!is_null($rec)) {
                 $this->setTaskurl($rec['taskurl']);
                 $this->setLaunchcontainer($rec['launchcontainer']);
                 $this->setMumieCourse($rec['mumie_course']);
