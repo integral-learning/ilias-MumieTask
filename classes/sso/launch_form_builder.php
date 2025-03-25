@@ -66,7 +66,7 @@ class launch_form_builder
      */
     private function get_deadline_signature_inputs(int $deadline): string
     {
-        $deadlineinmilliseconds = auth_mumie_get_deadline_in_ms($deadline);
+        $deadlineinmilliseconds = self::auth_mumie_get_deadline_in_ms($deadline);
         $syncidlowercase = strtolower($this->user->get_sync_id());
         $signeddata = \mumie_cryptography_service::sign_data(
             $deadlineinmilliseconds,
@@ -78,12 +78,21 @@ class launch_form_builder
     }
 
     /**
+     * Transforms the deadline(Unix Timestamp) from seconds to milliseconds.
+     * @param int $deadline timestamp in s
+     * @return int timestamp in ms
+     */
+    function auth_mumie_get_deadline_in_ms($deadline) {
+        return $deadline * 1000;
+    }
+
+    /**
      * Get worksheet id from problem path
      * @return string
      */
     private function get_worksheet_id(): string
     {
-        $problempath = auth_mumie_get_problem_path($this->mumietask);
+        $problempath = $this->mumietask->auth_mumie_get_problem_path();
         return str_replace(sso_service::WORKSHEET_PREFIX, "", $problempath);
     }
 
@@ -94,10 +103,11 @@ class launch_form_builder
      */
     public function build(): string
     {
-        $loginurl = auth_mumie_get_login_url($this->mumietask);
-        $org = get_config("auth_mumie", "mumie_org"); /* TODO */
-        $problemurl = auth_mumie_get_problem_url($this->mumietask);
-        $problempath = auth_mumie_get_problem_path($this->mumietask);
+        $loginurl = $this->mumietask->auth_mumie_get_login_url();
+        include_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
+        $org = ilMumieTaskAdminSettings::getInstance()->getOrg();
+        $problemurl = $this->mumietask->auth_mumie_get_problem_url();
+        $problempath = $this->mumietask->auth_mumie_get_problem_path();
 
         return"
             <form id='mumie_sso_form' name='mumie_sso_form' method='post' action='{$loginurl}'>
@@ -106,7 +116,7 @@ class launch_form_builder
                 <input type='hidden' name='org' id='org' type ='text' value='{$org}'/>
                 <input type='hidden' name='resource' id='resource' type ='text' value='{$problemurl}'/>
                 <input type='hidden' name='path' id='path' type ='text' value='{$problempath}'/>
-                <input type='hidden' name='lang' id='lang' type ='text' value='{$this->mumietask->language}'/>
+                <input type='hidden' name='lang' id='lang' type ='text' value='{$this->mumietask->getLanguage()}'/>
                 {$this->deadlinefragment}
             </form>
             <script>

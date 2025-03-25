@@ -31,14 +31,17 @@ class ilMumieTaskUser
 
     public function load(): bool
     {
-        global $DB;
-        $user = $DB->get_record('user', array('id' => $this->moodleid));
+        global $ilDB;
+        $query = "Select * from usr_data where usr_id = " . $ilDB->quote( $this->moodleid,
+        "integer");
+        $result = $ilDB->query($query);
+        $user = $ilDB->fetchAssoc($result);
         if (!$user) {
             return false;
         }
-        $this->firstname = $user->firstname;
-        $this->lastname = $user->lastname;
-        $this->email = $user->email;
+        $this->firstname = $user['firstname'];
+        $this->lastname = $user['lastname'];
+        $this->email = $user['email'];
         return true;
     }
 
@@ -114,5 +117,14 @@ class ilMumieTaskUser
     public function get_email(): string
     {
         return $this->email;
+    }
+
+    /**
+     * Get fill name
+     * @return string
+     */
+    public function get_fullname(): string
+    {
+        return $this->firstname . ' ' . $this->lastname;
     }
 }

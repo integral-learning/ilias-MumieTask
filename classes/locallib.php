@@ -12,7 +12,6 @@ class locallib
       */
     public static function getMumieId($mumietask): string
     {
-        ilLoggerFactory::getLogger('xmum')->info("getMumieId " . $mumietask->getDeadline());
         return self::transformMumieId($mumietask->getTaskurl());
     }
 

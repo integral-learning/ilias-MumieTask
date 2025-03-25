@@ -19,16 +19,16 @@ class ilMumieTaskUserService
 {
     public static function getFullName($user_id)
     {
-        return self::getUser($user_id)->getFullname();
+        return self::get_user_from_moodle_id($user_id)->get_fullname();
     }
 
-    public static function getUser($user_id): ilMumieTaskUser
-    {
-        global $ilDB;
-        $result = $ilDB->query("SELECT * FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
-        $user = $ilDB->fetchAssoc($result);
-        return new ilMumieTaskUser($user['usr_id'], $user["firstname"], $user['lastname']);
-    }
+//     public static function getUser($user_id): ilMumieTaskUser
+//     {
+//         global $ilDB;
+//         $result = $ilDB->query("SELECT * FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
+//         $user = $ilDB->fetchAssoc($result);
+//         return new ilMumieTaskUser($user['usr_id'], $user["firstname"], $user['lastname']);
+//     }
 
     /**
          * Get a ilMumieTaskUser instance for a given moodle user and MUMIE Task
@@ -54,6 +54,16 @@ class ilMumieTaskUserService
     {
         $mumieid = hashing_service::generate_hash_with_lecturer_postfix($moodleid)->get_hash();
         return new ilMumieTaskUser($moodleid, $mumieid);
+    }
+
+    public static function get_user_from_moodle_id($moodleid): ilMumieTaskUser
+    {
+        $user = new ilMumieTaskUser($moodleid, '');
+        $exists = $user->load();
+        if (!$exists) {
+            return null;
+        };
+        return $user;
     }
 
     /**

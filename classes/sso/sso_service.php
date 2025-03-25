@@ -44,7 +44,7 @@ class sso_service
      */
     public static function sso(string $moodleid, ilObjMumieTask $mumietask): void
     {
-        $mumieuser = mumie_user_service::get_user_id($moodleid, $mumietask);
+        $mumieuser = ilMumieTaskUserService::get_user($moodleid, $mumietask);
         $ssotoken = token_service::generate_sso_token($mumieuser);
         $deadline = locallib::mumie_get_effective_duedate($moodleid, $mumietask);
         echo self::get_launch_form($ssotoken, $mumietask, $deadline, $mumieuser);
@@ -63,7 +63,7 @@ class sso_service
     {
         $launchformbuilder = new launch_form_builder($token, $mumietask, $user);
 
-        $problempath = auth_mumie_get_problem_path($mumietask);
+        $problempath = $mumietask->auth_mumie_get_problem_path();
         if (self::include_signed_deadline($problempath, $deadline)) {
             $launchformbuilder->with_deadline($deadline);
         }

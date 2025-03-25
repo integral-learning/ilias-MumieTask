@@ -152,61 +152,14 @@
                     }
                     const importObj = JSON.parse(event.data);
 
-                    /*
-                    {
-    "link": "worksheet_26267",
-    "path_to_coursefile": "pool",
-    "language": "de",
-    "name": "Komplexe Zahlen mit Deadline",
-    "server": "https://lemon.mumie.net/api",
-    "isGraded": true,
-    "course": "Problem Pool",
-    "worksheet": {
-        "id": 26267,
-        "template": {
-            "id": 26268,
-            "documents": [
-                {
-                    "path": "content/pool/il/g_prb_complex_numbers.meta.xml"
-                }
-            ],
-            "title": {
-                "de": "Komplexe Zahlen mit Deadline",
-                "en": "Complex numbers with Deadline"
-            }
-        },
-        "configuration": {
-            "id": 18136,
-            "weightedDocuments": [
-                {
-                    "weight": 1,
-                    "path": "content/pool/il/g_prb_complex_numbers.meta.xml"
-                }
-            ],
-            "correction": {
-                "allowNewDataGenerationNTimes": -1,
-                "allowTriggerCorrectionNTimes": 0,
-                "correctorType": "AFTER_DEADLINE",
-                "canUserViewCorrection": true
-            },
-            "createdDate": 1706523562363
-        }
-    }
-}
-                    * */
                     const isGraded = importObj.isGraded !== false;
                     const worksheet = importObj.worksheet ?? null;
                     try {
                         langController.setLanguage(importObj.language);
-                        console.log('Received message: ',' 001');
                         courseController.setCourse(importObj.path_to_coursefile);
-                        console.log('Received message: ',' 002');
                         taskController.setSelection(importObj.link, importObj.name);
-                        console.log('Received message: ',' 003');
                         worksheetController.setWorksheet(worksheet);
-                        console.log('Received message: ',' 004');
                         taskController.setIsGraded(isGraded);
-                        console.log('Received message: ',' 005');
                         sendSuccess();
                         window.focus();
                         // displayProblemSelectedMessage();
@@ -215,29 +168,6 @@
                     }
                 }, false);
             }
-
-
-            // function openWithPost(url, data) {
-            //     let form = document.createElement("form");
-            //     form.method = "POST";
-            //     form.action = url;
-            //     form.target = "_blank";
-            //
-            //     for (let key in data) {
-            //         if (data.hasOwnProperty(key)) {
-            //             let input = document.createElement("input");
-            //             input.type = "hidden";
-            //             input.name = key;
-            //             input.value = data[key];
-            //             form.appendChild(input);
-            //         }
-            //     }
-            //
-            //     document.body.appendChild(form);
-            //     form.submit();
-            //     document.body.removeChild(form);
-            // }
-
 
             /**
              * Builds the URL to the Problem Selector
@@ -265,30 +195,6 @@
                         '&user_token=' + user_token +
                         '&user_lang=' + user_lang +
                         (selection ? '&selection=' + selection : ''));
-                    //
-                    // openWithPost(lmsSelectorUrl + '/api/sso/problem-selector', {
-                    //     userId: user_id,
-                    //     token: user_token,
-                    //     uiLang: user_lang,
-                    //     org: mumieOrg,
-                    //     serverUrl: encodeURIComponent(serverController.getSelectedServer().url_prefix),
-                    //     problemLang: langController.getSelectedLanguage(),
-                    //     origin: encodeURIComponent(window.location.origin),
-                    //     gradingType: 'graded'
-                    // });
-
-                    // openWithPost();
-                    // return  '/auth/mumie/problem_selector.php?' +
-                    //     'org=' +
-                    //     mumieOrg +
-                    //     '&serverurl=' +
-                    //     encodeURIComponent(selectedServer) +
-                    //     '&problemlang=' +
-                    //     langController.getSelectedLanguage() +
-                    //     '&origin=' + encodeURIComponent(window.location.origin) +
-                    //     '&gradingtype=' + gradingType +
-                    //     '&contextid=' + contextId +
-                    //     (selection ? '&selection=' + selection : '');
                 } else {
                     const withoutSSO = lmsSelectorUrl +
                         '/lms-problem-selector?' +

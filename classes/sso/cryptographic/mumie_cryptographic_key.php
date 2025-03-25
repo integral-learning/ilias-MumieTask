@@ -60,8 +60,12 @@ class mumie_cryptographic_key
      */
     public function create()
     {
-        global $DB;
-        $DB->insert_record(self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE, ["name" => $this->name, "key" => $this->key]);
+        global $ilDB;
+        $query = "Insert into `" . self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE . "` (`id`,`name`,`key`) values ("
+        . $ilDB->nextID(self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE) . ","
+        . $ilDB->quote($this->name, "text") . ","
+        . $ilDB->quote($this->key, "text") . ")";
+         $ilDB->manipulate($query);
     }
 
     /**
@@ -71,8 +75,10 @@ class mumie_cryptographic_key
      */
     public function update()
     {
-        global $DB;
-        $DB->update_record(self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE, ["name" => $this->name, "key" => $this->key, "id" => $this->id]);
+       global $ilDB;
+       $query = "Update " . self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE . "set (name, key) values (" .
+       $this->name . "," . $this->key . ") where id=" . $this->id;
+         $ilDB->manipulate($query);
     }
 
     /**
@@ -83,9 +89,11 @@ class mumie_cryptographic_key
      */
     public static function get_by_name(string $name): ?mumie_cryptographic_key
     {
-        global $DB;
-        $record = $DB->get_record(self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE, ["name" => $name]);
-        return self::from_record($record);
+        global $ilDB;
+        $query = "Select * from " . self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE . " where name = " . $ilDB->quote( $name, "text");
+        $result = $ilDB->query($query);
+        $key = $ilDB->fetchAssoc($result);
+        return self::from_record($key);
     }
 
     /**
@@ -98,8 +106,8 @@ class mumie_cryptographic_key
         if (!$record) {
             return null;
         }
-        $cryptokey = new mumie_cryptographic_key($record->name, $record->key);
-        $cryptokey->set_id($record->id);
+        $cryptokey = new mumie_cryptographic_key($record['name'], $record['key']);
+        $cryptokey->set_id($record['id']);
         return $cryptokey;
     }
 
