@@ -418,7 +418,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function getContent()
     {
         $ssoService = new sso_service();
-        return $ssoService->sso($this->getId(), $this );
+        return $ssoService->sso($this->getId(), $this);
     }
 
     /**
@@ -427,7 +427,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @param stdClass $mumietask
      * @return string path
      */
-    function auth_mumie_get_problem_path() {
+    public function auth_mumie_get_problem_path()
+    {
         return substr($this->taskurl, 0, strpos($this->taskurl, '?lang='));
     }
 
@@ -436,7 +437,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return string login url
      */
-    function auth_mumie_get_problem_url() {
+    public function auth_mumie_get_problem_url()
+    {
         return $this->server . $this->taskurl;
     }
 
@@ -445,7 +447,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return string login url
      */
-    function auth_mumie_get_login_url() {
+    public function auth_mumie_get_login_url()
+    {
         return $this->server . 'public/xapi/auth/sso/login';
     }
 
@@ -454,39 +457,40 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return string logout url
      */
-    function auth_mumie_get_logout_url() {
+    public function auth_mumie_get_logout_url()
+    {
         return $this->server . 'public/xapi/auth/sso/logout';
     }
 
-//     /**
-//      * Get complete url for single sign in to MUMIE server
-//      *
-//      * @return string login url
-//      */
-//     public function getLoginUrl()
-//     {
-//         return ilMumieTaskServer::fromUrl($this->server)->getLoginUrl();
-//     }
-//
-//     /**
-//      * Get complete url for single sign out from MUMIE server
-//      *
-//      * @return string logout url
-//      */
-//     public function getLogoutUrl()
-//     {
-//         return ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
-//     }
+    //     /**
+    //      * Get complete url for single sign in to MUMIE server
+    //      *
+    //      * @return string login url
+    //      */
+    //     public function getLoginUrl()
+    //     {
+    //         return ilMumieTaskServer::fromUrl($this->server)->getLoginUrl();
+    //     }
+    //
+    //     /**
+    //      * Get complete url for single sign out from MUMIE server
+    //      *
+    //      * @return string logout url
+    //      */
+    //     public function getLogoutUrl()
+    //     {
+    //         return ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
+    //     }
 
-//     /**
-//      * Get complete url to the problem on MUMIE server
-//      *
-//      * @return string login url
-//      */
-//     public function getProblemUrl()
-//     {
-//         return $this->server . $this->taskurl . '?lang=' . $this->language;
-//     }
+    //     /**
+    //      * Get complete url to the problem on MUMIE server
+    //      *
+    //      * @return string login url
+    //      */
+    //     public function getProblemUrl()
+    //     {
+    //         return $this->server . $this->taskurl . '?lang=' . $this->language;
+    //     }
 
     public function getGradeSyncURL()
     {

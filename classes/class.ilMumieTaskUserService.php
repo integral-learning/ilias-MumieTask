@@ -22,13 +22,13 @@ class ilMumieTaskUserService
         return self::get_user_from_moodle_id($user_id)->get_fullname();
     }
 
-//     public static function getUser($user_id): ilMumieTaskUser
-//     {
-//         global $ilDB;
-//         $result = $ilDB->query("SELECT * FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
-//         $user = $ilDB->fetchAssoc($result);
-//         return new ilMumieTaskUser($user['usr_id'], $user["firstname"], $user['lastname']);
-//     }
+    //     public static function getUser($user_id): ilMumieTaskUser
+    //     {
+    //         global $ilDB;
+    //         $result = $ilDB->query("SELECT * FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
+    //         $user = $ilDB->fetchAssoc($result);
+    //         return new ilMumieTaskUser($user['usr_id'], $user["firstname"], $user['lastname']);
+    //     }
 
     /**
          * Get a ilMumieTaskUser instance for a given moodle user and MUMIE Task

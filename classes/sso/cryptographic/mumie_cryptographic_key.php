@@ -65,7 +65,7 @@ class mumie_cryptographic_key
         . $ilDB->nextID(self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE) . ","
         . $ilDB->quote($this->name, "text") . ","
         . $ilDB->quote($this->key, "text") . ")";
-         $ilDB->manipulate($query);
+        $ilDB->manipulate($query);
     }
 
     /**
@@ -75,10 +75,10 @@ class mumie_cryptographic_key
      */
     public function update()
     {
-       global $ilDB;
-       $query = "Update " . self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE . "set (name, key) values (" .
-       $this->name . "," . $this->key . ") where id=" . $this->id;
-         $ilDB->manipulate($query);
+        global $ilDB;
+        $query = "Update " . self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE . "set (name, key) values (" .
+        $this->name . "," . $this->key . ") where id=" . $this->id;
+        $ilDB->manipulate($query);
     }
 
     /**
@@ -90,7 +90,7 @@ class mumie_cryptographic_key
     public static function get_by_name(string $name): ?mumie_cryptographic_key
     {
         global $ilDB;
-        $query = "Select * from " . self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE . " where name = " . $ilDB->quote( $name, "text");
+        $query = "Select * from " . self::MUMIE_CRYPTOGRAPHIC_KEY_TABLE . " where name = " . $ilDB->quote($name, "text");
         $result = $ilDB->query($query);
         $key = $ilDB->fetchAssoc($result);
         return self::from_record($key);

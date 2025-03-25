@@ -32,8 +32,10 @@ class ilMumieTaskUser
     public function load(): bool
     {
         global $ilDB;
-        $query = "Select * from usr_data where usr_id = " . $ilDB->quote( $this->moodleid,
-        "integer");
+        $query = "Select * from usr_data where usr_id = " . $ilDB->quote(
+            $this->moodleid,
+            "integer"
+        );
         $result = $ilDB->query($query);
         $user = $ilDB->fetchAssoc($result);
         if (!$user) {
