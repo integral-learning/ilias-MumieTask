@@ -52,15 +52,14 @@ class locallib
      * @param  ilObjMumieTask $mumietask
      * @return int
      */
-    private static function get_effective_duedate($userid, $mumietask)
+    private static function get_effective_duedate($userid, $mumietask): int
     {
         $extension = new ilMumieTaskDeadlineExtensionService();
-        return $extension->getDeadlineExtensionDate($userid, $mumietask);
-        //         $extension->load();
-        //         if ($extension->get_duedate()) {
-        //             return $extension->get_duedate();
-        //         }
-        //         return $mumie->duedate;
+        $duedate = $extension->getDeadlineExtensionDate($userid, $mumietask);
+        if (isset($duedate) && $duedate->getUnixTime()) {
+            return $duedate->getUnixTime();
+        }
+        return $mumietask->getDeadline();
     }
 
 }

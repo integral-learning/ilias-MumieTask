@@ -24,9 +24,13 @@ class ilMumieTaskDeadlineExtensionService
         return !is_null(self::getDeadlineExtensionAssoc($user_id, $task));
     }
 
-    public static function getDeadlineExtensionDate($user_id, $task): ilMumieTaskDateTime
+    public static function getDeadlineExtensionDate($user_id, $task): ?ilMumieTaskDateTime
     {
-        return self::getDeadlineExtension($user_id, $task)->getDate();
+        $deadline = self::getDeadlineExtension($user_id, $task);
+        if (isset($deadline)) {
+            return $deadline->getDate();
+        }
+        return null;
     }
 
     public static function upsertDeadlineExtension($mumie_task, $date_time_input, $user_id)
@@ -85,12 +89,10 @@ class ilMumieTaskDeadlineExtensionService
         );
     }
 
-    private static function getDeadlineExtension($user_id, $task): ilMumieTaskDeadlineExtension
+    private static function getDeadlineExtension($user_id, $task): ?ilMumieTaskDeadlineExtension
     {
-        ilLoggerFactory::getLogger('xmum')->info("getDeadlineExtension from user_id: " . $user_id);
-        //         ilLoggerFactory::getLogger('xmum')->info("getDeadlineExtension from task: " .
-        //         json_encode($task));
         $result = self::getDeadlineExtensionAssoc($user_id, $task);
+        ilLoggerFactory::getLogger('xmum')->info("deadline result from db: " . json_encode($result));
         if (!is_null($result)) {
             return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
         }
