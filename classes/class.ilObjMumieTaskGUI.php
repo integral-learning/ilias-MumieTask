@@ -458,9 +458,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt('frm_list_grade_overview_after_deadline'));
         }
-        if (!is_null($this->object->getContent())) {
-
-            $this->tpl->setContent($this->object->getContent());
+        $taskContent = $this->object->getContent();
+        if (!is_null($taskContent)) {
+            $this->tpl->setContent($taskContent);
         }
     }
 

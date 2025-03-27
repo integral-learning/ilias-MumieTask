@@ -110,9 +110,30 @@ class launch_form_builder
         $org = ilMumieTaskAdminSettings::getInstance()->getOrg();
         $problemurl = $this->mumietask->auth_mumie_get_problem_url();
         $problempath = $this->mumietask->auth_mumie_get_problem_path();
+        $target="";
+         $iframe="";
+         $iframe_settings="";
+        if ($this->mumietask->getLaunchcontainer() == 1) {
+            $target = 'MumieTaskLaunchFrame';
+            $iframe = "<iframe name='MumieTaskLaunchFrame'  id='basicMumieTaskLaunchFrame' src='{$loginurl}'
+                       width='100%' height='600' scrolling='auto' frameborder='0' transparency>
+                       </iframe>";
+            $iframe_settings="const iframe = document.getElementById('basicMumieTaskLaunchFrame');
+                                          let width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
+                                          let height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+                                          height = height * 0.8;
+                                          width = width * 0.6;
+
+                                          //iframe.width = width;
+                                          iframe.height = height;";
+        } else {
+            $target = '_blank';
+        }
 
         return"
-            <form id='mumie_sso_form' name='mumie_sso_form' method='post' action='{$loginurl}'>
+            <form id='mumie_sso_form' name='mumie_sso_form' method='post' action='{$loginurl}'
+            target='{$target}'>
                 <input type='hidden' name='userId' id='userId' type ='text' value='{$this->ssotoken->get_user()}'/>
                 <input type='hidden' name='token' id='token' type ='text' value='{$this->ssotoken->get_token()}'/>
                 <input type='hidden' name='org' id='org' type ='text' value='{$org}'/>
@@ -121,8 +142,10 @@ class launch_form_builder
                 <input type='hidden' name='lang' id='lang' type ='text' value='{$this->mumietask->getLanguage()}'/>
                 {$this->deadlinefragment}
             </form>
+            {$iframe}
             <script>
-            document.forms['mumie_sso_form'].submit();
+                {$iframe_settings}
+                document.forms['mumie_sso_form'].submit();
             </script>
         ";
     }
