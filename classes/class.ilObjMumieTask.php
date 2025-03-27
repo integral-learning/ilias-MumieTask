@@ -639,7 +639,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->worksheet;
     }
 
-    public function is_worksheet_with_deadline(): bool {
+    public function is_worksheet_with_deadline(): bool
+    {
         $worksheetAsArray = json_decode($this->worksheet, true);
         return $worksheetAsArray && $worksheetAsArray['configuration']['correction']['correctorType'] ==
         "AFTER_DEADLINE";

@@ -69,7 +69,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->deadline_item = new ilDateTimeInputGUI($this->i18N->txt('frm_grade_overview_list_deadline'), 'deadline');
         $this->deadline_item->setInfo($this->i18N->txt('frm_lp_deadline_desc'));
         $this->deadline_item->setShowTime(true);
-        if($this->worksheetWithDeadline) {
+        if ($this->worksheetWithDeadline) {
             $this->deadline_item->setRequired(true);
         }
 

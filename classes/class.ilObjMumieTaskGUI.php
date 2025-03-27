@@ -230,7 +230,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
             return;
         }
-        if(!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
+        if (!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
             $ilCtrl->redirect($this, 'editLPSettings');
         }
         $mumieTask = $this->object;
@@ -629,9 +629,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $mumieTask->doUpdate();
 
-        if(!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
+        if (!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
             $ilCtrl->redirect($this, 'editLPSettings');
-        } else if ($force_grade_update) {
+        } elseif ($force_grade_update) {
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
 

@@ -69,7 +69,8 @@ class ilMumieTaskGradeSync
      * @return ilMumieTaskUser|null
      * @throws \dml_exception
      */
-    private static function get_mumie_user_from_sync_id(string $syncid): ?ilMumieTaskUser {
+    private static function get_mumie_user_from_sync_id(string $syncid): ?ilMumieTaskUser
+    {
         $mumieid = substr(strrchr($syncid, "_"), 1);
         return ilMumieTaskUser::get_user_from_mumie_id($mumieid);
     }

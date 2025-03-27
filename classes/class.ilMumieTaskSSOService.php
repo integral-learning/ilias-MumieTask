@@ -23,10 +23,10 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 
 class ilMumieTaskSSOService
 {
-     /**
-         * A prefix used in task_urls indicating that the task is a worksheet
-         */
-        public const WORKSHEET_PREFIX = "worksheet_";
+    /**
+        * A prefix used in task_urls indicating that the task is a worksheet
+        */
+    public const WORKSHEET_PREFIX = "worksheet_";
 
     /**
          * Perform sso attempt for a given user and mumie task
@@ -35,46 +35,49 @@ class ilMumieTaskSSOService
          * @return void
          * @throws \dml_exception
          */
-        public static function sso(string $moodleid, ilObjMumieTask $mumietask): void
-        {
-            $mumieuser = ilMumieTaskUserService::get_user($moodleid, $mumietask);
-            $ssotoken = token_service::generate_sso_token($mumieuser);
-            $deadline = locallib::mumie_get_effective_duedate($moodleid, $mumietask);
-            echo self::get_launch_form($ssotoken, $mumietask, $mumieuser, $deadline);
+    public static function sso(string $moodleid, ilObjMumieTask $mumietask): void
+    {
+        $mumieuser = ilMumieTaskUserService::get_user($moodleid, $mumietask);
+        $ssotoken = token_service::generate_sso_token($mumieuser);
+        $deadline = locallib::mumie_get_effective_duedate($moodleid, $mumietask);
+        echo self::get_launch_form($ssotoken, $mumietask, $mumieuser, $deadline);
+    }
+
+    /**
+     * Get html code for launch form used to send POST request
+     * @param sso_token  $token
+     * @param ilObjMumieTask  $mumietask
+     * @param int        $deadline
+     * @param ilMumieTaskUser $user
+     * @return string
+     * @throws \dml_exception
+     */
+    private static function get_launch_form(
+        sso_token $token,
+        ilObjMumieTask $mumietask,
+        ilMumieTaskUser $user,
+        ?int     $deadline
+    ): string {
+        $launchformbuilder = new launch_form_builder($token, $mumietask, $user);
+
+        $problempath = $mumietask->auth_mumie_get_problem_path();
+        if ($deadline && self::include_signed_deadline($problempath, $deadline)) {
+            $launchformbuilder->with_deadline($deadline);
         }
+        return $launchformbuilder->build();
+    }
 
-        /**
-         * Get html code for launch form used to send POST request
-         * @param sso_token  $token
-         * @param ilObjMumieTask  $mumietask
-         * @param int        $deadline
-         * @param ilMumieTaskUser $user
-         * @return string
-         * @throws \dml_exception
-         */
-        private static function get_launch_form(sso_token $token, ilObjMumieTask $mumietask,
-        ilMumieTaskUser $user, ?int     $deadline): string
-        {
-            $launchformbuilder = new launch_form_builder($token, $mumietask, $user);
-
-            $problempath = $mumietask->auth_mumie_get_problem_path();
-            if ($deadline && self::include_signed_deadline($problempath, $deadline)) {
-                $launchformbuilder->with_deadline($deadline);
-            }
-            return $launchformbuilder->build();
-        }
-
-            /**
-             * Check whether we need to include signed deadline data in the request
-             * @param string $problempath
-             * @param int    $deadline
-             * @return bool
-             */
-            private static function include_signed_deadline(string $problempath, int $deadline): bool
-            {
-                return str_starts_with($problempath, self::WORKSHEET_PREFIX)
-                    && $deadline > 0;
-            }
+    /**
+     * Check whether we need to include signed deadline data in the request
+     * @param string $problempath
+     * @param int    $deadline
+     * @return bool
+     */
+    private static function include_signed_deadline(string $problempath, int $deadline): bool
+    {
+        return str_starts_with($problempath, self::WORKSHEET_PREFIX)
+            && $deadline > 0;
+    }
 
     /**
      * Verifies MUMIE tokens for SSO
@@ -145,15 +148,15 @@ class ilMumieTaskSSOService
         return $this->getHTMLCode($task, $ssotoken, $hashed_user, $deadline, $signeddata);
     }
 
-       /**
-         * Get worksheet id from problem path
-         * @return string
-         */
-        private function get_worksheet_id($mumietask): string
-        {
-            $problempath = $mumietask->auth_mumie_get_problem_path();
-            return str_replace('worksheet_', "", $problempath);
-        }
+    /**
+      * Get worksheet id from problem path
+      * @return string
+      */
+    private function get_worksheet_id($mumietask): string
+    {
+        $problempath = $mumietask->auth_mumie_get_problem_path();
+        return str_replace('worksheet_', "", $problempath);
+    }
 
     /**
      * Get html code for the MUMIE task launcher
