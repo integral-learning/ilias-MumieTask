@@ -110,15 +110,15 @@ class launch_form_builder
         $org = ilMumieTaskAdminSettings::getInstance()->getOrg();
         $problemurl = $this->mumietask->auth_mumie_get_problem_url();
         $problempath = $this->mumietask->auth_mumie_get_problem_path();
-        $target="";
-         $iframe="";
-         $iframe_settings="";
+        $target = "";
+        $iframe = "";
+        $iframe_settings = "";
         if ($this->mumietask->getLaunchcontainer() == 1) {
             $target = 'MumieTaskLaunchFrame';
             $iframe = "<iframe name='MumieTaskLaunchFrame'  id='basicMumieTaskLaunchFrame' src='{$loginurl}'
                        width='100%' height='600' scrolling='auto' frameborder='0' transparency>
                        </iframe>";
-            $iframe_settings="const iframe = document.getElementById('basicMumieTaskLaunchFrame');
+            $iframe_settings = "const iframe = document.getElementById('basicMumieTaskLaunchFrame');
                                           let width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
                                           let height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;

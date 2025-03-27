@@ -34,15 +34,15 @@ class ilMumieTaskSSOService
          * @return void
          * @throws \dml_exception
          */
-        public static function sso(ilObjMumieTask $mumietask): string
-        {
-//             debug_print_backtrace();
-            global $ilUser;
-            $mumieuser = ilMumieTaskUserService::get_user($ilUser->getId(), $mumietask);
-            $ssotoken = token_service::generate_sso_token($mumieuser);
-            $deadline = locallib::mumie_get_effective_duedate($ilUser->getId(), $mumietask);
-            return self::get_launch_form($ssotoken, $mumietask, $mumieuser, $deadline);
-        }
+    public static function sso(ilObjMumieTask $mumietask): string
+    {
+        //             debug_print_backtrace();
+        global $ilUser;
+        $mumieuser = ilMumieTaskUserService::get_user($ilUser->getId(), $mumietask);
+        $ssotoken = token_service::generate_sso_token($mumieuser);
+        $deadline = locallib::mumie_get_effective_duedate($ilUser->getId(), $mumietask);
+        return self::get_launch_form($ssotoken, $mumietask, $mumieuser, $deadline);
+    }
 
     /**
      * Get html code for launch form used to send POST request
@@ -128,10 +128,10 @@ class ilMumieTaskSSOService
         return $response;
     }
 
-      /**
-      * Get worksheet id from problem path
-      * @return string
-      */
+    /**
+    * Get worksheet id from problem path
+    * @return string
+    */
     private function get_worksheet_id($mumietask): string
     {
         $problempath = $mumietask->auth_mumie_get_problem_path();
