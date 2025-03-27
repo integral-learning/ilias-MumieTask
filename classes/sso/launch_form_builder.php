@@ -40,7 +40,8 @@ class launch_form_builder
      * @param ilObjMumieTask  $mumieTask
      * @param ilMumieTaskUser$user
      */
-    public function __construct(sso_token $ssotoken, ilObjMumieTask $mumieTask, ilMumieTaskUser$user)
+    public function __construct(sso_token $ssotoken, ilObjMumieTask $mumieTask, ilMumieTaskUser
+    $user)
     {
         $this->ssotoken = $ssotoken;
         $this->mumietask = $mumieTask;

@@ -414,7 +414,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function getContent()
     {
         $ssoService = new ilMumieTaskSSOService();
-        return $ssoService->sso($this->getId(), $this);
+        return $ssoService->sso($this);
     }
 
     /**

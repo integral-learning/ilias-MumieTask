@@ -33,16 +33,16 @@ class ilMumieTaskUserService
 
     /**
          * Get a ilMumieTaskUser instance for a given moodle user and MUMIE Task
-         * @param string    $moodleid
+         * @param string    $useriliasid
          * @param ilObjMumieTask $mumietask
          * @return ilMumieTaskUser
          */
-    public static function get_user(string $moodleid, ilObjMumieTask $mumietask): ilMumieTaskUser
+    public static function get_user(string $useriliasid, ilObjMumieTask $mumietask): ilMumieTaskUser
     {
-        $mumieid = self::use_id_masking($mumietask)
-            ? hashing_service::generate_hash($moodleid, $mumietask)->get_hash()
-            : $moodleid;
-        return new ilMumieTaskUser($moodleid, $mumieid);
+        $mumieid = hashing_service::generate_hash($useriliasid, $mumietask)->get_hash();
+        $taskUser = new ilMumieTaskUser($useriliasid, $mumieid);
+        $taskUser->load();
+        return $taskUser;
     }
 
     /**
@@ -86,18 +86,6 @@ class ilMumieTaskUserService
             return null;
         };
         return $user;
-    }
-
-    /**
-     * Check whether we should mask the moodle user id.
-     *
-     * Only very old MUMIE Tasks dont use id masking.
-     * @param mixed $mumietask
-     * @return bool
-     */
-    private static function use_id_masking(mixed $mumietask): bool
-    {
-        return isset($mumietask->use_hashed_id) && $mumietask->use_hashed_id == 1;
     }
 
     /**

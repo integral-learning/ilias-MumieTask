@@ -44,7 +44,9 @@ class ilMumieTaskIdHashingService
                 . $ilDB->quote($hash, "text")
             )
         );
-
+        if(is_null($result)) {
+            return null;
+        }
         return $result->usr_id;
     }
 

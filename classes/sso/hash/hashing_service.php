@@ -30,13 +30,14 @@ class hashing_service
 {
     /**
      * Generate a hash of the userid for a given MUMIE Task
-     * @param string    $user
+     * @param string    $useriliasid
      * @param ilObjMumieTask $mumietask
      * @return mumie_id_hash
      */
-    public static function generate_hash(string $user, ilObjMumieTask $mumietask): mumie_id_hash
+    public static function generate_hash(string $useriliasid, ilObjMumieTask $mumietask):
+    mumie_id_hash
     {
-        $mumieidhash = new mumie_id_hash($user, self::get_hash_with_suffix($user, $mumietask));
+        $mumieidhash = new mumie_id_hash($useriliasid, self::get_hash_with_suffix($useriliasid, $mumietask));
         $mumieidhash->save();
         return $mumieidhash;
     }
@@ -67,7 +68,7 @@ class hashing_service
     private static function get_hash_with_suffix(string $userid, ilObjMumieTask $mumietask): string
     {
         $hash = self::auth_mumie_get_hashed_id($userid);
-        if ($mumietask->privategradepool) {
+        if ($mumietask->getPrivateGradepool()) {
             $hash .= '@gradepool' . $mumietask->course . '@';
         }
         return $hash;
