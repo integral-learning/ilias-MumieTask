@@ -16,18 +16,21 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 {
     private ilMumieTaskI18N $i18N;
-    public function __construct($disable_grade_pool_selection)
-    {
-        parent::__construct();
-        $this->disable_grade_pool_selection = $disable_grade_pool_selection;
-        $this->i18N = new ilMumieTaskI18N();
-    }
-
     private $modus_item;
     private $gradepool_item;
     private $passing_threshold_item;
     private $deadline_item;
     private $disable_grade_pool_selection;
+    private bool $worksheetWithDeadline;
+
+    public function __construct($disable_grade_pool_selection, bool $worksheetWithDeadline)
+    {
+        parent::__construct();
+        $this->disable_grade_pool_selection = $disable_grade_pool_selection;
+        $this->worksheetWithDeadline = $worksheetWithDeadline;
+        $this->i18N = new ilMumieTaskI18N();
+    }
+
 
     public function setFields()
     {
@@ -66,6 +69,9 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->deadline_item = new ilDateTimeInputGUI($this->i18N->txt('frm_grade_overview_list_deadline'), 'deadline');
         $this->deadline_item->setInfo($this->i18N->txt('frm_lp_deadline_desc'));
         $this->deadline_item->setShowTime(true);
+        if($this->worksheetWithDeadline) {
+            $this->deadline_item->setRequired(true);
+        }
 
         $this->addItem($this->deadline_item);
     }

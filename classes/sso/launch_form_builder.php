@@ -94,7 +94,7 @@ class launch_form_builder
     private function get_worksheet_id(): string
     {
         $problempath = $this->mumietask->auth_mumie_get_problem_path();
-        return str_replace(sso_service::WORKSHEET_PREFIX, "", $problempath);
+        return str_replace(ilMumieTaskSSOService::WORKSHEET_PREFIX, "", $problempath);
     }
 
     /**

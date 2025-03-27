@@ -11,6 +11,7 @@
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskUser.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/hash/hashing_service.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/hash/mumie_id_hash.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/hash/mumie_id_hash.php');
 /**
  * This class provides services for overriding grades
  */

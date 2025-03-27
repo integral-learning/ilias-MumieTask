@@ -12,12 +12,70 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/locallib.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/cryptographic/mumie_cryptography_service.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/token/token_service.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/launch_form_builder.php');
+
 /**
  * This class provides functions for SSO between MUMIE servers and ILIAS
  */
 
 class ilMumieTaskSSOService
 {
+     /**
+         * A prefix used in task_urls indicating that the task is a worksheet
+         */
+        public const WORKSHEET_PREFIX = "worksheet_";
+
+    /**
+         * Perform sso attempt for a given user and mumie task
+         * @param string    $moodleid
+         * @param ilObjMumieTask $mumietask
+         * @return void
+         * @throws \dml_exception
+         */
+        public static function sso(string $moodleid, ilObjMumieTask $mumietask): void
+        {
+            $mumieuser = ilMumieTaskUserService::get_user($moodleid, $mumietask);
+            $ssotoken = token_service::generate_sso_token($mumieuser);
+            $deadline = locallib::mumie_get_effective_duedate($moodleid, $mumietask);
+            echo self::get_launch_form($ssotoken, $mumietask, $mumieuser, $deadline);
+        }
+
+        /**
+         * Get html code for launch form used to send POST request
+         * @param sso_token  $token
+         * @param ilObjMumieTask  $mumietask
+         * @param int        $deadline
+         * @param ilMumieTaskUser $user
+         * @return string
+         * @throws \dml_exception
+         */
+        private static function get_launch_form(sso_token $token, ilObjMumieTask $mumietask,
+        ilMumieTaskUser $user, ?int     $deadline): string
+        {
+            $launchformbuilder = new launch_form_builder($token, $mumietask, $user);
+
+            $problempath = $mumietask->auth_mumie_get_problem_path();
+            if ($deadline && self::include_signed_deadline($problempath, $deadline)) {
+                $launchformbuilder->with_deadline($deadline);
+            }
+            return $launchformbuilder->build();
+        }
+
+            /**
+             * Check whether we need to include signed deadline data in the request
+             * @param string $problempath
+             * @param int    $deadline
+             * @return bool
+             */
+            private static function include_signed_deadline(string $problempath, int $deadline): bool
+            {
+                return str_starts_with($problempath, self::WORKSHEET_PREFIX)
+                    && $deadline > 0;
+            }
+
     /**
      * Verifies MUMIE tokens for SSO
      *
@@ -78,10 +136,24 @@ class ilMumieTaskSSOService
         $ssotoken = new ilMumieTaskSSOToken($hashed_user);
         $ssotoken->insertOrRefreshToken();
         $deadline = locallib::mumie_get_effective_duedate($ilUser->getId(), $task);
-        ilLoggerFactory::getLogger('xmum')->info("setUpTokenAndLaunchForm deadline: " . $deadline);
-        //         ilLoggerFactory::getLogger('xmum')->info("setUpTokenAndLaunchForm task: " . json_encode($task));
-        return $this->getHTMLCode($task, $ssotoken, $hashed_user, $deadline);
+        $syncidlowercase = strtolower($this->user->get_sync_id());
+        $signeddata = mumie_cryptography_service::sign_data(
+            $deadline,
+            $syncidlowercase,
+            $task->get_worksheet_id($task)
+        );
+        return $this->getHTMLCode($task, $ssotoken, $hashed_user, $deadline, $signeddata);
     }
+
+       /**
+         * Get worksheet id from problem path
+         * @return string
+         */
+        private function get_worksheet_id($mumietask): string
+        {
+            $problempath = $mumietask->auth_mumie_get_problem_path();
+            return str_replace('worksheet_', "", $problempath);
+        }
 
     /**
      * Get html code for the MUMIE task launcher
@@ -91,10 +163,10 @@ class ilMumieTaskSSOService
         $ssotoken,
         $hashed_user,
         $deadline,
+        $signeddata,
         $width = 800,
         $height = 600
     ) {
-        //         ilLoggerFactory::getLogger('xmum')->info("what ist taskObj " . json_encode($taskObj));
         require_once("./Services/UICore/classes/class.ilTemplate.php");
         require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/synchronization/context/class.ilMumieTaskContextProvider.php");
@@ -103,12 +175,11 @@ class ilMumieTaskSSOService
         $contextProvider = new ilMumieTaskContextProvider();
         $mumietasksids = array(locallib::getMumieId($taskObj));
 
-        //         ilLoggerFactory::getLogger('xmum')->info("what ist mumietasksids " . json_encode($mumietasksids));
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
         // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
         // the other "true"s should always be set that way according to the ilias documentation
         $tpl->setVariable("TASKURL", $taskObj->getLoginUrl());
-        $tpl->setVariable("TARGET", $taskObj->getLaunchcontainer() == 1 ? 'MumieTaskLaunchFrame' : '_blank');
+        $tpl->setVariable("TARGET", $taskObj->getLaunchcontainer() === 1 ? 'MumieTaskLaunchFrame' : '_blank');
         $tpl->setVariable("USER_ID", $hashed_user);
         $tpl->setVariable("TOKEN", $ssotoken->getToken());
         $tpl->setVariable("ORG", htmlspecialchars(ilMumieTaskAdminSettings::getInstance()->getOrg()));
@@ -117,8 +188,8 @@ class ilMumieTaskSSOService
         $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
         $tpl->setVariable("WIDTH", '100%');
         $tpl->setVariable("HEIGHT", $height);
-        $tpl->setVariable("DEADLINE", '1742308800');
-        $tpl->setVariable("DEADLINESIGNATURE", 'xxx1742308800xxx');
+        $tpl->setVariable("DEADLINE", $deadline);
+        $tpl->setVariable("DEADLINESIGNATURE", $signeddata);
 
         if ($taskObj->getLaunchcontainer() == 1) {
             $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the iframe and launch it immediately via $script

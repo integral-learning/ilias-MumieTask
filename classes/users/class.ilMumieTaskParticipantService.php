@@ -18,9 +18,6 @@ class ilMumieTaskParticipantService
     public static function filter(ilObjMumieTask $mumie_task, $first_name = '', $last_name = ''): array
     {
         $members = self::getAllMemberIds($mumie_task);
-        ilLoggerFactory::getLogger('xmum')->info("filter members f: " . $first_name);
-        ilLoggerFactory::getLogger('xmum')->info("filter members n: " . $last_name);
-        ilLoggerFactory::getLogger('xmum')->info("filter members m: " . json_encode($members));
         return array_filter($members, function ($user_id) use ($first_name, $last_name) {
             if ($first_name !== '' && $last_name !== '') {
                 return self::matchesName($user_id, $first_name, $last_name);
@@ -34,7 +31,6 @@ class ilMumieTaskParticipantService
     private static function matchesName($user_id, $first_name, $last_name): bool
     {
         $user = ilMumieTaskUserService::getUser($user_id);
-        ilLoggerFactory::getLogger('xmum')->info("matchesName u: " . json_encode($user));
         return self::matchesFirstName($user, $first_name) && self::matchesLastName($user, $last_name);
     }
 

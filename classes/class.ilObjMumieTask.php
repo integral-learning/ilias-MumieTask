@@ -13,7 +13,6 @@ require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDateTime.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/sso_service.php');
 
 /**
  */
@@ -86,11 +85,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         $myquery = "SELECT * FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME .
                                " WHERE id = " . $ilDB->quote($this->getId(), "integer");
         $result = $ilDB->query($myquery);
-        ilLoggerFactory::getLogger('xmum')->info("doRead " . json_encode($myquery));
-        //         ilLoggerFactory::getLogger('xmum')->info("doRead result " . json_encode($result));
         if (!is_null($result)) {
             $rec = $ilDB->fetchAssoc($result);
-            ilLoggerFactory::getLogger('xmum')->info("fetchAssoc " . json_encode($rec));
             if (!is_null($rec)) {
                 $this->setTaskurl($rec['taskurl']);
                 $this->setLaunchcontainer($rec['launchcontainer']);
@@ -417,7 +413,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function getContent()
     {
-        $ssoService = new sso_service();
+        $ssoService = new ilMumieTaskSSOService();
         return $ssoService->sso($this->getId(), $this);
     }
 
@@ -641,6 +637,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function getWorksheet()
     {
         return $this->worksheet;
+    }
+
+    public function is_worksheet_with_deadline(): bool {
+        $worksheetAsArray = json_decode($this->worksheet, true);
+        return $worksheetAsArray && $worksheetAsArray['configuration']['correction']['correctorType'] ==
+        "AFTER_DEADLINE";
     }
 
     /**

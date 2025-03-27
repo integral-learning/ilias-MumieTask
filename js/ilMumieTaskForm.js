@@ -121,7 +121,6 @@
              * @param {string} message
              */
             function sendSuccess(message = '') {
-                console.log('sendSuccess: ', message);
                 sendResponse({
                     success: true,
                     message: message
@@ -145,13 +144,10 @@
             function addMessageListener() {
                 window.addEventListener('message', (event) => {
                     event.preventDefault();
-
-
                     if (event.origin !== lmsSelectorUrl) {
                         return;
                     }
                     const importObj = JSON.parse(event.data);
-
                     const isGraded = importObj.isGraded !== false;
                     const worksheet = importObj.worksheet ?? null;
                     try {
@@ -234,26 +230,6 @@
                     problemSelectorButton.onclick = function(e) {
                         e.preventDefault();
                         openProblemSelector()
-
-
-
-
-                        // problemSelectorWindow = window.open(
-                        //     lmsSelectorUrl
-                        //     + '/api/sso/problem-selector?'
-                        //     + 'userId=' + user_id
-                        //     + '&token=' + user_token
-                        //     + '&uiLang=' + user_lang
-                        //     // + '&gradingType=' + gradingtype
-                        //     + '&org='
-                        //     + mumieOrg
-                        //     + '&serverUrl='
-                        //     + encodeURIComponent(serverController.getSelectedServer().url_prefix)
-                        //     + "&problemLang="
-                        //     + langController.getSelectedLanguage()
-                        //     + "&origin=" + encodeURIComponent(window.location.origin)
-                        //     , '_blank'
-                        // );
                     };
 
                     addMessageListener();
@@ -291,11 +267,6 @@
             const taskDisplayElement = document.getElementById("xmum_display_task");
             const isGradedElem = document.getElementById('id_mumie_isgraded');
             const LANG_REQUEST_PARAM_PREFIX = "?lang=";
-            // const task_element = document.getElementById("xmum_task");
-            console.log('taskSelectionInput base', taskSelectionInput);
-            // console.log('task_element base', task_element);
-
-            console.log('updateTaskUri', document.getElementsByName("taskurl"));
             /**
              * Update the activity's name in the input field
              */
@@ -316,14 +287,9 @@
              * @param {string} language
              */
             function updateTaskUri(link, language) {
-                console.log('updateTaskUri #1', link, language);
                 const localizedLink = localizeLink(link, language);
-                console.log('updateTaskUri #2', localizedLink);
-                console.log('updateTaskUri #2_1', taskSelectionInput);
                 taskSelectionInput.value = localizedLink;
-                console.log('updateTaskUri #3', link, language);
                 updateTaskDisplayElement(localizedLink);
-                console.log('updateTaskUri #4', link, language);
             }
 
             /**
@@ -363,13 +329,9 @@
                     }
                 },
                 setSelection: function(link, name) {
-                    console.log('setSelection a', link, name);
                     updateTaskUri(link);
-                    console.log('setSelection b', link, name);
                     updateTaskDisplayElement(link);
-                    console.log('setSelection c', link, name);
                     updateName(name);
-                    console.log('setSelection d', link, name);
                 },
                 setIsGraded: function(isGraded) {
                     if (isGraded === null) {
@@ -397,7 +359,6 @@
             const worksheetElement = document.getElementById("xmum_worksheet");
             return {
                 setWorksheet: function(worksheet) {
-                    console.log('will set worksheet data to worksheetElement', worksheet);
                     if (worksheet) {
                         worksheetElement.setAttribute("value", JSON.stringify(worksheet));
                     } else {

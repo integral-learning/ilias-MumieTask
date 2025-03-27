@@ -17,7 +17,6 @@ class locallib
 
     public static function transformMumieId($mumietask_taskurl): string
     {
-        //         ilLoggerFactory::getLogger('xmum')->info("transformMumieId " . json_encode($mumietask_taskurl));
         $id = $mumietask_taskurl;
         $prefix = "link/";
         if (strpos($id, $prefix) > 0) {
@@ -37,7 +36,7 @@ class locallib
      * @param  ilObjMumieTask $mumietask
      * @return int
      */
-    public static function mumie_get_effective_duedate(int $userid, ilObjMumieTask $mumietask): int
+    public static function mumie_get_effective_duedate(int $userid, ilObjMumieTask $mumietask): ?int
     {
         return self::get_effective_duedate($userid, $mumietask);
     }
@@ -51,7 +50,7 @@ class locallib
      * @param  ilObjMumieTask $mumietask
      * @return int
      */
-    private static function get_effective_duedate($userid, $mumietask): int
+    private static function get_effective_duedate($userid, $mumietask): ?int
     {
         $extension = new ilMumieTaskDeadlineExtensionService();
         $duedate = $extension->getDeadlineExtensionDate($userid, $mumietask);

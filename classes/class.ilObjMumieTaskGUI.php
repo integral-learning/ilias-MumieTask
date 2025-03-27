@@ -29,9 +29,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     public function __construct(int $a_ref_id = 0, int $a_id_type = self::REPOSITORY_NODE_ID, int $a_parent_node_id = 0)
     {
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
-        //         ilLoggerFactory::getLogger('xmum')->info("__construct 1" . json_encode($a_ref_id));
-        //         ilLoggerFactory::getLogger('xmum')->info("__construct 2" . json_encode($a_id_type));
-        //         ilLoggerFactory::getLogger('xmum')->info("__construct 3" . json_encode($a_parent_node_id));
         $this->i18N = new ilMumieTaskI18N();
     }
 
@@ -85,10 +82,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilCtrl, $ilAccess, $ilTabs, $DIC;
         $lng = $DIC->language();
         $this->tabs->clearTargets();
-        //         ilLoggerFactory::getLogger('xmum')->info("setTabs " . json_encode($this->object));
-
         $this->object->read();
-        //         ilLoggerFactory::getLogger('xmum')->info("setTabs " . json_encode($this->object));
         if ($this->object->isDummy()) {
             return;
         }
@@ -169,7 +163,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $ilTabs->activateTab('properties');
         $ilTabs->activateSubTab("edit_task");
-        //         ilLoggerFactory::getLogger('xmum')->info("will read task from db: " . json_encode($myquery));
         $this->object->doRead();
         $this->initPropertiesForm();
         if (!$this->object->isDummy() && !ilMumieTaskServer::serverConfigExistsForUrl($this->object->getServer())) {
@@ -236,6 +229,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $tpl->setContent($this->form->getHTML());
             $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
             return;
+        }
+        if(!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
+            $ilCtrl->redirect($this, 'editLPSettings');
         }
         $mumieTask = $this->object;
         $force_grade_update = $this->form->getInput('xmum_task') != $mumieTask->getTaskurl()
@@ -456,18 +452,16 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($this->object->isDummy()) {
             $ilCtrl->redirect($this, 'editProperties');
         }
-
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
-        //         $this->object->doRead();
-        //         ilLoggerFactory::getLogger('xmum')->info("####################### viewContent " .
-        //         json_encode($this->object));
-        //         $this->object->doRead()
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
         if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt('frm_list_grade_overview_after_deadline'));
         }
-        $this->tpl->setContent($this->object->getContent());
+        if (!is_null($this->object->getContent())) {
+
+            $this->tpl->setContent($this->object->getContent());
+        }
     }
 
     /**
@@ -499,7 +493,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilCtrl;
         require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskLPSettingsFormGUI.php');
-        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet());
+        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet(), $this->object->is_worksheet_with_deadline());
         $form->setFields();
         $form->setTitle($this->i18N->txt('tab_lp_settings'));
 
@@ -604,7 +598,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitAvailabilitySettings()
     {
-        global $ilDB, $DIC;
+        global $ilDB, $DIC, $ilCtrl;
         $this->initAvailabilitySettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -635,7 +629,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $mumieTask->doUpdate();
 
-        if ($force_grade_update) {
+        if(!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
+            $ilCtrl->redirect($this, 'editLPSettings');
+        } else if ($force_grade_update) {
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
         }
 
