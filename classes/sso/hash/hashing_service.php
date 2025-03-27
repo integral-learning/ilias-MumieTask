@@ -34,8 +34,7 @@ class hashing_service
      * @param ilObjMumieTask $mumietask
      * @return mumie_id_hash
      */
-    public static function generate_hash(string $useriliasid, ilObjMumieTask $mumietask):
-    mumie_id_hash
+    public static function generate_hash(string $useriliasid, ilObjMumieTask $mumietask): mumie_id_hash
     {
         $mumieidhash = new mumie_id_hash($useriliasid, self::get_hash_with_suffix($useriliasid, $mumietask));
         $mumieidhash->save();

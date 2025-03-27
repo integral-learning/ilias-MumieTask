@@ -34,14 +34,14 @@ class ilMumieTaskSSOService
          * @return void
          * @throws \dml_exception
          */
-        public static function sso(ilObjMumieTask $mumietask): void
-        {
-            global $ilUser;
-            $mumieuser = ilMumieTaskUserService::get_user($ilUser->getId(), $mumietask);
-            $ssotoken = token_service::generate_sso_token($mumieuser);
-            $deadline = locallib::mumie_get_effective_duedate($ilUser->getId(), $mumietask);
-            echo self::get_launch_form($ssotoken, $mumietask, $mumieuser, $deadline);
-        }
+    public static function sso(ilObjMumieTask $mumietask): void
+    {
+        global $ilUser;
+        $mumieuser = ilMumieTaskUserService::get_user($ilUser->getId(), $mumietask);
+        $ssotoken = token_service::generate_sso_token($mumieuser);
+        $deadline = locallib::mumie_get_effective_duedate($ilUser->getId(), $mumietask);
+        echo self::get_launch_form($ssotoken, $mumietask, $mumieuser, $deadline);
+    }
 
     /**
      * Get html code for launch form used to send POST request
