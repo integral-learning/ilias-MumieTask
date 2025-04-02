@@ -18,6 +18,7 @@
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/cryptographic/mumie_cryptography_service.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/token/sso_token.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskUser.php');
+require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/locallib.php");
 
 /**
  * This class is used to create an HTML form that's used to launch the SSO POST request
@@ -67,36 +68,17 @@ class launch_form_builder
      */
     private function get_deadline_signature_inputs(int $deadline): string
     {
-        $deadlineinmilliseconds = self::auth_mumie_get_deadline_in_ms($deadline);
+        $deadlineinmilliseconds = locallib::auth_mumie_get_deadline_in_ms($deadline);
         $syncidlowercase = strtolower($this->user->get_sync_id());
         $signeddata = \mumie_cryptography_service::sign_data(
             $deadlineinmilliseconds,
             $syncidlowercase,
-            $this->get_worksheet_id()
+            locallib::get_worksheet_id($this->mumietask)
         );
         return "<input type='hidden' name='deadline' id='deadline' type='text' value='{$deadlineinmilliseconds}'>
         <input type='hidden' name='deadlineSignature' id='deadlineSignature' type='text' value='{$signeddata}'>";
     }
 
-    /**
-     * Transforms the deadline(Unix Timestamp) from seconds to milliseconds.
-     * @param int $deadline timestamp in s
-     * @return int timestamp in ms
-     */
-    public function auth_mumie_get_deadline_in_ms($deadline)
-    {
-        return $deadline * 1000;
-    }
-
-    /**
-     * Get worksheet id from problem path
-     * @return string
-     */
-    private function get_worksheet_id(): string
-    {
-        $problempath = $this->mumietask->auth_mumie_get_problem_path();
-        return str_replace(ilMumieTaskSSOService::WORKSHEET_PREFIX, "", $problempath);
-    }
 
     /**
      * Get the launch form html code as string

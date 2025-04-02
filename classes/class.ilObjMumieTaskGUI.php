@@ -14,12 +14,13 @@
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilMumieTaskLPTableGUI
  */
 
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLaunchFormGUI.php');
 
 
 
@@ -458,9 +459,22 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt('frm_list_grade_overview_after_deadline'));
         }
-        $taskContent = $this->object->getContent();
-        if (!is_null($taskContent)) {
-            $this->tpl->setContent($taskContent);
+
+        $openInNewTab = $this->object->getLaunchcontainer() === 0;
+        if($openInNewTab) {
+            $this->tpl->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskLaunch.js');
+            $user = ilMumieTaskUserService::get_user_from_moodle_id($ilUser->getId());
+
+            $form = new ilMumieTaskLaunchFormGUI($this->object, $user);
+            $form->setFields();
+            $this->form = $form;
+            $this->tpl->setContent($this->form->getHTML());
+
+        } else {
+            $taskContent = $this->object->getContent();
+            if (!is_null($taskContent)) {
+                $this->tpl->setContent($taskContent);
+            }
         }
     }
 

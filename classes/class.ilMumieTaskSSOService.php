@@ -23,10 +23,6 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 
 class ilMumieTaskSSOService
 {
-    /**
-        * A prefix used in task_urls indicating that the task is a worksheet
-        */
-    public const WORKSHEET_PREFIX = "worksheet_";
 
     /**
          * Perform sso attempt for a given user and mumie task
@@ -76,7 +72,7 @@ class ilMumieTaskSSOService
      */
     private static function include_signed_deadline(string $problempath, int $deadline): bool
     {
-        return str_starts_with($problempath, self::WORKSHEET_PREFIX)
+        return str_starts_with($problempath, locallib::WORKSHEET_PREFIX)
             && $deadline > 0;
     }
 
@@ -126,16 +122,6 @@ class ilMumieTaskSSOService
             $response->status = "invalid";
         }
         return $response;
-    }
-
-      /**
-      * Get worksheet id from problem path
-      * @return string
-      */
-    private function get_worksheet_id($mumietask): string
-    {
-        $problempath = $mumietask->auth_mumie_get_problem_path();
-        return str_replace('worksheet_', "", $problempath);
     }
 
 }

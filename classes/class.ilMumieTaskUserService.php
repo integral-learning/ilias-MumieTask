@@ -59,7 +59,8 @@ class ilMumieTaskUserService
 
     public static function get_user_from_moodle_id($moodleid): ilMumieTaskUser
     {
-        $user = new ilMumieTaskUser($moodleid, '');
+        $mumieid = hashing_service::generate_hash_with_lecturer_postfix($moodleid)->get_hash();
+        $user = new ilMumieTaskUser($moodleid, $mumieid);
         $exists = $user->load();
         if (!$exists) {
             return null;
