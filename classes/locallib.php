@@ -4,11 +4,10 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 
 class locallib
 {
-
-        /**
-            * A prefix used in task_urls indicating that the task is a worksheet
-            */
-        public const WORKSHEET_PREFIX = "worksheet_";
+    /**
+        * A prefix used in task_urls indicating that the task is a worksheet
+        */
+    public const WORKSHEET_PREFIX = "worksheet_";
 
     /**
       * Get the unique identifier for a MUMIE task
@@ -57,15 +56,15 @@ class locallib
         return $deadline * 1000;
     }
 
-          /**
-          * Get worksheet id from problem path
-          * @return string
-          */
-        public static function get_worksheet_id($mumietask): string
-        {
-            $problempath = $mumietask->auth_mumie_get_problem_path();
-            return str_replace(self::WORKSHEET_PREFIX, "", $problempath);
-        }
+    /**
+    * Get worksheet id from problem path
+    * @return string
+    */
+    public static function get_worksheet_id($mumietask): string
+    {
+        $problempath = $mumietask->auth_mumie_get_problem_path();
+        return str_replace(self::WORKSHEET_PREFIX, "", $problempath);
+    }
 
     /**
      * Get the effective duedate for a student.

@@ -1,16 +1,16 @@
 <?php
 
 function open_mumie_task(
-                         string $loginurl,
-                         string $userId,
-                         string $token,
-                         string $org,
-                         string $problempath,
-                         string $lang,
-                         string $deadlineinmilliseconds,
-                         string $signeddata,
-                     ): string {
-                         return "<form id='mumie_sso_form' name='mumie_sso_form' method='post' action='{$loginurl}'>
+    string $loginurl,
+    string $userId,
+    string $token,
+    string $org,
+    string $problempath,
+    string $lang,
+    string $deadlineinmilliseconds,
+    string $signeddata,
+): string {
+    return "<form id='mumie_sso_form' name='mumie_sso_form' method='post' action='{$loginurl}'>
                                      <input type='hidden' name='userId' id='userId' type ='text' value='{$userId}'/>
                                      <input type='hidden' name='token' id='token' type ='text' value='{$token}'/>
                                      <input type='hidden' name='org' id='org' type ='text' value='{$org}'/>
@@ -26,7 +26,7 @@ function open_mumie_task(
                                  document.forms['mumie_sso_form'].submit();
                                  </script>
                              ";
-                     }
+}
 $queries = array();
 parse_str($_SERVER['QUERY_STRING'], $queries);
 
@@ -40,5 +40,13 @@ $deadlineinmilliseconds = $queries['deadlineinmilliseconds'];
 $signeddata = $queries['signeddata'];
 
 
-echo open_mumie_task($loginurl, $userId, $token, $org, $problempath, $lang ,
-$deadlineinmilliseconds, $signeddata );
+echo open_mumie_task(
+    $loginurl,
+    $userId,
+    $token,
+    $org,
+    $problempath,
+    $lang,
+    $deadlineinmilliseconds,
+    $signeddata
+);

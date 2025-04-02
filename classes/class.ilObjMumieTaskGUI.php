@@ -461,7 +461,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
 
         $openInNewTab = $this->object->getLaunchcontainer() === 0;
-        if($openInNewTab) {
+        if ($openInNewTab) {
             $this->tpl->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskLaunch.js');
             $user = ilMumieTaskUserService::get_user_from_moodle_id($ilUser->getId());
 

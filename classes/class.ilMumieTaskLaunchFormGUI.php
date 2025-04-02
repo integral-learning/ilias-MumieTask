@@ -7,7 +7,6 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 
 class ilMumieTaskLaunchFormGUI extends ilPropertyFormGUI
 {
-
     private ilMumieTaskI18N $i18N;
     private ilObjMumieTask $mumieTask;
     private sso_token $sso_token;
@@ -50,27 +49,28 @@ class ilMumieTaskLaunchFormGUI extends ilPropertyFormGUI
         );
     }
 
-//     /**
-//      * ********************************** TODO is copy of launch_form_builder.php ****************
-//      * Get the html string input for deadline parameter
-//      * @param int $deadline
-//      * @return string
-//      */
-//     private function get_deadline_signature_inputs(int $deadline): string
-//     {
-//         $deadlineinmilliseconds = locallib::auth_mumie_get_deadline_in_ms($deadline);
-//         $syncidlowercase = strtolower($this->mumieUser->get_sync_id());
-//         $signeddata = mumie_cryptography_service::sign_data(
-//             $deadlineinmilliseconds,
-//             $syncidlowercase,
-//             locallib::get_worksheet_id($this->mumieTask)
-//         );
-//         return "<input type='hidden' name='deadline' id='deadline' type='text' value='{$deadlineinmilliseconds}'>
-//         <input type='hidden' name='deadlineSignature' id='deadlineSignature' type='text' value='{$signeddata}'>";
-//     }
+    //     /**
+    //      * ********************************** TODO is copy of launch_form_builder.php ****************
+    //      * Get the html string input for deadline parameter
+    //      * @param int $deadline
+    //      * @return string
+    //      */
+    //     private function get_deadline_signature_inputs(int $deadline): string
+    //     {
+    //         $deadlineinmilliseconds = locallib::auth_mumie_get_deadline_in_ms($deadline);
+    //         $syncidlowercase = strtolower($this->mumieUser->get_sync_id());
+    //         $signeddata = mumie_cryptography_service::sign_data(
+    //             $deadlineinmilliseconds,
+    //             $syncidlowercase,
+    //             locallib::get_worksheet_id($this->mumieTask)
+    //         );
+    //         return "<input type='hidden' name='deadline' id='deadline' type='text' value='{$deadlineinmilliseconds}'>
+    //         <input type='hidden' name='deadlineSignature' id='deadlineSignature' type='text' value='{$signeddata}'>";
+    //     }
 
 
-    public function setFields() {
+    public function setFields()
+    {
         $loginurl = $this->mumieTask->auth_mumie_get_login_url();
         $org = ilMumieTaskAdminSettings::getInstance()->getOrg();
         $problempath = $this->mumieTask->auth_mumie_get_problem_path();
@@ -123,4 +123,3 @@ class ilMumieTaskLaunchFormGUI extends ilPropertyFormGUI
     }
 
 }
-

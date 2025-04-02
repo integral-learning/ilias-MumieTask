@@ -23,7 +23,6 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 
 class ilMumieTaskSSOService
 {
-
     /**
          * Perform sso attempt for a given user and mumie task
          * @param ilObjMumieTask $mumietask
