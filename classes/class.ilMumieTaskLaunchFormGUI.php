@@ -5,7 +5,7 @@ require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/cryptographic/mumie_cryptography_service.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/sso/token/token_service.php');
 
-class ilMumieTaskLaunchFormGUI extends ilPropertyFormGUI
+class ilMumieTaskLaunchFormGUI
 {
     private ilMumieTaskI18N $i18N;
     private ilObjMumieTask $mumieTask;
@@ -26,12 +26,6 @@ class ilMumieTaskLaunchFormGUI extends ilPropertyFormGUI
 
     public function __construct(ilObjMumieTask $task, ilMumieTaskUser $mumieUser)
     {
-        parent::__construct();
-
-        ilLoggerFactory::getLogger('xmum')->error('new ilMumieTaskLaunchFormGUI' . $mumieUser->get_mumie_id());
-        ilLoggerFactory::getLogger('xmum')->error('new ilMumieTaskLaunchFormGUI 2' .
-        $mumieUser->get_sync_id());
-
         $this->i18N = new ilMumieTaskI18N();
         $this->mumieTask = $task;
         $this->sso_token = token_service::generate_sso_token($mumieUser);
@@ -49,77 +43,30 @@ class ilMumieTaskLaunchFormGUI extends ilPropertyFormGUI
         );
     }
 
-    //     /**
-    //      * ********************************** TODO is copy of launch_form_builder.php ****************
-    //      * Get the html string input for deadline parameter
-    //      * @param int $deadline
-    //      * @return string
-    //      */
-    //     private function get_deadline_signature_inputs(int $deadline): string
-    //     {
-    //         $deadlineinmilliseconds = locallib::auth_mumie_get_deadline_in_ms($deadline);
-    //         $syncidlowercase = strtolower($this->mumieUser->get_sync_id());
-    //         $signeddata = mumie_cryptography_service::sign_data(
-    //             $deadlineinmilliseconds,
-    //             $syncidlowercase,
-    //             locallib::get_worksheet_id($this->mumieTask)
-    //         );
-    //         return "<input type='hidden' name='deadline' id='deadline' type='text' value='{$deadlineinmilliseconds}'>
-    //         <input type='hidden' name='deadlineSignature' id='deadlineSignature' type='text' value='{$signeddata}'>";
-    //     }
+public function getContent(): string {
 
-
-    public function setFields()
-    {
         $loginurl = $this->mumieTask->auth_mumie_get_login_url();
         $org = ilMumieTaskAdminSettings::getInstance()->getOrg();
         $problempath = $this->mumieTask->auth_mumie_get_problem_path();
+        $userId = $this->sso_token->get_user();
+        $token = $this->sso_token->get_token();
+        $lang = $this->sso_token->get_token();
 
-        $this->loginurl_item = new ilHiddenInputGUI('xmum_loginurl');
-        $this->loginurl_item->setValue($loginurl);
-        $this->loginurl_item->setRequired(false);
-        $this->addItem($this->loginurl_item);
+    return "
+        <form >
+            <input type='hidden' id='xmum_loginurl' value='$loginurl'>
+            <input type='hidden' id='xmum_userId' value='$userId'>
+            <input type='hidden' id='xmum_token' value='$token'>
+            <input type='hidden' id='xmum_org' value='$org'>
+            <input type='hidden' id='xmum_problempath' value='$problempath'>
+            <input type='hidden' id='xmum_lang' value='$lang'>
+            <input type='hidden' id='xmum_deadlineinmilliseconds' value='$this->deadlineinmilliseconds'>
+            <input type='hidden' id='xmum_signeddata' value='$this->signeddata'>
+            <a class='xmum-pseudo-btn' id='xmum_launch'>
+                Launch
+            </a>
+        </form>
+    ";
 
-        $this->userId_item = new ilHiddenInputGUI('xmum_userId');
-        $this->userId_item->setValue($this->sso_token->get_user());
-        $this->userId_item->setRequired(false);
-        $this->addItem($this->userId_item);
-
-        $this->token_item = new ilHiddenInputGUI('xmum_token');
-        $this->token_item->setValue($this->sso_token->get_token());
-        $this->token_item->setRequired(false);
-        $this->addItem($this->token_item);
-
-        $this->org_item = new ilHiddenInputGUI('xmum_org');
-        $this->org_item->setValue($org);
-        $this->org_item->setRequired(false);
-        $this->addItem($this->org_item);
-
-        $this->problempath_item = new ilHiddenInputGUI('xmum_problempath');
-        $this->problempath_item->setValue($problempath);
-        $this->problempath_item->setRequired(false);
-        $this->addItem($this->problempath_item);
-
-        $this->lang_item = new ilHiddenInputGUI('xmum_lang');
-        $this->lang_item->setValue($this->mumieTask->getLanguage());
-        $this->lang_item->setRequired(false);
-        $this->addItem($this->lang_item);
-
-        $this->deadlineinmilliseconds_item = new ilHiddenInputGUI('xmum_deadlineinmilliseconds');
-        $this->deadlineinmilliseconds_item->setValue($this->deadlineinmilliseconds);
-        $this->deadlineinmilliseconds_item->setRequired(false);
-        $this->addItem($this->deadlineinmilliseconds_item);
-
-        $this->signeddata_item = new ilHiddenInputGUI('xmum_signeddata');
-        $this->signeddata_item->setValue($this->signeddata);
-        $this->signeddata_item->setRequired(false);
-        $this->addItem($this->signeddata_item);
-
-
-        $button = new ilMumieTaskFormButtonGUI("", "xmum_launch");
-        $button->setButtonLabel('Launch'); // TODO use i18n
-        $button->setRequired(false);
-        $this->addItem($button);
-    }
-
+}
 }
