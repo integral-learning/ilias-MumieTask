@@ -193,6 +193,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $values["xmum_language"] = $this->object->getLanguage();
         $values["xmum_server"] = $this->object->getServer();
         $values["xmum_coursefile"] = $this->object->getMumieCoursefile();
+        $values["xmum_worksheet"] = $this->object->getWorksheet();
         $this->form->setValuesByArray($values);
     }
 
@@ -231,9 +232,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
             return;
         }
-        if (!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
-            $ilCtrl->redirect($this, 'editLPSettings');
-        }
+
         $mumieTask = $this->object;
         $force_grade_update = $this->form->getInput('xmum_task') != $mumieTask->getTaskurl()
         || $this->form->getInput('xmum_course') != $mumieTask->getMumieCourse()
@@ -241,7 +240,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $this->saveFormValues();
 
-        if ($force_grade_update) {
+        if (!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && $this->object->getDeadline() <= 0) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved') . '. ' . $this->i18N->txt('msg_deadline_missing'), false);
+            $ilCtrl->redirect($this, 'editLPSettings');
+        } elseif ($force_grade_update) {
             require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
             ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
@@ -463,12 +465,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $openInNewTab = $this->object->getLaunchcontainer() === 0;
         if ($openInNewTab) {
             $this->tpl->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskLaunch.js');
+            $this->tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumieButton.css');
             $user = ilMumieTaskUserService::get_user_from_moodle_id($ilUser->getId());
 
             $form = new ilMumieTaskLaunchFormGUI($this->object, $user);
-            $form->setFields();
-            $this->form = $form;
-            $this->tpl->setContent($this->form->getHTML());
+            $this->tpl->setContent($form->getContent());
 
         } else {
             $taskContent = $this->object->getContent();
@@ -543,7 +544,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->object->setPrivateGradepool((int)$this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
-        $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
+
+        if ($this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('failure', $this->i18N->txt('msg_deadline_missing'), false);
+            $cmd = 'editLPSettings';
+            $this->performCommand($cmd);
+        } else {
+            $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
+        }
         $this->object->doUpdate();
         if ($is_gradepool_setting_update) {
             ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(
@@ -643,7 +651,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $mumieTask->doUpdate();
 
-        if (!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && strtotime($this->form->getInput('deadline')) <= 0) {
+        if (!$this->object->isDummy() && $this->object->is_worksheet_with_deadline() && $this->object->getDeadline() <= 0) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved') . '. ' . $this->i18N->txt('msg_deadline_missing'), false);
             $ilCtrl->redirect($this, 'editLPSettings');
         } elseif ($force_grade_update) {
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);

@@ -130,7 +130,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function doUpdate(): void
     {
         global $DIC;
-
         $DIC->database()->update(
             ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
             array(
@@ -145,7 +144,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'privategradepool' => array('integer', $this->getPrivateGradepool()),
                 'online' => array('integer', $this->getOnline()),
                 'deadline' => array('integer', $this->getDeadline()),
-                'worksheet' => array('text', $this->getWorksheet())
+                'worksheet' => array('text', $this->getWorksheet()),
+                'course' => array('integer', $this->getParentRef())
     ),
             array(
                 'id' => array("int", $this->getId()),
@@ -641,7 +641,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function is_worksheet_with_deadline(): bool
     {
-        $worksheetAsArray = json_decode($this->worksheet, true);
+        $worksheetAsArray = json_decode($this->getWorksheet(), true);
         return $worksheetAsArray && $worksheetAsArray['configuration']['correction']['correctorType'] ==
         "AFTER_DEADLINE";
     }

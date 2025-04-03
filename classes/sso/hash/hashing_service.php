@@ -68,7 +68,7 @@ class hashing_service
     {
         $hash = self::auth_mumie_get_hashed_id($userid);
         if ($mumietask->getPrivateGradepool()) {
-            $hash .= '@gradepool' . $mumietask->course . '@';
+            $hash .= '@gradepool' . $mumietask->getParentRef() . '@';
         }
         return $hash;
     }

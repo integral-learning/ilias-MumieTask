@@ -433,3 +433,16 @@ if (!$ilDB->tableExists("xmum_cryptographic_key")) {
     $ilDB->createSequence("xmum_cryptographic_key");
 }
 ?>
+<#18>
+<?php
+if (!$ilDB->tableColumnExists("xmum_mumie_task", "course")) {
+    $ilDB->addTableColumn(
+            'xmum_mumie_task',
+            'course',
+            array(
+                 'type' => 'integer',
+                 'length' => 8,
+             )
+        );
+}
+?>

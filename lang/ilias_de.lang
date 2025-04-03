@@ -50,6 +50,7 @@ language_desc#:#Bitte wählen Sie die Sprache, in der die MumieTask angezeigt we
 tab_gen_settings#:#Allgemein
 tab_lp_settings#:#Bewertungen
 msg_suc_saved#:#Änderungen erfolgreich gespeichert
+msg_deadline_missing#:#Sie müssen noch eine Deadline festlegen
 msg_suc_server_add#:#MUMIE-Server erfolgreich hinzugefügt
 msg_suc_deleted#:#Löschen erfolgreich
 msg_no_server_found#:#Es wurde kein konfigurierter MUMIE-Server gefunden! <br><br> Bitte fügen Sie einen Server hinzu um fortfahren zu können.

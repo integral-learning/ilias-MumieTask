@@ -50,6 +50,7 @@ language_desc#:#Please select the language in which the MUMIE Task should be dis
 tab_gen_settings#:#General
 tab_lp_settings#:#Grades
 msg_suc_saved#:#Changes successfully saved
+msg_deadline_missing#:#You still need to set a deadline
 msg_suc_server_add#:#Added MUMIE server successfully
 msg_suc_deleted#:#Deletion successful
 msg_no_server_found#:#No MUMIE server configuration found! <br><br> Please add a new MUMIE server before continuing.
