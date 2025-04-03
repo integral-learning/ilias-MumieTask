@@ -437,12 +437,12 @@ if (!$ilDB->tableExists("xmum_cryptographic_key")) {
 <?php
 if (!$ilDB->tableColumnExists("xmum_mumie_task", "course")) {
     $ilDB->addTableColumn(
-            'xmum_mumie_task',
-            'course',
-            array(
+        'xmum_mumie_task',
+        'course',
+        array(
                  'type' => 'integer',
                  'length' => 8,
              )
-        );
+    );
 }
 ?>

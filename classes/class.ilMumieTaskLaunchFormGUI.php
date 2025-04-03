@@ -43,7 +43,8 @@ class ilMumieTaskLaunchFormGUI
         );
     }
 
-public function getContent(): string {
+    public function getContent(): string
+    {
 
         $loginurl = $this->mumieTask->auth_mumie_get_login_url();
         $org = ilMumieTaskAdminSettings::getInstance()->getOrg();
@@ -52,7 +53,7 @@ public function getContent(): string {
         $token = $this->sso_token->get_token();
         $lang = $this->sso_token->get_token();
 
-    return "
+        return "
         <form >
             <input type='hidden' id='xmum_loginurl' value='$loginurl'>
             <input type='hidden' id='xmum_userId' value='$userId'>
@@ -68,5 +69,5 @@ public function getContent(): string {
         </form>
     ";
 
-}
+    }
 }
