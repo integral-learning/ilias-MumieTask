@@ -1,2 +1,5 @@
-#PHP-CS-FIXER
+vendor/
+.php-cs-fixer.cache
 .php_cs.cache
+composer.lock
+.php-cs-fixer.php
