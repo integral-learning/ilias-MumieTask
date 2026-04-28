@@ -1,9 +1,7 @@
 name: fix-style
 
 on:
-  push:
-    paths:
-      - '**.php'
+  workflow_dispatch:
 
 jobs:
   php-formatter:
