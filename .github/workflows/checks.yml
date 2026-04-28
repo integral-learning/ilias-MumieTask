@@ -20,9 +20,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, intl, gd, xml, dom, json, fileinfo, curl, zip, iconv
-          tools: composer:v2
-          coverage: none
 
       - name: PHP Syntax Check
         run: find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 php -l
