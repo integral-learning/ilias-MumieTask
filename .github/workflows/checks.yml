@@ -20,6 +20,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          tools: composer:v2
 
-      - name: PHP Syntax Check
-        run: find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -n 1 php -l
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: phplint
+        run: vendor/bin/parallel-lint --exclude vendor .
+
+      - name: phpmd
+        continue-on-error: true
+        run: vendor/bin/phpmd . text unusedcode,design --exclude vendor
