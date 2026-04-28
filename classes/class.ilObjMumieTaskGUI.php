@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MumieTask plugin
  *
@@ -519,7 +520,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $is_gradepool_setting_update = $this->object->getPrivateGradepool() !== $this->form->getInput('privategradepool');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
         if (!$this->object->isGradepoolSet()) {
-            $this->object->setPrivateGradepool((int)$this->form->getInput('privategradepool'));
+            $this->object->setPrivateGradepool((int) $this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
@@ -647,7 +648,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $ilCtrl;
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskGradeOverviewFormGUI.php');
-        $form =  new ilMumieTaskGradeOverviewFormGUI($this->object);
+        $form = new ilMumieTaskGradeOverviewFormGUI($this->object);
         $form->setTitle($this->i18N->txt('frm_user_overview_list_search_title'));
         $form->addCommandButton('displayGradeOverviewPage', $this->i18N->txt('frm_user_overview_list_search'));
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -665,7 +666,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $ilTabs, $ilCtrl;
         $ilTabs->activateTab('userList');
         require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskGradeListFormGUI.php');
-        $form =  new ilMumieTaskGradeListFormGUI($this, $_GET['user_id'], $this->object);
+        $form = new ilMumieTaskGradeListFormGUI($this, $_GET['user_id'], $this->object);
         $form->setFields();
         $form->setFormAction($ilCtrl->getFormAction($this));
         $form->addCommandButton('displayGradeOverviewPage', $this->i18N->txt('frm_grade_overview_list_back'));

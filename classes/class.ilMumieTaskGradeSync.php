@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MumieTask plugin
  *
@@ -160,14 +161,14 @@ class ilMumieTaskGradeSync
             " WHERE obj_id = " . $ilDB->quote($this->task->getId(), "integer") .
             " AND mark IS NOT NULL");
         while ($record = $ilDB->fetchAssoc($result)) {
-            if (in_array($record['usr_id'], $this->user_ids) && strtotime($record['status_changed'])<$oldest_timestamp) {
+            if (in_array($record['usr_id'], $this->user_ids) && strtotime($record['status_changed']) < $oldest_timestamp) {
                 $oldest_timestamp = strtotime($record['status_changed']);
             }
         }
         if ($oldest_timestamp == PHP_INT_MAX) {
             $oldest_timestamp = 1;
         }
-        return $oldest_timestamp*1000;
+        return $oldest_timestamp * 1000;
     }
 
     /**
@@ -220,7 +221,7 @@ class ilMumieTaskGradeSync
         $latest_grade = $xapi_grades[0];
 
         foreach ($xapi_grades as $grade) {
-            if (strtotime($grade->timestamp)> strtotime($latest_grade->timestamp)) {
+            if (strtotime($grade->timestamp) > strtotime($latest_grade->timestamp)) {
                 $latest_grade = $grade;
             }
         }
@@ -240,7 +241,7 @@ class ilMumieTaskGradeSync
 
     public static function getGradesForUser($user_id, $mumie_task)
     {
-        $gradesync  = new  ilMumieTaskGradeSync($mumie_task, false);
+        $gradesync = new ilMumieTaskGradeSync($mumie_task, false);
         $xapi_grades = $gradesync->getAllXapiGradesByUser();
         $syncId = $gradesync->getSyncIdForUser($user_id);
         $userGrades = array();
