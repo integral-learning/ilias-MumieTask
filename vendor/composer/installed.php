@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-feature/#5062-ensure-compatibility-9.18',
         'version' => 'dev-feature/#5062-ensure-compatibility-9.18',
-        'reference' => '584bd25ded2c96b8ab91b49b75aa1ad0a3a658bb',
+        'reference' => 'c14f795749f0843e05200b8167dc574dddba454a',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-feature/#5062-ensure-compatibility-9.18',
             'version' => 'dev-feature/#5062-ensure-compatibility-9.18',
-            'reference' => '584bd25ded2c96b8ab91b49b75aa1ad0a3a658bb',
+            'reference' => 'c14f795749f0843e05200b8167dc574dddba454a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
