@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MumieTask plugin
  *
@@ -106,7 +107,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
     private function getDeadlineBadge(ilMumieTaskDateTime $deadline_date): string
     {
-        return '<span class = "mumie-deadline-badge">' . $this->i18n->txt('frm_grade_overview_list_deadline'). ": " . $deadline_date . "</span>";
+        return '<span class = "mumie-deadline-badge">' . $this->i18n->txt('frm_grade_overview_list_deadline') . ": " . $deadline_date . "</span>";
     }
 
     /**

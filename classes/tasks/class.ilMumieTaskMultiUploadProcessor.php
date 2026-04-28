@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MumieTask plugin
  *
@@ -41,7 +42,7 @@ class ilMumieTaskMultiUploadProcessor
 
     private static function parseTaskDTOs(string $tasks_json): array
     {
-        $tasks =  json_decode($tasks_json);
+        $tasks = json_decode($tasks_json);
         return array_map(function (string $task) {
             return new ilMumieTaskTaskDTO($task);
         }, $tasks);

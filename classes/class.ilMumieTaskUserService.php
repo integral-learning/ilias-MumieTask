@@ -23,7 +23,7 @@ class ilMumieTaskUserService
     public static function getUser($user_id): ilMumieTaskUser
     {
         global $ilDB;
-        $result = $ilDB->query("SELECT * FROM usr_data WHERE usr_id = ". $ilDB->quote($user_id, "integer"));
+        $result = $ilDB->query("SELECT * FROM usr_data WHERE usr_id = " . $ilDB->quote($user_id, "integer"));
         $user = $ilDB->fetchAssoc($result);
         return new ilMumieTaskUser($user['usr_id'], $user["firstname"], $user['lastname']);
     }

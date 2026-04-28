@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MumieTask plugin
  *
@@ -242,8 +243,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $form->setTitle($this->i18N->txt('tab_problem_selector'));
         $form->setDescription($this->i18N->txt('tab_problem_selector_no_change'));
 
-        $url_input = new ilTextInputGUI($this->i18N->txt("tab_problem_selector_label_text"),
-        "problem_selector_url");
+        $url_input = new ilTextInputGUI(
+            $this->i18N->txt("tab_problem_selector_label_text"),
+            "problem_selector_url"
+        );
         $url_input->setRequired(true);
         if ($load_saved_values) {
             $url_input->setValue($admin_settings->getProblemSelectorUrl());
@@ -301,9 +304,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         global $tpl, $DIC;
         $this->initProblemSelectorUrl(false);
         if (!$this->form->checkInput()) {
-             $this->form->setValuesByPost();
-             $tpl->setContent($this->form->getHTML());
-             return;
+            $this->form->setValuesByPost();
+            $tpl->setContent($this->form->getHTML());
+            return;
         }
 
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
