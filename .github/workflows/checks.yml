@@ -31,3 +31,6 @@ jobs:
       - name: phpmd
         continue-on-error: true
         run: vendor/bin/phpmd . text unusedcode,design --exclude vendor
+
+      - name: php-cs-fixer
+        run: vendor/bin/php-cs-fixer check --diff
