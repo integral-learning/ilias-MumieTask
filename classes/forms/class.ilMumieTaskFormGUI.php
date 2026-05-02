@@ -7,8 +7,6 @@
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This form is used to edit and validate the general settings of MumieTasks
@@ -38,9 +36,13 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $dropzone_item;
     private $problem_selector_item;
 
-    private $server_options = array();
+    private array $server_options = [];
 
-    public function setFields($is_creation_mode = false)
+    /**
+     * @throws ilCurlConnectionException
+     * @throws ilCtrlException
+     */
+    public function setFields($is_creation_mode = false): void
     {
         global $ilCtrl;
 
@@ -51,13 +53,11 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->description_item = new ilTextInputGUI($this->i18N->globalTxt('description'), 'description');
         $this->addItem($this->description_item);
 
-        require_once('Services/Form/classes/class.ilSelectInputGUI.php');
         $this->server_item = new ilSelectInputGui($this->i18N->txt('mumie_server'), 'xmum_server');
         $this->server_item->setRequired(true);
         $this->addItem($this->server_item);
 
         if (!$is_creation_mode) {
-            require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
             $add_server_button = new ilMumieTaskFormButtonGUI("", "xmum_add_server_btn");
             $add_server_button->setButtonLabel($this->i18N->txt('add_server'));
             $add_server_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'addServer'));
@@ -129,11 +129,13 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $multi_problem_selector_btn->setInfo($this->i18N->txt('dnd_prb_selector_desc'));
         $this->addItem($multi_problem_selector_btn);
 
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZoneGUI.php');
         $this->dropzone_item = new ilMumieTaskDropZoneGUI("", "xmum_multi_problems");
         $this->addItem($this->dropzone_item);
     }
 
+    /**
+     * @throws ilCurlConnectionException
+     */
     public function checkInput(): bool
     {
         $ok = parent::checkInput();
@@ -148,22 +150,18 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             $this->title_item->setAlert($this->i18N->txt('title_not_valid'));
         }
         if (!$server->isValidMumieServer()) {
-            $ok = false;
             $this->server_item->setAlert($this->i18N->txt('server_not_valid'));
-            return $ok;
+            return false;
         }
 
         if ($task == null && $is_dummy) {
-            $ok = false;
             $this->problem_display_item->setAlert($this->i18N->globalTxt('required_field'));
-            return $ok;
+            return false;
         } elseif ($task == null) {
-            $ok = false;
             $this->problem_display_item->setAlert($this->i18N->txt('frm_tsk_problem_not_found'));
-            return $ok;
+            return false;
         }
 
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskMultiUploadProcessor.php');
         $multi_problems_input = $this->getInput("xmum_multi_problems");
         if (!empty($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input)) {
             $ok = false;
@@ -178,7 +176,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
      *
      * js/ilMumieTaskForm.js removes incorrect options for any given selection
      */
-    private function populateServerOptions($servers)
+    private function populateServerOptions($servers): void
     {
         foreach ($servers as $server) {
             $this->server_options[$server->getUrlprefix()] = $server->getName();
@@ -188,8 +186,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     /**
      * Save all Mumie Servers as a hidden input field. The JS file needs to know about them and their structure
+     * @throws ilCurlConnectionException
      */
-    public function setValuesByArray($a_values, $a_restrict_to_value_keys = false): void
+    public function setValuesByArray(array $a_values, bool $a_restrict_to_value_keys = false): void
     {
         parent::setValuesByArray($a_values);
         $servers = ilMumieTaskServer::getAllServers();
@@ -201,14 +200,13 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->setDefault();
     }
 
-    public function setDefault()
+    public function setDefault(): void
     {
         global $ilUser;
         if ($this->launchcontainer_item->getValue() == null) {
             $this->launchcontainer_item->setValue("0");
         }
 
-        include_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         $this->org_item->setValue(ilMumieTaskAdminSettings::getInstance()->getOrg());
         if ($this->language_item->getValue() == null) {
             $this->language_item->setValue($ilUser->getLanguage());
@@ -220,7 +218,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     /**
      * Disable all drop down menus and command buttons for this form
      */
-    public function disable()
+    public function disable(): void
     {
         $this->server_item->setDisabled(true);
         $this->course_item->setDisabled(true);

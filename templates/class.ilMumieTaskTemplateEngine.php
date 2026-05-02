@@ -11,6 +11,11 @@
 class ilMumieTaskTemplateEngine
 {
     public const EMPTY_CELL = '-';
+
+    /**
+     * @throws ilSystemStyleException
+     * @throws ilTemplateException
+     */
     public static function getTemplate(string $path): ilTemplate
     {
         global $tpl;
@@ -19,14 +24,22 @@ class ilMumieTaskTemplateEngine
         return new ilTemplate($path, true, true, true, "DEFAULT", true);
     }
 
+    /**
+     * @throws ilSystemStyleException
+     * @throws ilTemplateException
+     */
     public static function getDropzoneTemplate(): ilTemplate
     {
         return self::getTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/MumieTasks/tpl.file-drop-zone.html");
     }
 
+    /**
+     * @throws ilSystemStyleException
+     * @throws ilTemplateException
+     * @throws ilDateTimeException
+     */
     public static function getStudentGradingInfoboxTemplate(ilObjMumieTask $mumie_task, string $user_id, string $description = ''): ilTemplate
     {
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
         $i18N = new ilMumieTaskI18N();
         $template = ilMumieTaskTemplateEngine::getTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeList/tpl.grade-list-info-box.html");
         $template->setVariable('STUDENT_NAME', $i18N->txt('student_name'));
@@ -41,6 +54,9 @@ class ilMumieTaskTemplateEngine
         return $template;
     }
 
+    /**
+     * @throws ilDateTimeException
+     */
     private static function getDeadlineInformation(ilObjMumieTask $mumie_task): string
     {
         if ($mumie_task->hasDeadline()) {
@@ -49,18 +65,23 @@ class ilMumieTaskTemplateEngine
         return ilMumieTaskTemplateEngine::EMPTY_CELL;
     }
 
+    /**
+     * @throws ilDateTimeException
+     */
     private static function getDeadlineExtensionInformation(ilObjMumieTask $mumie_task, $user_id): string
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task) && $mumie_task->hasDeadline()) {
             return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task);
         }
         return ilMumieTaskTemplateEngine::EMPTY_CELL;
     }
 
+    /**
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
     private static function getCurrentGradeInformation(ilObjMumieTask $mumie_task, $user_id): string
     {
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $mumie_task);
         if (is_null($grade)) {
             return ilMumieTaskTemplateEngine::EMPTY_CELL;

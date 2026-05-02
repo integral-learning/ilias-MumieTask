@@ -8,7 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This form is used to add, edit and validate MUMIE Server configurations
@@ -22,10 +21,10 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
         $this->i18N = new ilMumieTaskI18N();
     }
 
-    private $url_item;
-    private $name_item;
+    private ilTextInputGUI $url_item;
+    private ilTextInputGUI $name_item;
 
-    public function setFields()
+    public function setFields(): void
     {
         $this->name_item = new ilTextInputGUI($this->i18N->globalTxt('name'), 'name');
         $this->name_item->setRequired(true);
@@ -35,6 +34,10 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
         parent::addItem($this->url_item);
     }
 
+    /**
+     * @throws ilCurlConnectionException
+     * @throws ilCtrlException
+     */
     public function checkInput(): bool
     {
         global $DIC;
@@ -43,8 +46,6 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 
         $ok = parent::checkInput();
         if ($ok) {
-            require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-
             $server = new ilMumieTaskServer();
             $server->setName($this->getInput("name"));
             $server->setUrlPrefix($this->getInput("url_prefix"));

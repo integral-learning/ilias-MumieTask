@@ -8,9 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
-
 /**
  * This form is used to grant due date extensions for a given MumieTask
  */
@@ -20,15 +17,15 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
     /**
      * @var ilDateTimeInputGUI
      */
-    private $deadline_input;
+    private ilDateTimeInputGUI $deadline_input;
     /**
      * @var ilObjMumieTask
      */
-    private $mumie_task;
+    private ilObjMumieTask $mumie_task;
     /**
      * @var string
      */
-    private $user_id;
+    private string $user_id;
     private ilMumieTaskI18N $i18n;
 
     public function __construct($mumie_task, $user_id)
@@ -39,7 +36,10 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
         $this->i18n = new ilMumieTaskI18N();
     }
 
-    public function setFields()
+    /**
+     * @throws ilCtrlException
+     */
+    public function setFields(): void
     {
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
         $this->deadline_input = new ilDateTimeInputGUI(
@@ -52,10 +52,12 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
         $this->addItem($this->deadline_input);
     }
 
-    public function setInfoBox()
+    /**
+     * @throws ilTemplateException
+     */
+    public function setInfoBox(): void
     {
         global $DIC;
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/class.ilMumieTaskTemplateEngine.php');
         $description = $this->i18n->txt('deadline_extension_desc');
         $template = ilMumieTaskTemplateEngine::getStudentGradingInfoboxTemplate($this->mumie_task, $this->user_id, $description);
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $template->get());
@@ -63,7 +65,6 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 
     public function checkInput(): bool
     {
-        global $lng;
         $ok = parent::checkInput();
         if ($this->mumie_task->getDeadline() > strtotime($this->getInput(self::DEADLINE_PARAM))) {
             $ok = false;

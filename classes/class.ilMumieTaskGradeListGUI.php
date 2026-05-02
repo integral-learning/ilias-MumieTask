@@ -12,8 +12,6 @@
  * This GUI provides a way to list grades and submission dates for a single user in a MUMIE task
  */
 
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
     private $user_id;
@@ -21,6 +19,9 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     private ilObjMumieTask $mumie_task;
 
 
+    /**
+     * @throws ilException
+     */
     public function __construct($parentObj, ilObjMumieTask $mumie_task)
     {
         parent::__construct($parentObj, 'displayGradeList');
@@ -30,12 +31,22 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->mumie_task = $mumie_task;
     }
 
-    public function init()
+    /**
+     * @throws ilCurlConnectionException
+     * @throws ilTemplateException
+     * @throws ilCtrlException
+     */
+    public function init(): void
     {
         $this->createList();
     }
 
-    private function createList()
+    /**
+     * @throws ilCurlConnectionException
+     * @throws ilTemplateException
+     * @throws ilCtrlException
+     */
+    private function createList(): void
     {
         $this->setFormName('participants');
 
@@ -63,12 +74,15 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    private function privateGradepoolSet($mumie_task)
+    private function privateGradepoolSet($mumie_task): bool
     {
         return $mumie_task->getPrivateGradepool() != -1;
     }
 
-    private function setEmptyTable()
+    /**
+     * @throws ilTemplateException
+     */
+    private function setEmptyTable(): void
     {
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
@@ -81,7 +95,11 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->tpl->parseCurrentBlock();
     }
 
-    private function setTableRow($parentObj, $xapi_grade)
+    /**
+     * @throws ilCtrlException
+     * @throws ilTemplateException
+     */
+    private function setTableRow($parentObj, $xapi_grade): void
     {
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
@@ -102,7 +120,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     }
 
     //necessary functions for list to be added to form
-    public function insert($a_tpl)
+    public function insert($a_tpl): void
     {
         $a_tpl->setCurrentBlock("prop_custom");
         $a_tpl->setVariable("CUSTOM_CONTENT", $this->render());
@@ -110,38 +128,38 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     }
 
 
-    public function getHiddenTitle()
+    public function getHiddenTitle(): string
     {
         return "";
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
         return "";
     }
 
 
-    public function getFormLabelFor()
+    public function getFormLabelFor(): string
     {
         return "";
     }
 
-    public function getType()
+    public function getType(): string
     {
         return "";
     }
 
-    public function getSubForm()
+    public function getSubForm(): string
     {
         return "";
     }
 
-    public function hideSubForm()
+    public function hideSubForm(): bool
     {
         return true;
     }
 
-    public function getAlert()
+    public function getAlert(): string
     {
         return "";
     }
@@ -155,7 +173,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     {
     }
 
-    public function setParentForm($a_parentform)
+    public function setParentForm($a_parentform): void
     {
         $this->setParent($a_parentform);
     }
@@ -164,12 +182,12 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     {
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return "";
     }
 
-    public function getRequired()
+    public function getRequired(): string
     {
         return "";
     }

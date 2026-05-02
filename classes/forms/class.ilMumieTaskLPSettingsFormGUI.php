@@ -8,7 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This form is used to edit the Learning Progress settings of MumieTasks
@@ -23,15 +22,14 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->i18N = new ilMumieTaskI18N();
     }
 
-    private $modus_item;
-    private $gradepool_item;
-    private $passing_threshold_item;
-    private $deadline_item;
-    private $disable_grade_pool_selection;
+    private ilRadioGroupInputGUI $modus_item;
+    private ilRadioGroupInputGUI $gradepool_item;
+    private ilNumberInputGUI $passing_threshold_item;
+    private ilDateTimeInputGUI $deadline_item;
+    private bool $disable_grade_pool_selection;
 
-    public function setFields()
+    public function setFields(): void
     {
-        global $lng;
         $this->modus_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_sync_lp'), "lp_modus");
         $this->modus_item->setInfo($this->i18N->txt('frm_sync_lp_desc'));
         $modus_option_true = new ilRadioOption($this->i18N->txt('frm_enable'), 1);
@@ -70,9 +68,8 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->addItem($this->deadline_item);
     }
 
-    private function getGradepoolInfo()
+    private function getGradepoolInfo(): string
     {
-        global $lng;
         $gradepool_info = $this->i18N->txt('frm_privategradepool_desc') . '<br><br>';
         if (!$this->disable_grade_pool_selection) {
             $gradepool_info .= $this->i18N->txt('frm_privategradepool_undecided');
@@ -84,9 +81,4 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     }
 
 
-    public function checkInput(): bool
-    {
-        $ok = parent::checkInput();
-        return $ok;
-    }
 }

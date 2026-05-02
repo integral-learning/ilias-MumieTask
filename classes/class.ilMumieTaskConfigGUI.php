@@ -8,10 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 /**
  * @ilCtrl_IsCalledBy ilMumieTaskConfigGUI: ilObjComponentSettingsGUI
  */
@@ -26,6 +22,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Handles all commands, default is "configure"
+     * @throws ilCtrlException
      */
     public function performCommand(string $cmd): void
     {
@@ -54,8 +51,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Entry point for this gui
+     * @throws ilCtrlException
      */
-    public function configure()
+    public function configure(): void
     {
         global $ilTabs;
 
@@ -64,7 +62,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $ilTabs->activateTab("tab_servers");
     }
 
-    public function setTabs()
+    /**
+     * @throws ilCtrlException
+     */
+    public function setTabs(): void
     {
         global $ilCtrl, $ilTabs;
         $i18N = $this->i18N;
@@ -95,12 +96,12 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * List all configured MUMIE servers with options to add, edit and delete
+     * @throws ilCtrlException
      */
-    public function listServers()
+    public function listServers(): void
     {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_servers");
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServerTableGUI.php');
         $server_gui = new ilMumieTaskServerTableGUI($this, 'listServers');
         $server_gui->init($this);
         $tpl->setContent($server_gui->getHTML());
@@ -108,8 +109,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Display options for sharing personal data
+     * @throws ilCtrlException
      */
-    public function sharedData($setSavedValues = false)
+    public function sharedData($setSavedValues = false): void
     {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_shared_data");
@@ -120,10 +122,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Define and initialize the form for privacy options
+     * @throws ilCtrlException
      */
-    public function initShareDataForm($load_saved_values = true)
+    public function initShareDataForm($load_saved_values = true): void
     {
-        global $lng, $ilCtrl;
+        global $ilCtrl;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -160,8 +163,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Submit changes made in the shared data form
+     * @throws ilCtrlException
      */
-    private function submitSharedData()
+    private function submitSharedData(): void
     {
         global $tpl, $DIC;
         $this->initShareDataForm(false);
@@ -183,8 +187,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Display form for authentication
+     * @throws ilCtrlException
      */
-    public function authentication()
+    public function authentication(): void
     {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_authentication");
@@ -194,10 +199,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Define and initialize the form for authentication
+     * @throws ilCtrlException
      */
-    public function initAuthForm($load_saved_values = true)
+    public function initAuthForm($load_saved_values = true): void
     {
-        global $lng, $ilCtrl;
+        global $ilCtrl;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -220,8 +226,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Display form for problem selector
+     * @throws ilCtrlException
      */
-    public function problemSelector()
+    public function problemSelector(): void
     {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_problem_selector");
@@ -231,10 +238,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Define and initialize the form for problem selector
+     * @throws ilCtrlException
      */
-    public function initProblemSelectorUrl($load_saved_values = true)
+    public function initProblemSelectorUrl($load_saved_values = true): void
     {
-        global $lng, $ilCtrl;
+        global $ilCtrl;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
 
         $form = new ilPropertyFormGUI();
@@ -265,8 +273,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Submit changes made in the authentication form
+     * @throws ilCtrlException
      */
-    public function submitAuthForm()
+    public function submitAuthForm(): void
     {
         global $tpl, $DIC;
         $this->initAuthForm(false);
@@ -288,7 +297,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     /**
      * Display the MUMIE server form for creation or modification
      */
-    public function addServer()
+    public function addServer(): void
     {
         global $tpl;
         $this->initServerForm();
@@ -298,6 +307,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Submit changes made in the problem selector form
+     * @throws ilCtrlException
      */
     public function saveProblemSelectorUrl(): void
     {
@@ -321,9 +331,8 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     /**
      * Initialize and set command buttons for the MUMIE server form
      */
-    private function initServerForm()
+    private function initServerForm(): void
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
         $form->addCommandButton('submitServer', $this->i18N->globalTxt('save'));
@@ -335,8 +344,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      * Create a new or edit an existing MUMIE server
      *
      * Params in query
+     * @throws ilCtrlException
      */
-    public function submitServer()
+    public function submitServer(): void
     {
         global $tpl, $DIC;
         $this->initServerForm();
@@ -364,7 +374,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      *
      * Values in query
      */
-    public function deleteServer()
+    public function deleteServer(): void
     {
         global $DIC;
         $server = new ilMumieTaskServer($_GET['server_id']);
@@ -376,8 +386,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Display form to edit an existing MUMIE server
+     * @throws ilCtrlException
      */
-    public function editServer()
+    public function editServer(): void
     {
         global $tpl, $DIC, $ilCtrl;
         $id = $_GET['server_id'];
@@ -392,7 +403,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     /**
      * Return settings of a given server as array
      */
-    protected function loadServerSettings($id)
+    protected function loadServerSettings($id): array
     {
         $values = array();
         $server = new ilMumieTaskServer($id);
@@ -404,8 +415,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Execute this function if cancel is pressed in the MUMIE server form
+     * @throws ilCtrlException
      */
-    public function cancelServer()
+    public function cancelServer(): void
     {
         $this->listServers();
     }

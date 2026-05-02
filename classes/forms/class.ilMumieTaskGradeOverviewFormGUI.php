@@ -8,8 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
-
 /**
  * This form is used to edit the Learning Progress settings of MumieTasks
  */
@@ -28,16 +26,21 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         $this->objMumieTask = $objMumieTask;
     }
 
-    public function setFields($parentObj, $form)
+    /**
+     * @throws ilDateTimeException
+     */
+    public function setFields($parentObj, $form): void
     {
-        $this->setSearch($parentObj, $form);
+        $this->setSearch($form);
         $this->setTable($parentObj, $form);
     }
 
-    private function setSearch($parentObj, $form)
+    /**
+     * @throws ilDateTimeException
+     */
+    private function setSearch($form): void
     {
         global $DIC;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverviewGUI.php');
         $this->text_item_first = new ilTextInputGUI($this->i18N->txt('frm_user_overview_list_firstname_search'), 'firstnamefield');
         if (!empty($this->getInput("firstnamefield"))) {
             $this->text_item_first->setValue($form->getInput("firstnamefield"));
@@ -57,7 +60,7 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         }
     }
 
-    private function setTable($parentObj, $form)
+    private function setTable($parentObj, $form): void
     {
         $select_task_header_item = new ilFormSectionHeaderGUI();
         $select_task_header_item->setTitle($this->i18N->txt('tab_userlist'));
@@ -73,9 +76,4 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
         return str_replace("ilTableOuter", "mumie-user-table", $html);
     }
 
-    public function checkInput(): bool
-    {
-        $ok = parent::checkInput();
-        return $ok;
-    }
 }

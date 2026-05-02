@@ -8,7 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This class is used to display and validate the custom availability form for MumieTask
@@ -26,9 +25,11 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
         $this->i18N = new ilMumieTaskI18N();
     }
 
-    public function setFields($disable_online_selection)
+    /**
+     * @throws ilDateTimeException
+     */
+    public function setFields($disable_online_selection): void
     {
-        global $lng;
         $online_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_activation_online'), 'online');
 
         $online_item->setInfo($this->getOnlineItemInfo($disable_online_selection));
@@ -38,7 +39,6 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 
         $act_type_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_visibility_until'), 'activation_type');
 
-        include_once "Services/Form/classes/class.ilDateDurationInputGUI.php";
         $duration_item = new ilDateDurationInputGUI($this->i18N->globalTxt("rep_time_period"), "access_period");
         $duration_item->setRequired(true);
         $duration_item->setShowTime(true);
@@ -53,22 +53,18 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
         $this->act_type_item = $act_type_item;
     }
 
-    public function checkInput(): bool
+    /**
+     * @throws ilDateTimeException
+     */
+    public function setValuesByArray(array $a_values, bool $a_restrict_to_value_keys = false): void
     {
-        $ok = parent::checkInput();
-
-        return $ok;
-    }
-
-    public function setValuesByArray($values, $a_restrict_to_value_keys = false): void
-    {
-        $period = $values['period'];
+        $period = $a_values['period'];
         $this->duration_item->setStart(new ilDateTime($period->startingTime ?? time(), IL_CAL_UNIX));
         $this->duration_item->setEnd(new ilDateTime($period->endingTime ?? time(), IL_CAL_UNIX));
-        parent::setValuesByArray($values, $a_restrict_to_value_keys);
+        parent::setValuesByArray($a_values, $a_restrict_to_value_keys);
     }
 
-    private function getOnlineItemInfo($disable_online_selection)
+    private function getOnlineItemInfo($disable_online_selection): string
     {
         $online_info = $this->i18N->txt('frm_online_info');
         if ($disable_online_selection) {
