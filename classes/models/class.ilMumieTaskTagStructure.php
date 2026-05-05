@@ -8,7 +8,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class ilMumieTaskTagStructure implements \JsonSerializable
+class ilMumieTaskTagStructure implements JsonSerializable
 {
     /**
      * Name of the tag
@@ -36,11 +36,9 @@ class ilMumieTaskTagStructure implements \JsonSerializable
      * Necessary to encode this object as json.
      * @return mixed
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
-
-        return $vars;
+        return get_object_vars($this);
     }
 
     /**

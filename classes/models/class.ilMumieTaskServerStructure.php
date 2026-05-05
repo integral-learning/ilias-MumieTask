@@ -9,10 +9,10 @@
  */
 include_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskCourseStructure.php');
 
-class ilMumieTaskServerStructure implements \JsonSerializable
+class ilMumieTaskServerStructure implements JsonSerializable
 {
     private $courses;
-    private $languages = array();
+    private array $languages = array();
 
     /**
      * Get the value of courses
@@ -25,15 +25,16 @@ class ilMumieTaskServerStructure implements \JsonSerializable
     /**
      * Set the value of courses
      *
+     * @param $courses
      * @return  self
      */
-    public function setCourses($courses)
+    public function setCourses($courses): static
     {
         $this->courses = $courses;
 
         return $this;
     }
-    protected function loadStructure($courses_and_tasks)
+    protected function loadStructure($courses_and_tasks): void
     {
         $this->courses = [];
         if ($courses_and_tasks) {
@@ -44,7 +45,7 @@ class ilMumieTaskServerStructure implements \JsonSerializable
         $this->collectLanguages();
     }
 
-    private function collectLanguages()
+    private function collectLanguages(): void
     {
         $langs = [];
         foreach ($this->courses as $course) {
@@ -54,17 +55,15 @@ class ilMumieTaskServerStructure implements \JsonSerializable
     }
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
-
-        return $vars;
+        return get_object_vars($this);
     }
 
     /**
      * Get the value of languages
      */
-    public function getLanguages()
+    public function getLanguages(): array
     {
         return $this->languages;
     }
@@ -72,9 +71,10 @@ class ilMumieTaskServerStructure implements \JsonSerializable
     /**
      * Set the value of languages
      *
+     * @param $languages
      * @return  self
      */
-    public function setLanguages($languages)
+    public function setLanguages($languages): static
     {
         $this->languages = $languages;
 
