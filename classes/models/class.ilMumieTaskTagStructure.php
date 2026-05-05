@@ -8,25 +8,25 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class ilMumieTaskTagStructure implements JsonSerializable
+class ilMumieTaskTagStructure implements \JsonSerializable
 {
     /**
      * Name of the tag
      * @var string
      */
-    private string $name;
+    private $name;
     /**
      * All values for the tag
      * @var string[]
      */
-    private array $values;
+    private $values = array();
 
     /**
      * Constructor
      * @param string $name
      * @param string[] $values
      */
-    public function __construct(string $name, array $values)
+    public function __construct($name, $values)
     {
         $this->name = $name;
         $this->values = $values;
@@ -34,11 +34,13 @@ class ilMumieTaskTagStructure implements JsonSerializable
 
     /**
      * Necessary to encode this object as json.
-     * @return array
+     * @return mixed
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize()
     {
-        return get_object_vars($this);
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 
     /**
@@ -46,10 +48,10 @@ class ilMumieTaskTagStructure implements JsonSerializable
      * @param ilMumieTaskTagStructure $tag the tag to merge with
      * @return ilMumieTaskTagStructure the new tag
      */
-    public function merge(ilMumieTaskTagStructure $tag): ilMumieTaskTagStructure
+    public function merge($tag)
     {
         $mergedtag = new ilMumieTaskTagStructure($this->name, $this->values);
-        if ($tag->name == $mergedtag->name) {
+        if ($tag instanceof ilMumieTaskTagStructure && $tag->name == $mergedtag->name) {
             array_push($mergedtag->values, ...$tag->values);
             $mergedtag->values = array_values(array_unique($mergedtag->values));
         }
@@ -61,7 +63,7 @@ class ilMumieTaskTagStructure implements JsonSerializable
      * Get the name of this tag
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }

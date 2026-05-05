@@ -8,12 +8,12 @@ require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Mu
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ilMumieTaskTaskStructure implements JsonSerializable
+class ilMumieTaskTaskStructure implements \JsonSerializable
 {
     private $link;
     private $headline;
-    private array $languages = [];
-    private array $tags = [];
+    private $languages = array();
+    private $tags = array();
 
     /**
      * Get the value of headline
@@ -26,10 +26,9 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     /**
      * Set the value of headline
      *
-     * @param $headline
      * @return  self
      */
-    public function setHeadline($headline): static
+    public function setHeadline($headline)
     {
         $this->headline = $headline;
 
@@ -51,8 +50,9 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     /**
      * Get all languages used in this task
      *
+     * @return string[]
      */
-    public function collectLanguages(): void
+    public function collectLanguages()
     {
         if ($this->headline) {
             foreach ($this->headline as $langItem) {
@@ -71,25 +71,26 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     /**
      * Set the value of link
      *
-     * @param $link
      * @return  self
      */
-    public function setLink($link): static
+    public function setLink($link)
     {
         $this->link = $link;
 
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize()
     {
-        return get_object_vars($this);
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 
     /**
      * Get the value of languages
      */
-    public function getLanguages(): array
+    public function getLanguages()
     {
         return $this->languages;
     }
@@ -97,10 +98,9 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     /**
      * Set the value of languages
      *
-     * @param $languages
      * @return  self
      */
-    public function setLanguages($languages): static
+    public function setLanguages($languages)
     {
         $this->languages = $languages;
 
@@ -110,7 +110,7 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     /**
      * Get the value of tags
      */
-    public function getTags(): array
+    public function getTags()
     {
         return $this->tags;
     }

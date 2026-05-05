@@ -9,10 +9,10 @@
  */
 include_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskCourseStructure.php');
 
-class ilMumieTaskServerStructure implements JsonSerializable
+class ilMumieTaskServerStructure implements \JsonSerializable
 {
     private $courses;
-    private array $languages = [];
+    private $languages = array();
 
     /**
      * Get the value of courses
@@ -25,16 +25,15 @@ class ilMumieTaskServerStructure implements JsonSerializable
     /**
      * Set the value of courses
      *
-     * @param $courses
      * @return  self
      */
-    public function setCourses($courses): static
+    public function setCourses($courses)
     {
         $this->courses = $courses;
 
         return $this;
     }
-    protected function loadStructure($courses_and_tasks): void
+    protected function loadStructure($courses_and_tasks)
     {
         $this->courses = [];
         if ($courses_and_tasks) {
@@ -45,7 +44,7 @@ class ilMumieTaskServerStructure implements JsonSerializable
         $this->collectLanguages();
     }
 
-    private function collectLanguages(): void
+    private function collectLanguages()
     {
         $langs = [];
         foreach ($this->courses as $course) {
@@ -55,15 +54,17 @@ class ilMumieTaskServerStructure implements JsonSerializable
     }
 
 
-    public function jsonSerialize(): array
+    public function jsonSerialize()
     {
-        return get_object_vars($this);
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 
     /**
      * Get the value of languages
      */
-    public function getLanguages(): array
+    public function getLanguages()
     {
         return $this->languages;
     }
@@ -71,10 +72,9 @@ class ilMumieTaskServerStructure implements JsonSerializable
     /**
      * Set the value of languages
      *
-     * @param array $languages
      * @return  self
      */
-    public function setLanguages(array $languages): static
+    public function setLanguages($languages)
     {
         $this->languages = $languages;
 
@@ -82,7 +82,7 @@ class ilMumieTaskServerStructure implements JsonSerializable
     }
 
 
-    public function getCoursebyName(string $name): ?ilMumieTaskCourseStructure
+    public function getCoursebyName($name)
     {
         foreach ($this->courses as $course) {
             foreach ($course->getName() as $translation) {
@@ -91,6 +91,5 @@ class ilMumieTaskServerStructure implements JsonSerializable
                 }
             }
         }
-        return null;
     }
 }
