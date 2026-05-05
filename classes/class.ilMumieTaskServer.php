@@ -238,7 +238,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
     }
     public function getLogoutUrl(): string
     {
-        return urlencode($this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg());
+        return $this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg();
     }
 
     public function getGradeSyncURL(): string
