@@ -421,9 +421,24 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         return "viewContent";
     }
 
-    public function cancelDummy()
+    /**
+     * @throws ilRepositoryException
+     * @throws ilCtrlException
+     * @throws ilObjectNotFoundException
+     * @throws ilDatabaseException
+     * @throws ilInvalidTreeStructureException
+     */
+    public function cancelDummy(): void
     {
-        $this->ctrl->returnToParent($this);
+        global $DIC;
+        $tree = $DIC->repositoryTree();
+        $ref_id = $this->object->getRefId();
+        $parent_ref_id = (int) $tree->getParentId($ref_id);
+
+        ilRepUtil::removeObjectsFromSystem([$ref_id]);
+
+        $this->ctrl->setParameterByClass(ilRepositoryGUI::class, 'ref_id', $parent_ref_id);
+        $this->ctrl->redirectByClass(ilRepositoryGUI::class);
     }
 
     /**
