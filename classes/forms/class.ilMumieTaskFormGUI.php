@@ -40,7 +40,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     public function setFields($is_creation_mode = false)
     {
-        global $ilCtrl;
+        global $DIC;
 
         $this->title_item = new ilTextInputGUI($this->i18N->globalTxt('title'), 'title');
         $this->title_item->setRequired(true);
@@ -56,7 +56,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         if (!$is_creation_mode) {
             $add_server_button = new ilMumieTaskFormButtonGUI("", "xmum_add_server_btn");
             $add_server_button->setButtonLabel($this->i18N->txt('add_server'));
-            $add_server_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'addServer'));
+            $add_server_button->setLink($DIC->ctrl()->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'addServer'));
             $add_server_button->setInfo($this->i18N->txt('add_server_desc'));
             $this->addItem($add_server_button);
         }
@@ -197,14 +197,14 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     public function setDefault()
     {
-        global $ilUser;
+        global $DIC;
         if ($this->launchcontainer_item->getValue() == null) {
             $this->launchcontainer_item->setValue("0");
         }
 
         $this->org_item->setValue(ilMumieTaskAdminSettings::getInstance()->getOrg());
         if ($this->language_item->getValue() == null) {
-            $this->language_item->setValue($ilUser->getLanguage());
+            $this->language_item->setValue($DIC->user()->getLanguage());
         }
         $this->problem_selector_item->setValue(ilMumieTaskAdminSettings::getInstance()
         ->getProblemSelectorUrl());

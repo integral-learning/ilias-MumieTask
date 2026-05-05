@@ -121,12 +121,13 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     private static function upsertMarks($user_id, $task, $xapi_grade)
     {
-        global $ilDB, $DIC;
+        global $DIC;
+        $db = $DIC->database();
         $query = "SELECT * FROM ut_lp_marks WHERE 
-        obj_id = " . $ilDB->quote($task->getId(), "integer") .
+        obj_id = " . $db->quote($task->getId(), "integer") .
         " AND " .
-        "usr_id = " . $ilDB->quote($user_id, "integer");
-        $existingGrade = $ilDB->fetchAssoc($ilDB->query($query));
+        "usr_id = " . $db->quote($user_id, "integer");
+        $existingGrade = $db->fetchAssoc($db->query($query));
         if (is_null($existingGrade)) {
             self::insertMark($user_id, $task->getId());
         }
@@ -135,8 +136,8 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     private static function insertMark($user_id, $task_id)
     {
-        global $ilDB;
-        $ilDB->insert(
+        global $DIC;
+        $DIC->database()->insert(
             "ut_lp_marks",
             array(
                 'obj_id' => array('integer', $task_id),
@@ -184,19 +185,19 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
      */
     private static function getMumieTasksInRepository($refId)
     {
-        global $ilDB;
-
-        $result = $ilDB->query(
+        global $DIC;
+        $db = $DIC->database();
+        $result = $db->query(
             "SELECT o.ref_id, m.id
             FROM tree t
             JOIN object_reference o ON t.child = o.ref_id
             JOIN xmum_mumie_task m ON m.id = o.obj_id
-            WHERE t.parent = " . $ilDB->quote($refId, "integer")
+            WHERE t.parent = " . $db->quote($refId, "integer")
         );
 
         $mumieTasks = array();
 
-        while ($record = $ilDB->fetchAssoc($result)) {
+        while ($record = $db->fetchAssoc($result)) {
             $mumieTask = new ilObjMumieTask($record["ref_id"]);
             $mumieTask->read();
             array_push($mumieTasks, $mumieTask);
@@ -244,25 +245,27 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     private static function getLpMark($user_id, ilObjMumieTask $mumie_task): ?array
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
 
-        return $ilDB->fetchAssoc($ilDB->query(
+        return $db->fetchAssoc($db->query(
             "SELECT *
             FROM ut_lp_marks 
-            WHERE usr_id = " . $ilDB->quote($user_id, "integer") .
+            WHERE usr_id = " . $db->quote($user_id, "integer") .
             " AND " .
-            "obj_id = " . $ilDB->quote($mumie_task->getId(), "integer")
+            "obj_id = " . $db->quote($mumie_task->getId(), "integer")
         ));
     }
 
     private static function deleteLPForTask($task, $user_id = 0)
     {
         ilChangeEvent::_deleteReadEvents($task->getId());
-        global $ilDB;
-        $query = "DELETE FROM ut_lp_marks WHERE obj_id = " . $ilDB->quote($task->getId(), 'integer');
+        global $DIC;
+        $db = $DIC->database();
+        $query = "DELETE FROM ut_lp_marks WHERE obj_id = " . $db->quote($task->getId(), 'integer');
         if ($user_id > 0) {
-            $query .= " AND usr_id = " . $ilDB->quote($task->getId(), 'integer');
+            $query .= " AND usr_id = " . $db->quote($task->getId(), 'integer');
         }
-        $ilDB->manipulate($query);
+        $db->manipulate($query);
     }
 }

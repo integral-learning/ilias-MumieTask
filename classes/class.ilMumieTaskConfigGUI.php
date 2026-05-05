@@ -25,9 +25,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function performCommand(string $cmd): void
     {
-        global $ilCtrl;
+        global $DIC;
 
-        $cmd = $ilCtrl->getCmd($cmd);
+        $cmd = $DIC->ctrl()->getCmd($cmd);
 
         $this->setTabs();
         switch ($cmd) {
@@ -53,39 +53,42 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function configure()
     {
-        global $ilTabs;
+        global $DIC;
 
         $this->setTabs();
         $this->listServers();
-        $ilTabs->activateTab("tab_servers");
+        $DIC->tabs()->activateTab("tab_servers");
     }
 
     public function setTabs()
     {
-        global $ilCtrl, $ilTabs;
-        $i18N = $this->i18N;
-        $ilTabs->clearTargets();
+        global $DIC;
+        $ctrl = $DIC->ctrl();
+        $tabs = $DIC->tabs();
 
-        $ilTabs->addTab(
+        $i18N = $this->i18N;
+        $tabs->clearTargets();
+
+        $tabs->addTab(
             "tab_servers",
             $i18N->txt("tab_servers"),
-            $ilCtrl->getLinkTarget($this, "listServers")
+            $ctrl->getLinkTarget($this, "listServers")
         );
-        $ilTabs->addTab(
+        $tabs->addTab(
             "tab_shared_data",
             $i18N->txt("tab_shared_data"),
-            $ilCtrl->getLinkTarget($this, "sharedData")
+            $ctrl->getLinkTarget($this, "sharedData")
         );
 
-        $ilTabs->addTab(
+        $tabs->addTab(
             'tab_authentication',
             $i18N->txt("tab_authentication"),
-            $ilCtrl->getLinkTarget($this, "authentication")
+            $ctrl->getLinkTarget($this, "authentication")
         );
-        $ilTabs->addTab(
+        $tabs->addTab(
             'tab_problem_selector',
             $i18N->txt("tab_problem_selector"),
-            $ilCtrl->getLinkTarget($this, "problemSelector")
+            $ctrl->getLinkTarget($this, "problemSelector")
         );
     }
 
@@ -94,11 +97,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function listServers()
     {
-        global $tpl, $ilTabs;
-        $ilTabs->activateTab("tab_servers");
+        global $DIC;
+        $DIC->tabs()->activateTab("tab_servers");
         $server_gui = new ilMumieTaskServerTableGUI($this, 'listServers');
         $server_gui->init($this);
-        $tpl->setContent($server_gui->getHTML());
+        $DIC->ui()->mainTemplate()->setContent($server_gui->getHTML());
     }
 
     /**
@@ -106,11 +109,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function sharedData($setSavedValues = false)
     {
-        global $tpl, $ilTabs;
-        $ilTabs->activateTab("tab_shared_data");
+        global $DIC;
+        $DIC->tabs()->activateTab("tab_shared_data");
         $this->initShareDataForm();
 
-        $tpl->setContent($this->form->getHTML());
+        $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
     }
 
     /**
@@ -118,10 +121,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function initShareDataForm($load_saved_values = true)
     {
-        global $lng, $ilCtrl;
+        global $DIC;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
         $form->setTitle($this->i18N->txt("tab_shared_data"));
         $form->setDescription($this->i18N->txt("frm_shared_data_description"));
 
@@ -158,11 +161,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     private function submitSharedData()
     {
-        global $tpl, $DIC;
+        global $DIC;
         $this->initShareDataForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
-            $tpl->setContent($this->form->getHTML());
+            $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
             return;
         }
 
@@ -181,10 +184,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function authentication()
     {
-        global $tpl, $ilTabs;
-        $ilTabs->activateTab("tab_authentication");
+        global $DIC;
+        $DIC->tabs()->activateTab("tab_authentication");
         $this->initAuthForm();
-        $tpl->setContent($this->form->getHTML());
+        $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
     }
 
     /**
@@ -192,10 +195,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function initAuthForm($load_saved_values = true)
     {
-        global $lng, $ilCtrl;
+        global $DIC;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
         $form = new ilPropertyFormGUI();
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
         $form->setTitle($this->i18N->txt("tab_authentication"));
         $api_item = new ilTextInputGUI($this->i18N->txt('frm_auth_api'), 'api_key');
         $api_item->setInfo($this->i18N->txt('frm_auth_api_desc'));
@@ -218,10 +221,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function problemSelector()
     {
-        global $tpl, $ilTabs;
-        $ilTabs->activateTab("tab_problem_selector");
+        global $DIC;
+        $DIC->tabs()->activateTab("tab_problem_selector");
         $this->initProblemSelectorUrl();
-        $tpl->setContent($this->form->getHTML());
+        $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
     }
 
     /**
@@ -229,11 +232,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function initProblemSelectorUrl($load_saved_values = true)
     {
-        global $lng, $ilCtrl;
+        global $DIC;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
 
         $form = new ilPropertyFormGUI();
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
 
         $form->setTitle($this->i18N->txt('tab_problem_selector'));
         $form->setDescription($this->i18N->txt('tab_problem_selector_no_change'));
@@ -263,11 +266,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function submitAuthForm()
     {
-        global $tpl, $DIC;
+        global $DIC;
         $this->initAuthForm(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
-            $tpl->setContent($this->form->getHTML());
+            $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
             return;
         }
 
@@ -285,10 +288,10 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function addServer()
     {
-        global $tpl;
+        global $DIC;
         $this->initServerForm();
         $this->form->setTitle($this->i18N->txt('frm_server_add_title'));
-        $tpl->setContent($this->form->getHTML());
+        $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
     }
 
     /**
@@ -296,11 +299,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function saveProblemSelectorUrl(): void
     {
-        global $tpl, $DIC;
+        global $DIC;
         $this->initProblemSelectorUrl(false);
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
-            $tpl->setContent($this->form->getHTML());
+            $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
             return;
         }
 
@@ -332,11 +335,11 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function submitServer()
     {
-        global $tpl, $DIC;
+        global $DIC;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
-            $tpl->setContent($this->form->getHTML());
+            $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
             return;
         }
         $input_name = $this->form->getInput('name');
@@ -373,14 +376,14 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     public function editServer()
     {
-        global $tpl, $DIC, $ilCtrl;
+        global $DIC;
         $id = $_GET['server_id'];
         $DIC->ctrl()->setParameter($this, "server_id", $id);
         $this->initServerForm();
         $this->form->setValuesByArray($this->loadServerSettings($id));
         $this->form->setTitle($this->i18N->txt('frm_server_edit_title'));
-        $this->form->setFormAction($ilCtrl->getFormAction($this));
-        $tpl->setContent($this->form->getHTML());
+        $this->form->setFormAction($DIC->ctrl()->getFormAction($this));
+        $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
     }
 
     /**

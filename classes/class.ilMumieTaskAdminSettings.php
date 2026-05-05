@@ -17,18 +17,18 @@ class ilMumieTaskAdminSettings
 {
     public const TABLE_NAME = 'xmum_admin_settings';
 
-    protected $problem_selector_url;
-    protected $share_first_name;
-    protected $share_last_name;
-    protected $share_email;
-    protected $api_key;
-    protected $org;
-    protected $id;
+    protected string $problem_selector_url;
+    protected int $share_first_name;
+    protected int $share_last_name;
+    protected int $share_email;
+    protected string $api_key;
+    protected string $org;
+    protected int $id;
 
     /**
      * Always use this method to get access to the current settings
      */
-    public static function getInstance()
+    public static function getInstance(): ilMumieTaskAdminSettings
     {
         $instance = new ilMumieTaskAdminSettings();
         $instance->load();
@@ -38,10 +38,11 @@ class ilMumieTaskAdminSettings
     /**
      * Load all values from the database
      */
-    private function load()
+    private function load(): void
     {
-        global $ilDB;
-        $result = $ilDB->fetchObject($ilDB->query("SELECT * FROM " . ilMumieTaskAdminSettings::TABLE_NAME . " WHERE id = 1"));
+        global $DIC;
+        $db = $DIC->database();
+        $result = $db->fetchObject($db->query("SELECT * FROM " . ilMumieTaskAdminSettings::TABLE_NAME . " WHERE id = 1"));
         $this->id = $result->id;
         $this->problem_selector_url = $result->problem_selector_url;
         $this->share_first_name = $result->share_first_name;
@@ -51,10 +52,10 @@ class ilMumieTaskAdminSettings
         $this->org = $result->org;
     }
 
-    public function update()
+    public function update(): void
     {
-        global $ilDB;
-        $ilDB->update(
+        global $DIC;
+        $DIC->database()->update(
             ilMumieTaskAdminSettings::TABLE_NAME,
             array(
             "problem_selector_url" => array("text", $this->problem_selector_url),
@@ -70,72 +71,72 @@ class ilMumieTaskAdminSettings
         );
     }
 
-    public function getShareFirstName()
+    public function getShareFirstName(): int
     {
         return $this->share_first_name;
     }
 
-    public function setShareFirstName($share_first_name)
+    public function setShareFirstName($share_first_name): static
     {
         $this->share_first_name = $share_first_name;
 
         return $this;
     }
 
-    public function getShareLastName()
+    public function getShareLastName(): int
     {
         return $this->share_last_name;
     }
 
-    public function setShareLastName($share_last_name)
+    public function setShareLastName($share_last_name): static
     {
         $this->share_last_name = $share_last_name;
 
         return $this;
     }
 
-    public function getShareEmail()
+    public function getShareEmail(): int
     {
         return $this->share_email;
     }
 
-    public function setShareEmail($share_email)
+    public function setShareEmail($share_email): static
     {
         $this->share_email = $share_email;
 
         return $this;
     }
 
-    public function getApiKey()
+    public function getApiKey(): string
     {
         return $this->api_key;
     }
 
-    public function setApiKey($api_key)
+    public function setApiKey($api_key): static
     {
         $this->api_key = $api_key;
 
         return $this;
     }
 
-    public function getOrg()
+    public function getOrg(): string
     {
         return $this->org;
     }
 
-    public function setOrg($org)
+    public function setOrg($org): static
     {
         $this->org = $org;
 
         return $this;
     }
 
-    public function getProblemSelectorUrl()
+    public function getProblemSelectorUrl(): string
     {
         return $this->problem_selector_url;
     }
 
-    public function setProblemSelectorUrl($problem_selector_url)
+    public function setProblemSelectorUrl($problem_selector_url): static
     {
         $this->problem_selector_url = $problem_selector_url;
 

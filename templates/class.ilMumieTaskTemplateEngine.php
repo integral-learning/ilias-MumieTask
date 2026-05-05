@@ -13,7 +13,8 @@ class ilMumieTaskTemplateEngine
     public const EMPTY_CELL = '-';
     public static function getTemplate(string $path): ilTemplate
     {
-        global $tpl;
+        global $DIC;
+        $tpl = $DIC->ui()->mainTemplate();
         $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
         $tpl->addCss("Services/FileUpload/templates/default/fileupload.css");
         return new ilTemplate($path, true, true, true, "DEFAULT", true);

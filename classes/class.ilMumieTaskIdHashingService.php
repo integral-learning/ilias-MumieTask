@@ -35,13 +35,14 @@ class ilMumieTaskIdHashingService
 
     public static function getUserFromHash($hash)
     {
-        global $ilDB;
-        $result = $ilDB->fetchObject(
-            $ilDB->query(
+        global $DIC;
+        $db = $DIC->database();
+        $result = $db->fetchObject(
+            $db->query(
                 'SELECT * FROM '
                 . self::TABLE_NAME
                 . " WHERE hash = "
-                . $ilDB->quote($hash, "text")
+                . $db->quote($hash, "text")
             )
         );
 
@@ -50,19 +51,20 @@ class ilMumieTaskIdHashingService
 
     private function upsertHash()
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $this->hash = $this->generateHash();
         if ($this->task != null && $this->task->getPrivateGradepool() == 1) {
             $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
         }
-        $result = $ilDB->fetchObject(
-            $ilDB->query(
+        $result = $db->fetchObject(
+            $db->query(
                 'SELECT * FROM '
                 . self::TABLE_NAME
                 . " WHERE usr_id = "
-                . $ilDB->quote($this->user_id, "integer")
+                . $db->quote($this->user_id, "integer")
                 . " AND hash = "
-                . $ilDB->quote($this->hash, 'text')
+                . $db->quote($this->hash, 'text')
             )
         );
         if (!is_null($result)) {
@@ -75,11 +77,12 @@ class ilMumieTaskIdHashingService
 
     private function create()
     {
-        global $ilDB;
-        $ilDB->insert(
+        global $DIC;
+        $db = $DIC->database();
+        $db->insert(
             self::TABLE_NAME,
             array(
-                'id' => array('integer', $ilDB->nextID(self::TABLE_NAME)),
+                'id' => array('integer', $db->nextID(self::TABLE_NAME)),
                 'usr_id' => array('integer', $this->user_id),
                 'hash' => array('text', $this->hash),
             )
@@ -88,8 +91,8 @@ class ilMumieTaskIdHashingService
 
     private function update()
     {
-        global $ilDB;
-        $ilDB->update(
+        global $DIC;
+        $DIC->database()->update(
             self::TABLE_NAME,
             array(
                 'hash' => array('text', $this->hash),

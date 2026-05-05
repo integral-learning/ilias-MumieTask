@@ -58,12 +58,13 @@ class ilMumieTaskParticipantService
 
     private static function getAllUserIds(): array
     {
-        global $ilDB;
-        $result = $ilDB->query(
+        global $DIC;
+        $db = $DIC->database();
+        $result = $db->query(
             "SELECT usr_id FROM usr_data;"
         );
         $allIds = array();
-        while ($user_id = $ilDB->fetchAssoc($result)) {
+        while ($user_id = $db->fetchAssoc($result)) {
             array_push($allIds, $user_id["usr_id"]);
         }
         return $allIds;

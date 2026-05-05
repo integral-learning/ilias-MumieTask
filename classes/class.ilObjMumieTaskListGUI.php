@@ -60,7 +60,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
      */
     public function insertDescription(): void
     {
-        global $ilUser, $tpl;
+        global $DIC;
 
         try {
             // This fragment replicates parent behaviour
@@ -78,9 +78,9 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
                 return;
             }
 
-            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($ilUser->getId(), $task);
+            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($DIC->user()->getId(), $task);
 
-            $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
+            $DIC->ui()->mainTemplate()->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
             $this->tpl->setVariable("TXT_DESC", $this->getDescriptionWithDeadlineBadge($deadline, $task));
             $this->tpl->setCurrentBlock("item_description");
             $this->tpl->parseCurrentBlock();

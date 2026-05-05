@@ -27,51 +27,52 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
      */
     public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = ""): bool
     {
-        global $ilUser, $ilAccess, $ilCtrl, $DIC, $lng;
+        global $DIC;
+        $access = $DIC->access();
+
         if (!isset($a_cmd) || trim($a_cmd) === '') {
-            $a_cmd = $ilCtrl->getCmd();
+            $a_cmd = $DIC->ctrl()->getCmd();
         }
 
         if ($a_user_id == "") {
-            $a_user_id = $ilUser->getId();
+            $a_user_id = $DIC->user()->getId();
         }
 
-        $rbacsystem = $DIC['rbacsystem'];
         switch ($a_cmd) {
             case "editProperties":
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case 'createObject':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case "submitMumieTask":
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case 'cancelServer':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case 'cancelCreate':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case 'addServer':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case 'submitServer':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case 'editLPSettings':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case 'submitLPSettings':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case "forceGradeUpdate":
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case "viewContent":
-                return $ilAccess->checkAccess("read", "", $a_ref_id);
+                return $access->checkAccess("read", "", $a_ref_id);
             case "displayLearningProgress":
-                return $ilAccess->checkAccess("read", "", $a_ref_id);
+                return $access->checkAccess("read", "", $a_ref_id);
             case 'editAvailabilitySettings':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case 'submitAvailabilitySettings':
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case "displayGradeOverviewPage":
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case "displayGradeList":
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
             case "gradeOverride":
-                return $ilAccess->checkAccess("write", "", $a_ref_id);
+                return $access->checkAccess("write", "", $a_ref_id);
         }
 
         $rbacsystem = $DIC['rbacsystem'];
@@ -82,7 +83,7 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
             case "visible":
                 if (!$rbacsystem->checkAccessOfUser($a_user_id, 'write', $a_ref_id)) {
                     if (!self::_lookupOnline($a_obj_id)) {
-                        $ilAccess->addInfoItem(ilAccessInfo::IL_NO_OBJECT_ACCESS, $lng->txt("offline"));
+                        $ilAccess->addInfoItem(ilAccessInfo::IL_NO_OBJECT_ACCESS, $DIC->language()->txt("offline"));
                         return false;
                     }
                 }
@@ -97,11 +98,12 @@ class ilObjMumieTaskAccess extends ilObjectPluginAccess
      */
     public static function _lookupOnline($objId)
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
 
-        $query = "SELECT online FROM xmum_mumie_task where id = " . $ilDB->quote($objId, 'integer');
+        $query = "SELECT online FROM xmum_mumie_task where id = " . $db->quote($objId, 'integer');
 
-        if ($row = $ilDB->fetchAssoc($ilDB->query($query))) {
+        if ($row = $db->fetchAssoc($db->query($query))) {
             return $row["online"] == 1;
         }
         return false;

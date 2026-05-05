@@ -60,7 +60,6 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 
     public function checkInput(): bool
     {
-        global $lng;
         $ok = parent::checkInput();
         if ($this->mumie_task->getDeadline() > strtotime($this->getInput(self::DEADLINE_PARAM))) {
             $ok = false;

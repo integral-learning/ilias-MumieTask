@@ -37,14 +37,15 @@ class ilMumieTaskGradeOverrideService
 
     private static function loadOverriddenGrade($user_id, $task)
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $query = "SELECT new_grade
         FROM xmum_grade_override
         WHERE " .
-        "usr_id = " . $ilDB->quote($user_id, "text") .
+        "usr_id = " . $db->quote($user_id, "text") .
         " AND " .
-        "task_id = " . $ilDB->quote($task->getId(), "integer");
-        $assoc = $ilDB->fetchAssoc($ilDB->query($query));
+        "task_id = " . $db->quote($task->getId(), "integer");
+        $assoc = $db->fetchAssoc($db->query($query));
         return is_null($assoc) ? $assoc : $assoc[self::NEW_GRADE];
     }
 
@@ -59,8 +60,8 @@ class ilMumieTaskGradeOverrideService
 
     private static function insertGradeOverride(ilMumieTaskGrade $grade)
     {
-        global $ilDB;
-        $ilDB->insert(
+        global $DIC;
+        $DIC->database()->insert(
             "xmum_grade_override",
             array(
                 self::TASK_ID => array('integer', $grade->getMumieTask()->getId()),
@@ -72,8 +73,8 @@ class ilMumieTaskGradeOverrideService
 
     private static function updateGradeOverride(ilMumieTaskGrade $grade)
     {
-        global $ilDB;
-        $ilDB->update(
+        global $DIC;
+        $DIC->database()->update(
             "xmum_grade_override",
             array(
                 self::NEW_GRADE => array('integer', $grade->getPercentileScore())
@@ -87,16 +88,18 @@ class ilMumieTaskGradeOverrideService
 
     public static function deleteGradeOverridesForTask(ilObjMumieTask $task)
     {
-        global $ilDB;
-        $ilDB->manipulate("DELETE FROM xmum_grade_override WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
+        global $DIC;
+        $db = $DIC->database();
+        $db->manipulate("DELETE FROM xmum_grade_override WHERE task_id = " . $db->quote($task->getId(), 'integer'));
     }
 
     public static function deleteGradeOverride(ilObjMumieTask $task, $user_id)
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $query = "DELETE FROM xmum_grade_override WHERE task_id = " .
-            $ilDB->quote($task->getId(), 'integer') .
-            " AND usr_id = " . $ilDB->quote($user_id);
-        $ilDB->manipulate($query);
+            $db->quote($task->getId(), 'integer') .
+            " AND usr_id = " . $db->quote($user_id);
+        $db->manipulate($query);
     }
 }

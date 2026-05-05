@@ -33,7 +33,7 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
      */
     public function init($a_parent_obj)
     {
-        global $ilCtrl, $lng;
+        global $DIC;
         $i18n = $this->i18n;
 
         $this->setTitle($i18n->txt('tab_servers'));
@@ -41,7 +41,7 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
         $this->addColumn($i18n->globalTxt('name'), 'name', '20%');
         $this->addColumn($i18n->txt('url_prefix'), 'url_prefix', '50%');
         $this->setEnableHeader(true);
-        $this->setFormAction($ilCtrl->getFormAction($a_parent_obj));
+        $this->setFormAction($DIC->ctrl()->getFormAction($a_parent_obj));
         $this->addCommandButton('addServer', $i18n->txt('add_server'));
         $this->setRowTemplate('tpl.servers_row.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask');
         $this->getServerData();
@@ -54,18 +54,19 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
 
     protected function fillRow($set): void
     {
-        global $ilCtrl;
+        global $DIC;
+        $ctrl = $DIC->ctrl();
 
-        $ilCtrl->setParameter($this->parent_obj, 'server_id', $set['server_id']);
+        $ctrl->setParameter($this->parent_obj, 'server_id', $set['server_id']);
 
         $this->tpl->setVariable("TXT_ID", $set["server_id"]);
         $this->tpl->setVariable("TXT_NAME", $set["name"]);
         $this->tpl->setVariable("TXT_URL_PREFIX", $set["url_prefix"]);
 
         $this->tpl->setVariable("TXT_DELETE", $this->i18n->globalTxt('delete'));
-        $this->tpl->setVariable("LINK_DELETE", $ilCtrl->getLinkTarget($this->parent_obj, 'deleteServer'));
+        $this->tpl->setVariable("LINK_DELETE", $ctrl->getLinkTarget($this->parent_obj, 'deleteServer'));
 
         $this->tpl->setVariable("TXT_EDIT", "EDIT");
-        $this->tpl->setVariable("LINK_EDIT", $ilCtrl->getLinkTarget($this->parent_obj, 'editServer'));
+        $this->tpl->setVariable("LINK_EDIT", $ctrl->getLinkTarget($this->parent_obj, 'editServer'));
     }
 }

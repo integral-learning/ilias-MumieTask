@@ -64,8 +64,8 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function doCreate(bool $clone_mode = false): void
     {
-        global $ilDB;
-        $ilDB->insert(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME, array(
+        global $DIC;
+        $DIC->database()->insert(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME, array(
             "id" => array('integer', $this->getId()),
         ));
     }
@@ -75,14 +75,15 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function doRead(): void
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
 
-        $result = $ilDB->query(
+        $result = $db->query(
             "SELECT * FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME .
-            " WHERE id = " . $ilDB->quote($this->getId(), "integer")
+            " WHERE id = " . $db->quote($this->getId(), "integer")
         );
         if (!is_null($result)) {
-            $rec = $ilDB->fetchAssoc($result);
+            $rec = $db->fetchAssoc($result);
             $this->setTaskurl($rec['taskurl']);
             $this->setLaunchcontainer($rec['launchcontainer']);
             $this->setMumieCourse($rec['mumie_course']);
@@ -170,11 +171,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      */
     public function doDelete(): void
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         ilMumieTaskDeadlineExtensionService::deleteDeadlineExtensions($this);
-        $ilDB->manipulate(
+        $db->manipulate(
             "DELETE FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME . " WHERE " .
-            " id = " . $ilDB->quote($this->getId(), "integer")
+            " id = " . $db->quote($this->getId(), "integer")
         );
     }
 
@@ -262,9 +264,10 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     public function updateAccess()
     {
-        global $ilUser;
-        if ($ilUser->getId() != ANONYMOUS_USER_ID) {
-            ilMumieTaskLPStatus::updateAccess($ilUser->getId(), $this, $this->getRefId(), $this->getLPStatusForUser($ilUser->getId()));
+        global $DIC;
+        $user_id = $DIC->user()->getId();
+        if ($user_id != ANONYMOUS_USER_ID) {
+            ilMumieTaskLPStatus::updateAccess($user_id, $this, $this->getRefId(), $this->getLPStatusForUser($user_id));
         }
     }
 

@@ -27,7 +27,6 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 
     public function setFields($disable_online_selection)
     {
-        global $lng;
         $online_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_activation_online'), 'online');
 
         $online_item->setInfo($this->getOnlineItemInfo($disable_online_selection));

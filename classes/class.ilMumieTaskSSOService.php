@@ -23,7 +23,8 @@ class ilMumieTaskSSOService
 
     public static function verifyToken()
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $token = $_POST['token'];
         $hashed_id = $_POST['userId'];
 
@@ -32,8 +33,8 @@ class ilMumieTaskSSOService
         $mumietoken = new ilMumieTaskSSOToken($hashed_id);
         $mumietoken->read();
 
-        $user_query = $ilDB->query('SELECT * FROM usr_data WHERE usr_id = ' . $ilDB->quote($il_user_id, "integer"));
-        $user_rec = $ilDB->fetchAssoc($user_query);
+        $user_query = $db->query('SELECT * FROM usr_data WHERE usr_id = ' . $db->quote($il_user_id, "integer"));
+        $user_rec = $db->fetchAssoc($user_query);
         $response = new stdClass();
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
 
@@ -68,8 +69,8 @@ class ilMumieTaskSSOService
 
     public function setUpTokenAndLaunchForm($task)
     {
-        global $ilUser, $ilDB, $DIC;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($ilUser->getId(), $task);
+        global $DIC;
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($DIC->user()->getId(), $task);
         $ssotoken = new ilMumieTaskSSOToken($hashed_user);
         $ssotoken->insertOrRefreshToken();
 

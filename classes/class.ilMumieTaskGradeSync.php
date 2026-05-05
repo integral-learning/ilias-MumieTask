@@ -142,17 +142,18 @@ class ilMumieTaskGradeSync
      */
     private function getLastSync()
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         if ($this->force_update) {
             return 1;
         }
 
         $oldest_timestamp = PHP_INT_MAX;
-        $result = $ilDB->query("SELECT usr_id, obj_id, status_changed" .
+        $result = $db->query("SELECT usr_id, obj_id, status_changed" .
             " FROM ut_lp_marks" .
-            " WHERE obj_id = " . $ilDB->quote($this->task->getId(), "integer") .
+            " WHERE obj_id = " . $db->quote($this->task->getId(), "integer") .
             " AND mark IS NOT NULL");
-        while ($record = $ilDB->fetchAssoc($result)) {
+        while ($record = $db->fetchAssoc($result)) {
             if (in_array($record['usr_id'], $this->user_ids) && strtotime($record['status_changed']) < $oldest_timestamp) {
                 $oldest_timestamp = strtotime($record['status_changed']);
             }

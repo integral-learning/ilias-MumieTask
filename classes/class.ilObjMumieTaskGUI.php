@@ -70,42 +70,45 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
     public function setTabs(): void
     {
-        global $ilCtrl, $ilAccess, $ilTabs, $DIC;
-        $lng = $DIC->language();
+        global $DIC;
+        $ctrl = $DIC->ctrl();
+        $tabs = $DIC->tabs();
+
         $this->tabs->clearTargets();
         $this->object->read();
         if ($this->object->isDummy()) {
             return;
         }
-        $this->tabs->addTab("viewContent", $this->i18N->globalTxt("content"), $ilCtrl->getLinkTarget($this, "viewContent"));
-        if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
-            $this->tabs->addTab("properties", $this->i18N->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
-            $this->tabs->addTab("userList", $this->i18N->txt('tab_userlist'), $ilCtrl->getLinkTarget($this, "displayGradeOverviewPage"));
+        $this->tabs->addTab("viewContent", $this->i18N->globalTxt("content"), $ctrl->getLinkTarget($this, "viewContent"));
+        if ($DIC->access()->checkAccess("write", "", $this->object->getRefId())) {
+            $this->tabs->addTab("properties", $this->i18N->txt("properties"), $ctrl->getLinkTarget($this, "editProperties"));
+            $this->tabs->addTab("userList", $this->i18N->txt('tab_userlist'), $ctrl->getLinkTarget($this, "displayGradeOverviewPage"));
         }
 
         if ($this->object->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
-            $ilTabs->addTab("learning_progress", $this->i18N->globalTxt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
+            $tabs->addTab("learning_progress", $this->i18N->globalTxt('learning_progress'), $ctrl->getLinkTarget($this, 'displayLearningProgress'));
         }
 
-        $ilTabs->addTab("infoScreen", $this->i18N->globalTxt("info_short"), $ilCtrl->getLinkTarget($this, "infoScreen"));
+        $tabs->addTab("infoScreen", $this->i18N->globalTxt("info_short"), $ctrl->getLinkTarget($this, "infoScreen"));
 
         $this->addPermissionTab();
     }
 
     public function setSubTabs($a_tab)
     {
-        global $ilTabs, $ilCtrl;
+        global $DIC;
+        $ctrl = $DIC->ctrl();
+        $tabs = $DIC->tabs();
+
         if ($this->object->isDummy()) {
             return;
         }
-        $ilTabs->clearSubTabs();
-        switch ($a_tab) {
-            case 'properties':
-                $ilTabs->addSubTab("edit_task", $this->i18N->txt('tab_gen_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
-                $ilTabs->addSubTab("lp_settings", $this->i18N->txt('tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
-                $this->lng->loadLanguageModule('rep');
-                $ilTabs->addSubTab("availability_settings", $this->i18N->globalTxt('rep_activation_availability'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
-                break;
+        $tabs->clearSubTabs();
+        if ($a_tab == 'properties') {
+            $tabs->addSubTab("edit_task", $this->i18N->txt('tab_gen_settings'), $ctrl->getLinkTarget($this, "editProperties"));
+            $tabs->addSubTab("lp_settings", $this->i18N->txt('tab_lp_settings'), $ctrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
+            $this->lng->loadLanguageModule('rep');
+            $tabs->addSubTab("availability_settings", $this->i18N->globalTxt('rep_activation_availability'), $ctrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
         }
     }
 
@@ -142,14 +145,17 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function editPropertiesObject()
     {
-        global $tpl, $ilTabs, $DIC;
+        global $DIC;
+        $tabs = $DIC->tabs();
+        $tpl = $DIC->ui()->mainTemplate();
+
         if (empty(ilMumieTaskServer::getAllServers())) {
             $this->addServer();
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt("msg_no_server_found"), true);
             return;
         }
-        $ilTabs->activateTab('properties');
-        $ilTabs->activateSubTab("edit_task");
+        $tabs->activateTab('properties');
+        $tabs->activateSubTab("edit_task");
         $this->object->doRead();
         $this->initPropertiesForm();
         if (!$this->object->isDummy() && !ilMumieTaskServer::serverConfigExistsForUrl($this->object->getServer())) {
@@ -186,7 +192,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function initPropertiesForm()
     {
-        global $ilCtrl, $DIC;
+        global $DIC;
 
         $form = new ilMumieTaskFormGUI();
         $form->setFields();
@@ -194,7 +200,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $form->addCommandButton("submitMumieTask", $this->i18N->globalTxt('save'));
         $form->addCommandButton($this->object->isDummy() ? 'cancelDummy' : 'viewContent', $this->i18N->globalTxt('cancel'));
 
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
         $this->form = $form;
     }
 
@@ -203,7 +209,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitMumieTask()
     {
-        global $tpl, $ilCtrl, $DIC;
+        global $DIC;
+        $tpl = $DIC->ui()->mainTemplate();
         $this->initPropertiesForm();
 
         if (!$this->form->checkInput()) {
@@ -225,7 +232,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
 
-        $ilCtrl->redirect($this, 'editProperties');
+        $DIC->ctrl()->redirect($this, 'editProperties');
     }
 
     /**
@@ -258,9 +265,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function addServer()
     {
-        global $ilTabs;
+        global $DIC;
         $this->setSubTabs('properties');
-        $ilTabs->activateTab('properties');
+        $DIC->tabs()->activateTab('properties');
         $this->initServerForm();
         $this->form->setTitle($this->i18N->txt('frm_server_add_title'));
         $this->tpl->setContent($this->form->getHTML());
@@ -271,11 +278,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     private function initServerForm()
     {
-        global $ilCtrl;
+        global $DIC;
 
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
         $form->addCommandButton('submitServer', $this->i18N->globalTxt('save'));
         $form->addCommandButton('editProperties', $this->i18N->globalTxt('cancel'));
 
@@ -287,11 +294,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitServer()
     {
-        global $tpl, $DIC;
+        global $DIC;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
-            $tpl->setContent($this->form->getHTML());
+            $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
         } else {
             $input_name = $this->form->getInput('name');
             $input_url_prefix = $this->form->getInput("url_prefix");
@@ -314,13 +321,15 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function displayLearningProgress()
     {
-        global $ilCtrl;
+        global $DIC;
+        $ctrl = $DIC->ctrl();
+
         ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
-            $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
+            $ctrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
         } else {
             $this->setProgressInfo();
-            $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI'));
+            $ctrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI'));
         }
     }
 
@@ -332,10 +341,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function setProgressInfo()
     {
-        global $ilUser, $lng, $DIC;
-        $status = ilMumieTaskLPStatus::getLPStatusForUser($this->object, $ilUser->getId());
+        global $DIC;
+        $status = ilMumieTaskLPStatus::getLPStatusForUser($this->object, $DIC->user()->getId());
         $status_path = $this->getStatusImagePath($status);
-        $lng->loadLanguageModule('trac');
+        $DIC->language()->loadLanguageModule('trac');
 
         switch ($status) {
             case ilLPStatus::LP_STATUS_COMPLETED_NUM:
@@ -370,8 +379,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function getLPMessageString($status_text, $status_path)
     {
-        global $lng;
-        $lng->loadLanguageModule('trac');
+        global $DIC;
+        $DIC->language()->loadLanguageModule('trac');
 
         $html_string =
 
@@ -422,13 +431,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     protected function viewContent()
     {
-        global $ilTabs, $ilCtrl, $ilUser, $DIC;
+        global $DIC;
         if ($this->object->isDummy()) {
-            $ilCtrl->redirect($this, 'editProperties');
+            $DIC->ctrl()->redirect($this, 'editProperties');
         }
-        $ilTabs->activateTab('viewContent');
+        $DIC->tabs()->activateTab('viewContent');
         $this->object->updateAccess();
-        if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
+        if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($DIC->user()->getId(), $this->object)) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt('frm_list_grade_overview_after_deadline'));
         }
         $this->tpl->setContent($this->object->getContent());
@@ -442,10 +451,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($this->object->isDummy()) {
             return;
         }
-        global $ilTabs;
-        $ilTabs->activateTab('properties');
+        global $DIC;
+        $tabs = $DIC->tabs();
+        $tabs->activateTab('properties');
         $this->setSubTabs("properties");
-        $ilTabs->activateSubTab('lp_settings');
+        $tabs->activateSubTab('lp_settings');
         $this->initLPSettingsForm();
         $values = array();
         $values['lp_modus'] = $this->object->getLpModus();
@@ -461,20 +471,22 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function initLPSettingsForm()
     {
-        global $ilCtrl;
+        global $DIC;
+        $ctrl = $DIC->ctrl();
+
         $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet());
         $form->setFields();
         $form->setTitle($this->i18N->txt('tab_lp_settings'));
 
         $force_sync_button = new ilMumieTaskFormButtonGUI($this->i18N->txt('frm_force_update'));
         $force_sync_button->setButtonLabel($this->i18N->txt('frm_force_update_btn'));
-        $force_sync_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'forceGradeUpdate'));
+        $force_sync_button->setLink($ctrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'forceGradeUpdate'));
         $force_sync_button->setInfo($this->i18N->txt('frm_force_update_desc'));
         $form->addItem($force_sync_button);
 
         $form->addCommandButton('submitLPSettings', $this->i18N->globalTxt('save'));
         $form->addCommandButton('editProperties', $this->i18N->globalTxt('cancel'));
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($ctrl->getFormAction($this));
         $this->form = $form;
     }
 
@@ -524,11 +536,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($this->object->isDummy()) {
             return;
         }
-        global $ilTabs;
-        $ilTabs->activateTab('properties');
+        global $DIC;
+        $tabs = $DIC->tabs();
+        $tabs->activateTab('properties');
         $this->setSubTabs("properties");
 
-        $ilTabs->activateSubTab('availability_settings');
+        $tabs->activateSubTab('availability_settings');
         $this->lng->loadLanguageModule('rep');
         $this->initAvailabilitySettingsForm();
         $values = array();
@@ -550,12 +563,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function initAvailabilitySettingsForm()
     {
-        global $ilCtrl;
+        global $DIC;
         $form = new ilMumieTaskFormAvailabilityGUI();
         $form->setFields(!$this->object->isGradepoolSet());
         $form->addCommandButton('submitAvailabilitySettings', $this->i18N->globalTxt('save'));
         $form->addCommandButton('editProperties', $this->i18N->globalTxt('cancel'));
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
 
         $this->form = $form;
     }
@@ -565,7 +578,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function submitAvailabilitySettings()
     {
-        global $ilDB, $DIC;
+        global $DIC;
         $this->initAvailabilitySettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -611,19 +624,19 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function displayGradeOverviewPage()
     {
-        global $ilTabs;
-        $ilTabs->activateTab('userList');
+        global $DIC;
+        $DIC->tabs()->activateTab('userList');
         $this->initGradeOverviewPage();
         $this->tpl->setContent($this->form->getHTML());
     }
 
     private function initGradeOverviewPage()
     {
-        global $ilCtrl;
+        global $DIC;
         $form = new ilMumieTaskGradeOverviewFormGUI($this->object);
         $form->setTitle($this->i18N->txt('frm_user_overview_list_search_title'));
         $form->addCommandButton('displayGradeOverviewPage', $this->i18N->txt('frm_user_overview_list_search'));
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
         $this->form = $form;
         if (!$this->form->checkInput()) {
             $this->tpl->setContent($this->form->getHTML());
@@ -635,11 +648,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     public function displayGradeList()
     {
-        global $ilTabs, $ilCtrl;
-        $ilTabs->activateTab('userList');
+        global $DIC;
+        $DIC->tabs()->activateTab('userList');
         $form = new ilMumieTaskGradeListFormGUI($this, $_GET['user_id'], $this->object);
         $form->setFields();
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
         $form->addCommandButton('displayGradeOverviewPage', $this->i18N->txt('frm_grade_overview_list_back'));
         $this->form = $form;
         $this->tpl->setContent($this->form->getHTML());
@@ -675,21 +688,21 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     public function displayDeadlineExtension()
     {
-        global $ilTabs;
-        $ilTabs->activateTab('userList');
+        global $DIC;
+        $DIC->tabs()->activateTab('userList');
         $this->initDeadlineExtension();
         $this->tpl->setContent($this->form->getHTML());
     }
 
     private function initDeadlineExtension()
     {
-        global $ilCtrl;
+        global $DIC;
         $form = new ilMumieTaskDeadlineExtensionForm($this->object, $_GET["user_id"]);
         $form->setTitle($this->i18N->txt('frm_user_overview_list_extended_deadline'));
         $form->setFields();
         $form->addCommandButton('submitDeadlineExtension', $this->i18N->txt('frm_save'));
         $form->addCommandButton('displayGradeOverviewPage', $this->i18N->txt('frm_cancel'));
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
         $form->setInfoBox();
 
         $this->form = $form;

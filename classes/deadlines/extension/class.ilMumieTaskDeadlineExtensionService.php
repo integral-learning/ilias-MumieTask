@@ -41,25 +41,27 @@ class ilMumieTaskDeadlineExtensionService
 
     public static function deleteDeadlineExtension($mumie_task, $user_id)
     {
-        global $ilDB;
-        $ilDB->manipulate(
+        global $DIC;
+        $db = $DIC->database();
+        $db->manipulate(
             "DELETE FROM xmum_deadline_ext WHERE task_id = " .
-            $ilDB->quote($mumie_task->getId(), 'integer') .
+            $db->quote($mumie_task->getId(), 'integer') .
             " AND usr_id = " .
-            $ilDB->quote($user_id, 'integer')
+            $db->quote($user_id, 'integer')
         );
     }
 
     public static function deleteDeadlineExtensions($task)
     {
-        global $ilDB;
-        $ilDB->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
+        global $DIC;
+        $db = $DIC->database();
+        $db->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $db->quote($task->getId(), 'integer'));
     }
 
     private static function insertDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)
     {
-        global $ilDB;
-        $ilDB->insert(
+        global $DIC;
+        $DIC->database()->insert(
             self::DEADLINE_EXTENSION_TABLE,
             array(
                 self::TASK_ID => array('integer', $deadline_extension->getTaskId()),
@@ -71,8 +73,8 @@ class ilMumieTaskDeadlineExtensionService
 
     private static function updateDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)
     {
-        global $ilDB;
-        $ilDB->update(
+        global $DIC;
+        $DIC->database()->update(
             self::DEADLINE_EXTENSION_TABLE,
             array(
                 self::DATE => array('integer', $deadline_extension->getDate()->getUnixTime())
@@ -92,18 +94,19 @@ class ilMumieTaskDeadlineExtensionService
 
     private static function getDeadlineExtensionAssoc($user_id, $task): ?array
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $query = "SELECT *
         FROM xmum_deadline_ext
         WHERE " .
             self::TASK_ID .
             " = "
-            . $ilDB->quote($task->getId(), "integer") .
+            . $db->quote($task->getId(), "integer") .
             " AND " .
             self::USER_ID .
             " = " .
-            $ilDB->quote($user_id, "text");
-        return $ilDB->fetchAssoc($ilDB->query($query));
+            $db->quote($user_id, "text");
+        return $db->fetchAssoc($db->query($query));
     }
 
     private static function sendUpdateSuccessMessage(ilMumieTaskDeadlineExtension $deadline_extension)

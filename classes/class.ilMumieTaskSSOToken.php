@@ -42,11 +42,12 @@ class ilMumieTaskSSOToken
 
     private function create()
     {
-        global $ilDB;
-        $ilDB->insert(
+        global $DIC;
+        $db = $DIC->database();
+        $db->insert(
             self::MUMIETOKENS_TABLE_NAME,
             array(
-                'id' => array('integer', $ilDB->nextID(self::MUMIETOKENS_TABLE_NAME)),
+                'id' => array('integer', $db->nextID(self::MUMIETOKENS_TABLE_NAME)),
                 'token' => array('text', $this->token),
                 'timecreated' => array('integer', time()),
                 'user' => array('text',  $this->user))
@@ -55,13 +56,14 @@ class ilMumieTaskSSOToken
 
     public function read()
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $query = "SELECT * FROM "
         . self::MUMIETOKENS_TABLE_NAME
         . " WHERE user = "
-        . $ilDB->quote($this->user, 'text');
+        . $db->quote($this->user, 'text');
 
-        $result = $ilDB->fetchAssoc($ilDB->query($query));
+        $result = $db->fetchAssoc($db->query($query));
         if (!is_null($result)) {
             $this->setToken($result["token"]);
             $this->setTimecreated($result["timecreated"]);
@@ -70,8 +72,8 @@ class ilMumieTaskSSOToken
 
     private function update()
     {
-        global $ilDB;
-        $ilDB->update(
+        global $DIC;
+        $DIC->database()->update(
             self::MUMIETOKENS_TABLE_NAME,
             array(
                 'token' => array('text', $this->token),
@@ -85,12 +87,13 @@ class ilMumieTaskSSOToken
 
     public function delete()
     {
-        global $ilDB;
-        $ilDB->manipulate(
+        global $DIC;
+        $db = $DIC->database();
+        $db->manipulate(
             "DELETE FROM "
             . self::MUMIETOKENS_TABLE_NAME
             . " WHERE user = "
-            . $ilDB->quote($this->user, 'text')
+            . $db->quote($this->user, 'text')
         );
     }
 
@@ -114,25 +117,27 @@ class ilMumieTaskSSOToken
 
     public static function tokenExistsForIliasUser($iliasUserId)
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $query = self::getAllTokensForIliasUserQuery($iliasUserId);
-        return !is_null($ilDB->fetchAssoc($ilDB->query($query)));
+        return !is_null($db->fetchAssoc($db->query($query)));
     }
 
     private static function getAllTokensForIliasUserQuery($iliasUserId)
     {
-        global $ilDB;
+        global $DIC;
         $hashedId = ilMumieTaskIdHashingService::getHashForUser($iliasUserId);
         return "SELECT * FROM "
             . self::MUMIETOKENS_TABLE_NAME
-            . " WHERE " . $ilDB->like("user", "text", $hashedId . "%");
+            . " WHERE " . $DIC->database()->like("user", "text", $hashedId . "%");
     }
 
     public static function invalidateAllTokensForUser($iliasUserId)
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $query = self::getAllTokensForIliasUserQuery($iliasUserId);
-        while ($result = $ilDB->fetchAssoc($ilDB->query($query))) {
+        while ($result = $db->fetchAssoc($db->query($query))) {
             $mumie_token = new ilMumieTaskSSOToken($result["user"]);
             $mumie_token->delete();
         }

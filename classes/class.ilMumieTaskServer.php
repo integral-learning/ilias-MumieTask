@@ -49,9 +49,10 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
 
     private function create(): void
     {
-        global $ilDB, $DIC;
-        $this->server_id = $ilDB->nextId(ilMumieTaskServer::$SERVER_TABLE_NAME);
-        $DIC->database()->insert(ilMumieTaskServer::$SERVER_TABLE_NAME, array(
+        global $DIC;
+        $db = $DIC->database();
+        $this->server_id = $db->nextId(ilMumieTaskServer::$SERVER_TABLE_NAME);
+        $db->insert(ilMumieTaskServer::$SERVER_TABLE_NAME, array(
             "server_id" => array('integer', $this->server_id),
             "name" => array('text', $this->name),
             "url_prefix" => array('text', $this->url_prefix),

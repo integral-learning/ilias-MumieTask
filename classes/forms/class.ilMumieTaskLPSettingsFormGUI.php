@@ -30,7 +30,6 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 
     public function setFields()
     {
-        global $lng;
         $this->modus_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_sync_lp'), "lp_modus");
         $this->modus_item->setInfo($this->i18N->txt('frm_sync_lp_desc'));
         $modus_option_true = new ilRadioOption($this->i18N->txt('frm_enable'), 1);
@@ -71,7 +70,6 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 
     private function getGradepoolInfo()
     {
-        global $lng;
         $gradepool_info = $this->i18N->txt('frm_privategradepool_desc') . '<br><br>';
         if (!$this->disable_grade_pool_selection) {
             $gradepool_info .= $this->i18N->txt('frm_privategradepool_undecided');
