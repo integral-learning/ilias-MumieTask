@@ -49,7 +49,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->description_item = new ilTextInputGUI($this->i18N->globalTxt('description'), 'description');
         $this->addItem($this->description_item);
 
-        $this->server_item = new ilSelectInputGui($this->i18N->txt('mumie_server'), 'xmum_server');
+        $this->server_item = new ilSelectInputGUI($this->i18N->txt('mumie_server'), 'xmum_server');
         $this->server_item->setRequired(true);
         $this->addItem($this->server_item);
 
