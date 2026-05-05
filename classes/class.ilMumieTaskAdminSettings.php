@@ -76,7 +76,7 @@ class ilMumieTaskAdminSettings
         return $this->share_first_name;
     }
 
-    public function setShareFirstName($share_first_name): static
+    public function setShareFirstName(int $share_first_name): static
     {
         $this->share_first_name = $share_first_name;
 
@@ -88,7 +88,7 @@ class ilMumieTaskAdminSettings
         return $this->share_last_name;
     }
 
-    public function setShareLastName($share_last_name): static
+    public function setShareLastName(int $share_last_name): static
     {
         $this->share_last_name = $share_last_name;
 
@@ -100,7 +100,7 @@ class ilMumieTaskAdminSettings
         return $this->share_email;
     }
 
-    public function setShareEmail($share_email): static
+    public function setShareEmail(int $share_email): static
     {
         $this->share_email = $share_email;
 

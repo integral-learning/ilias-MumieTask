@@ -170,9 +170,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         }
 
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
-        $admin_settings->setShareFirstName($this->form->getInput('shareFirstName'));
-        $admin_settings->setShareLastName($this->form->getInput('shareLastName'));
-        $admin_settings->setShareEmail($this->form->getInput('shareEmail'));
+        $admin_settings->setShareFirstName((int) $this->form->getInput('shareFirstName'));
+        $admin_settings->setShareLastName((int) $this->form->getInput('shareLastName'));
+        $admin_settings->setShareEmail((int) $this->form->getInput('shareEmail'));
         $admin_settings->update();
         $cmd = "sharedData";
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
