@@ -8,14 +8,16 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
 
 /**
  * This class provides information about LP progress and methods to synchronize it with MUMIE servers
  */
 class ilMumieTaskLPStatus extends ilLPStatusPlugin
 {
-    public static function updateAccess($user_id, ilObjMumieTask $mumie_task, $refId, $old_status): void
+    public static function updateAccess($user_id, ilObjMumieTask $mumie_task, $refId, $old_status)
     {
+        require_once('Services/Tracking/classes/class.ilChangeEvent.php');
         ilChangeEvent::_recordReadEvent('xmum', $refId, $mumie_task->getId(), $user_id);
 
         $status = self::getLPStatusForUser($mumie_task, $user_id);
@@ -31,27 +33,27 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
-    public static function getLPInProgressForMumieTask($taskId): array
+    public static function getLPInProgressForMumieTask($taskId)
     {
         return self::getLPStatusData($taskId, self::LP_STATUS_IN_PROGRESS_NUM);
     }
 
-    public static function getLPFailedForMumieTask($taskId): array
+    public static function getLPFailedForMumieTask($taskId)
     {
         return self::getLPStatusData($taskId, self::LP_STATUS_FAILED_NUM);
     }
 
-    public static function getLPCompletedForMumieTask($taskId): array
+    public static function getLPCompletedForMumieTask($taskId)
     {
         return self::getLPStatusData($taskId, self::LP_STATUS_COMPLETED_NUM);
     }
 
-    public static function getLPNotAttemptedForMumieTask($taskId): array
+    public static function getLPNotAttemptedForMumieTask($taskId)
     {
         return self::getLPStatusData($taskId, self::LP_STATUS_NOT_ATTEMPTED_NUM);
     }
 
-    private static function updateResult($user_id, $taskId, $succeeded, $percentage): void
+    private static function updateResult($user_id, $taskId, $succeeded, $percentage)
     {
         $status = $succeeded ? self::LP_STATUS_COMPLETED_NUM : self::LP_STATUS_FAILED_NUM;
         self::writeStatus($taskId, $user_id, $status, $percentage, true);
@@ -61,21 +63,22 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     /**
      * Synchronize grade for a given MumieTask
      *
-     * @param ilObjMumieTask $task the task we want to update grades for
+     * @param stdClass $task the task we want to update grades for
      * @param boolean $force_update if true delete all saved learning progress data and then synchronize it again
-     * @throws ilCurlConnectionException
      */
-    public static function updateGrades(ilObjMumieTask $task, bool $force_update = false): void
+    public static function updateGrades($task, $force_update = false)
     {
         if (!self::isGradable($task)) {
             return;
         }
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         $grade_sync = new ilMumieTaskGradeSync($task, $force_update);
 
         if ($force_update) {
             ilLoggerFactory::getLogger('xmum')->info("MumieTask: Changes triggered forced grade update");
             self::deleteLPForTask($task);
         }
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
         $grades_by_user = $grade_sync->getValidAndNewXapiGradesByUser();
         foreach (array_keys($grades_by_user) as $user_id) {
             $xapi_grade = $grades_by_user[$user_id];
@@ -83,14 +86,12 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         }
     }
 
-    /**
-     * @throws ilCurlConnectionException
-     */
-    public static function updateGradeForUser($task, $user_id, bool $force_update = false): void
+    public static function updateGradeForUser($task, $user_id, $force_update = false)
     {
         if (!self::isGradable($task)) {
             return;
         }
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
         $grade_sync = new ilMumieTaskGradeSync($task, $force_update);
 
         if ($force_update) {
@@ -101,7 +102,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         self::upsertXapiGrade($xapi_grade, $task, $user_id);
     }
 
-    private static function upsertXapiGrade($xapi_grade, $task, $user_id): void
+    private static function upsertXapiGrade($xapi_grade, $task, $user_id)
     {
         $percentage = round($xapi_grade->result->score->scaled * 100);
         self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
@@ -117,15 +118,16 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         if (!$task->getServer()) {
             return false;
         }
+        include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
         if (!$task->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
             return false;
         }
         return true;
     }
 
-    private static function upsertMarks($user_id, $task, $xapi_grade): void
+    private static function upsertMarks($user_id, $task, $xapi_grade)
     {
-        global $ilDB;
+        global $ilDB, $DIC;
         $query = "SELECT * FROM ut_lp_marks WHERE 
         obj_id = " . $ilDB->quote($task->getId(), "integer") .
         " AND " .
@@ -137,7 +139,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         self::updateMark($user_id, $task->getId(), round($xapi_grade->result->score->scaled * 100), strtotime($xapi_grade->timestamp));
     }
 
-    private static function insertMark($user_id, $task_id): void
+    private static function insertMark($user_id, $task_id)
     {
         global $ilDB;
         $ilDB->insert(
@@ -149,7 +151,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         );
     }
 
-    public static function updateMark($user_id, $task_id, $percentage, $timestamp): void
+    public static function updateMark($user_id, $task_id, $percentage, $timestamp)
     {
         global $DIC;
         $DIC->database()->update(
@@ -170,8 +172,10 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
      *
      * @param int $refId RefId of the ilContainer
      */
-    public static function updateGradesForIlContainer($refId): void
+    public static function updateGradesForIlContainer($refId)
     {
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+
         $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
         foreach ($mumieTasks as $mumieTask) {
             try {
@@ -186,7 +190,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     /**
      *  @return ilObjMumieTask[]
      */
-    private static function getMumieTasksInRepository($refId): array
+    private static function getMumieTasksInRepository($refId)
     {
         global $ilDB;
 
@@ -208,7 +212,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         return $mumieTasks;
     }
 
-    public static function updateGradepoolSettingsForAllMumieTaskInRepository($refId, $privategradepool): void
+    public static function updateGradepoolSettingsForAllMumieTaskInRepository($refId, $privategradepool)
     {
         $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
         foreach ($mumieTasks as $mumieTask) {
@@ -259,8 +263,9 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         ));
     }
 
-    private static function deleteLPForTask($task, $user_id = 0): void
+    private static function deleteLPForTask($task, $user_id = 0)
     {
+        require_once('Services/Tracking/classes/class.ilChangeEvent.php');
         ilChangeEvent::_deleteReadEvents($task->getId());
         global $ilDB;
         $query = "DELETE FROM ut_lp_marks WHERE obj_id = " . $ilDB->quote($task->getId(), 'integer');

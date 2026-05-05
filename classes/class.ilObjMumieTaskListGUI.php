@@ -8,6 +8,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 {
     private ilMumieTaskI18N $i18n;
@@ -18,7 +19,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
         parent::__construct($a_context);
     }
 
-    public function initType(): void
+    public function initType()
     {
         $this->setType('xmum');
     }
@@ -30,6 +31,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
     public function initCommands(): array
     {
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         //Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
         try {
             ilMumieTaskLPStatus::updateGradesForIlContainer($_GET["ref_id"]);
@@ -56,12 +58,14 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
      * We need to to override parent method or we won't be able to add any kind of styling to the deadline bade.
      * We closely follow the structure found in ilObjectListGUI::insertDescription
      *
-     * @return void
+     * @return true|void
      */
     public function insertDescription(): void
     {
         global $ilUser, $tpl;
 
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskObjService.php');
         try {
             // This fragment replicates parent behaviour
             if ($this->getSubstitutionStatus()) {

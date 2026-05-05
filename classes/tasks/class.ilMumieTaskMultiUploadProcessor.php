@@ -8,9 +8,12 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskTaskDTO.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilMumieTaskMultiUploadProcessor
 {
-    public static function process(ilObjMumieTask $base_task, string $tasks_json): void
+    public static function process(ilObjMumieTask $base_task, string $tasks_json)
     {
         global $DIC;
         $i18N = new ilMumieTaskI18N();
@@ -32,7 +35,7 @@ class ilMumieTaskMultiUploadProcessor
                 }, $task_dtos),
                 true
             );
-        } catch (Exception) {
+        } catch (Exception $exception) {
             return false;
         }
     }
@@ -45,7 +48,7 @@ class ilMumieTaskMultiUploadProcessor
         }, $tasks);
     }
 
-    private static function generateMumieTask(ilMumieTaskTaskDTO $task_dto, ilObjMumieTask $base_task): void
+    private static function generateMumieTask(ilMumieTaskTaskDTO $task_dto, ilObjMumieTask $base_task)
     {
         $new_task = self::generateEmptyMumieTask($base_task->getParentRef(), $base_task->getType());
 
@@ -73,11 +76,9 @@ class ilMumieTaskMultiUploadProcessor
         return $new_task;
     }
 
-    /**
-     * @throws ilCurlConnectionException
-     */
     private static function isValidProblem(ilMumieTaskTaskDTO $task_dto): bool
     {
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $server = ilMumieTaskServer::fromUrl($task_dto->getServer());
         $server->buildStructure();
         $course = $server->getCoursebyName($task_dto->getCourse());

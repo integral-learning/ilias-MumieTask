@@ -12,6 +12,8 @@
  * This GUI provides a way to list grades and submission dates for a single user in a MUMIE task
  */
 
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
     private $user_id;
@@ -19,9 +21,6 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     private ilObjMumieTask $mumie_task;
 
 
-    /**
-     * @throws ilException
-     */
     public function __construct($parentObj, ilObjMumieTask $mumie_task)
     {
         parent::__construct($parentObj, 'displayGradeList');
@@ -31,22 +30,12 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->mumie_task = $mumie_task;
     }
 
-    /**
-     * @throws ilCurlConnectionException
-     * @throws ilTemplateException
-     * @throws ilCtrlException
-     */
-    public function init(): void
+    public function init()
     {
         $this->createList();
     }
 
-    /**
-     * @throws ilCurlConnectionException
-     * @throws ilTemplateException
-     * @throws ilCtrlException
-     */
-    private function createList(): void
+    private function createList()
     {
         $this->setFormName('participants');
 
@@ -74,15 +63,12 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    private function privateGradepoolSet($mumie_task): bool
+    private function privateGradepoolSet($mumie_task)
     {
         return $mumie_task->getPrivateGradepool() != -1;
     }
 
-    /**
-     * @throws ilTemplateException
-     */
-    private function setEmptyTable(): void
+    private function setEmptyTable()
     {
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
@@ -95,11 +81,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->tpl->parseCurrentBlock();
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    private function setTableRow($parentObj, $xapi_grade): void
+    private function setTableRow($parentObj, $xapi_grade)
     {
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
@@ -120,7 +102,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     }
 
     //necessary functions for list to be added to form
-    public function insert($a_tpl): void
+    public function insert($a_tpl)
     {
         $a_tpl->setCurrentBlock("prop_custom");
         $a_tpl->setVariable("CUSTOM_CONTENT", $this->render());
@@ -128,38 +110,38 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     }
 
 
-    public function getHiddenTitle(): string
+    public function getHiddenTitle()
     {
         return "";
     }
 
-    public function getTitle(): string
+    public function getTitle()
     {
         return "";
     }
 
 
-    public function getFormLabelFor(): string
+    public function getFormLabelFor()
     {
         return "";
     }
 
-    public function getType(): string
+    public function getType()
     {
         return "";
     }
 
-    public function getSubForm(): string
+    public function getSubForm()
     {
         return "";
     }
 
-    public function hideSubForm(): bool
+    public function hideSubForm()
     {
         return true;
     }
 
-    public function getAlert(): string
+    public function getAlert()
     {
         return "";
     }
@@ -173,7 +155,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     {
     }
 
-    public function setParentForm($a_parentform): void
+    public function setParentForm($a_parentform)
     {
         $this->setParent($a_parentform);
     }
@@ -182,12 +164,12 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     {
     }
 
-    public function getInfo(): string
+    public function getInfo()
     {
         return "";
     }
 
-    public function getRequired(): string
+    public function getRequired()
     {
         return "";
     }

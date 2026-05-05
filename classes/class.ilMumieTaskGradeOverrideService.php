@@ -18,7 +18,7 @@ class ilMumieTaskGradeOverrideService
     public const USER_ID = 'usr_id';
     public const NEW_GRADE = 'new_grade';
 
-    public static function wasGradeOverridden($user_id, $task): bool
+    public static function wasGradeOverridden($user_id, $task)
     {
         $grade = self::loadOverriddenGrade($user_id, $task);
         return !is_null($grade);
@@ -48,8 +48,11 @@ class ilMumieTaskGradeOverrideService
         return is_null($assoc) ? $assoc : $assoc[self::NEW_GRADE];
     }
 
-    public static function overrideGrade(ilMumieTaskGrade $grade): void
+    public static function overrideGrade(ilMumieTaskGrade $grade)
     {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
+
         ilMumieTaskLPStatus::updateMark($grade->getUserId(), $grade->getMumieTask()->getId(), $grade->getPercentileScore(), $grade->getTimestamp());
         if (!self::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
             self::insertGradeOverride($grade);
@@ -57,7 +60,7 @@ class ilMumieTaskGradeOverrideService
         self::updateGradeOverride($grade);
     }
 
-    private static function insertGradeOverride(ilMumieTaskGrade $grade): void
+    private static function insertGradeOverride(ilMumieTaskGrade $grade)
     {
         global $ilDB;
         $ilDB->insert(
@@ -70,7 +73,7 @@ class ilMumieTaskGradeOverrideService
         );
     }
 
-    private static function updateGradeOverride(ilMumieTaskGrade $grade): void
+    private static function updateGradeOverride(ilMumieTaskGrade $grade)
     {
         global $ilDB;
         $ilDB->update(
@@ -85,13 +88,13 @@ class ilMumieTaskGradeOverrideService
         );
     }
 
-    public static function deleteGradeOverridesForTask(ilObjMumieTask $task): void
+    public static function deleteGradeOverridesForTask(ilObjMumieTask $task)
     {
         global $ilDB;
         $ilDB->manipulate("DELETE FROM xmum_grade_override WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
     }
 
-    public static function deleteGradeOverride(ilObjMumieTask $task, $user_id): void
+    public static function deleteGradeOverride(ilObjMumieTask $task, $user_id)
     {
         global $ilDB;
         $query = "DELETE FROM xmum_grade_override WHERE task_id = " .

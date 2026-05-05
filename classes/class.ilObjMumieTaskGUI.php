@@ -12,14 +12,20 @@
  * @ilCtrl_isCalledBy ilObjMumieTaskGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI, ilLearningProgressGUI, ilLPListOfObjectsGUI,ilObjPluginDispatchGUI, ilLPListOfSettingsGui, ilMumieTaskLPGUI
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilMumieTaskLPTableGUI
- *
- * @property ilObjMumieTask $object
  */
+
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
+
+
 
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
 {
     private ilMumieTaskI18N $i18N;
-
     public function __construct(int $a_ref_id = 0, int $a_id_type = self::REPOSITORY_NODE_ID, int $a_parent_node_id = 0)
     {
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
@@ -36,7 +42,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Handles all commands of this class, centralizes permission checks
-     * @throws ilCtrlException
      */
     public function performCommand($cmd): void
     {
@@ -72,15 +77,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 break;
         }
     }
-
-    /**
-     * @throws ilCtrlException
-     * @throws ilObjectNotFoundException
-     * @throws ilObjectTypeMismatchException
-     */
     public function setTabs(): void
     {
-        global $ilCtrl, $ilAccess, $ilTabs;
+        global $ilCtrl, $ilAccess, $ilTabs, $DIC;
+        $lng = $DIC->language();
         $this->tabs->clearTargets();
         $this->object->read();
         if ($this->object->isDummy()) {
@@ -92,6 +92,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->tabs->addTab("userList", $this->i18N->txt('tab_userlist'), $ilCtrl->getLinkTarget($this, "displayGradeOverviewPage"));
         }
 
+        include_once("Services/Tracking/classes/class.ilObjUserTracking.php");
         if ($this->object->getLpModus() && ilObjUserTracking::_enabledLearningProgress()) {
             $ilTabs->addTab("learning_progress", $this->i18N->globalTxt('learning_progress'), $ilCtrl->getLinkTarget($this, 'displayLearningProgress'));
         }
@@ -101,21 +102,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->addPermissionTab();
     }
 
-    /**
-     * @throws ilCtrlException
-     */
-    public function setSubTabs($a_tab): void
+    public function setSubTabs($a_tab)
     {
         global $ilTabs, $ilCtrl;
         if ($this->object->isDummy()) {
             return;
         }
         $ilTabs->clearSubTabs();
-        if ($a_tab == 'properties') {
-            $ilTabs->addSubTab("edit_task", $this->i18N->txt('tab_gen_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
-            $ilTabs->addSubTab("lp_settings", $this->i18N->txt('tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
-            $this->lng->loadLanguageModule('rep');
-            $ilTabs->addSubTab("availability_settings", $this->i18N->globalTxt('rep_activation_availability'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
+        switch ($a_tab) {
+            case 'properties':
+                $ilTabs->addSubTab("edit_task", $this->i18N->txt('tab_gen_settings'), $ilCtrl->getLinkTarget($this, "editProperties"));
+                $ilTabs->addSubTab("lp_settings", $this->i18N->txt('tab_lp_settings'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
+                $this->lng->loadLanguageModule('rep');
+                $ilTabs->addSubTab("availability_settings", $this->i18N->globalTxt('rep_activation_availability'), $ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
+                break;
         }
     }
 
@@ -123,7 +123,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      * Create a dummy MumieTask without any meaningful properties. The values must be set, before it can be used
      *
      * We decided to do implement creation this way, because we need the option to add MUMIE servers during the creation process, but generating any kind of output during repObj creation caused ILIAS errors
-     * @throws ilCtrlException
      */
     public function create(): void
     {
@@ -131,6 +130,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->setCreationMode(true);
         $refId = $_GET["ref_id"];
 
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         $task = ilObjMumieTask::constructDummy();
         $task->setType($this->type);
         $task->create();
@@ -150,9 +151,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Display the general settings of a MumieTask
-     * @throws ilCurlConnectionException|ilCtrlException|ilDateTimeException
      */
-    public function editPropertiesObject(): void
+    public function editPropertiesObject()
     {
         global $tpl, $ilTabs, $DIC;
         if (empty(ilMumieTaskServer::getAllServers())) {
@@ -160,6 +160,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt("msg_no_server_found"), true);
             return;
         }
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $ilTabs->activateTab('properties');
         $ilTabs->activateSubTab("edit_task");
         $this->object->doRead();
@@ -179,10 +180,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Set values for the general settings form
-     * @throws ilCurlConnectionException|ilDateTimeException
      */
-    public function setPropertyValues(): void
+    public function setPropertyValues()
     {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $values["title"] = $this->object->getTitle();
         $values["description"] = $this->object->getDescription();
         $values["xmum_task"] = $this->object->getTaskurl();
@@ -196,12 +197,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * initialize the general settings form and add command buttons
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
      */
-    public function initPropertiesForm(): void
+    public function initPropertiesForm()
     {
-        global $ilCtrl;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormGUI.php');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+        global $ilCtrl, $DIC;
+        $lng = $DIC->language();
 
         $form = new ilMumieTaskFormGUI();
         $form->setFields();
@@ -215,11 +217,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * submit changes made to the general settings of a MumieTask and trigger a forced grade update if necessary
-     * @throws ilCurlConnectionException|ilCtrlException
      */
-    public function submitMumieTask(): void
+    public function submitMumieTask()
     {
-        global $tpl, $ilCtrl, $DIC;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
+        global $tpl, $ilCtrl, $lng, $DIC;
         $this->initPropertiesForm();
 
         if (!$this->form->checkInput()) {
@@ -236,6 +238,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->saveFormValues();
 
         if ($force_grade_update) {
+            require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
             ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         }
@@ -247,7 +250,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Update the MumieTask object with the given form values
      */
-    public function saveFormValues(): void
+    public function saveFormValues()
     {
         $mumieTask = $this->object;
 
@@ -263,6 +266,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $mumieTask->setDescription($this->form->getInput('description'));
         $mumieTask->update();
 
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskMultiUploadProcessor.php');
         $tasks_json = $this->form->getInput("xmum_multi_problems");
         if (!empty($tasks_json)) {
             ilMumieTaskMultiUploadProcessor::process($mumieTask, $tasks_json);
@@ -271,9 +275,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Display a from to add a new MUMIE server
-     * @throws ilCtrlException
      */
-    public function addServer(): void
+    public function addServer()
     {
         global $ilTabs;
         $this->setSubTabs('properties');
@@ -285,11 +288,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * initialize the MUMIE server form and add command buttons
-     * @throws ilCtrlException
      */
-    private function initServerForm(): void
+    private function initServerForm()
     {
-        global $ilCtrl;
+        global $ilCtrl, $lng;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
 
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
@@ -302,11 +305,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Submit and save a new mumie server
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
      */
-    public function submitServer(): void
+    public function submitServer()
     {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         global $tpl, $DIC;
         $this->initServerForm();
         if (!$this->form->checkInput()) {
@@ -331,13 +333,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      * Display the learning progress tab, if enabled
      *
      * This function als also used as a hook to trigger a grade synchronization with the MUMIE server
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
-     * @throws ilLPException
      */
-    public function displayLearningProgress(): void
+    public function displayLearningProgress()
     {
         global $ilCtrl;
+        require_once('Services/User/classes/class.ilObjUser.php');
         ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
             $ilCtrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
@@ -352,9 +352,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      *
      * We couldn't find (and don't believe there is) a built-in functionality to display all necessary information about learning progress in the learning progress gui.
      * We need to use this workaround until ilias fixes this.
-     * @throws ilLPException
      */
-    public function setProgressInfo(): void
+    public function setProgressInfo()
     {
         global $ilUser, $lng, $DIC;
         $status = ilMumieTaskLPStatus::getLPStatusForUser($this->object, $ilUser->getId());
@@ -383,9 +382,6 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
     }
 
-    /**
-     * @throws ilLPException
-     */
     private function getStatusImagePath($status): string
     {
         $icons = ilLPStatusIcons::getInstance(ilLPStatusIcons::ICON_VARIANT_SHORT);
@@ -395,12 +391,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Return an html string containing information about a users learning progress
      */
-    public function getLPMessageString($status_text, $status_path): string
+    public function getLPMessageString($status_text, $status_path)
     {
         global $lng;
         $lng->loadLanguageModule('trac');
 
-        return '<table style= "padding:15px">'
+        $html_string =
+
+        '<table style= "padding:15px">'
         . ' <tr style="line-height:30px">
             <td><i>'
         . $this->i18N->txt('frm_passing_grade')
@@ -419,6 +417,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             . '</td></tr>'
 
             . '</table>';
+        return $html_string;
     }
     /**
      * After object has been created -> jump to this command
@@ -436,20 +435,15 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         return "viewContent";
     }
 
-    /**
-     * @throws ilCtrlException
-     */
-    public function cancelDummy(): void
+    public function cancelDummy()
     {
         $this->ctrl->returnToParent($this);
     }
 
     /**
      * Display either the embedded MUMIE Problem or a button that opens it in a new tab
-     * @throws ilCtrlException
-     * @throws ilDateTimeException
      */
-    protected function viewContent(): void
+    protected function viewContent()
     {
         global $ilTabs, $ilCtrl, $ilUser, $DIC;
         if ($this->object->isDummy()) {
@@ -457,6 +451,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         $ilTabs->activateTab('viewContent');
         $this->object->updateAccess();
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
         if (ilMumieTaskDeadlineService::hasDeadlinePassedForUser($ilUser->getId(), $this->object)) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt('frm_list_grade_overview_after_deadline'));
         }
@@ -465,11 +460,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Display the LP settings form
-     * @throws ilCtrlException
-     * @throws ilDateTimeException
-     * @throws ilCurlConnectionException
      */
-    public function editLPSettings(): void
+    public function editLPSettings()
     {
         if ($this->object->isDummy()) {
             return;
@@ -490,15 +482,16 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Initialize the LP settings form and add force sync button and command buttons
-     * @throws ilCtrlException
      */
-    public function initLPSettingsForm(): void
+    public function initLPSettingsForm()
     {
         global $ilCtrl;
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskLPSettingsFormGUI.php');
         $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet());
         $form->setFields();
         $form->setTitle($this->i18N->txt('tab_lp_settings'));
 
+        require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
         $force_sync_button = new ilMumieTaskFormButtonGUI($this->i18N->txt('frm_force_update'));
         $force_sync_button->setButtonLabel($this->i18N->txt('frm_force_update_btn'));
         $force_sync_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'forceGradeUpdate'));
@@ -513,10 +506,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Submit changes to the learning progress settings
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
      */
-    public function submitLPSettings(): void
+    public function submitLPSettings()
     {
         global $DIC;
         $this->initLPSettingsForm();
@@ -553,11 +544,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Display availability settings form
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
-     * @throws ilDateTimeException
      */
-    public function editAvailabilitySettings(): void
+    public function editAvailabilitySettings()
     {
         if ($this->object->isDummy()) {
             return;
@@ -585,12 +573,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Initialize availability form and add command buttons
-     * @throws ilDateTimeException
-     * @throws ilCtrlException
      */
-    public function initAvailabilitySettingsForm(): void
+    public function initAvailabilitySettingsForm()
     {
         global $ilCtrl;
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormAvailabilityGUI.php');
         $form = new ilMumieTaskFormAvailabilityGUI();
         $form->setFields(!$this->object->isGradepoolSet());
         $form->addCommandButton('submitAvailabilitySettings', $this->i18N->globalTxt('save'));
@@ -602,13 +589,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Submit changes made to availability settings and trigger a forced grade update if necessary
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
-     * @throws ilDateTimeException
      */
-    public function submitAvailabilitySettings(): void
+    public function submitAvailabilitySettings()
     {
-        global $DIC;
+        global $ilDB, $DIC;
         $this->initAvailabilitySettingsForm();
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
@@ -650,13 +634,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
 
     /**
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
-     * @throws ilDateTimeException
-     * @throws ilException
-     * @throws ilTemplateException
+     *
      */
-    public function displayGradeOverviewPage(): void
+    public function displayGradeOverviewPage()
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
@@ -664,16 +644,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($this->form->getHTML());
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
-     * @throws ilDateTimeException
-     * @throws ilException
-     * @throws ilTemplateException
-     */
-    private function initGradeOverviewPage(): void
+    private function initGradeOverviewPage()
     {
         global $ilCtrl;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskGradeOverviewFormGUI.php');
         $form = new ilMumieTaskGradeOverviewFormGUI($this->object);
         $form->setTitle($this->i18N->txt('frm_user_overview_list_search_title'));
         $form->addCommandButton('displayGradeOverviewPage', $this->i18N->txt('frm_user_overview_list_search'));
@@ -687,16 +661,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->form->setFields($this, $this->form);
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
-     * @throws ilException
-     * @throws ilTemplateException
-     */
-    public function displayGradeList(): void
+    public function displayGradeList()
     {
         global $ilTabs, $ilCtrl;
         $ilTabs->activateTab('userList');
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskGradeListFormGUI.php');
         $form = new ilMumieTaskGradeListFormGUI($this, $_GET['user_id'], $this->object);
         $form->setFields();
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -705,10 +674,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($this->form->getHTML());
     }
 
-    /**
-     * @throws ilCtrlException
-     */
-    public function gradeOverride(): void
+    public function gradeOverride()
     {
         global $DIC;
         $user_id = $_GET["user_id"];
@@ -717,8 +683,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $areParametersValid = !is_null($user_id) && !is_null($score) && !is_null($timestamp);
 
         $grade = new ilMumieTaskGrade($user_id, $score, $this->object, $timestamp);
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
 
         if ($areParametersValid && ilMumieTaskGradeSync::isValidGrade($grade)) {
+            require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             ilMumieTaskGradeOverrideService::overrideGrade($grade);
             $DIC->ui()->mainTemplate()->setOnScreenMessage(
                 'success',
@@ -736,11 +704,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    public function displayDeadlineExtension(): void
+    public function displayDeadlineExtension()
     {
         global $ilTabs;
         $ilTabs->activateTab('userList');
@@ -748,13 +712,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->tpl->setContent($this->form->getHTML());
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    private function initDeadlineExtension(): void
+    private function initDeadlineExtension()
     {
         global $ilCtrl;
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDeadlineExtensionForm.php');
         $form = new ilMumieTaskDeadlineExtensionForm($this->object, $_GET["user_id"]);
         $form->setTitle($this->i18N->txt('frm_user_overview_list_extended_deadline'));
         $form->setFields();
@@ -766,13 +727,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->form = $form;
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
-     * @throws ilDateTimeException
-     * @throws ilTemplateException
-     */
-    public function submitDeadlineExtension(): void
+    public function submitDeadlineExtension()
     {
         $this->initDeadlineExtension();
         if (!$this->form->checkInput()) {
@@ -785,10 +740,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->performCommand($cmd);
     }
 
-    /**
-     * @throws ilCtrlException
-     */
-    private function deleteDeadlineExtension(): void
+    private function deleteDeadlineExtension()
     {
         global $DIC;
         $user_id = $_GET["user_id"];
@@ -804,11 +756,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->performCommand($cmd);
     }
 
-    /**
-     * @throws ilCurlConnectionException
-     * @throws ilCtrlException
-     */
-    private function deleteGradeOverride(): void
+    private function deleteGradeOverride()
     {
         global $DIC;
         $user_id = $_GET["user_id"];
@@ -829,10 +777,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      * Some settings require invalidation of formerly synchronized grades and learning progress status (e.g. due date modified, passing threshold was changed etc).
      * After that a new synchronization is triggered.
      *
-     * @throws ilCtrlException
-     * @throws ilCurlConnectionException
      */
-    public function forceGradeUpdate(): void
+    public function forceGradeUpdate()
     {
         global $DIC;
         ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);

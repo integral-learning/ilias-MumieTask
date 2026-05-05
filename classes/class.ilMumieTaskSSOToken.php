@@ -16,7 +16,7 @@ class ilMumieTaskSSOToken
 {
     public const MUMIETOKENS_TABLE_NAME = "xmum_sso_tokens";
     public const TOKEN_LENGTH = 30;
-    private string $token;
+    private $token;
     private $user;
     private $timecreated;
 
@@ -25,7 +25,7 @@ class ilMumieTaskSSOToken
         $this->user = $user;
     }
 
-    private function generateToken(): string
+    private function generateToken()
     {
         $token = "";
         $codealphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -40,7 +40,7 @@ class ilMumieTaskSSOToken
         return $token;
     }
 
-    private function create(): void
+    private function create()
     {
         global $ilDB;
         $ilDB->insert(
@@ -53,7 +53,7 @@ class ilMumieTaskSSOToken
         );
     }
 
-    public function read(): void
+    public function read()
     {
         global $ilDB;
         $query = "SELECT * FROM "
@@ -68,7 +68,7 @@ class ilMumieTaskSSOToken
         }
     }
 
-    private function update(): void
+    private function update()
     {
         global $ilDB;
         $ilDB->update(
@@ -83,7 +83,7 @@ class ilMumieTaskSSOToken
         );
     }
 
-    public function delete(): void
+    public function delete()
     {
         global $ilDB;
         $ilDB->manipulate(
@@ -94,7 +94,7 @@ class ilMumieTaskSSOToken
         );
     }
 
-    public function insertOrRefreshToken(): void
+    public function insertOrRefreshToken()
     {
         $this->read();
         $this->token = $this->generateToken();
@@ -105,14 +105,14 @@ class ilMumieTaskSSOToken
         }
     }
 
-    private static function tokenExistsForHashedUser($hashedUser): bool
+    private static function tokenExistsForHashedUser($hashedUser)
     {
         $mumie_token = new ilMumieTaskSSOToken($hashedUser);
         $mumie_token->read();
         return !is_null($mumie_token->timecreated) && !is_null($mumie_token->token);
     }
 
-    public static function tokenExistsForIliasUser($iliasUserId): bool
+    public static function tokenExistsForIliasUser($iliasUserId)
     {
         global $ilDB;
         $query = self::getAllTokensForIliasUserQuery($iliasUserId);
@@ -122,13 +122,14 @@ class ilMumieTaskSSOToken
     private static function getAllTokensForIliasUserQuery($iliasUserId)
     {
         global $ilDB;
+        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
         $hashedId = ilMumieTaskIdHashingService::getHashForUser($iliasUserId);
         return "SELECT * FROM "
             . self::MUMIETOKENS_TABLE_NAME
             . " WHERE " . $ilDB->like("user", "text", $hashedId . "%");
     }
 
-    public static function invalidateAllTokensForUser($iliasUserId): void
+    public static function invalidateAllTokensForUser($iliasUserId)
     {
         global $ilDB;
         $query = self::getAllTokensForIliasUserQuery($iliasUserId);
@@ -149,10 +150,9 @@ class ilMumieTaskSSOToken
     /**
      * Set the value of timecreated
      *
-     * @param $timecreated
      * @return  self
      */
-    public function setTimecreated($timecreated): static
+    public function setTimecreated($timecreated)
     {
         $this->timecreated = $timecreated;
 
@@ -162,7 +162,7 @@ class ilMumieTaskSSOToken
     /**
      * Get the value of token
      */
-    public function getToken(): string
+    public function getToken()
     {
         return $this->token;
     }
@@ -170,10 +170,9 @@ class ilMumieTaskSSOToken
     /**
      * Set the value of token
      *
-     * @param string $token
      * @return  self
      */
-    public function setToken(string $token): static
+    public function setToken($token)
     {
         $this->token = $token;
 
@@ -191,10 +190,9 @@ class ilMumieTaskSSOToken
     /**
      * Set the value of user
      *
-     * @param $user
      * @return  self
      */
-    public function setUser($user): static
+    public function setUser($user)
     {
         $this->user = $user;
 

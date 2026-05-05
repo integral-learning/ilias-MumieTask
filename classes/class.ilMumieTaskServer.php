@@ -8,6 +8,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskServerStructure.php');
 
 /**
  * A MUMIE server is an instance of the MUMIE E-Learning platform.
@@ -187,6 +188,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
      */
     public function getCoursesAndTasks(): mixed
     {
+        require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
 
         $curl = new ilCurlConnection($this->getCoursesAndTasksURL());
@@ -243,6 +245,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
     }
     public function getLogoutUrl(): string
     {
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
         return urlencode($this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg());
     }
 

@@ -8,6 +8,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+include_once('./Services/Table/classes/class.ilTable2GUI.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This GUI provides a way to list MUMIE servers with buttons to edit and delete entries
@@ -30,11 +32,10 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
      *
      *
      * @access public
-     * @throws ilCtrlException
      */
-    public function init($a_parent_obj): void
+    public function init($a_parent_obj)
     {
-        global $ilCtrl;
+        global $ilCtrl, $lng;
         $i18n = $this->i18n;
 
         $this->setTitle($i18n->txt('tab_servers'));
@@ -48,14 +49,11 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
         $this->getServerData();
     }
 
-    private function getServerData(): void
+    private function getServerData()
     {
         $this->setData(ilMumieTaskServer::getAllServerData());
     }
 
-    /**
-     * @throws ilCtrlException
-     */
     protected function fillRow($set): void
     {
         global $ilCtrl;

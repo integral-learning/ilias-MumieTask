@@ -8,6 +8,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 /**
  * This GUI provides a way to list users in a MUMIE task
  */
@@ -17,9 +19,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     private ilMumieTaskI18N $i18N;
     private ilObjMumieTask $mumie_task;
 
-    /**
-     * @throws ilException
-     */
     public function __construct($parentObj, ilObjMumieTask $mumie_task)
     {
         $this->setId("user" . $_GET["ref_id"]);
@@ -28,12 +27,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->mumie_task = $mumie_task;
     }
 
-    /**
-     * @throws ilCurlConnectionException
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    public function init($parentObj, $form): void
+    public function init($parentObj, $form)
     {
         $this->setFormName('participants');
         $this->addColumn($this->i18N->txt('frm_user_overview_list_name'), 'name');
@@ -44,6 +38,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
         $members = ilMumieTaskParticipantService::filter($this->mumie_task, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
 
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGrades($this->mumie_task);
 
         $this->tpl->addBlockFile(
@@ -59,12 +54,12 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->setEnableHeader(true);
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    private function addTableRow($user_id, $parentObj): void
+    private function addTableRow($user_id, $parentObj)
     {
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
+
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
         ? "tblrow1"
@@ -79,11 +74,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         $this->tpl->parseCurrentBlock();
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    private function getDeadlineCellContent($user_id, $mumie_task): string
+    private function getDeadlineCellContent($user_id, $mumie_task)
     {
         if (!$mumie_task->hasDeadline()) {
             return self::EMPTY_CELL;
@@ -94,22 +85,14 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         return $this->getDeadlineUnsetCellContent();
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    private function getDeadlineUnsetCellContent(): string
+    private function getDeadlineUnsetCellContent()
     {
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-unset.html", true, true, true, "DEFAULT", true);
         $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
         return $tpl->get();
     }
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    private function getDeadlineSetCellContent($user_id, $mumie_task): string
+    private function getDeadlineSetCellContent($user_id, $mumie_task)
     {
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-set.html", true, true, true, "DEFAULT", true);
         $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task)->get();
@@ -119,14 +102,12 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         return $tpl->get();
     }
 
-    /**
-     * @throws ilTemplateException
-     */
     private function getGradeCellContent(?ilMumieTaskGrade $grade): string
     {
         if (is_null($grade)) {
             return self::EMPTY_CELL;
         }
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
         if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
             $tpl = new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html", true, true, true, "DEFAULT", true);
             $tpl->setVariable("VAL_GRADE", $grade->getPercentileScore());
@@ -137,50 +118,49 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     }
 
     //All functions are necessary for the list to be implemented into a form
-    public function checkInput(): bool
+    public function checkInput()
     {
         return true;
     }
-
-    public function insert($a_tpl): void
+    public function insert($a_tpl)
     {
         $a_tpl->setCurrentBlock("prop_custom");
         $a_tpl->setVariable("CUSTOM_CONTENT", $this->render());
         $a_tpl->parseCurrentBlock();
     }
 
-    public function getHiddenTitle(): string
+    public function getHiddenTitle()
     {
         return "";
     }
 
-    public function getTitle(): string
+    public function getTitle()
     {
         return "";
     }
 
 
-    public function getFormLabelFor(): string
+    public function getFormLabelFor()
     {
         return "";
     }
 
-    public function getType(): string
+    public function getType()
     {
         return "";
     }
 
-    public function getSubForm(): string
+    public function getSubForm()
     {
         return "";
     }
 
-    public function hideSubForm(): bool
+    public function hideSubForm()
     {
         return true;
     }
 
-    public function getAlert(): string
+    public function getAlert()
     {
         return "";
     }
@@ -190,12 +170,12 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     *
     * @return	string	Post Variable
     */
-    public function getFieldId(): string
+    public function getFieldId()
     {
         return "";
     }
 
-    public function setParentForm($a_parentform): void
+    public function setParentForm($a_parentform)
     {
         $this->setParent($a_parentform);
     }
@@ -204,12 +184,12 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     {
     }
 
-    public function getInfo(): string
+    public function getInfo()
     {
         return "";
     }
 
-    public function getRequired(): string
+    public function getRequired()
     {
         return "";
     }

@@ -8,12 +8,18 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
+require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
+require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDateTime.php');
+
 /**
  */
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 {
     public const DUMMY_TITLE = "-- Empty MumieTask --";
-    private static string $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
+    private static $MUMIE_TASK_TABLE_NAME = "xmum_mumie_task";
     private $server;
     private $mumie_course;
     private $taskurl;
@@ -37,7 +43,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * @access        public
      * @param int $a_ref_id
      */
-    public function __construct(int $a_ref_id = 0)
+    public function __construct($a_ref_id = 0)
     {
         parent::__construct($a_ref_id);
     }
@@ -100,6 +106,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
          * Snippet taken from ilObjTask->loadFromDb
          */
         if ($this->ref_id) {
+            include_once "./Services/Object/classes/class.ilObjectActivation.php";
             $activation = ilObjectActivation::getItem($this->ref_id);
             switch ($activation["timing_type"]) {
                 case ilObjectActivation::TIMINGS_ACTIVATION:
@@ -148,6 +155,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
          * Snippet taken from ilObjTest->saveToDb()
          */
         if ($this->ref_id) {
+            include_once "./Services/Object/classes/class.ilObjectActivation.php";
             ilObjectActivation::getItem($this->ref_id);
 
             $item = new ilObjectActivation();
@@ -170,6 +178,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function doDelete(): void
     {
         global $ilDB;
+        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         ilMumieTaskDeadlineExtensionService::deleteDeadlineExtensions($this);
         $ilDB->manipulate(
             "DELETE FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME . " WHERE " .
@@ -180,7 +189,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Do Cloning
      */
-    public function doClone($a_target_id, $a_copy_id, $new_obj): void
+    public function doClone($a_target_id, $a_copy_id, $new_obj)
     {
         $new_obj->setOnline($this->getOnline());
         $new_obj->setOptionOne($this->getOptionOne());
@@ -191,9 +200,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set online
      *
-     * @param        boolean $a_val online
+     * @param        boolean                online
      */
-    public function setOnline($a_val): void
+    public function setOnline($a_val)
     {
         $this->online = $a_val;
     }
@@ -203,7 +212,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return        boolean                online
      */
-    public function getOnline(): bool
+    public function getOnline()
     {
         return $this->online;
     }
@@ -259,7 +268,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return ilMumieTaskLPStatus::getLPStatusForUser($this, $a_user_id);
     }
 
-    public function updateAccess(): void
+    public function updateAccess()
     {
         global $ilUser;
         if ($ilUser->getId() != ANONYMOUS_USER_ID) {
@@ -273,7 +282,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * All MumieTasks are created as dummy for technical reasons
      */
-    public function isDummy(): bool
+    public function isDummy()
     {
         return $this->title == self::DUMMY_TITLE;
     }
@@ -289,10 +298,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set the value of server
      *
-     * @param $server
      * @return  self
      */
-    public function setServer($server): static
+    public function setServer($server)
     {
         $this->server = $server;
         return $this;
@@ -309,10 +317,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set the value of mumie_course
      *
-     * @param $mumie_course
      * @return  self
      */
-    public function setMumieCourse($mumie_course): static
+    public function setMumieCourse($mumie_course)
     {
         $this->mumie_course = $mumie_course;
 
@@ -330,10 +337,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set the value of taskurl
      *
-     * @param $taskurl
      * @return  self
      */
-    public function setTaskurl($taskurl): static
+    public function setTaskurl($taskurl)
     {
         $this->taskurl = $taskurl;
 
@@ -351,10 +357,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set the value of launchcontainer
      *
-     * @param $launchcontainer
      * @return  self
      */
-    public function setLaunchcontainer($launchcontainer): static
+    public function setLaunchcontainer($launchcontainer)
     {
         $this->launchcontainer = $launchcontainer;
 
@@ -372,10 +377,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set the value of language
      *
-     * @param $language
      * @return  self
      */
-    public function setLanguage($language): static
+    public function setLanguage($language)
     {
         $this->language = $language;
 
@@ -393,10 +397,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set the value of mumie_coursefile
      *
-     * @param $mumie_coursefile
      * @return  self
      */
-    public function setMumieCoursefile($mumie_coursefile): static
+    public function setMumieCoursefile($mumie_coursefile)
     {
         $this->mumie_coursefile = $mumie_coursefile;
 
@@ -407,7 +410,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      * Generates the html code for launching the MumieTask
      */
 
-    public function getContent(): string
+    public function getContent()
     {
         $ssoService = new ilMumieTaskSSOService();
         return $ssoService->setUpTokenAndLaunchForm($this);
@@ -418,7 +421,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return string login url
      */
-    public function getLoginUrl(): string
+    public function getLoginUrl()
     {
         return ilMumieTaskServer::fromUrl($this->server)->getLoginUrl();
     }
@@ -428,7 +431,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return string logout url
      */
-    public function getLogoutUrl(): string
+    public function getLogoutUrl()
     {
         return ilMumieTaskServer::fromUrl($this->server)->getLogoutUrl();
     }
@@ -438,12 +441,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
      *
      * @return string login url
      */
-    public function getProblemUrl(): string
+    public function getProblemUrl()
     {
         return $this->server . $this->taskurl . '?lang=' . $this->language;
     }
 
-    public function getGradeSyncURL(): string
+    public function getGradeSyncURL()
     {
         return ilMumieTaskServer::fromUrl($this->server)->getGradeSyncURL();
     }
@@ -459,10 +462,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set the value of lp_modus
      *
-     * @param $lp_modus
      * @return  self
      */
-    public function setLpModus($lp_modus): static
+    public function setLpModus($lp_modus)
     {
         $this->lp_modus = $lp_modus;
 
@@ -480,10 +482,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set the value of passing_grade
      *
-     * @param $passing_grade
      * @return  self
      */
-    public function setPassingGrade($passing_grade): static
+    public function setPassingGrade($passing_grade)
     {
         $this->passing_grade = $passing_grade;
 
@@ -495,7 +496,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->activation_limited;
     }
 
-    public function setActivationLimited($activation_limited): static
+    public function setActivationLimited($activation_limited)
     {
         $this->activation_limited = $activation_limited;
 
@@ -507,7 +508,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->activation_starting_time;
     }
 
-    public function setActivationStartingTime($activation_starting_time): static
+    public function setActivationStartingTime($activation_starting_time)
     {
         $this->activation_starting_time = $activation_starting_time;
 
@@ -519,7 +520,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->activation_ending_time;
     }
 
-    public function setActivationEndingTime($activation_ending_time): static
+    public function setActivationEndingTime($activation_ending_time)
     {
         $this->activation_ending_time = $activation_ending_time;
 
@@ -531,7 +532,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->activation_visibility;
     }
 
-    public function setActivationVisibility($activation_visibility): static
+    public function setActivationVisibility($activation_visibility)
     {
         $this->activation_visibility = $activation_visibility;
 
@@ -543,12 +544,12 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this->private_gradepool;
     }
 
-    public function setPrivateGradepool($private_gradepool): void
+    public function setPrivateGradepool($private_gradepool)
     {
         $this->private_gradepool = $private_gradepool;
     }
 
-    public function isGradepoolSet(): bool
+    public function isGradepoolSet()
     {
         return !($this->private_gradepool == -1);
     }
@@ -560,7 +561,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $tree->getParentId($this->getRefId());
     }
 
-    public function hasDeadline(): bool
+    public function hasDeadline()
     {
         return !empty($this->deadline) && $this->deadline > 0;
     }
@@ -582,9 +583,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     }
 
 
-    /**
-     * @throws ilDateTimeException
-     */
+
     public function getDeadlineDateTime(): ilMumieTaskDateTime
     {
         return new ilMumieTaskDateTime($this->deadline);

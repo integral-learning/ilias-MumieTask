@@ -6,7 +6,11 @@ class ilMumieTaskServerTest extends TestCase
 {
     protected function setUp(): void
     {
-        //ilUnitUtil::performInitialisation();
+        /*include_once ("./Services/PHPUnit/classes/class.ilUnitUtil.php");
+        ilUnitUtil::performInitialisation();*/
+        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
+
+        //require_once ('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskCourseStructure.php');
     }
 
     public function testUrlStreamlining()

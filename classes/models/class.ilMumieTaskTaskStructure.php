@@ -1,5 +1,6 @@
 <?php
 
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskTagStructure.php');
 /**
  * MumieTask plugin
  *
