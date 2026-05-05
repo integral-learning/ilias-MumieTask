@@ -50,9 +50,6 @@ class ilMumieTaskGradeOverrideService
 
     public static function overrideGrade(ilMumieTaskGrade $grade)
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-
         ilMumieTaskLPStatus::updateMark($grade->getUserId(), $grade->getMumieTask()->getId(), $grade->getPercentileScore(), $grade->getTimestamp());
         if (!self::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
             self::insertGradeOverride($grade);

@@ -8,9 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskTaskDTO.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilMumieTaskMultiUploadProcessor
 {
     public static function process(ilObjMumieTask $base_task, string $tasks_json)
@@ -78,7 +75,6 @@ class ilMumieTaskMultiUploadProcessor
 
     private static function isValidProblem(ilMumieTaskTaskDTO $task_dto): bool
     {
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
         $server = ilMumieTaskServer::fromUrl($task_dto->getServer());
         $server->buildStructure();
         $course = $server->getCoursebyName($task_dto->getCourse());

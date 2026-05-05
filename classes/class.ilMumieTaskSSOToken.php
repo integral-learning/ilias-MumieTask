@@ -122,7 +122,6 @@ class ilMumieTaskSSOToken
     private static function getAllTokensForIliasUserQuery($iliasUserId)
     {
         global $ilDB;
-        include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
         $hashedId = ilMumieTaskIdHashingService::getHashForUser($iliasUserId);
         return "SELECT * FROM "
             . self::MUMIETOKENS_TABLE_NAME

@@ -103,8 +103,6 @@ class ilMumieTaskIdHashingService
 
     private function generateHash()
     {
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        $adminSettings = ilMumieTaskAdminSettings::getInstance();
         return hash("sha512", $this->user_id . substr(ilMumieTaskAdminSettings::getInstance()->getApiKey(), 0, 10));
     }
 

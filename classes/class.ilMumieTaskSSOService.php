@@ -8,9 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOToken.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 /**
  * This class provides functions for SSO between MUMIE servers and ILIAS
  */
@@ -38,7 +35,6 @@ class ilMumieTaskSSOService
         $user_query = $ilDB->query('SELECT * FROM usr_data WHERE usr_id = ' . $ilDB->quote($il_user_id, "integer"));
         $user_rec = $ilDB->fetchAssoc($user_query);
         $response = new stdClass();
-        require_once(__DIR__ . "/class.ilMumieTaskAdminSettings.php");
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
 
         if (!is_null($mumietoken->getToken()) && $mumietoken->getToken() == $token && $user_rec != null) {
@@ -86,8 +82,6 @@ class ilMumieTaskSSOService
      */
     private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $width = 800, $height = 600)
     {
-        require_once("./Services/UICore/classes/class.ilTemplate.php");
-        require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
         // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
         // the other "true"s should always be set that way according to the ilias documentation

@@ -8,13 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/grades/class.ilMumieTaskGrade.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
 
 /**
  * This class pulls grades for a given task from its MUMIE server
@@ -72,7 +65,6 @@ class ilMumieTaskGradeSync
     private function getXapiGrades($request_body)
     {
         $payload = json_encode($request_body);
-        require_once './Services/Http/classes/class.ilProxySettings.php';
         $proxy_settings = ilProxySettings::_getInstance();
         $curl = new ilCurlConnection($this->task->getGradeSyncURL());
         $curl->init();
@@ -191,7 +183,6 @@ class ilMumieTaskGradeSync
 
         $valid_grade_by_user = array();
         foreach ($grades_by_user as $user_id => $xapi_grades) {
-            require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
             if (!ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $this->task)) {
                 $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);

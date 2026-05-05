@@ -8,10 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
 /**
  * @ilCtrl_IsCalledBy ilMumieTaskConfigGUI: ilObjComponentSettingsGUI
  */
@@ -100,7 +96,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("tab_servers");
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServerTableGUI.php');
         $server_gui = new ilMumieTaskServerTableGUI($this, 'listServers');
         $server_gui->init($this);
         $tpl->setContent($server_gui->getHTML());
@@ -323,7 +318,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     private function initServerForm()
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskServerFormGUI.php');
         $form = new ilMumieTaskServerFormGUI();
         $form->setFields();
         $form->addCommandButton('submitServer', $this->i18N->globalTxt('save'));

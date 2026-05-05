@@ -8,11 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
-require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTaskGUI.php");
-require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOService.php");
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDateTime.php');
 
 /**
  */
@@ -106,7 +101,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
          * Snippet taken from ilObjTask->loadFromDb
          */
         if ($this->ref_id) {
-            include_once "./Services/Object/classes/class.ilObjectActivation.php";
             $activation = ilObjectActivation::getItem($this->ref_id);
             switch ($activation["timing_type"]) {
                 case ilObjectActivation::TIMINGS_ACTIVATION:
@@ -155,7 +149,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
          * Snippet taken from ilObjTest->saveToDb()
          */
         if ($this->ref_id) {
-            include_once "./Services/Object/classes/class.ilObjectActivation.php";
             ilObjectActivation::getItem($this->ref_id);
 
             $item = new ilObjectActivation();
@@ -178,7 +171,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function doDelete(): void
     {
         global $ilDB;
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
         ilMumieTaskDeadlineExtensionService::deleteDeadlineExtensions($this);
         $ilDB->manipulate(
             "DELETE FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME . " WHERE " .

@@ -8,7 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtension.php');
 /**
  * This service is used to manage deadline extensions for students
  */
@@ -110,8 +109,6 @@ class ilMumieTaskDeadlineExtensionService
     private static function sendUpdateSuccessMessage(ilMumieTaskDeadlineExtension $deadline_extension)
     {
         global $DIC;
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
         $i18n = new ilMumieTaskI18N();
         $DIC->ui()->mainTemplate()->setOnScreenMessage(
             'success',

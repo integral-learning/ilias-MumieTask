@@ -8,8 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/users/class.ilMumieTaskParticipantService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 /**
  * This GUI provides a way to list users in a MUMIE task
  */
@@ -38,7 +36,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
         $members = ilMumieTaskParticipantService::filter($this->mumie_task, $form->getInput("firstnamefield"), $form->getInput("lastnamefield"));
 
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
         ilMumieTaskLPStatus::updateGrades($this->mumie_task);
 
         $this->tpl->addBlockFile(
@@ -56,10 +53,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     private function addTableRow($user_id, $parentObj)
     {
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtensionService.php');
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskLPStatus.php');
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
         ? "tblrow1"
@@ -107,7 +100,6 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         if (is_null($grade)) {
             return self::EMPTY_CELL;
         }
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverrideService.php');
         if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
             $tpl = new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html", true, true, true, "DEFAULT", true);
             $tpl->setVariable("VAL_GRADE", $grade->getPercentileScore());

@@ -8,8 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
-
 /**
  * This form is used to edit the Learning Progress settings of MumieTasks
  */
@@ -37,7 +35,6 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
     private function setSearch($parentObj, $form)
     {
         global $DIC;
-        require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeOverviewGUI.php');
         $this->text_item_first = new ilTextInputGUI($this->i18N->txt('frm_user_overview_list_firstname_search'), 'firstnamefield');
         if (!empty($this->getInput("firstnamefield"))) {
             $this->text_item_first->setValue($form->getInput("firstnamefield"));

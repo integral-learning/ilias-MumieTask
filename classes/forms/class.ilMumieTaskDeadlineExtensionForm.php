@@ -8,8 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/class.ilMumieTaskDeadlineService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This form is used to grant due date extensions for a given MumieTask
@@ -55,7 +53,6 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
     public function setInfoBox()
     {
         global $DIC;
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/class.ilMumieTaskTemplateEngine.php');
         $description = $this->i18n->txt('deadline_extension_desc');
         $template = ilMumieTaskTemplateEngine::getStudentGradingInfoboxTemplate($this->mumie_task, $this->user_id, $description);
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $template->get());

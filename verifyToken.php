@@ -32,7 +32,6 @@ ilMumieTaskInitialisation::init($_REQUEST['clientId']);
 
 //once the global exists we can verify the token
 
-require_once(__DIR__ . "/classes/class.ilMumieTaskSSOService.php");
 $response = ilMumieTaskSSOService::verifyToken();
 
 echo json_encode($response);

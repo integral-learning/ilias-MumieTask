@@ -8,7 +8,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This class is used to display and validate the custom availability form for MumieTask
@@ -38,7 +37,6 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 
         $act_type_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_visibility_until'), 'activation_type');
 
-        include_once "Services/Form/classes/class.ilDateDurationInputGUI.php";
         $duration_item = new ilDateDurationInputGUI($this->i18N->globalTxt("rep_time_period"), "access_period");
         $duration_item->setRequired(true);
         $duration_item->setShowTime(true);

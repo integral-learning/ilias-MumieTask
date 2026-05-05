@@ -7,8 +7,6 @@
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 
 /**
  * This form is used to edit and validate the general settings of MumieTasks
@@ -51,13 +49,11 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->description_item = new ilTextInputGUI($this->i18N->globalTxt('description'), 'description');
         $this->addItem($this->description_item);
 
-        require_once('Services/Form/classes/class.ilSelectInputGUI.php');
         $this->server_item = new ilSelectInputGui($this->i18N->txt('mumie_server'), 'xmum_server');
         $this->server_item->setRequired(true);
         $this->addItem($this->server_item);
 
         if (!$is_creation_mode) {
-            require_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskFormButtonGUI.php");
             $add_server_button = new ilMumieTaskFormButtonGUI("", "xmum_add_server_btn");
             $add_server_button->setButtonLabel($this->i18N->txt('add_server'));
             $add_server_button->setLink($ilCtrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'addServer'));
@@ -129,7 +125,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $multi_problem_selector_btn->setInfo($this->i18N->txt('dnd_prb_selector_desc'));
         $this->addItem($multi_problem_selector_btn);
 
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/forms/class.ilMumieTaskDropZoneGUI.php');
         $this->dropzone_item = new ilMumieTaskDropZoneGUI("", "xmum_multi_problems");
         $this->addItem($this->dropzone_item);
     }
@@ -163,7 +158,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             return $ok;
         }
 
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/tasks/class.ilMumieTaskMultiUploadProcessor.php');
         $multi_problems_input = $this->getInput("xmum_multi_problems");
         if (!empty($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input)) {
             $ok = false;
@@ -208,7 +202,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             $this->launchcontainer_item->setValue("0");
         }
 
-        include_once("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
         $this->org_item->setValue(ilMumieTaskAdminSettings::getInstance()->getOrg());
         if ($this->language_item->getValue() == null) {
             $this->language_item->setValue($ilUser->getLanguage());
