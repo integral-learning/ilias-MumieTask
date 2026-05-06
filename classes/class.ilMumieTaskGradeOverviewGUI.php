@@ -80,13 +80,15 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     /**
      * @throws ilCtrlException
-     * @throws ilTemplateException
      */
     private function getDeadlineUnsetCellContent(): string
     {
-        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-unset.html", true, true);
-        $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
-        return $tpl->get();
+        global $DIC;
+        $factory = $DIC->ui()->factory();
+        $render = $DIC->ui()->renderer();
+
+        $url = $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension');
+        return $render->render($factory->symbol()->glyph()->add($url));
     }
 
     /**
