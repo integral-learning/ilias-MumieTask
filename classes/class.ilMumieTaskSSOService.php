@@ -80,12 +80,11 @@ class ilMumieTaskSSOService
 
     /**
      * Get html code for the MUMIE task launcher
+     * @throws ilTemplateException
      */
-    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $width = 800, $height = 600)
+    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $width = 800, $height = 600): string
     {
-        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
-        // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
-        // the other "true"s should always be set that way according to the ilias documentation
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true);
         $tpl->setVariable("TASKURL", $taskObj->getLoginUrl());
         $tpl->setVariable("TARGET", $taskObj->getLaunchcontainer() == 1 ? 'MumieTaskLaunchFrame' : '_blank');
         $tpl->setVariable("USER_ID", $hashed_user);
@@ -117,7 +116,6 @@ class ilMumieTaskSSOService
         }
         // otherwise leave a button to launch in a new tab
 
-        $html = $tpl->get();
-        return $html;
+        return $tpl->get();
     }
 }

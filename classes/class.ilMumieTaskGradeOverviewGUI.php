@@ -78,16 +78,24 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         return $this->getDeadlineUnsetCellContent();
     }
 
-    private function getDeadlineUnsetCellContent()
+    /**
+     * @throws ilCtrlException
+     * @throws ilTemplateException
+     */
+    private function getDeadlineUnsetCellContent(): string
     {
-        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-unset.html", true, true, true, "DEFAULT", true);
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-unset.html", true, true);
         $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
         return $tpl->get();
     }
 
-    private function getDeadlineSetCellContent($user_id, $mumie_task)
+    /**
+     * @throws ilCtrlException
+     * @throws ilTemplateException
+     */
+    private function getDeadlineSetCellContent($user_id, $mumie_task): string
     {
-        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-set.html", true, true, true, "DEFAULT", true);
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-set.html", true, true);
         $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task)->get();
         $tpl->setVariable("DEADLINE", $deadline);
         $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
@@ -95,13 +103,16 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
         return $tpl->get();
     }
 
+    /**
+     * @throws ilTemplateException
+     */
     private function getGradeCellContent(?ilMumieTaskGrade $grade): string
     {
         if (is_null($grade)) {
             return self::EMPTY_CELL;
         }
         if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
-            $tpl = new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html", true, true, true, "DEFAULT", true);
+            $tpl = new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html", true, true);
             $tpl->setVariable("VAL_GRADE", $grade->getPercentileScore());
             $tpl->setVariable("OVERRIDDEN_MOUSEOVER", $this->i18N->txt('user_gradeoverview_overridden_explanation'));
             return $tpl->get();

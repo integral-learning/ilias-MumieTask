@@ -33,9 +33,12 @@ class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
         $a_tpl->parseCurrentBlock();
     }
 
-    public function render()
+    /**
+     * @throws ilTemplateException
+     */
+    public function render(): string
     {
-        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/tpl.mumie_form_button.html", true, true, true, "DEFAULT", true);
+        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/tpl.mumie_form_button.html", true, true);
         $tpl->setVariable("COMMAND_LINK", $this->link);
         $tpl->setVariable("BUTTON_LABEL", $this->button_label);
         $tpl->setVariable("ID", $this->id);

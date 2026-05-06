@@ -11,20 +11,33 @@
 class ilMumieTaskTemplateEngine
 {
     public const EMPTY_CELL = '-';
+
+    /**
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
     public static function getTemplate(string $path): ilTemplate
     {
         global $DIC;
         $tpl = $DIC->ui()->mainTemplate();
         $tpl->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
         $tpl->addCss("Services/FileUpload/templates/default/fileupload.css");
-        return new ilTemplate($path, true, true, true, "DEFAULT", true);
+        return new ilTemplate($path, true, true);
     }
 
+    /**
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
     public static function getDropzoneTemplate(): ilTemplate
     {
         return self::getTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/MumieTasks/tpl.file-drop-zone.html");
     }
 
+    /**
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
     public static function getStudentGradingInfoboxTemplate(ilObjMumieTask $mumie_task, string $user_id, string $description = ''): ilTemplate
     {
         $i18N = new ilMumieTaskI18N();
@@ -57,6 +70,10 @@ class ilMumieTaskTemplateEngine
         return ilMumieTaskTemplateEngine::EMPTY_CELL;
     }
 
+    /**
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
     private static function getCurrentGradeInformation(ilObjMumieTask $mumie_task, $user_id): string
     {
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $mumie_task);
