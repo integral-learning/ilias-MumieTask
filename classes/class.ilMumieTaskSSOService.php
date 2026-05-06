@@ -82,7 +82,7 @@ class ilMumieTaskSSOService
      * Get html code for the MUMIE task launcher
      * @throws ilTemplateException
      */
-    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $width = 800, $height = 600): string
+    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $height = 600): string
     {
         $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true);
         $tpl->setVariable("TASKURL", $taskObj->getLoginUrl());

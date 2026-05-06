@@ -57,6 +57,9 @@ class ilMumieTaskGradeSync
         return $this->getXapiGrades($this->getXapiRequestBody(true));
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
+     */
     private function getAllXapiGradesByUser()
     {
         return $this->getXapiGrades($this->getXapiRequestBody(false));
@@ -194,6 +197,9 @@ class ilMumieTaskGradeSync
         return array_filter($valid_grade_by_user);
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
+     */
     private function isGradeBeforeDueDate($grade)
     {
         if (!$this->task->hasDeadline()) {

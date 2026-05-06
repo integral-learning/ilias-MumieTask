@@ -61,6 +61,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Create object
      * @param bool $clone_mode
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
     public function doCreate(bool $clone_mode = false): void
     {
@@ -182,6 +183,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
     /**
      * Do Cloning
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
     public function doClone($a_target_id, $a_copy_id, $new_obj)
     {

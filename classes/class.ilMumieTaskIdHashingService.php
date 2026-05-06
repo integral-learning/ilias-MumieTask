@@ -49,6 +49,9 @@ class ilMumieTaskIdHashingService
         return $result->usr_id;
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
+     */
     private function upsertHash()
     {
         global $DIC;

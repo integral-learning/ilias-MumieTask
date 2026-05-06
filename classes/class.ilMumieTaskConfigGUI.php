@@ -107,7 +107,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
     /**
      * Display options for sharing personal data
      */
-    public function sharedData($setSavedValues = false)
+    public function sharedData()
     {
         global $DIC;
         $DIC->tabs()->activateTab("tab_shared_data");
@@ -158,6 +158,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
     /**
      * Submit changes made in the shared data form
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
      */
     private function submitSharedData()
     {

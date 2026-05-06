@@ -37,6 +37,7 @@ class ilMumieTaskAdminSettings
 
     /**
      * Load all values from the database
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
      */
     private function load(): void
     {

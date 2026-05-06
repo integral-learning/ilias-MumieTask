@@ -158,6 +158,9 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setParent($a_parentform);
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter)
+     */
     public function setParent($a_val)
     {
     }

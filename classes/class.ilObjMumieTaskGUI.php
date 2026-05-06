@@ -736,6 +736,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->performCommand($cmd);
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
+     */
     private function deleteDeadlineExtension()
     {
         global $DIC;
@@ -752,6 +755,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->performCommand($cmd);
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
+     */
     private function deleteGradeOverride()
     {
         global $DIC;

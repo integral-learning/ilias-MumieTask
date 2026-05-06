@@ -182,6 +182,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
     /**
      * Save all Mumie Servers as a hidden input field. The JS file needs to know about them and their structure
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
     public function setValuesByArray($a_values, $a_restrict_to_value_keys = false): void
     {

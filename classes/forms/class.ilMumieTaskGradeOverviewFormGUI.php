@@ -28,11 +28,11 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
 
     public function setFields($parentObj, $form)
     {
-        $this->setSearch($parentObj, $form);
+        $this->setSearch($form);
         $this->setTable($parentObj, $form);
     }
 
-    private function setSearch($parentObj, $form)
+    private function setSearch($form)
     {
         global $DIC;
         $this->text_item_first = new ilTextInputGUI($this->i18N->txt('frm_user_overview_list_firstname_search'), 'firstnamefield');
