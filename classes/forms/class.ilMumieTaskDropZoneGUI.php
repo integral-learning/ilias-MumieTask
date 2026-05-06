@@ -11,6 +11,7 @@
 class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
 {
     private ilMumieTaskI18N $i18n;
+
     public function __construct($a_title = "", $post_var = "")
     {
         parent::__construct($a_title, $post_var);

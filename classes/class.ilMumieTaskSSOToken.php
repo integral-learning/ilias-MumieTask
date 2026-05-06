@@ -50,7 +50,7 @@ class ilMumieTaskSSOToken
                 'id' => array('integer', $db->nextID(self::MUMIETOKENS_TABLE_NAME)),
                 'token' => array('text', $this->token),
                 'timecreated' => array('integer', time()),
-                'user' => array('text',  $this->user))
+                'user' => array('text', $this->user))
         );
     }
 
@@ -59,9 +59,9 @@ class ilMumieTaskSSOToken
         global $DIC;
         $db = $DIC->database();
         $query = "SELECT * FROM "
-        . self::MUMIETOKENS_TABLE_NAME
-        . " WHERE user = "
-        . $db->quote($this->user, 'text');
+            . self::MUMIETOKENS_TABLE_NAME
+            . " WHERE user = "
+            . $db->quote($this->user, 'text');
 
         $result = $db->fetchAssoc($db->query($query));
         if (!is_null($result)) {

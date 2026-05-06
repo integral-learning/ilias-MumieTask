@@ -17,6 +17,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     private $parent_gui;
     private ilObjMumieTask $mumie_task;
     private ilMumieTaskI18N $i18N;
+
     public function __construct($parent_gui, $user_id, ilObjMumieTask $mumie_task)
     {
         parent::__construct();

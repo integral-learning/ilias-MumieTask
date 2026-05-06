@@ -79,9 +79,10 @@ class ilMumieTaskCourseStructure implements JsonSerializable
 
         return $this;
     }
+
     /**
      * Set the value of link
-     * @param  string $link
+     * @param string $link
      * @return self
      */
     public function setLink($link): static
@@ -180,8 +181,8 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-    * Get the tags
-    */
+     * Get the tags
+     */
     public function getTags()
     {
         return $this->tags;

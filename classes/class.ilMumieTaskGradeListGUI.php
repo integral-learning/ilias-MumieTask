@@ -11,7 +11,6 @@
 /**
  * This GUI provides a way to list grades and submission dates for a single user in a MUMIE task
  */
-
 class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
     private $user_id;
@@ -145,10 +144,10 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     }
 
     /**
-    * Get Post Variable.
-    *
-    * @return	string	Post Variable
-    */
+     * Get Post Variable.
+     *
+     * @return    string    Post Variable
+     */
     public function getFieldId()
     {
     }

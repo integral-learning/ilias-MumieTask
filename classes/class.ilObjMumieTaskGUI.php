@@ -13,10 +13,10 @@
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI, ilLearningProgressGUI, ilLPListOfObjectsGUI,ilObjPluginDispatchGUI, ilLPListOfSettingsGui, ilMumieTaskLPGUI
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilMumieTaskLPTableGUI
  */
-
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
 {
     private ilMumieTaskI18N $i18N;
+
     public function __construct(int $a_ref_id = 0, int $a_id_type = self::REPOSITORY_NODE_ID, int $a_parent_node_id = 0)
     {
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
@@ -68,6 +68,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 break;
         }
     }
+
     public function setTabs(): void
     {
         global $DIC;
@@ -221,8 +222,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
         $mumieTask = $this->object;
         $force_grade_update = $this->form->getInput('xmum_task') != $mumieTask->getTaskurl()
-        || $this->form->getInput('xmum_course') != $mumieTask->getMumieCourse()
-        || $this->form->getInput('xmum_server') != $mumieTask->getServer();
+            || $this->form->getInput('xmum_course') != $mumieTask->getMumieCourse()
+            || $this->form->getInput('xmum_server') != $mumieTask->getServer();
 
         $this->saveFormValues();
 
@@ -384,18 +385,18 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $html_string =
 
-        '<table style= "padding:15px">'
-        . ' <tr style="line-height:30px">
+            '<table style= "padding:15px">'
+            . ' <tr style="line-height:30px">
             <td><i>'
-        . $this->i18N->txt('frm_passing_grade')
-        . ':</i></td>'
-        . '<td style="padding-left:50px">'
-        . $this->object->getPassingGrade()
-        . '</td>'
-        . '</tr>'
-        . '<tr style="line-height:30px">'
-        . '<td><i>'
-        . $this->i18N->globalTxt('status')
+            . $this->i18N->txt('frm_passing_grade')
+            . ':</i></td>'
+            . '<td style="padding-left:50px">'
+            . $this->object->getPassingGrade()
+            . '</td>'
+            . '</tr>'
+            . '<tr style="line-height:30px">'
+            . '<td><i>'
+            . $this->i18N->globalTxt('status')
             . ':</i></td>'
             . '<td style="padding-left:50px">'
             . "<img style='margin-right: 10px; width: 1em' src='" . $status_path . "'>"
@@ -405,6 +406,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             . '</table>';
         return $html_string;
     }
+
     /**
      * After object has been created -> jump to this command
      */
@@ -433,7 +435,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $tree = $DIC->repositoryTree();
         $ref_id = $this->object->getRefId();
-        $parent_ref_id = (int) $tree->getParentId($ref_id);
+        $parent_ref_id = (int)$tree->getParentId($ref_id);
 
         ilRepUtil::removeObjectsFromSystem([$ref_id]);
 
@@ -521,7 +523,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $is_gradepool_setting_update = $this->object->getPrivateGradepool() !== $this->form->getInput('privategradepool');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
         if (!$this->object->isGradepoolSet()) {
-            $this->object->setPrivateGradepool((int) $this->form->getInput('privategradepool'));
+            $this->object->setPrivateGradepool((int)$this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->setDeadline(strtotime($this->form->getInput('deadline')));

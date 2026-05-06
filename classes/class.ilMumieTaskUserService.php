@@ -11,7 +11,6 @@
 /**
  * This class provides services for overriding grades
  */
-
 class ilMumieTaskUserService
 {
     public static function getFullName($user_id)

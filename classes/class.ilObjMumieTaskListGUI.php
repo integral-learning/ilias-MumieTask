@@ -97,7 +97,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             return $this->getDeadlineBadge($deadline) . "<br>" .
                 strip_tags($task->getDescription());
         } else {
-            return  $this->getDeadlineBadge($deadline);
+            return $this->getDeadlineBadge($deadline);
         }
     }
 

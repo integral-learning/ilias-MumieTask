@@ -198,8 +198,8 @@ foreach ($operations as $operation) {
     $ops_id = $row->ops_id;
 
     $query = "INSERT INTO rbac_ta (typ_id, ops_id) VALUES ("
-    . $ilDB->quote($typ_id, 'integer') . ","
-    . $ilDB->quote($ops_id, 'integer') . ")";
+        . $ilDB->quote($typ_id, 'integer') . ","
+        . $ilDB->quote($ops_id, 'integer') . ")";
     $ilDB->manipulate($query);
 }
 
@@ -235,11 +235,11 @@ if (!$ilDB->fetchAssoc($ilDB->query($query))) {
     $result = $ilDB->query($query);
     while ($row = $ilDB->fetchAssoc($result)) {
         $query = 'INSERT INTO rbac_templates (rol_id,type,ops_id,parent) ' .
-        'VALUES (' .
-        $ilDB->quote($row['rol_id'], 'integer') . "," .
-        $ilDB->quote("xmum", 'text') . "," .
-        $ilDB->quote($row['ops_id'], 'integer') . "," .
-        $ilDB->quote($row['parent'], 'integer') . ")";
+            'VALUES (' .
+            $ilDB->quote($row['rol_id'], 'integer') . "," .
+            $ilDB->quote("xmum", 'text') . "," .
+            $ilDB->quote($row['ops_id'], 'integer') . "," .
+            $ilDB->quote($row['parent'], 'integer') . ")";
         $ilDB->manipulate($query);
     }
 }
@@ -255,7 +255,7 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task", "privategradepool")) {
             'length' => '2',
             'notnull' => true,
             'default' => '-1'
-    )
+        )
     );
 }
 $ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');

@@ -11,7 +11,6 @@
 /**
  * This class provides services for overriding grades
  */
-
 class ilMumieTaskGradeOverrideService
 {
     public const TASK_ID = 'task_id';
@@ -42,9 +41,9 @@ class ilMumieTaskGradeOverrideService
         $query = "SELECT new_grade
         FROM xmum_grade_override
         WHERE " .
-        "usr_id = " . $db->quote($user_id, "text") .
-        " AND " .
-        "task_id = " . $db->quote($task->getId(), "integer");
+            "usr_id = " . $db->quote($user_id, "text") .
+            " AND " .
+            "task_id = " . $db->quote($task->getId(), "integer");
         $assoc = $db->fetchAssoc($db->query($query));
         return is_null($assoc) ? $assoc : $assoc[self::NEW_GRADE];
     }

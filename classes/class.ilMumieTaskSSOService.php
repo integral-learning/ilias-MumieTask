@@ -11,7 +11,6 @@
 /**
  * This class provides functions for SSO between MUMIE servers and ILIAS
  */
-
 class ilMumieTaskSSOService
 {
     /**

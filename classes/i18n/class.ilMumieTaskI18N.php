@@ -26,6 +26,6 @@ class ilMumieTaskI18N
 
     public function globalTxt($key): string
     {
-        return$this->language->txt($key);
+        return $this->language->txt($key);
     }
 }

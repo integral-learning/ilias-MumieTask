@@ -29,6 +29,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
     public const MUMIE_GRADE_SYNC_VERSION = 2;
 
     private static string $SERVER_TABLE_NAME = "xmum_mumie_servers";
+
     public function __construct($id = 0)
     {
         $this->server_id = $id;
@@ -101,6 +102,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
         }
         return $servers;
     }
+
     public function setName($name): void
     {
         $this->name = $name;
@@ -129,12 +131,12 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
         $DIC->database()->update(
             ilMumieTaskServer::$SERVER_TABLE_NAME,
             array(
-            "name" => array("text", $this->name),
-            "url_prefix" => array("text", $this->url_prefix),
-        ),
+                "name" => array("text", $this->name),
+                "url_prefix" => array("text", $this->url_prefix),
+            ),
             array(
-            "server_id" => array("int", $this->server_id),
-        )
+                "server_id" => array("int", $this->server_id),
+            )
         );
     }
 
@@ -217,7 +219,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
 
     public function jsonSerialize(): array
     {
-        $parentVars = (array) parent::jsonSerialize();
+        $parentVars = (array)parent::jsonSerialize();
         $vars = get_object_vars($this);
         return array_merge($vars, $parentVars);
     }
@@ -236,6 +238,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
     {
         return $this->url_prefix . 'public/xapi/auth/sso/login';
     }
+
     public function getLogoutUrl(): string
     {
         return $this->url_prefix . 'public/xapi/auth/sso/logout/' . ilMumieTaskAdminSettings::getInstance()->getOrg();

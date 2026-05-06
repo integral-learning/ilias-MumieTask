@@ -100,7 +100,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     private static function upsertXapiGrade($xapi_grade, $task, $user_id)
     {
         $percentage = round($xapi_grade->result->score->scaled * 100);
-        self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
+        self::updateResult($user_id, (string)$task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
         self::upsertMarks($user_id, $task, $xapi_grade);
     }
 
@@ -125,8 +125,8 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         $db = $DIC->database();
         $query = "SELECT * FROM ut_lp_marks WHERE 
         obj_id = " . $db->quote($task->getId(), "integer") .
-        " AND " .
-        "usr_id = " . $db->quote($user_id, "integer");
+            " AND " .
+            "usr_id = " . $db->quote($user_id, "integer");
         $existingGrade = $db->fetchAssoc($db->query($query));
         if (is_null($existingGrade)) {
             self::insertMark($user_id, $task->getId());
@@ -181,7 +181,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     }
 
     /**
-     *  @return ilObjMumieTask[]
+     * @return ilObjMumieTask[]
      */
     private static function getMumieTasksInRepository($refId)
     {

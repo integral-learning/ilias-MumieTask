@@ -14,6 +14,7 @@
 class ilMumieTaskFormGUI extends ilPropertyFormGUI
 {
     private ilMumieTaskI18N $i18N;
+
     public function __construct()
     {
         parent::__construct();
@@ -208,7 +209,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             $this->language_item->setValue($DIC->user()->getLanguage());
         }
         $this->problem_selector_item->setValue(ilMumieTaskAdminSettings::getInstance()
-        ->getProblemSelectorUrl());
+            ->getProblemSelectorUrl());
     }
 
     /**

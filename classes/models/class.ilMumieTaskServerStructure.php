@@ -34,6 +34,7 @@ class ilMumieTaskServerStructure implements JsonSerializable
 
         return $this;
     }
+
     protected function loadStructure($courses_and_tasks): void
     {
         $this->courses = [];

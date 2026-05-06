@@ -141,7 +141,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'online' => array('integer', $this->getOnline()),
                 'deadline' => array('integer', $this->getDeadline()),
                 'worksheet' => array('text', $this->getWorksheet())
-    ),
+            ),
             array(
                 'id' => array("int", $this->getId()),
             )
@@ -196,7 +196,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     /**
      * Set online
      *
-     * @param        boolean                online
+     * @param boolean                online
      */
     public function setOnline($a_val)
     {
@@ -578,7 +578,6 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     {
         $this->deadline = $deadline;
     }
-
 
 
     public function getDeadlineDateTime(): ilMumieTaskDateTime

@@ -86,7 +86,7 @@ class ilMumieTaskGradeSync
         );
         $response = json_decode($curl->exec());
         $curl->close();
-        return($response);
+        return ($response);
     }
 
     private function getXapiRequestBody($getOnlyChangedGrades)

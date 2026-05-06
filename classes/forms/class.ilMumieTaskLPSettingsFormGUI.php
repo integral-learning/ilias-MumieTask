@@ -15,6 +15,7 @@
 class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 {
     private ilMumieTaskI18N $i18N;
+
     public function __construct($disable_grade_pool_selection)
     {
         parent::__construct();

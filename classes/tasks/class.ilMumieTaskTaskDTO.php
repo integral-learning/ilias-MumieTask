@@ -40,6 +40,7 @@ class ilMumieTaskTaskDTO
      * @var string
      */
     private $link;
+
     public function __construct(string $task_json)
     {
         $task = json_decode($task_json);

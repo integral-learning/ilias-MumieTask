@@ -55,8 +55,8 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     {
         $this->tpl->setCurrentBlock("tbl_content");
         $this->css_row = ($this->css_row != "tblrow1")
-        ? "tblrow1"
-        : "tblrow2";
+            ? "tblrow1"
+            : "tblrow2";
         $this->tpl->setVariable("CSS_ROW", $this->css_row);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $user_id);
         $grade = ilMumieTaskLPStatus::getCurrentGradeForUser($user_id, $this->mumie_task);
@@ -127,6 +127,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     {
         return true;
     }
+
     public function insert($a_tpl)
     {
         $a_tpl->setCurrentBlock("prop_custom");
@@ -171,10 +172,10 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     }
 
     /**
-    * Get Post Variable.
-    *
-    * @return	string	Post Variable
-    */
+     * Get Post Variable.
+     *
+     * @return    string    Post Variable
+     */
     public function getFieldId()
     {
         return "";

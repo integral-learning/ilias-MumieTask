@@ -15,6 +15,7 @@
 class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 {
     private ilMumieTaskI18N $i18N;
+
     public function __construct()
     {
         parent::__construct();
