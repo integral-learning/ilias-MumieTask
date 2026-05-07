@@ -12,7 +12,7 @@
 class ilMumieTaskServerStructure implements JsonSerializable
 {
     private $courses;
-    private array $languages = array();
+    private array $languages = [];
 
     /**
      * Get the value of courses

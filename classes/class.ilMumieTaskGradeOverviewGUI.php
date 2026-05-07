@@ -42,7 +42,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             "TBL_CONTENT",
             "tbl_content",
             "tpl.mumie_user_list.html",
-            "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
+            "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask",
         );
 
         foreach ($members as $user_id) {
@@ -189,9 +189,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
     /**
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
-    public function setParent($a_val)
-    {
-    }
+    public function setParent($a_val) {}
 
     public function getInfo()
     {

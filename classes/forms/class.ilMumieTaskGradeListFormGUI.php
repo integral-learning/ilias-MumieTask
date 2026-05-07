@@ -39,7 +39,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         $remove_grade_override_button = new ilMumieTaskFormButtonGUI("", "xmum_btn_remove_grade_override");
         $remove_grade_override_button->setButtonLabel($this->i18N->txt('btn_remove_grade_override'));
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
-        $remove_grade_override_button->setLink($this->ctrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'deleteGradeOverride'));
+        $remove_grade_override_button->setLink($this->ctrl->getLinkTargetByClass(['ilObjMumieTaskGUI'], 'deleteGradeOverride'));
         $this->addItem($remove_grade_override_button);
     }
 

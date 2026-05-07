@@ -44,7 +44,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             "TBL_CONTENT",
             "tbl_content",
             "tpl.mumie_grade_list.html",
-            "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
+            "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask",
         );
         $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->mumie_task);
         if ($this->privateGradepoolSet($this->mumie_task)) {
@@ -148,9 +148,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
      *
      * @return    string    Post Variable
      */
-    public function getFieldId()
-    {
-    }
+    public function getFieldId() {}
 
     public function setParentForm($a_parentform)
     {
@@ -160,9 +158,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
     /**
      * @SuppressWarnings("PHPMD.UnusedFormalParameter)
      */
-    public function setParent($a_val)
-    {
-    }
+    public function setParent($a_val) {}
 
     public function getInfo()
     {

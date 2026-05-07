@@ -46,7 +46,5 @@ class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
     /**
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
-    public function setValueByArray($a_values)
-    {
-    }
+    public function setValueByArray($a_values) {}
 }

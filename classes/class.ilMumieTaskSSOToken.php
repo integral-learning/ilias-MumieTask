@@ -46,11 +46,11 @@ class ilMumieTaskSSOToken
         $db = $DIC->database();
         $db->insert(
             self::MUMIETOKENS_TABLE_NAME,
-            array(
-                'id' => array('integer', $db->nextID(self::MUMIETOKENS_TABLE_NAME)),
-                'token' => array('text', $this->token),
-                'timecreated' => array('integer', time()),
-                'user' => array('text', $this->user))
+            [
+                'id' => ['integer', $db->nextID(self::MUMIETOKENS_TABLE_NAME)],
+                'token' => ['text', $this->token],
+                'timecreated' => ['integer', time()],
+                'user' => ['text', $this->user]],
         );
     }
 
@@ -75,13 +75,13 @@ class ilMumieTaskSSOToken
         global $DIC;
         $DIC->database()->update(
             self::MUMIETOKENS_TABLE_NAME,
-            array(
-                'token' => array('text', $this->token),
-                'timecreated' => array('integer', time()),
-            ),
-            array(
-                'user' => array('text', $this->user),
-            )
+            [
+                'token' => ['text', $this->token],
+                'timecreated' => ['integer', time()],
+            ],
+            [
+                'user' => ['text', $this->user],
+            ],
         );
     }
 
@@ -93,7 +93,7 @@ class ilMumieTaskSSOToken
             "DELETE FROM "
             . self::MUMIETOKENS_TABLE_NAME
             . " WHERE user = "
-            . $db->quote($this->user, 'text')
+            . $db->quote($this->user, 'text'),
         );
     }
 

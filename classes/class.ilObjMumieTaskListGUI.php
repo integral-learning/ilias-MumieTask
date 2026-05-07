@@ -37,17 +37,17 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
             ilLoggerFactory::getLogger('xmum')->info("Error when updating MUMIE grades:");
             ilLoggerFactory::getLogger('xmum')->info($e);
         }
-        return array(
-            array(
+        return [
+            [
                 "permission" => "read",
                 "cmd" => "viewContent",
-                "default" => true),
-            array(
+                "default" => true],
+            [
                 "permission" => "write",
                 "cmd" => "editProperties",
                 "txt" => $this->i18n->txt('edit_task'),
-                "default" => false),
-        );
+                "default" => false],
+        ];
     }
 
     /**
@@ -116,9 +116,9 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
     {
         $i18N = new ilMumieTaskI18N();
         if (!ilObjMumieTaskAccess::_lookupOnline($this->obj_id)) {
-            $props[] = array("alert" => true, "property" => $i18N->globalTxt("status"),
-                "value" => $i18N->globalTxt("offline"));
+            $props[] = ["alert" => true, "property" => $i18N->globalTxt("status"),
+                "value" => $i18N->globalTxt("offline")];
         }
-        return $props ?? array();
+        return $props ?? [];
     }
 }

@@ -66,9 +66,9 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function doCreate(bool $clone_mode = false): void
     {
         global $DIC;
-        $DIC->database()->insert(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME, array(
-            "id" => array('integer', $this->getId()),
-        ));
+        $DIC->database()->insert(ilObjMumieTask::$MUMIE_TASK_TABLE_NAME, [
+            "id" => ['integer', $this->getId()],
+        ]);
     }
 
     /**
@@ -81,7 +81,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
         $result = $db->query(
             "SELECT * FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME .
-            " WHERE id = " . $db->quote($this->getId(), "integer")
+            " WHERE id = " . $db->quote($this->getId(), "integer"),
         );
         if (!is_null($result)) {
             $rec = $db->fetchAssoc($result);
@@ -128,23 +128,23 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 
         $DIC->database()->update(
             ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
-            array(
-                'taskurl' => array('text', $this->getTaskurl()),
-                'launchcontainer' => array('integer', $this->getLaunchcontainer()),
-                'mumie_course' => array('text', $this->getMumieCourse()),
-                'language' => array('text', $this->getLanguage()),
-                'server' => array('text', $this->getServer()),
-                'mumie_coursefile' => array('text', $this->getMumieCoursefile()),
-                'passing_grade' => array('integer', $this->getPassingGrade()),
-                'lp_modus' => array('integer', $this->getLpModus()),
-                'privategradepool' => array('integer', $this->getPrivateGradepool()),
-                'online' => array('integer', $this->getOnline()),
-                'deadline' => array('integer', $this->getDeadline()),
-                'worksheet' => array('text', $this->getWorksheet())
-            ),
-            array(
-                'id' => array("int", $this->getId()),
-            )
+            [
+                'taskurl' => ['text', $this->getTaskurl()],
+                'launchcontainer' => ['integer', $this->getLaunchcontainer()],
+                'mumie_course' => ['text', $this->getMumieCourse()],
+                'language' => ['text', $this->getLanguage()],
+                'server' => ['text', $this->getServer()],
+                'mumie_coursefile' => ['text', $this->getMumieCoursefile()],
+                'passing_grade' => ['integer', $this->getPassingGrade()],
+                'lp_modus' => ['integer', $this->getLpModus()],
+                'privategradepool' => ['integer', $this->getPrivateGradepool()],
+                'online' => ['integer', $this->getOnline()],
+                'deadline' => ['integer', $this->getDeadline()],
+                'worksheet' => ['text', $this->getWorksheet()],
+            ],
+            [
+                'id' => ["int", $this->getId()],
+            ],
         );
 
         /**
@@ -177,7 +177,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         ilMumieTaskDeadlineExtensionService::deleteDeadlineExtensions($this);
         $db->manipulate(
             "DELETE FROM " . ilObjMumieTask::$MUMIE_TASK_TABLE_NAME . " WHERE " .
-            " id = " . $db->quote($this->getId(), "integer")
+            " id = " . $db->quote($this->getId(), "integer"),
         );
     }
 

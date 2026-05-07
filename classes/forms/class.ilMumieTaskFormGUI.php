@@ -37,7 +37,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $dropzone_item;
     private $problem_selector_item;
 
-    private $server_options = array();
+    private $server_options = [];
 
     public function setFields($is_creation_mode = false)
     {
@@ -57,7 +57,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         if (!$is_creation_mode) {
             $add_server_button = new ilMumieTaskFormButtonGUI("", "xmum_add_server_btn");
             $add_server_button->setButtonLabel($this->i18N->txt('add_server'));
-            $add_server_button->setLink($DIC->ctrl()->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'addServer'));
+            $add_server_button->setLink($DIC->ctrl()->getLinkTargetByClass(['ilObjMumieTaskGUI'], 'addServer'));
             $add_server_button->setInfo($this->i18N->txt('add_server_desc'));
             $this->addItem($add_server_button);
         }

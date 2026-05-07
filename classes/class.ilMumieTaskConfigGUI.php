@@ -72,23 +72,23 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $tabs->addTab(
             "tab_servers",
             $i18N->txt("tab_servers"),
-            $ctrl->getLinkTarget($this, "listServers")
+            $ctrl->getLinkTarget($this, "listServers"),
         );
         $tabs->addTab(
             "tab_shared_data",
             $i18N->txt("tab_shared_data"),
-            $ctrl->getLinkTarget($this, "sharedData")
+            $ctrl->getLinkTarget($this, "sharedData"),
         );
 
         $tabs->addTab(
             'tab_authentication',
             $i18N->txt("tab_authentication"),
-            $ctrl->getLinkTarget($this, "authentication")
+            $ctrl->getLinkTarget($this, "authentication"),
         );
         $tabs->addTab(
             'tab_problem_selector',
             $i18N->txt("tab_problem_selector"),
-            $ctrl->getLinkTarget($this, "problemSelector")
+            $ctrl->getLinkTarget($this, "problemSelector"),
         );
     }
 
@@ -171,9 +171,9 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         }
 
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
-        $admin_settings->setShareFirstName((int)$this->form->getInput('shareFirstName'));
-        $admin_settings->setShareLastName((int)$this->form->getInput('shareLastName'));
-        $admin_settings->setShareEmail((int)$this->form->getInput('shareEmail'));
+        $admin_settings->setShareFirstName((int) $this->form->getInput('shareFirstName'));
+        $admin_settings->setShareLastName((int) $this->form->getInput('shareLastName'));
+        $admin_settings->setShareEmail((int) $this->form->getInput('shareEmail'));
         $admin_settings->update();
         $cmd = "sharedData";
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
@@ -244,7 +244,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
 
         $url_input = new ilTextInputGUI(
             $this->i18N->txt("tab_problem_selector_label_text"),
-            "problem_selector_url"
+            "problem_selector_url",
         );
         $url_input->setRequired(true);
         if ($load_saved_values) {
@@ -392,7 +392,7 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
      */
     protected function loadServerSettings($id)
     {
-        $values = array();
+        $values = [];
         $server = new ilMumieTaskServer($id);
         $server->load();
         $values["name"] = $server->getName();

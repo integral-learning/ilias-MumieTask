@@ -40,7 +40,7 @@ class ilMumieTaskGradeSync
      */
     public function getSyncIds($user_ids)
     {
-        return array_map(array($this, "getSyncIdForUser"), $user_ids);
+        return array_map([$this, "getSyncIdForUser"], $user_ids);
     }
 
     /**
@@ -82,7 +82,7 @@ class ilMumieTaskGradeSync
         $curl->setOpt(CURLOPT_RETURNTRANSFER, 1);
         $curl->setOpt(
             CURLOPT_HTTPHEADER,
-            $this->getXapiRequestHeaders($payload)
+            $this->getXapiRequestHeaders($payload),
         );
         $response = json_decode($curl->exec());
         $curl->close();
@@ -91,23 +91,23 @@ class ilMumieTaskGradeSync
 
     private function getXapiRequestBody($getOnlyChangedGrades)
     {
-        $params = array(
+        $params = [
             "users" => $this->getSyncIds($this->user_ids),
             "course" => $this->task->getMumieCoursefile(),
-            "objectIds" => array(self::getMumieId($this->task)),
+            "objectIds" => [self::getMumieId($this->task)],
             'lastSync' => $getOnlyChangedGrades ? $this->getLastSync() : 1,
-            'includeAll' => true
-        );
+            'includeAll' => true,
+        ];
         return $params;
     }
 
     private function getXapiRequestHeaders($payload)
     {
-        return array(
+        return [
             'Content-Type: application/json',
             'Content-Length: ' . strlen($payload),
             "X-API-Key: " . $this->admin_settings->getApiKey(),
-        );
+        ];
     }
 
     /**
@@ -179,16 +179,16 @@ class ilMumieTaskGradeSync
             foreach ($response as $xapi_grade) {
                 $ilias_id = $this->getIliasId($xapi_grade);
                 if (!isset($grades_by_user->$ilias_id)) {
-                    $grades_by_user->{$ilias_id} = array();
+                    $grades_by_user->{$ilias_id} = [];
                 }
                 array_push($grades_by_user->{$ilias_id}, $xapi_grade);
             }
         }
 
-        $valid_grade_by_user = array();
+        $valid_grade_by_user = [];
         foreach ($grades_by_user as $user_id => $xapi_grades) {
             if (!ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $this->task)) {
-                $xapi_grades = array_filter($xapi_grades, array($this, "isGradeBeforeDueDate"));
+                $xapi_grades = array_filter($xapi_grades, [$this, "isGradeBeforeDueDate"]);
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
             } else {
                 $valid_grade_by_user[$user_id] = ilMumieTaskGradeOverrideService::getOverriddenGrade($user_id, $xapi_grades, $this->task);
@@ -242,7 +242,7 @@ class ilMumieTaskGradeSync
         $gradesync = new ilMumieTaskGradeSync($mumie_task, false);
         $xapi_grades = $gradesync->getAllXapiGradesByUser();
         $syncId = $gradesync->getSyncIdForUser($user_id);
-        $userGrades = array();
+        $userGrades = [];
         if (empty($xapi_grades)) {
             return;
         }

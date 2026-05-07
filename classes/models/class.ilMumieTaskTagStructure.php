@@ -19,7 +19,7 @@ class ilMumieTaskTagStructure implements JsonSerializable
      * All values for the tag
      * @var string[]
      */
-    private $values = array();
+    private $values = [];
 
     /**
      * Constructor

@@ -13,8 +13,8 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     private $name;
     private $tasks;
     private $path_to_course_file;
-    private array $languages = array();
-    private array $tags = array();
+    private array $languages = [];
+    private array $tags = [];
     private $link;
 
     /**
@@ -141,11 +141,11 @@ class ilMumieTaskCourseStructure implements JsonSerializable
      */
     public function collectTags()
     {
-        $tags = array();
+        $tags = [];
         foreach ($this->tasks as $task) {
             foreach ($task->getTags() as $tag) {
                 if (!isset($tags[$tag->getName()])) {
-                    $tags[$tag->getName()] = array();
+                    $tags[$tag->getName()] = [];
                 }
                 $tags[$tag->getName()] = $tag->merge($tags[$tag->getName()]);
             }

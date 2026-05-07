@@ -26,7 +26,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
                 $user_id,
                 self::LP_STATUS_IN_PROGRESS_NUM,
                 $old_status,
-                self::getPercentageForUser($mumie_task->getId(), $user_id)
+                self::getPercentageForUser($mumie_task->getId(), $user_id),
             );
         }
     }
@@ -100,7 +100,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     private static function upsertXapiGrade($xapi_grade, $task, $user_id)
     {
         $percentage = round($xapi_grade->result->score->scaled * 100);
-        self::updateResult($user_id, (string)$task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
+        self::updateResult($user_id, (string) $task->getId(), $percentage >= $task->getPassingGrade(), $percentage);
         self::upsertMarks($user_id, $task, $xapi_grade);
     }
 
@@ -139,10 +139,10 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         global $DIC;
         $DIC->database()->insert(
             "ut_lp_marks",
-            array(
-                'obj_id' => array('integer', $task_id),
-                'usr_id' => array('text', $user_id)
-            )
+            [
+                'obj_id' => ['integer', $task_id],
+                'usr_id' => ['text', $user_id],
+            ],
         );
     }
 
@@ -151,14 +151,14 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         global $DIC;
         $DIC->database()->update(
             'ut_lp_marks',
-            array(
-                "status_changed" => array('text', date("Y-m-d H:i:s", $timestamp)),
-                "mark" => array('int', $percentage),
-            ),
-            array(
-                'obj_id' => array('int', $task_id),
-                'usr_id' => array('int', $user_id),
-            )
+            [
+                "status_changed" => ['text', date("Y-m-d H:i:s", $timestamp)],
+                "mark" => ['int', $percentage],
+            ],
+            [
+                'obj_id' => ['int', $task_id],
+                'usr_id' => ['int', $user_id],
+            ],
         );
     }
 
@@ -192,10 +192,10 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             FROM tree t
             JOIN object_reference o ON t.child = o.ref_id
             JOIN xmum_mumie_task m ON m.id = o.obj_id
-            WHERE t.parent = " . $db->quote($refId, "integer")
+            WHERE t.parent = " . $db->quote($refId, "integer"),
         );
 
-        $mumieTasks = array();
+        $mumieTasks = [];
 
         while ($record = $db->fetchAssoc($result)) {
             $mumieTask = new ilObjMumieTask($record["ref_id"]);
@@ -253,7 +253,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
             FROM ut_lp_marks 
             WHERE usr_id = " . $db->quote($user_id, "integer") .
             " AND " .
-            "obj_id = " . $db->quote($mumie_task->getId(), "integer")
+            "obj_id = " . $db->quote($mumie_task->getId(), "integer"),
         ));
     }
 

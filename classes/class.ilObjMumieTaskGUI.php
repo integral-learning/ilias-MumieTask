@@ -107,9 +107,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $tabs->clearSubTabs();
         if ($a_tab == 'properties') {
             $tabs->addSubTab("edit_task", $this->i18N->txt('tab_gen_settings'), $ctrl->getLinkTarget($this, "editProperties"));
-            $tabs->addSubTab("lp_settings", $this->i18N->txt('tab_lp_settings'), $ctrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editLPSettings'));
+            $tabs->addSubTab("lp_settings", $this->i18N->txt('tab_lp_settings'), $ctrl->getLinkTargetByClass(['ilObjMumieTaskGUI'], 'editLPSettings'));
             $this->lng->loadLanguageModule('rep');
-            $tabs->addSubTab("availability_settings", $this->i18N->globalTxt('rep_activation_availability'), $ctrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'editAvailabilitySettings'));
+            $tabs->addSubTab("availability_settings", $this->i18N->globalTxt('rep_activation_availability'), $ctrl->getLinkTargetByClass(['ilObjMumieTaskGUI'], 'editAvailabilitySettings'));
         }
     }
 
@@ -327,10 +327,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
-            $ctrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'), 'showObjectSummary');
+            $ctrl->redirectByClass(['ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'], 'showObjectSummary');
         } else {
             $this->setProgressInfo();
-            $ctrl->redirectByClass(array('ilObjMumieTaskGUI', 'ilLearningProgressGUI'));
+            $ctrl->redirectByClass(['ilObjMumieTaskGUI', 'ilLearningProgressGUI']);
         }
     }
 
@@ -435,7 +435,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $tree = $DIC->repositoryTree();
         $ref_id = $this->object->getRefId();
-        $parent_ref_id = (int)$tree->getParentId($ref_id);
+        $parent_ref_id = (int) $tree->getParentId($ref_id);
 
         ilRepUtil::removeObjectsFromSystem([$ref_id]);
 
@@ -474,7 +474,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->setSubTabs("properties");
         $tabs->activateSubTab('lp_settings');
         $this->initLPSettingsForm();
-        $values = array();
+        $values = [];
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
         $values['privategradepool'] = $this->object->getPrivateGradepool();
@@ -497,7 +497,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $force_sync_button = new ilMumieTaskFormButtonGUI($this->i18N->txt('frm_force_update'));
         $force_sync_button->setButtonLabel($this->i18N->txt('frm_force_update_btn'));
-        $force_sync_button->setLink($ctrl->getLinkTargetByClass(array('ilObjMumieTaskGUI'), 'forceGradeUpdate'));
+        $force_sync_button->setLink($ctrl->getLinkTargetByClass(['ilObjMumieTaskGUI'], 'forceGradeUpdate'));
         $force_sync_button->setInfo($this->i18N->txt('frm_force_update_desc'));
         $form->addItem($force_sync_button);
 
@@ -523,7 +523,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $is_gradepool_setting_update = $this->object->getPrivateGradepool() !== $this->form->getInput('privategradepool');
         $this->object->setLpModus($this->form->getInput('lp_modus'));
         if (!$this->object->isGradepoolSet()) {
-            $this->object->setPrivateGradepool((int)$this->form->getInput('privategradepool'));
+            $this->object->setPrivateGradepool((int) $this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
         $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
@@ -531,7 +531,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if ($is_gradepool_setting_update) {
             ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(
                 $this->object->getParentRef(),
-                $this->object->getPrivateGradepool()
+                $this->object->getPrivateGradepool(),
             );
         }
 
@@ -561,7 +561,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $tabs->activateSubTab('availability_settings');
         $this->lng->loadLanguageModule('rep');
         $this->initAvailabilitySettingsForm();
-        $values = array();
+        $values = [];
         $values['activation_type'] = $this->object->getActivationLimited();
         $values['online'] = $this->object->getOnline();
         $period = new stdClass();
@@ -691,8 +691,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 'success',
                 sprintf(
                     $this->i18N->txt('frm_grade_overview_list_successfull_update'),
-                    ilMumieTaskUserService::getFullName($user_id)
-                )
+                    ilMumieTaskUserService::getFullName($user_id),
+                ),
             );
             $cmd = 'displayGradeOverviewPage';
             $this->performCommand($cmd);
@@ -750,8 +750,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             'success',
             sprintf(
                 $this->i18N->txt('frm_deadline_extension_successfull_delete'),
-                ilMumieTaskUserService::getFullName($user_id)
-            )
+                ilMumieTaskUserService::getFullName($user_id),
+            ),
         );
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);
@@ -770,8 +770,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             'success',
             sprintf(
                 $this->i18N->txt('grade_override_removed'),
-                ilMumieTaskUserService::getFullName($user_id)
-            )
+                ilMumieTaskUserService::getFullName($user_id),
+            ),
         );
         $cmd = 'displayGradeOverviewPage';
         $this->performCommand($cmd);

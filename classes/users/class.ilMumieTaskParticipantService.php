@@ -61,9 +61,9 @@ class ilMumieTaskParticipantService
         global $DIC;
         $db = $DIC->database();
         $result = $db->query(
-            "SELECT usr_id FROM usr_data;"
+            "SELECT usr_id FROM usr_data;",
         );
-        $allIds = array();
+        $allIds = [];
         while ($user_id = $db->fetchAssoc($result)) {
             array_push($allIds, $user_id["usr_id"]);
         }

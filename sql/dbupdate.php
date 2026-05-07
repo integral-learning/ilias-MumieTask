@@ -1,152 +1,152 @@
 <#1>
 <?php
 if (!$ilDB->tableExists("xmum_sso_tokens")) {
-    $fieldsToken = array(
-        'id' => array(
+    $fieldsToken = [
+        'id' => [
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-        'token' => array(
+        ],
+        'token' => [
             'type' => 'text',
             'length' => 30,
             'notnull' => true,
-        ),
+        ],
         // hashed user id
-        'user' => array(
+        'user' => [
             'type' => 'text',
             'length' => 128,
             'notnull' => true,
-        ),
-        'timecreated' => array(
+        ],
+        'timecreated' => [
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-    );
+        ],
+    ];
 
     $ilDB->createTable("xmum_sso_tokens", $fieldsToken);
-    $ilDB->addPrimaryKey("xmum_sso_tokens", array("id"));
+    $ilDB->addPrimaryKey("xmum_sso_tokens", ["id"]);
     $ilDB->createSequence("xmum_sso_tokens");
 }
 ?>
 <#2>
 <?php
 if (!$ilDB->tableExists("xmum_mumie_task")) {
-    $fieldsMumie = array(
-        'id' => array(
+    $fieldsMumie = [
+        'id' => [
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-        'taskurl' => array(
+        ],
+        'taskurl' => [
             'type' => 'text',
-        ),
-        'launchcontainer' => array(
+        ],
+        'launchcontainer' => [
             'type' => 'integer',
             'length' => '4',
-        ),
-        'mumie_course' => array(
+        ],
+        'mumie_course' => [
             'type' => 'text',
             'length' => '255',
-        ),
-        'language' => array(
+        ],
+        'language' => [
             'type' => 'text',
             'length' => '255',
-        ),
-        'server' => array(
+        ],
+        'server' => [
             'type' => 'text',
             'length' => '255',
-        ),
-        'mumie_coursefile' => array(
+        ],
+        'mumie_coursefile' => [
             'type' => 'text',
             'length' => '255',
-        ),
-        'passing_grade' => array(
+        ],
+        'passing_grade' => [
             'type' => 'integer',
             'length' => '4',
             'default' => 60,
-        ),
-        'lp_modus' => array(
+        ],
+        'lp_modus' => [
             'type' => 'integer',
             'length' => '2',
             'default' => '1',
-        ),
-        'online' => array(
+        ],
+        'online' => [
             'type' => 'integer',
             'length' => '2',
             'default' => '0',
-        ),
-    );
+        ],
+    ];
     $ilDB->createTable("xmum_mumie_task", $fieldsMumie);
-    $ilDB->addPrimaryKey("xmum_mumie_task", array("id"));
+    $ilDB->addPrimaryKey("xmum_mumie_task", ["id"]);
 }
 ?>
 <#3>
 <?php
 if (!$ilDB->tableExists("xmum_mumie_servers")) {
-    $fieldsServer = array(
-        'server_id' => array(
+    $fieldsServer = [
+        'server_id' => [
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
             'default' => 0,
-        ),
-        'name' => array(
+        ],
+        'name' => [
             'type' => 'text',
             'length' => 30,
             'notnull' => true,
-        ),
-        'url_prefix' => array(
+        ],
+        'url_prefix' => [
             'type' => 'text',
             'length' => 200,
             'notnull' => true,
-        ),
-    );
+        ],
+    ];
     $ilDB->createTable("xmum_mumie_servers", $fieldsServer);
-    $ilDB->addPrimaryKey("xmum_mumie_servers", array("server_id"));
+    $ilDB->addPrimaryKey("xmum_mumie_servers", ["server_id"]);
     $ilDB->createSequence("xmum_mumie_servers");
 }
 ?>
 <#4>
 <?php
 if (!$ilDB->tableExists('xmum_admin_settings')) {
-    $fieldsAminSettings = array(
-        'id' => array(
+    $fieldsAminSettings = [
+        'id' => [
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-        'share_first_name' => array(
+        ],
+        'share_first_name' => [
             'type' => 'integer',
             'default' => 'false',
             'length' => '1',
-        ),
-        'share_last_name' => array(
+        ],
+        'share_last_name' => [
             'type' => 'integer',
             'default' => 'false',
             'length' => '1',
-        ),
-        'share_email' => array(
+        ],
+        'share_email' => [
             'type' => 'integer',
             'default' => 'false',
             'length' => '1',
-        ),
-        'api_key' => array(
+        ],
+        'api_key' => [
             'type' => 'text',
             'length' => '255',
-        ),
-        'org' => array(
+        ],
+        'org' => [
             'type' => 'text',
             'length' => '7',
-        ),
-        'problem_selector_url' => array(
+        ],
+        'problem_selector_url' => [
             'type' => 'text',
             'length' => '255',
-        ),
-    );
+        ],
+    ];
     $ilDB->createTable("xmum_admin_settings", $fieldsAminSettings);
-    $ilDB->addPrimaryKey("xmum_admin_settings", array("id"));
+    $ilDB->addPrimaryKey("xmum_admin_settings", ["id"]);
 }
 ?>
 <#5>
@@ -164,7 +164,7 @@ if ($ilDB->numRows($result) < 1) {
         . $ilDB->quote('', 'text') . ','
         . $ilDB->quote('', 'text') . ','
         . $ilDB->quote('https://pool.mumie.net', 'text')
-        . ')'
+        . ')',
     );
 }
 ?>
@@ -190,7 +190,7 @@ if ($rec = $ilDB->fetchAssoc($set)) {
 /**
  * Add new RBAC operations
  */
-$operations = array('read_learning_progress');
+$operations = ['read_learning_progress'];
 foreach ($operations as $operation) {
     $query = "SELECT ops_id FROM rbac_operations WHERE operation = " . $ilDB->quote($operation, 'text');
     $res = $ilDB->query($query);
@@ -207,20 +207,20 @@ foreach ($operations as $operation) {
 <#7>
 <?php
 if (!$ilDB->tableExists('xmum_id_hashes')) {
-    $fieldsHashes = array(
-        'usr_id' => array(
+    $fieldsHashes = [
+        'usr_id' => [
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-        'hash' => array(
+        ],
+        'hash' => [
             'type' => 'text',
             'length' => '128',
             'notnull' => true,
-        ),
-    );
+        ],
+    ];
     $ilDB->createTable("xmum_id_hashes", $fieldsHashes);
-    $ilDB->addPrimaryKey("xmum_id_hashes", array("usr_id"));
+    $ilDB->addPrimaryKey("xmum_id_hashes", ["usr_id"]);
 }
 
 ?>
@@ -250,12 +250,12 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task", "privategradepool")) {
     $ilDB->addTableColumn(
         "xmum_mumie_task",
         "privategradepool",
-        array(
+        [
             'type' => 'integer',
             'length' => '2',
             'notnull' => true,
-            'default' => '-1'
-        )
+            'default' => '-1',
+        ],
     );
 }
 $ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');
@@ -268,25 +268,25 @@ if ($ilDB->tableExists('xmum_id_hashes')) {
     $result = $ilDB->query($query);
     $ilDB->dropTable('xmum_id_hashes');
 }
-$fieldsHashes = array(
-    'id' => array(
+$fieldsHashes = [
+    'id' => [
         'type' => 'integer',
         'length' => 8,
         'notnull' => true,
-    ),
-    'usr_id' => array(
+    ],
+    'usr_id' => [
         'type' => 'integer',
         'length' => 8,
         'notnull' => true,
-    ),
-    'hash' => array(
+    ],
+    'hash' => [
         'type' => 'text',
         'length' => '143',
         'notnull' => true,
-    ),
-);
+    ],
+];
 $ilDB->createTable("xmum_id_hashes", $fieldsHashes);
-$ilDB->addPrimaryKey("xmum_id_hashes", array("id"));
+$ilDB->addPrimaryKey("xmum_id_hashes", ["id"]);
 $ilDB->createSequence("xmum_id_hashes");
 if (!is_null($result)) {
     while ($row = $ilDB->fetchAssoc($result)) {
@@ -303,57 +303,57 @@ if (!is_null($result)) {
 $ilDB->modifyTableColumn(
     "xmum_sso_tokens",
     "user",
-    array(
+    [
         'type' => 'text',
         'length' => 143,
         'notnull' => true,
-    )
+    ],
 );
 ?>
 <#12>
 <?php
 if (!$ilDB->tableExists('xmum_grade_override')) {
-    $gradeOverrideSettings = array(
-        'task_id' => array(
+    $gradeOverrideSettings = [
+        'task_id' => [
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-        'usr_id' => array(
+        ],
+        'usr_id' => [
             'type' => 'text',
             'length' => '143',
             'notnull' => true,
-        ),
-        'new_grade' => array(
+        ],
+        'new_grade' => [
             'type' => 'integer',
             'length' => '3',
             'notnull' => true,
-            'default' => '0'
-        )
-    );
+            'default' => '0',
+        ],
+    ];
     $ilDB->createTable("xmum_grade_override", $gradeOverrideSettings);
 }
 ?>
 <#13>
 <?php
 if (!$ilDB->tableExists('xmum_deadline_ext')) {
-    $tableSettings = array(
-        'task_id' => array(
+    $tableSettings = [
+        'task_id' => [
             'type' => 'integer',
             'length' => 8,
             'notnull' => true,
-        ),
-        'usr_id' => array(
+        ],
+        'usr_id' => [
             'type' => 'text',
             'length' => '143',
             'notnull' => true,
-        ),
-        'date' => array(
+        ],
+        'date' => [
             'type' => 'integer',
             'length' => '4',
             'notnull' => true,
-        ),
-    );
+        ],
+    ];
     $ilDB->createTable("xmum_deadline_ext", $tableSettings);
 }
 ?>
@@ -363,11 +363,11 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task", "deadline")) {
     $ilDB->addTableColumn(
         'xmum_mumie_task',
         'deadline',
-        array(
+        [
             'type' => 'integer',
             'length' => '4',
-            'notnull' => false
-        )
+            'notnull' => false,
+        ],
     );
 
     $query = "SELECT xmum_mumie_task.id, crs_items.timing_end FROM xmum_mumie_task JOIN object_reference ON xmum_mumie_task.id = object_reference.obj_id JOIN crs_items ON object_reference.ref_id = crs_items.obj_id WHERE crs_items.timing_type = 0";
@@ -377,7 +377,7 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task", "deadline")) {
             'UPDATE xmum_mumie_task SET deadline = ' .
             $ilDB->quote($row['timing_end'], 'integer') .
             ' WHERE id = ' .
-            $ilDB->quote($row['id'], 'integer')
+            $ilDB->quote($row['id'], 'integer'),
         );
     }
 }
@@ -388,10 +388,10 @@ if (!$ilDB->tableColumnExists("xmum_mumie_task", "worksheet")) {
     $ilDB->addTableColumn(
         'xmum_mumie_task',
         'worksheet',
-        array(
+        [
             'type' => 'text',
-            'notnull' => false
-        )
+            'notnull' => false,
+        ],
     );
 }
 ?>
@@ -401,10 +401,10 @@ if (!$ilDB->tableColumnExists("xmum_admin_settings", "problem_selector_url")) {
     $ilDB->addTableColumn(
         'xmum_admin_settings',
         'problem_selector_url',
-        array(
+        [
             'type' => 'text',
             'length' => '255',
-        )
+        ],
     );
     $ilDB->manipulate("UPDATE xmum_admin_settings SET problem_selector_url = 'https://pool.mumie.net'");
 }

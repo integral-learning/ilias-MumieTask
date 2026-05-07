@@ -58,17 +58,17 @@ class ilMumieTaskAdminSettings
         global $DIC;
         $DIC->database()->update(
             ilMumieTaskAdminSettings::TABLE_NAME,
-            array(
-                "problem_selector_url" => array("text", $this->problem_selector_url),
-                "share_first_name" => array("integer", $this->share_first_name),
-                "share_last_name" => array("integer", $this->share_last_name),
-                "share_email" => array("integer", $this->share_email),
-                "api_key" => array("text", $this->api_key),
-                "org" => array("text", $this->org),
-            ),
-            array(
-                "id" => array("int", $this->id),
-            )
+            [
+                "problem_selector_url" => ["text", $this->problem_selector_url],
+                "share_first_name" => ["integer", $this->share_first_name],
+                "share_last_name" => ["integer", $this->share_last_name],
+                "share_email" => ["integer", $this->share_email],
+                "api_key" => ["text", $this->api_key],
+                "org" => ["text", $this->org],
+            ],
+            [
+                "id" => ["int", $this->id],
+            ],
         );
     }
 

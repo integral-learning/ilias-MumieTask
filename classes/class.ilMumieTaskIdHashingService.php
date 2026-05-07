@@ -42,8 +42,8 @@ class ilMumieTaskIdHashingService
                 'SELECT * FROM '
                 . self::TABLE_NAME
                 . " WHERE hash = "
-                . $db->quote($hash, "text")
-            )
+                . $db->quote($hash, "text"),
+            ),
         );
 
         return $result->usr_id;
@@ -67,8 +67,8 @@ class ilMumieTaskIdHashingService
                 . " WHERE usr_id = "
                 . $db->quote($this->user_id, "integer")
                 . " AND hash = "
-                . $db->quote($this->hash, 'text')
-            )
+                . $db->quote($this->hash, 'text'),
+            ),
         );
         if (!is_null($result)) {
             $this->id = $result->id;
@@ -84,11 +84,11 @@ class ilMumieTaskIdHashingService
         $db = $DIC->database();
         $db->insert(
             self::TABLE_NAME,
-            array(
-                'id' => array('integer', $db->nextID(self::TABLE_NAME)),
-                'usr_id' => array('integer', $this->user_id),
-                'hash' => array('text', $this->hash),
-            )
+            [
+                'id' => ['integer', $db->nextID(self::TABLE_NAME)],
+                'usr_id' => ['integer', $this->user_id],
+                'hash' => ['text', $this->hash],
+            ],
         );
     }
 
@@ -97,13 +97,13 @@ class ilMumieTaskIdHashingService
         global $DIC;
         $DIC->database()->update(
             self::TABLE_NAME,
-            array(
-                'hash' => array('text', $this->hash),
-                "usr_id" => array('integer', $this->user_id),
-            ),
-            array(
-                'id' => array('integer', $this->id)
-            )
+            [
+                'hash' => ['text', $this->hash],
+                "usr_id" => ['integer', $this->user_id],
+            ],
+            [
+                'id' => ['integer', $this->id],
+            ],
         );
     }
 

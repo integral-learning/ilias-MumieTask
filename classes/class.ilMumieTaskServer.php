@@ -53,11 +53,11 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
         global $DIC;
         $db = $DIC->database();
         $this->server_id = $db->nextId(ilMumieTaskServer::$SERVER_TABLE_NAME);
-        $db->insert(ilMumieTaskServer::$SERVER_TABLE_NAME, array(
-            "server_id" => array('integer', $this->server_id),
-            "name" => array('text', $this->name),
-            "url_prefix" => array('text', $this->url_prefix),
-        ));
+        $db->insert(ilMumieTaskServer::$SERVER_TABLE_NAME, [
+            "server_id" => ['integer', $this->server_id],
+            "name" => ['text', $this->name],
+            "url_prefix" => ['text', $this->url_prefix],
+        ]);
     }
 
     public function upsert(): void
@@ -78,7 +78,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
         global $DIC;
         $query = "SELECT * FROM " . ilMumieTaskServer::$SERVER_TABLE_NAME;
         $result = $DIC->database()->query($query);
-        $servers = array();
+        $servers = [];
         while ($row = $DIC->database()->fetchAssoc($result)) {
             $servers[] = $row;
         }
@@ -92,7 +92,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
      */
     public static function getAllServers(): array
     {
-        $servers = array();
+        $servers = [];
         foreach (ilMumieTaskServer::getAllServerData() as $data) {
             $server = new ilMumieTaskServer($data["server_id"]);
             $server->setName($data["name"]);
@@ -130,13 +130,13 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
 
         $DIC->database()->update(
             ilMumieTaskServer::$SERVER_TABLE_NAME,
-            array(
-                "name" => array("text", $this->name),
-                "url_prefix" => array("text", $this->url_prefix),
-            ),
-            array(
-                "server_id" => array("int", $this->server_id),
-            )
+            [
+                "name" => ["text", $this->name],
+                "url_prefix" => ["text", $this->url_prefix],
+            ],
+            [
+                "server_id" => ["int", $this->server_id],
+            ],
         );
     }
 
@@ -219,7 +219,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
 
     public function jsonSerialize(): array
     {
-        $parentVars = (array)parent::jsonSerialize();
+        $parentVars = (array) parent::jsonSerialize();
         $vars = get_object_vars($this);
         return array_merge($vars, $parentVars);
     }
@@ -230,7 +230,7 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
             $url,
             array_map(function ($server) {
                 return $server->getUrlPrefix();
-            }, ilMumieTaskServer::getAllServers())
+            }, ilMumieTaskServer::getAllServers()),
         );
     }
 

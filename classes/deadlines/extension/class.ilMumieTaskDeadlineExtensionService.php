@@ -47,7 +47,7 @@ class ilMumieTaskDeadlineExtensionService
             "DELETE FROM xmum_deadline_ext WHERE task_id = " .
             $db->quote($mumie_task->getId(), 'integer') .
             " AND usr_id = " .
-            $db->quote($user_id, 'integer')
+            $db->quote($user_id, 'integer'),
         );
     }
 
@@ -63,11 +63,11 @@ class ilMumieTaskDeadlineExtensionService
         global $DIC;
         $DIC->database()->insert(
             self::DEADLINE_EXTENSION_TABLE,
-            array(
-                self::TASK_ID => array('integer', $deadline_extension->getTaskId()),
-                self::USER_ID => array('text', $deadline_extension->getUserId()),
-                self::DATE => array('integer', $deadline_extension->getDate()->getUnixTime())
-            )
+            [
+                self::TASK_ID => ['integer', $deadline_extension->getTaskId()],
+                self::USER_ID => ['text', $deadline_extension->getUserId()],
+                self::DATE => ['integer', $deadline_extension->getDate()->getUnixTime()],
+            ],
         );
     }
 
@@ -76,13 +76,13 @@ class ilMumieTaskDeadlineExtensionService
         global $DIC;
         $DIC->database()->update(
             self::DEADLINE_EXTENSION_TABLE,
-            array(
-                self::DATE => array('integer', $deadline_extension->getDate()->getUnixTime())
-            ),
-            array(
-                self::TASK_ID => array('integer', $deadline_extension->getTaskId()),
-                self::USER_ID => array('text', $deadline_extension->getUserId()),
-            )
+            [
+                self::DATE => ['integer', $deadline_extension->getDate()->getUnixTime()],
+            ],
+            [
+                self::TASK_ID => ['integer', $deadline_extension->getTaskId()],
+                self::USER_ID => ['text', $deadline_extension->getUserId()],
+            ],
         );
     }
 
@@ -117,8 +117,8 @@ class ilMumieTaskDeadlineExtensionService
             'success',
             sprintf(
                 $i18n->txt('frm_deadline_extension_successfull_update'),
-                ilMumieTaskUserService::getFullName($deadline_extension->getUserId())
-            )
+                ilMumieTaskUserService::getFullName($deadline_extension->getUserId()),
+            ),
         );
     }
 }

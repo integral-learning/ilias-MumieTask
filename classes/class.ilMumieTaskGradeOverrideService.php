@@ -62,11 +62,11 @@ class ilMumieTaskGradeOverrideService
         global $DIC;
         $DIC->database()->insert(
             "xmum_grade_override",
-            array(
-                self::TASK_ID => array('integer', $grade->getMumieTask()->getId()),
-                self::USER_ID => array('text', $grade->getUserId()),
-                self::NEW_GRADE => array('integer', $grade->getPercentileScore())
-            )
+            [
+                self::TASK_ID => ['integer', $grade->getMumieTask()->getId()],
+                self::USER_ID => ['text', $grade->getUserId()],
+                self::NEW_GRADE => ['integer', $grade->getPercentileScore()],
+            ],
         );
     }
 
@@ -75,13 +75,13 @@ class ilMumieTaskGradeOverrideService
         global $DIC;
         $DIC->database()->update(
             "xmum_grade_override",
-            array(
-                self::NEW_GRADE => array('integer', $grade->getPercentileScore())
-            ),
-            array(
-                self::TASK_ID => array('integer', $grade->getMumieTask()->getId()),
-                self::USER_ID => array('text', $grade->getUserId()),
-            )
+            [
+                self::NEW_GRADE => ['integer', $grade->getPercentileScore()],
+            ],
+            [
+                self::TASK_ID => ['integer', $grade->getMumieTask()->getId()],
+                self::USER_ID => ['text', $grade->getUserId()],
+            ],
         );
     }
 

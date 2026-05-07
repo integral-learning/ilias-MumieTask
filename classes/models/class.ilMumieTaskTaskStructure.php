@@ -11,8 +11,8 @@ class ilMumieTaskTaskStructure implements JsonSerializable
 {
     private $link;
     private $headline;
-    private array $languages = array();
-    private array $tags = array();
+    private array $languages = [];
+    private array $tags = [];
 
     /**
      * Get the value of headline

@@ -30,7 +30,7 @@ class ilMumieTaskMultiUploadProcessor
                 array_map(function ($task_dto) {
                     return self::isValidProblem($task_dto);
                 }, $task_dtos),
-                true
+                true,
             );
         } catch (Exception $exception) {
             return false;
