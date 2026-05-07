@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
@@ -15,7 +15,7 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     private array $tags = [];
 
     /**
-     * Get the value of headline
+     * Get the value of headline.
      */
     public function getHeadline()
     {
@@ -23,10 +23,9 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of headline
+     * Set the value of headline.
      *
-     * @param $headline
-     * @return  self
+     * @return self
      */
     public function setHeadline($headline): static
     {
@@ -48,7 +47,7 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     }
 
     /**
-     * Get all languages used in this task
+     * Get all languages used in this task.
      *
      * @return string[]
      */
@@ -62,7 +61,7 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     }
 
     /**
-     * Get the value of link
+     * Get the value of link.
      */
     public function getLink()
     {
@@ -70,10 +69,9 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of link
+     * Set the value of link.
      *
-     * @param $link
-     * @return  self
+     * @return self
      */
     public function setLink($link): static
     {
@@ -88,7 +86,7 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     }
 
     /**
-     * Get the value of languages
+     * Get the value of languages.
      */
     public function getLanguages(): array
     {
@@ -96,10 +94,9 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of languages
+     * Set the value of languages.
      *
-     * @param $languages
-     * @return  self
+     * @return self
      */
     public function setLanguages($languages): static
     {
@@ -109,7 +106,7 @@ class ilMumieTaskTaskStructure implements JsonSerializable
     }
 
     /**
-     * Get the value of tags
+     * Get the value of tags.
      */
     public function getTags(): array
     {

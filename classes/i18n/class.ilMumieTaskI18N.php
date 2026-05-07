@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2013 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)

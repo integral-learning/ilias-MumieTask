@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
@@ -30,6 +30,7 @@ class ilMumieTaskIdHashingService
     {
         $service = new ilMumieTaskIdHashingService($user_id, $task);
         $service->upsertHash();
+
         return $service->getHash();
     }
 
@@ -41,8 +42,8 @@ class ilMumieTaskIdHashingService
             $db->query(
                 'SELECT * FROM '
                 . self::TABLE_NAME
-                . " WHERE hash = "
-                . $db->quote($hash, "text"),
+                . ' WHERE hash = '
+                . $db->quote($hash, 'text'),
             ),
         );
 
@@ -57,16 +58,16 @@ class ilMumieTaskIdHashingService
         global $DIC;
         $db = $DIC->database();
         $this->hash = $this->generateHash();
-        if ($this->task != null && $this->task->getPrivateGradepool() == 1) {
+        if (null != $this->task && 1 == $this->task->getPrivateGradepool()) {
             $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
         }
         $result = $db->fetchObject(
             $db->query(
                 'SELECT * FROM '
                 . self::TABLE_NAME
-                . " WHERE usr_id = "
-                . $db->quote($this->user_id, "integer")
-                . " AND hash = "
+                . ' WHERE usr_id = '
+                . $db->quote($this->user_id, 'integer')
+                . ' AND hash = '
                 . $db->quote($this->hash, 'text'),
             ),
         );
@@ -99,7 +100,7 @@ class ilMumieTaskIdHashingService
             self::TABLE_NAME,
             [
                 'hash' => ['text', $this->hash],
-                "usr_id" => ['integer', $this->user_id],
+                'usr_id' => ['integer', $this->user_id],
             ],
             [
                 'id' => ['integer', $this->id],
@@ -109,11 +110,11 @@ class ilMumieTaskIdHashingService
 
     private function generateHash()
     {
-        return hash("sha512", $this->user_id . substr(ilMumieTaskAdminSettings::getInstance()->getApiKey(), 0, 10));
+        return hash('sha512', $this->user_id . substr(ilMumieTaskAdminSettings::getInstance()->getApiKey(), 0, 10));
     }
 
     /**
-     * Get the value of hash
+     * Get the value of hash.
      */
     public function getHash()
     {

@@ -1,21 +1,19 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 class ilMumieTaskServerStructure implements JsonSerializable
 {
     private $courses;
     private array $languages = [];
 
     /**
-     * Get the value of courses
+     * Get the value of courses.
      */
     public function getCourses()
     {
@@ -23,10 +21,9 @@ class ilMumieTaskServerStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of courses
+     * Set the value of courses.
      *
-     * @param $courses
-     * @return  self
+     * @return self
      */
     public function setCourses($courses): static
     {
@@ -55,14 +52,13 @@ class ilMumieTaskServerStructure implements JsonSerializable
         $this->languages = array_values(array_unique($langs));
     }
 
-
     public function jsonSerialize(): array
     {
         return get_object_vars($this);
     }
 
     /**
-     * Get the value of languages
+     * Get the value of languages.
      */
     public function getLanguages(): array
     {
@@ -70,10 +66,9 @@ class ilMumieTaskServerStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of languages
+     * Set the value of languages.
      *
-     * @param $languages
-     * @return  self
+     * @return self
      */
     public function setLanguages($languages): static
     {
@@ -81,7 +76,6 @@ class ilMumieTaskServerStructure implements JsonSerializable
 
         return $this;
     }
-
 
     public function getCoursebyName($name)
     {

@@ -1,16 +1,15 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
- * This class is used to display and validate the custom availability form for MumieTask
+ * This class is used to display and validate the custom availability form for MumieTask.
  */
 class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 {
@@ -36,7 +35,7 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
 
         $act_type_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_visibility_until'), 'activation_type');
 
-        $duration_item = new ilDateDurationInputGUI($this->i18N->globalTxt("rep_time_period"), "access_period");
+        $duration_item = new ilDateDurationInputGUI($this->i18N->globalTxt('rep_time_period'), 'access_period');
         $duration_item->setRequired(true);
         $duration_item->setShowTime(true);
         $duration_item->setStart(new ilDateTime(time(), IL_CAL_UNIX));

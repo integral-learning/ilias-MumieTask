@@ -1,16 +1,15 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
- * This form is used to add, edit and validate MUMIE Server configurations
+ * This form is used to add, edit and validate MUMIE Server configurations.
  */
 class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 {
@@ -39,13 +38,13 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
     {
         global $DIC;
         $id = $_GET['server_id'];
-        $DIC->ctrl()->setParameter($this, "server_id", $id);
+        $DIC->ctrl()->setParameter($this, 'server_id', $id);
 
         $ok = parent::checkInput();
         if ($ok) {
             $server = new ilMumieTaskServer();
-            $server->setName($this->getInput("name"));
-            $server->setUrlPrefix($this->getInput("url_prefix"));
+            $server->setName($this->getInput('name'));
+            $server->setUrlPrefix($this->getInput('url_prefix'));
 
             $name_exists = $server->nameExistsInDb();
             $url_prefix_exists = $server->urlPrefixExistsInDb();
@@ -77,6 +76,7 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
                 }
             }
         }
+
         return $ok;
     }
 }

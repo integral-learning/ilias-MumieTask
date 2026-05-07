@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
@@ -26,24 +26,26 @@ class ilMumieTaskAdminSettings
     protected int $id;
 
     /**
-     * Always use this method to get access to the current settings
+     * Always use this method to get access to the current settings.
      */
     public static function getInstance(): ilMumieTaskAdminSettings
     {
         $instance = new ilMumieTaskAdminSettings();
         $instance->load();
+
         return $instance;
     }
 
     /**
-     * Load all values from the database
+     * Load all values from the database.
+     *
      * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
      */
     private function load(): void
     {
         global $DIC;
         $db = $DIC->database();
-        $result = $db->fetchObject($db->query("SELECT * FROM " . ilMumieTaskAdminSettings::TABLE_NAME . " WHERE id = 1"));
+        $result = $db->fetchObject($db->query('SELECT * FROM ' . ilMumieTaskAdminSettings::TABLE_NAME . ' WHERE id = 1'));
         $this->id = $result->id;
         $this->problem_selector_url = $result->problem_selector_url;
         $this->share_first_name = $result->share_first_name;
@@ -59,15 +61,15 @@ class ilMumieTaskAdminSettings
         $DIC->database()->update(
             ilMumieTaskAdminSettings::TABLE_NAME,
             [
-                "problem_selector_url" => ["text", $this->problem_selector_url],
-                "share_first_name" => ["integer", $this->share_first_name],
-                "share_last_name" => ["integer", $this->share_last_name],
-                "share_email" => ["integer", $this->share_email],
-                "api_key" => ["text", $this->api_key],
-                "org" => ["text", $this->org],
+                'problem_selector_url' => ['text', $this->problem_selector_url],
+                'share_first_name' => ['integer', $this->share_first_name],
+                'share_last_name' => ['integer', $this->share_last_name],
+                'share_email' => ['integer', $this->share_email],
+                'api_key' => ['text', $this->api_key],
+                'org' => ['text', $this->org],
             ],
             [
-                "id" => ["int", $this->id],
+                'id' => ['int', $this->id],
             ],
         );
     }

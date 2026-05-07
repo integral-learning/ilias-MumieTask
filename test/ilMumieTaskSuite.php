@@ -7,7 +7,8 @@ class ilMumieTaskSuite extends TestSuite
     public static function suite()
     {
         $suite = new ilMumieTaskSuite();
-        $suite->addTestSuite("ilMumieTaskServerTest");
+        $suite->addTestSuite('ilMumieTaskServerTest');
+
         return $suite;
     }
 }

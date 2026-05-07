@@ -1,13 +1,12 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class ilMumieTaskCourseStructure implements JsonSerializable
 {
     private $name;
@@ -18,7 +17,7 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     private $link;
 
     /**
-     * Get the value of path_to_course_file
+     * Get the value of path_to_course_file.
      */
     public function getPathToCourseFile()
     {
@@ -26,10 +25,9 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of path_to_course_file
+     * Set the value of path_to_course_file.
      *
-     * @param $path_to_course_file
-     * @return  self
+     * @return self
      */
     public function setPathToCourseFile($path_to_course_file): static
     {
@@ -39,7 +37,7 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Get the value of tasks
+     * Get the value of tasks.
      */
     public function getTasks()
     {
@@ -47,10 +45,9 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of tasks
+     * Set the value of tasks.
      *
-     * @param $tasks
-     * @return  self
+     * @return self
      */
     public function setTasks($tasks): static
     {
@@ -60,7 +57,7 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Get the value of name
+     * Get the value of name.
      */
     public function getName()
     {
@@ -68,10 +65,9 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of name
+     * Set the value of name.
      *
-     * @param $name
-     * @return  self
+     * @return self
      */
     public function setName($name): static
     {
@@ -81,8 +77,10 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of link
+     * Set the value of link.
+     *
      * @param string $link
+     *
      * @return self
      */
     public function setLink($link): static
@@ -93,7 +91,8 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Get the value of link
+     * Get the value of link.
+     *
      * @return void
      */
     public function getLink()
@@ -160,7 +159,7 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Get the value of languages
+     * Get the value of languages.
      */
     public function getLanguages()
     {
@@ -168,10 +167,9 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Set the value of languages
+     * Set the value of languages.
      *
-     * @param $languages
-     * @return  self
+     * @return self
      */
     public function setLanguages($languages): static
     {
@@ -181,7 +179,7 @@ class ilMumieTaskCourseStructure implements JsonSerializable
     }
 
     /**
-     * Get the tags
+     * Get the tags.
      */
     public function getTags()
     {

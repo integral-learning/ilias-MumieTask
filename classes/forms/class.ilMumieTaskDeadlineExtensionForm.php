@@ -1,16 +1,15 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
- * This form is used to grant due date extensions for a given MumieTask
+ * This form is used to grant due date extensions for a given MumieTask.
  */
 class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
 {
@@ -65,6 +64,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
             $ok = false;
             $this->deadline_input->setAlert($this->i18n->txt('frm_deadline_extension_before_general_deadline_error'));
         }
+
         return $ok;
     }
 }

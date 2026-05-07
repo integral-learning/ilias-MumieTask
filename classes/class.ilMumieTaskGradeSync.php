@@ -1,16 +1,15 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
- * This class pulls grades for a given task from its MUMIE server
+ * This class pulls grades for a given task from its MUMIE server.
  */
 class ilMumieTaskGradeSync
 {
@@ -30,7 +29,8 @@ class ilMumieTaskGradeSync
     public function getSyncIdForUser($user_id)
     {
         $hashed_user = ilMumieTaskIdHashingService::getHashForUser($user_id, $this->task);
-        return "GSSO_" . $this->admin_settings->getOrg() . "_" . $hashed_user;
+
+        return 'GSSO_' . $this->admin_settings->getOrg() . '_' . $hashed_user;
     }
 
     /**
@@ -40,15 +40,16 @@ class ilMumieTaskGradeSync
      */
     public function getSyncIds($user_ids)
     {
-        return array_map([$this, "getSyncIdForUser"], $user_ids);
+        return array_map([$this, 'getSyncIdForUser'], $user_ids);
     }
 
     /**
-     * Get the ilias id from a xapi grade
+     * Get the ilias id from a xapi grade.
      */
     private function getIliasId($xapi_grade)
     {
-        $hashed_user = substr(strrchr($xapi_grade->actor->account->name, "_"), 1);
+        $hashed_user = substr(strrchr($xapi_grade->actor->account->name, '_'), 1);
+
         return ilMumieTaskIdHashingService::getUserFromHash($hashed_user);
     }
 
@@ -86,18 +87,20 @@ class ilMumieTaskGradeSync
         );
         $response = json_decode($curl->exec());
         $curl->close();
-        return ($response);
+
+        return $response;
     }
 
     private function getXapiRequestBody($getOnlyChangedGrades)
     {
         $params = [
-            "users" => $this->getSyncIds($this->user_ids),
-            "course" => $this->task->getMumieCoursefile(),
-            "objectIds" => [self::getMumieId($this->task)],
+            'users' => $this->getSyncIds($this->user_ids),
+            'course' => $this->task->getMumieCoursefile(),
+            'objectIds' => [self::getMumieId($this->task)],
             'lastSync' => $getOnlyChangedGrades ? $this->getLastSync() : 1,
             'includeAll' => true,
         ];
+
         return $params;
     }
 
@@ -106,12 +109,12 @@ class ilMumieTaskGradeSync
         return [
             'Content-Type: application/json',
             'Content-Length: ' . strlen($payload),
-            "X-API-Key: " . $this->admin_settings->getApiKey(),
+            'X-API-Key: ' . $this->admin_settings->getApiKey(),
         ];
     }
 
     /**
-     * get a map of xapi grades by user
+     * get a map of xapi grades by user.
      */
     public function getValidAndNewXapiGradesByUser()
     {
@@ -121,27 +124,30 @@ class ilMumieTaskGradeSync
     public function getValidAndNewXapiGradesForUser($user_id)
     {
         $grades_by_user = $this->getValidAndNewXapiGradesByUser();
+
         return $grades_by_user[$user_id];
     }
 
     /**
-     * Get the unique identifier for a MUMIE task
+     * Get the unique identifier for a MUMIE task.
      *
      * @param stdClass $mumietask
+     *
      * @return string id for MUMIE task on MUMIE server
      */
     private function getMumieId($mumietask)
     {
         $id = $mumietask->getTaskurl();
-        $prefix = "link/";
-        if (strpos($id, $prefix) === 0) {
+        $prefix = 'link/';
+        if (0 === strpos($id, $prefix)) {
             $id = substr($id, strlen($prefix));
         }
+
         return $id;
     }
 
     /**
-     * LastSync is used to improve performance. We don't need to check grades that were awarded before the last time we synced
+     * LastSync is used to improve performance. We don't need to check grades that were awarded before the last time we synced.
      */
     private function getLastSync()
     {
@@ -152,18 +158,19 @@ class ilMumieTaskGradeSync
         }
 
         $oldest_timestamp = PHP_INT_MAX;
-        $result = $db->query("SELECT usr_id, obj_id, status_changed" .
-            " FROM ut_lp_marks" .
-            " WHERE obj_id = " . $db->quote($this->task->getId(), "integer") .
-            " AND mark IS NOT NULL");
+        $result = $db->query('SELECT usr_id, obj_id, status_changed' .
+            ' FROM ut_lp_marks' .
+            ' WHERE obj_id = ' . $db->quote($this->task->getId(), 'integer') .
+            ' AND mark IS NOT NULL');
         while ($record = $db->fetchAssoc($result)) {
             if (in_array($record['usr_id'], $this->user_ids) && strtotime($record['status_changed']) < $oldest_timestamp) {
                 $oldest_timestamp = strtotime($record['status_changed']);
             }
         }
-        if ($oldest_timestamp == PHP_INT_MAX) {
+        if (PHP_INT_MAX == $oldest_timestamp) {
             $oldest_timestamp = 1;
         }
+
         return $oldest_timestamp * 1000;
     }
 
@@ -188,12 +195,13 @@ class ilMumieTaskGradeSync
         $valid_grade_by_user = [];
         foreach ($grades_by_user as $user_id => $xapi_grades) {
             if (!ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $this->task)) {
-                $xapi_grades = array_filter($xapi_grades, [$this, "isGradeBeforeDueDate"]);
+                $xapi_grades = array_filter($xapi_grades, [$this, 'isGradeBeforeDueDate']);
                 $valid_grade_by_user[$user_id] = $this->getLatestGrade($xapi_grades);
             } else {
                 $valid_grade_by_user[$user_id] = ilMumieTaskGradeOverrideService::getOverriddenGrade($user_id, $xapi_grades, $this->task);
             }
         }
+
         return array_filter($valid_grade_by_user);
     }
 
@@ -208,6 +216,7 @@ class ilMumieTaskGradeSync
         if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task)) {
             return strtotime($grade->timestamp) <= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
         }
+
         return strtotime($grade->timestamp) <= $this->task->getDeadline();
     }
 
@@ -223,6 +232,7 @@ class ilMumieTaskGradeSync
                 $latest_grade = $grade;
             }
         }
+
         return $latest_grade;
     }
 
@@ -234,6 +244,7 @@ class ilMumieTaskGradeSync
                 return true;
             }
         }
+
         return false;
     }
 
@@ -251,6 +262,7 @@ class ilMumieTaskGradeSync
                 array_push($userGrades, $xapi_grade);
             }
         }
+
         return $userGrades;
     }
 }

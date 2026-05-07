@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
@@ -9,7 +9,7 @@
  */
 
 /**
- * This form is used to display all submissions a user has gotten for a given MumieTask
+ * This form is used to display all submissions a user has gotten for a given MumieTask.
  */
 class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
 {
@@ -36,7 +36,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
         $grade_list->init();
         $this->addItem($grade_list);
 
-        $remove_grade_override_button = new ilMumieTaskFormButtonGUI("", "xmum_btn_remove_grade_override");
+        $remove_grade_override_button = new ilMumieTaskFormButtonGUI('', 'xmum_btn_remove_grade_override');
         $remove_grade_override_button->setButtonLabel($this->i18N->txt('btn_remove_grade_override'));
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
         $remove_grade_override_button->setLink($this->ctrl->getLinkTargetByClass(['ilObjMumieTaskGUI'], 'deleteGradeOverride'));
@@ -54,6 +54,7 @@ class ilMumieTaskGradeListFormGUI extends ilPropertyFormGUI
     public function getHTML(): string
     {
         $html = parent::getHTML();
-        return str_replace("ilTableOuter", "mumie-user-table", $html);
+
+        return str_replace('ilTableOuter', 'mumie-user-table', $html);
     }
 }

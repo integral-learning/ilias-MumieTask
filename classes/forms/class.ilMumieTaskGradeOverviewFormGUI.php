@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
@@ -9,7 +9,7 @@
  */
 
 /**
- * This form is used to edit the Learning Progress settings of MumieTasks
+ * This form is used to edit the Learning Progress settings of MumieTasks.
  */
 class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
 {
@@ -36,13 +36,13 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
     {
         global $DIC;
         $this->text_item_first = new ilTextInputGUI($this->i18N->txt('frm_user_overview_list_firstname_search'), 'firstnamefield');
-        if (!empty($this->getInput("firstnamefield"))) {
-            $this->text_item_first->setValue($form->getInput("firstnamefield"));
+        if (!empty($this->getInput('firstnamefield'))) {
+            $this->text_item_first->setValue($form->getInput('firstnamefield'));
         }
         $this->addItem($this->text_item_first);
         $this->text_item_last = new ilTextInputGUI($this->i18N->txt('frm_user_overview_list_lastname_search'), 'lastnamefield');
-        if (!empty($this->getInput("lastnamefield"))) {
-            $this->text_item_last->setValue($this->getInput("lastnamefield"));
+        if (!empty($this->getInput('lastnamefield'))) {
+            $this->text_item_last->setValue($this->getInput('lastnamefield'));
         }
         $this->addItem($this->text_item_last);
 
@@ -67,12 +67,14 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
     public function getHTML(): string
     {
         $html = parent::getHTML();
-        return str_replace("ilTableOuter", "mumie-user-table", $html);
+
+        return str_replace('ilTableOuter', 'mumie-user-table', $html);
     }
 
     public function checkInput(): bool
     {
         $ok = parent::checkInput();
+
         return $ok;
     }
 }

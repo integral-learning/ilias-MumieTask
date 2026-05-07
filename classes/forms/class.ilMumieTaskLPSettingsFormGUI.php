@@ -1,16 +1,15 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
- * This form is used to edit the Learning Progress settings of MumieTasks
+ * This form is used to edit the Learning Progress settings of MumieTasks.
  */
 class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 {
@@ -31,7 +30,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 
     public function setFields()
     {
-        $this->modus_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_sync_lp'), "lp_modus");
+        $this->modus_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_sync_lp'), 'lp_modus');
         $this->modus_item->setInfo($this->i18N->txt('frm_sync_lp_desc'));
         $modus_option_true = new ilRadioOption($this->i18N->txt('frm_enable'), 1);
         $modus_option_false = new ilRadioOption($this->i18N->txt('frm_disable'), 0);
@@ -39,7 +38,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->modus_item->addOption($modus_option_false);
         $this->addItem($this->modus_item);
 
-        $this->gradepool_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_privategradepool'), "privategradepool");
+        $this->gradepool_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_privategradepool'), 'privategradepool');
 
         $this->gradepool_item->setInfo($this->getGradepoolInfo());
         $gradepool_option_true = new ilRadioOption($this->i18N->txt('frm_enable'), 0);
@@ -81,10 +80,10 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         return $gradepool_info;
     }
 
-
     public function checkInput(): bool
     {
         $ok = parent::checkInput();
+
         return $ok;
     }
 }

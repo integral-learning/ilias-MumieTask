@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
@@ -9,7 +9,7 @@
  */
 
 /**
- * This class provides services for overriding grades
+ * This class provides services for overriding grades.
  */
 class ilMumieTaskGradeOverrideService
 {
@@ -20,6 +20,7 @@ class ilMumieTaskGradeOverrideService
     public static function wasGradeOverridden($user_id, $task)
     {
         $grade = self::loadOverriddenGrade($user_id, $task);
+
         return !is_null($grade);
     }
 
@@ -31,6 +32,7 @@ class ilMumieTaskGradeOverrideService
                 return $xGrade;
             }
         }
+
         return null;
     }
 
@@ -38,13 +40,14 @@ class ilMumieTaskGradeOverrideService
     {
         global $DIC;
         $db = $DIC->database();
-        $query = "SELECT new_grade
+        $query = 'SELECT new_grade
         FROM xmum_grade_override
-        WHERE " .
-            "usr_id = " . $db->quote($user_id, "text") .
-            " AND " .
-            "task_id = " . $db->quote($task->getId(), "integer");
+        WHERE ' .
+            'usr_id = ' . $db->quote($user_id, 'text') .
+            ' AND ' .
+            'task_id = ' . $db->quote($task->getId(), 'integer');
         $assoc = $db->fetchAssoc($db->query($query));
+
         return is_null($assoc) ? $assoc : $assoc[self::NEW_GRADE];
     }
 
@@ -61,7 +64,7 @@ class ilMumieTaskGradeOverrideService
     {
         global $DIC;
         $DIC->database()->insert(
-            "xmum_grade_override",
+            'xmum_grade_override',
             [
                 self::TASK_ID => ['integer', $grade->getMumieTask()->getId()],
                 self::USER_ID => ['text', $grade->getUserId()],
@@ -74,7 +77,7 @@ class ilMumieTaskGradeOverrideService
     {
         global $DIC;
         $DIC->database()->update(
-            "xmum_grade_override",
+            'xmum_grade_override',
             [
                 self::NEW_GRADE => ['integer', $grade->getPercentileScore()],
             ],
@@ -89,16 +92,16 @@ class ilMumieTaskGradeOverrideService
     {
         global $DIC;
         $db = $DIC->database();
-        $db->manipulate("DELETE FROM xmum_grade_override WHERE task_id = " . $db->quote($task->getId(), 'integer'));
+        $db->manipulate('DELETE FROM xmum_grade_override WHERE task_id = ' . $db->quote($task->getId(), 'integer'));
     }
 
     public static function deleteGradeOverride(ilObjMumieTask $task, $user_id)
     {
         global $DIC;
         $db = $DIC->database();
-        $query = "DELETE FROM xmum_grade_override WHERE task_id = " .
+        $query = 'DELETE FROM xmum_grade_override WHERE task_id = ' .
             $db->quote($task->getId(), 'integer') .
-            " AND usr_id = " . $db->quote($user_id);
+            ' AND usr_id = ' . $db->quote($user_id);
         $db->manipulate($query);
     }
 }

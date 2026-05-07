@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
@@ -9,7 +9,7 @@
  */
 
 /**
- * This class changes default behavior of ilDateTime. It's only meant to be used within MUMIE Task plugins
+ * This class changes default behavior of ilDateTime. It's only meant to be used within MUMIE Task plugins.
  */
 class ilMumieTaskDateTime extends ilDateTime
 {

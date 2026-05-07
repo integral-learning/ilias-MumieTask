@@ -1,13 +1,12 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 {
     private ilMumieTaskI18N $i18n;
@@ -30,28 +29,29 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
     public function initCommands(): array
     {
-        //Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
+        // Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
         try {
-            ilMumieTaskLPStatus::updateGradesForIlContainer($_GET["ref_id"]);
+            ilMumieTaskLPStatus::updateGradesForIlContainer($_GET['ref_id']);
         } catch (Exception $e) {
-            ilLoggerFactory::getLogger('xmum')->info("Error when updating MUMIE grades:");
+            ilLoggerFactory::getLogger('xmum')->info('Error when updating MUMIE grades:');
             ilLoggerFactory::getLogger('xmum')->info($e);
         }
+
         return [
             [
-                "permission" => "read",
-                "cmd" => "viewContent",
-                "default" => true],
+                'permission' => 'read',
+                'cmd' => 'viewContent',
+                'default' => true],
             [
-                "permission" => "write",
-                "cmd" => "editProperties",
-                "txt" => $this->i18n->txt('edit_task'),
-                "default" => false],
+                'permission' => 'write',
+                'cmd' => 'editProperties',
+                'txt' => $this->i18n->txt('edit_task'),
+                'default' => false],
         ];
     }
 
     /**
-     * Insert description for MUMIE Task - including information about any deadline set by the teacher,
+     * Insert description for MUMIE Task - including information about any deadline set by the teacher,.
      *
      * We need to to override parent method or we won't be able to add any kind of styling to the deadline bade.
      * We closely follow the structure found in ilObjectListGUI::insertDescription
@@ -75,17 +75,18 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
             if (!$task->hasDeadline()) {
                 parent::insertDescription();
+
                 return;
             }
 
             $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($DIC->user()->getId(), $task);
 
-            $DIC->ui()->mainTemplate()->addCss("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css");
-            $this->tpl->setVariable("TXT_DESC", $this->getDescriptionWithDeadlineBadge($deadline, $task));
-            $this->tpl->setCurrentBlock("item_description");
+            $DIC->ui()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css');
+            $this->tpl->setVariable('TXT_DESC', $this->getDescriptionWithDeadlineBadge($deadline, $task));
+            $this->tpl->setCurrentBlock('item_description');
             $this->tpl->parseCurrentBlock();
         } catch (Exception $e) {
-            ilLoggerFactory::getLogger('xmum')->error("Error when setting MUMIE Task description in list view:");
+            ilLoggerFactory::getLogger('xmum')->error('Error when setting MUMIE Task description in list view:');
             ilLoggerFactory::getLogger('xmum')->error($e);
             parent::insertDescription();
         }
@@ -94,31 +95,29 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
     private function getDescriptionWithDeadlineBadge(ilMumieTaskDateTime $deadline, ilObjMumieTask $task): string
     {
         if (!empty($task->getDescription())) {
-            return $this->getDeadlineBadge($deadline) . "<br>" .
+            return $this->getDeadlineBadge($deadline) . '<br>' .
                 strip_tags($task->getDescription());
-        } else {
-            return $this->getDeadlineBadge($deadline);
         }
+
+        return $this->getDeadlineBadge($deadline);
     }
 
     private function getDeadlineBadge(ilMumieTaskDateTime $deadline_date): string
     {
-        return '<span class = "mumie-deadline-badge">' . $this->i18n->txt('frm_grade_overview_list_deadline') . ": " . $deadline_date . "</span>";
+        return '<span class = "mumie-deadline-badge">' . $this->i18n->txt('frm_grade_overview_list_deadline') . ': ' . $deadline_date . '</span>';
     }
 
     /**
-     * Insert an offline warning into the description field in list view, if MumieTask is not set to online
-     *
-     * @access public
-     * @return array
+     * Insert an offline warning into the description field in list view, if MumieTask is not set to online.
      */
     public function getProperties(): array
     {
         $i18N = new ilMumieTaskI18N();
         if (!ilObjMumieTaskAccess::_lookupOnline($this->obj_id)) {
-            $props[] = ["alert" => true, "property" => $i18N->globalTxt("status"),
-                "value" => $i18N->globalTxt("offline")];
+            $props[] = ['alert' => true, 'property' => $i18N->globalTxt('status'),
+                'value' => $i18N->globalTxt('offline')];
         }
+
         return $props ?? [];
     }
 }
