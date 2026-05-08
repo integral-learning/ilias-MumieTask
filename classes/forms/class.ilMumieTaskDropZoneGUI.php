@@ -27,6 +27,7 @@ class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
     public function render()
     {
         global $DIC;
+
         $dropzone_template = ilMumieTaskTemplateEngine::getDropzoneTemplate();
         $dropzone_template->setVariable('DESCRIPTION', $this->i18n->txt('dropzone_description'));
         $dropzone_template->setVariable('MULTI_PROBLEM_LIST_HEADER', $this->i18n->txt('multi_problem_list_description'));

@@ -262,7 +262,6 @@ $ilDB->manipulate('UPDATE xmum_mumie_task SET privategradepool = 0');
 ?>
 <#10>
 <?php
-
 if ($ilDB->tableExists('xmum_id_hashes')) {
     $query = 'SELECT usr_id, hash FROM xmum_id_hashes';
     $result = $ilDB->query($query);

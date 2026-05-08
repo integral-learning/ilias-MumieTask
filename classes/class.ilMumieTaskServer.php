@@ -84,6 +84,8 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
 
     /**
      * Get a list of all saved server configurations including their course structure.
+     *
+     * @throws ilCurlConnectionException
      */
     public static function getAllServers(): array
     {
@@ -139,15 +141,17 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
     public function delete(): void
     {
         global $DIC;
-        $query = 'DELETE FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE server_id = ' . $DIC->database()->quote($this->server_id, 'integer');
-        $DIC->database()->manipulate($query);
+        $db = $DIC->database();
+        $query = 'DELETE FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE server_id = ' . $db->quote($this->server_id, 'integer');
+        $db->manipulate($query);
     }
 
     public function load(): void
     {
         global $DIC;
-        $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE server_id = ' . $DIC->database()->quote($this->server_id, 'integer');
-        $result = $DIC->database()->fetchObject($DIC->database()->query($query));
+        $db = $DIC->database();
+        $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE server_id = ' . $db->quote($this->server_id, 'integer');
+        $result = $db->fetchObject($db->query($query));
         $this->name = $result->name;
         $this->url_prefix = $result->url_prefix;
     }
@@ -155,19 +159,21 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
     public function nameExistsInDB(): bool
     {
         global $DIC;
-        $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE name = ' . $DIC->database()->quote($this->name, 'text');
-        $result = $DIC->database()->query($query);
+        $db = $DIC->database();
+        $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE name = ' . $db->quote($this->name, 'text');
+        $result = $db->query($query);
 
-        return $DIC->database()->numRows($result) > 0;
+        return $db->numRows($result) > 0;
     }
 
     public function urlPrefixExistsInDB(): bool
     {
         global $DIC;
-        $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE url_prefix = ' . $DIC->database()->quote($this->url_prefix, 'text');
-        $result = $DIC->database()->query($query);
+        $db = $DIC->database();
+        $query = 'SELECT * FROM ' . ilMumieTaskServer::$SERVER_TABLE_NAME . ' WHERE url_prefix = ' . $db->quote($this->url_prefix, 'text');
+        $result = $db->query($query);
 
-        return $DIC->database()->numRows($result) > 0;
+        return $db->numRows($result) > 0;
     }
 
     /**
@@ -210,6 +216,9 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
         return $this->url_prefix . 'public/courses-and-tasks?v=' . self::MUMIE_JSON_FORMAT_VERSION . '&org=' . ilMumieTaskAdminSettings::getInstance()->getOrg();
     }
 
+    /**
+     * @throws ilCurlConnectionException
+     */
     public function buildStructure(): void
     {
         parent::loadStructure($this->getCoursesAndTasks());
@@ -223,6 +232,9 @@ class ilMumieTaskServer extends ilMumieTaskServerStructure implements JsonSerial
         return array_merge($vars, $parentVars);
     }
 
+    /**
+     * @throws ilCurlConnectionException
+     */
     public static function serverConfigExistsForUrl($url): bool
     {
         return in_array(

@@ -144,6 +144,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     /**
      * Display the general settings of a MumieTask.
+     *
+     * @throws ilCurlConnectionException
      */
     public function editPropertiesObject()
     {
@@ -153,7 +155,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         if (empty(ilMumieTaskServer::getAllServers())) {
             $this->addServer();
-            $DIC->ui()->mainTemplate()->setOnScreenMessage('info', $this->i18N->txt('msg_no_server_found'), true);
+            $tpl->setOnScreenMessage('info', $this->i18N->txt('msg_no_server_found'), true);
 
             return;
         }
@@ -163,10 +165,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $this->initPropertiesForm();
         if (!$this->object->isDummy() && !ilMumieTaskServer::serverConfigExistsForUrl($this->object->getServer())) {
             $this->form->disable();
-            $DIC->ui()->mainTemplate()->setOnScreenMessage('failure', $this->i18N->txt('msg_server_missing') . $this->object->getServer());
+            $tpl->setOnScreenMessage('failure', $this->i18N->txt('msg_server_missing') . $this->object->getServer());
         } elseif (!$this->object->isDummy() && !ilMumieTaskServer::fromUrl($this->object->getServer())->isValidMumieServer()) {
             $this->form->disable();
-            $DIC->ui()->mainTemplate()->setOnScreenMessage('failure', $this->i18N->txt('msg_no_connection_to_server') . $this->object->getServer());
+            $tpl->setOnScreenMessage('failure', $this->i18N->txt('msg_no_connection_to_server') . $this->object->getServer());
         }
         $this->setPropertyValues();
         $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
@@ -234,7 +236,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
             ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         }
-        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
+        $tpl->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
 
         $DIC->ctrl()->redirect($this, 'editProperties');
     }
@@ -654,6 +656,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     private function initGradeOverviewPage()
     {
         global $DIC;
+
         $form = new ilMumieTaskGradeOverviewFormGUI($this->object);
         $form->setTitle($this->i18N->txt('frm_user_overview_list_search_title'));
         $form->addCommandButton('displayGradeOverviewPage', $this->i18N->txt('frm_user_overview_list_search'));
@@ -672,6 +675,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $DIC;
         $DIC->tabs()->activateTab('userList');
+
         $form = new ilMumieTaskGradeListFormGUI($this, $_GET['user_id'], $this->object);
         $form->setFields();
         $form->setFormAction($DIC->ctrl()->getFormAction($this));
@@ -719,6 +723,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     private function initDeadlineExtension()
     {
         global $DIC;
+
         $form = new ilMumieTaskDeadlineExtensionForm($this->object, $_GET['user_id']);
         $form->setTitle($this->i18N->txt('frm_user_overview_list_extended_deadline'));
         $form->setFields();

@@ -187,6 +187,7 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
     {
         global $DIC;
         $db = $DIC->database();
+
         $result = $db->query(
             'SELECT o.ref_id, m.id
             FROM tree t

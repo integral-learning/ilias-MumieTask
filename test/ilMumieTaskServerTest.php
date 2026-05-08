@@ -6,7 +6,8 @@ class ilMumieTaskServerTest extends TestCase
 {
     protected function setUp(): void
     {
-        // ilUnitUtil::performInitialisation();
+        /*include_once ("./Services/PHPUnit/classes/class.ilUnitUtil.php");
+        ilUnitUtil::performInitialisation();*/
     }
 
     public function testUrlStreamlining()
