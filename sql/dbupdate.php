@@ -182,8 +182,8 @@ if ($rec = $ilDB->fetchAssoc($set)) {
         $ilDB->quote('xmum', 'text') . ',' .
         $ilDB->quote('Plugin MumieTask', 'text') . ',' .
         $ilDB->quote(-1, 'integer') . ',' .
-        $ilDB->quote(ilUtil::now(), 'timestamp') . ',' .
-        $ilDB->quote(ilUtil::now(), 'timestamp') .
+        $ilDB->quote(date('Y-m-d H:i:s'), 'timestamp') . ',' .
+        $ilDB->quote(date('Y-m-d H:i:s'), 'timestamp') .
         ')');
 }
 
