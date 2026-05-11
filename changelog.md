@@ -2,7 +2,7 @@
 
 All important changes to this plugin will be documented in this file.
 
-## TODO
+## [v4.0] - 2026-05-11
 ### Added
 - Teachers can now select worksheets in the problem selector. Worksheets are a collection of problems with a custom correction workflow
 - Admin settings for the problem selector URL
