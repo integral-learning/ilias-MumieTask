@@ -18,6 +18,11 @@
     margin-left: 0.5em;
 }
 
+.mumie-drag-over {
+    border-color: #606060;
+    background-color: #FFF9BC;
+}
+
 #xmum_dropzone_description {
     margin-top: 10px;
 }

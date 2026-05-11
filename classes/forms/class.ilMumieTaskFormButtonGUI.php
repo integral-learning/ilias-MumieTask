@@ -1,12 +1,12 @@
 <?php
+
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('Services/Form/classes/class.ilCustomInputGUI.php');
 
 /**
  * A new input type for ilPropertyFormGUI.
@@ -19,33 +19,36 @@ class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
     protected $button_label;
     protected $id;
 
-    public function __construct($a_title = "", $id = "")
+    public function __construct($a_title = '', $id = '')
     {
-        parent::__construct($a_title, "");
+        parent::__construct($a_title, '');
         $this->id = $id;
     }
 
     public function insert($a_tpl): void
     {
-        $a_tpl->setCurrentBlock("prop_generic");
-        $a_tpl->setVariable("PROP_GENERIC", $this->render());
+        $a_tpl->setCurrentBlock('prop_generic');
+        $a_tpl->setVariable('PROP_GENERIC', $this->render());
         $a_tpl->parseCurrentBlock();
     }
 
-    public function render()
+    /**
+     * @throws ilTemplateException
+     */
+    public function render(): string
     {
-        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/tpl.mumie_form_button.html", true, true, true, "DEFAULT", true);
-        $tpl->setVariable("COMMAND_LINK", $this->link);
-        $tpl->setVariable("BUTTON_LABEL", $this->button_label);
-        $tpl->setVariable("ID", $this->id);
+        $tpl = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/tpl.mumie_form_button.html', true, true);
+        $tpl->setVariable('COMMAND_LINK', $this->link);
+        $tpl->setVariable('BUTTON_LABEL', $this->button_label);
+        $tpl->setVariable('ID', $this->id);
 
         return $tpl->get();
     }
 
     /**
-     * Set the value of link
+     * Set the value of link.
      *
-     * @return  self
+     * @return self
      */
     public function setLink($link)
     {
@@ -55,9 +58,9 @@ class ilMumieTaskFormButtonGUI extends ilCustomInputGUI
     }
 
     /**
-     * Set the value of button_label
+     * Set the value of button_label.
      *
-     * @return  self
+     * @return self
      */
     public function setButtonLabel($button_label)
     {

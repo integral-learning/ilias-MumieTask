@@ -1,25 +1,23 @@
 <?php
+
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-include_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/models/class.ilMumieTaskTaskStructure.php');
-include_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-
-class ilMumieTaskCourseStructure implements \JsonSerializable
+class ilMumieTaskCourseStructure implements JsonSerializable
 {
     private $name;
     private $tasks;
     private $path_to_course_file;
-    private $languages = array();
-    private $tags = array();
+    private array $languages = [];
+    private array $tags = [];
     private $link;
 
     /**
-     * Get the value of path_to_course_file
+     * Get the value of path_to_course_file.
      */
     public function getPathToCourseFile()
     {
@@ -27,11 +25,11 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-     * Set the value of path_to_course_file
+     * Set the value of path_to_course_file.
      *
-     * @return  self
+     * @return self
      */
-    public function setPathToCourseFile($path_to_course_file)
+    public function setPathToCourseFile($path_to_course_file): static
     {
         $this->path_to_course_file = $path_to_course_file;
 
@@ -39,7 +37,7 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-     * Get the value of tasks
+     * Get the value of tasks.
      */
     public function getTasks()
     {
@@ -47,11 +45,11 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-     * Set the value of tasks
+     * Set the value of tasks.
      *
-     * @return  self
+     * @return self
      */
-    public function setTasks($tasks)
+    public function setTasks($tasks): static
     {
         $this->tasks = $tasks;
 
@@ -59,7 +57,7 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-     * Get the value of name
+     * Get the value of name.
      */
     public function getName()
     {
@@ -67,22 +65,25 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-     * Set the value of name
+     * Set the value of name.
      *
-     * @return  self
+     * @return self
      */
-    public function setName($name)
+    public function setName($name): static
     {
         $this->name = $name;
 
         return $this;
     }
+
     /**
-     * Set the value of link
-     * @param  string $link
+     * Set the value of link.
+     *
+     * @param string $link
+     *
      * @return self
      */
-    public function setLink($link)
+    public function setLink($link): static
     {
         $this->link = $link;
 
@@ -90,7 +91,8 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-     * Get the value of link
+     * Get the value of link.
+     *
      * @return void
      */
     public function getLink()
@@ -138,11 +140,11 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
      */
     public function collectTags()
     {
-        $tags = array();
+        $tags = [];
         foreach ($this->tasks as $task) {
             foreach ($task->getTags() as $tag) {
                 if (!isset($tags[$tag->getName()])) {
-                    $tags[$tag->getName()] = array();
+                    $tags[$tag->getName()] = [];
                 }
                 $tags[$tag->getName()] = $tag->merge($tags[$tag->getName()]);
             }
@@ -151,15 +153,13 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
         $this->tags = array_values($tags);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
-
-        return $vars;
+        return get_object_vars($this);
     }
 
     /**
-     * Get the value of languages
+     * Get the value of languages.
      */
     public function getLanguages()
     {
@@ -167,11 +167,11 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-     * Set the value of languages
+     * Set the value of languages.
      *
-     * @return  self
+     * @return self
      */
-    public function setLanguages($languages)
+    public function setLanguages($languages): static
     {
         $this->languages = $languages;
 
@@ -179,16 +179,8 @@ class ilMumieTaskCourseStructure implements \JsonSerializable
     }
 
     /**
-     * Get the values of the tags
+     * Get the tags.
      */
-    public function getValues()
-    {
-        return $this->values;
-    }
-
-    /**
-    * Get the tags
-    */
     public function getTags()
     {
         return $this->tags;

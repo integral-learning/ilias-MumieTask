@@ -11,6 +11,10 @@ frm_share_email_desc#:#Choose, whether a user's e-mail address should be shared 
 tab_shared_data#:#Privacy
 tab_servers#:#Servers
 tab_authentication#:#Authentication
+tab_problem_selector#:#Developer options
+tab_problem_selector_no_change#:#These settings are for developers only. No changes required!
+tab_problem_selector_label_text#:#Problem selector URL
+tab_problem_selector_info_text#:#Please insert a valid URL. Default: https://pool.mumie.net
 tab_userlist#:#Grade Overview
 frm_auth_api#:#MUMIE API Key
 frm_auth_api_desc#:#Specify the MUMIE API key for grade synchronization
@@ -35,10 +39,8 @@ mumie_server_desc#:#Please select a MUMIE server to get an updated list of avail
 mumie_course#:#MUMIE course
 mumie_select_problem#:#Select a MUMIE Problem
 mumie_problem#:#MUMIE problem
-mumie_problem_desc#:#Choose from <b><span id='xmum_task_count'></span></b> MUMIE problems! <br><br>A MUMIE problem is a single graded exercise on MUMIE
-frm_tsk_course_not_found#:#This course doesn't exist on the chosen server
+mumie_problem_desc#:#A MUMIE problem is a single graded exercise on MUMIE
 frm_tsk_problem_not_found#:#This problem doesn't exist in the selected course
-frm_tsk_lang_not_found#:#There is no translation in this language for the selected problem
 launchcontainer#:#Launch container
 launchcontainer_desc#:#Please select whether the activity should be opened in a new browser tab or embedded into the ILIAS environment
 window#:#New window

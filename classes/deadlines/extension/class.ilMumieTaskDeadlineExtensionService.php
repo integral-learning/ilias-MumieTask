@@ -1,20 +1,19 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/deadlines/extension/class.ilMumieTaskDeadlineExtension.php');
 /**
- * This service is used to manage deadline extensions for students
+ * This service is used to manage deadline extensions for students.
  */
 class ilMumieTaskDeadlineExtensionService
 {
-    public const DEADLINE_EXTENSION_TABLE = "xmum_deadline_ext";
+    public const DEADLINE_EXTENSION_TABLE = 'xmum_deadline_ext';
     public const TASK_ID = 'task_id';
     public const USER_ID = 'usr_id';
     public const DATE = 'date';
@@ -42,83 +41,86 @@ class ilMumieTaskDeadlineExtensionService
 
     public static function deleteDeadlineExtension($mumie_task, $user_id)
     {
-        global $ilDB;
-        $ilDB->manipulate(
-            "DELETE FROM xmum_deadline_ext WHERE task_id = " .
-            $ilDB->quote($mumie_task->getId(), 'integer') .
-            " AND usr_id = " .
-            $ilDB->quote($user_id, 'integer')
+        global $DIC;
+        $db = $DIC->database();
+        $db->manipulate(
+            'DELETE FROM xmum_deadline_ext WHERE task_id = ' .
+            $db->quote($mumie_task->getId(), 'integer') .
+            ' AND usr_id = ' .
+            $db->quote($user_id, 'integer'),
         );
     }
 
     public static function deleteDeadlineExtensions($task)
     {
-        global $ilDB;
-        $ilDB->manipulate("DELETE FROM xmum_deadline_ext WHERE task_id = " . $ilDB->quote($task->getId(), 'integer'));
+        global $DIC;
+        $db = $DIC->database();
+        $db->manipulate('DELETE FROM xmum_deadline_ext WHERE task_id = ' . $db->quote($task->getId(), 'integer'));
     }
 
     private static function insertDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)
     {
-        global $ilDB;
-        $ilDB->insert(
+        global $DIC;
+        $DIC->database()->insert(
             self::DEADLINE_EXTENSION_TABLE,
-            array(
-                self::TASK_ID => array('integer', $deadline_extension->getTaskId()),
-                self::USER_ID => array('text', $deadline_extension->getUserId()),
-                self::DATE => array('integer', $deadline_extension->getDate()->getUnixTime())
-            )
+            [
+                self::TASK_ID => ['integer', $deadline_extension->getTaskId()],
+                self::USER_ID => ['text', $deadline_extension->getUserId()],
+                self::DATE => ['integer', $deadline_extension->getDate()->getUnixTime()],
+            ],
         );
     }
 
     private static function updateDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)
     {
-        global $ilDB;
-        $ilDB->update(
+        global $DIC;
+        $DIC->database()->update(
             self::DEADLINE_EXTENSION_TABLE,
-            array(
-                self::DATE => array('integer', $deadline_extension->getDate()->getUnixTime())
-            ),
-            array(
-                self::TASK_ID => array('integer', $deadline_extension->getTaskId()),
-                self::USER_ID => array('text', $deadline_extension->getUserId()),
-            )
+            [
+                self::DATE => ['integer', $deadline_extension->getDate()->getUnixTime()],
+            ],
+            [
+                self::TASK_ID => ['integer', $deadline_extension->getTaskId()],
+                self::USER_ID => ['text', $deadline_extension->getUserId()],
+            ],
         );
     }
 
     private static function getDeadlineExtension($user_id, $task): ilMumieTaskDeadlineExtension
     {
         $result = self::getDeadlineExtensionAssoc($user_id, $task);
+
         return new ilMumieTaskDeadlineExtension($result[self::DATE], $result[self::USER_ID], $result[self::TASK_ID]);
     }
 
     private static function getDeadlineExtensionAssoc($user_id, $task): ?array
     {
-        global $ilDB;
-        $query = "SELECT *
+        global $DIC;
+        $db = $DIC->database();
+        $query = 'SELECT *
         FROM xmum_deadline_ext
-        WHERE " .
+        WHERE ' .
             self::TASK_ID .
-            " = "
-            . $ilDB->quote($task->getId(), "integer") .
-            " AND " .
+            ' = '
+            . $db->quote($task->getId(), 'integer') .
+            ' AND ' .
             self::USER_ID .
-            " = " .
-            $ilDB->quote($user_id, "text");
-        return $ilDB->fetchAssoc($ilDB->query($query));
+            ' = ' .
+            $db->quote($user_id, 'text');
+
+        return $db->fetchAssoc($db->query($query));
     }
 
     private static function sendUpdateSuccessMessage(ilMumieTaskDeadlineExtension $deadline_extension)
     {
         global $DIC;
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskUserService.php');
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
         $i18n = new ilMumieTaskI18N();
         $DIC->ui()->mainTemplate()->setOnScreenMessage(
             'success',
             sprintf(
                 $i18n->txt('frm_deadline_extension_successfull_update'),
-                ilMumieTaskUserService::getFullName($deadline_extension->getUserId())
-            )
+                ilMumieTaskUserService::getFullName($deadline_extension->getUserId()),
+            ),
         );
     }
 }

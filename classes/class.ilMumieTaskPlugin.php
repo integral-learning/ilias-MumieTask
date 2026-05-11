@@ -1,20 +1,20 @@
 <?php
+
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
 {
-    public const ID = "xmum";
+    public const ID = 'xmum';
 
     // must correspond to the plugin subdirectory
     public function getPluginName(): string
     {
-        return "MumieTask";
+        return 'MumieTask';
     }
 
     protected function uninstallCustom(): void

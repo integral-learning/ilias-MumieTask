@@ -1,31 +1,28 @@
 <?php
+
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskSSOToken.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskIdHashingService.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilObjMumieTask.php');
 /**
- * This class provides functions for SSO between MUMIE servers and ILIAS
+ * This class provides functions for SSO between MUMIE servers and ILIAS.
  */
-
 class ilMumieTaskSSOService
 {
     /**
-     * Verifies MUMIE tokens for SSO
+     * Verifies MUMIE tokens for SSO.
      *
      * @return json object $response containing the field status: valid or invalid
-     * and any user data that the admin has selected for sharing (user_id, firstname, lastname,email)
+     *              and any user data that the admin has selected for sharing (user_id, firstname, lastname,email)
      */
-
     public static function verifyToken()
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $token = $_POST['token'];
         $hashed_id = $_POST['userId'];
 
@@ -34,18 +31,17 @@ class ilMumieTaskSSOService
         $mumietoken = new ilMumieTaskSSOToken($hashed_id);
         $mumietoken->read();
 
-        $user_query = $ilDB->query('SELECT * FROM usr_data WHERE usr_id = ' . $ilDB->quote($il_user_id, "integer"));
-        $user_rec = $ilDB->fetchAssoc($user_query);
+        $user_query = $db->query('SELECT * FROM usr_data WHERE usr_id = ' . $db->quote($il_user_id, 'integer'));
+        $user_rec = $db->fetchAssoc($user_query);
         $response = new stdClass();
-        require_once(__DIR__ . "/class.ilMumieTaskAdminSettings.php");
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
 
-        if (!is_null($mumietoken->getToken()) && $mumietoken->getToken() == $token && $user_rec != null) {
+        if (!is_null($mumietoken->getToken()) && $mumietoken->getToken() == $token && null != $user_rec) {
             $current = time();
             if (($current - $mumietoken->getTimecreated()) >= 1000) {
-                $response->status = "invalid";
+                $response->status = 'invalid';
             } else {
-                $response->status = "valid";
+                $response->status = 'valid';
                 $response->userid = $hashed_id;
 
                 if ($admin_settings->getShareFirstName()) {
@@ -59,50 +55,47 @@ class ilMumieTaskSSOService
                 }
             }
         } else {
-            $response->status = "invalid";
+            $response->status = 'invalid';
         }
+
         return $response;
     }
 
     /**
      * Generates an sso Token and the html for a form with hidden fields
-     * containing the login and logout urls, sso token and other infos
+     * containing the login and logout urls, sso token and other infos.
      */
-
     public function setUpTokenAndLaunchForm($task)
     {
-        global $ilUser, $ilDB, $DIC;
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($ilUser->getId(), $task);
+        global $DIC;
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser($DIC->user()->getId(), $task);
         $ssotoken = new ilMumieTaskSSOToken($hashed_user);
         $ssotoken->insertOrRefreshToken();
 
         return $this->getHTMLCode($task, $ssotoken, $hashed_user);
     }
 
-
     /**
-     * Get html code for the MUMIE task launcher
+     * Get html code for the MUMIE task launcher.
+     *
+     * @throws ilTemplateException
      */
-    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $width = 800, $height = 600)
+    private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $height = 600): string
     {
-        require_once("./Services/UICore/classes/class.ilTemplate.php");
-        require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php");
-        $tpl = new ilTemplate("./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html", true, true, true, "DEFAULT", true);
-        // explanation for the various "true" arguments above: the last one is important because it signifies this is a plugin,
-        // the other "true"s should always be set that way according to the ilias documentation
-        $tpl->setVariable("TASKURL", $taskObj->getLoginUrl());
-        $tpl->setVariable("TARGET", $taskObj->getLaunchcontainer() == 1 ? 'MumieTaskLaunchFrame' : '_blank');
-        $tpl->setVariable("USER_ID", $hashed_user);
-        $tpl->setVariable("TOKEN", $ssotoken->getToken());
-        $tpl->setVariable("ORG", htmlspecialchars(ilMumieTaskAdminSettings::getInstance()->getOrg()));
-        $tpl->setVariable("PROBLEMURL", $taskObj->getProblemUrl());
-        $tpl->setVariable("LANG", $taskObj->getLanguage());
+        $tpl = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html', true, true);
+        $tpl->setVariable('TASKURL', $taskObj->getLoginUrl());
+        $tpl->setVariable('TARGET', 1 == $taskObj->getLaunchcontainer() ? 'MumieTaskLaunchFrame' : '_blank');
+        $tpl->setVariable('USER_ID', $hashed_user);
+        $tpl->setVariable('TOKEN', $ssotoken->getToken());
+        $tpl->setVariable('ORG', htmlspecialchars(ilMumieTaskAdminSettings::getInstance()->getOrg()));
+        $tpl->setVariable('PROBLEMURL', $taskObj->getProblemUrl());
+        $tpl->setVariable('LANGUAGE', $taskObj->getLanguage());
         $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
-        $tpl->setVariable("WIDTH", '100%');
-        $tpl->setVariable("HEIGHT", $height);
+        $tpl->setVariable('WIDTH', '100%');
+        $tpl->setVariable('HEIGHT', $height);
 
-        if ($taskObj->getLaunchcontainer() == 1) {
-            $tpl->setVariable("BUTTONTYPE", "hidden"); //embed the iframe and launch it immediately via $script
+        if (1 == $taskObj->getLaunchcontainer()) {
+            $tpl->setVariable('BUTTONTYPE', 'hidden'); // embed the iframe and launch it immediately via $script
             $script = "<script>
             const iframe = document.getElementById('basicMumieTaskLaunchFrame');
             let width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -115,13 +108,12 @@ class ilMumieTaskSSOService
             iframe.height = height;
             document.forms['mumie_sso_form'].submit();
             </script>";
-            $tpl->setVariable("EMBED", $script);
+            $tpl->setVariable('EMBED', $script);
         } else {
-            $tpl->setVariable("BUTTONTYPE", "submit");
+            $tpl->setVariable('BUTTONTYPE', 'submit');
         }
         // otherwise leave a button to launch in a new tab
 
-        $html = $tpl->get();
-        return $html;
+        return $tpl->get();
     }
 }

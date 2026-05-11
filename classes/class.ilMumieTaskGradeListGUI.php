@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2022 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Vasilije Nedeljkovic(vasilije.nedeljkovic@integral-learning.de)
@@ -9,23 +9,19 @@
  */
 
 /**
- * This GUI provides a way to list grades and submission dates for a single user in a MUMIE task
+ * This GUI provides a way to list grades and submission dates for a single user in a MUMIE task.
  */
-
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskGradeSync.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
 class ilMumieTaskGradeListGUI extends ilTable2GUI
 {
     private $user_id;
     private ilMumieTaskI18N $i18N;
     private ilObjMumieTask $mumie_task;
 
-
     public function __construct($parentObj, ilObjMumieTask $mumie_task)
     {
         parent::__construct($parentObj, 'displayGradeList');
         $this->user_id = $_GET['user_id'];
-        $this->setId("user" . $_GET["ref_id"]);
+        $this->setId('user' . $_GET['ref_id']);
         $this->i18N = new ilMumieTaskI18N();
         $this->mumie_task = $mumie_task;
     }
@@ -44,10 +40,10 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->addColumn($this->i18N->txt('frm_list_grade'), 'grade');
 
         $this->tpl->addBlockFile(
-            "TBL_CONTENT",
-            "tbl_content",
-            "tpl.mumie_grade_list.html",
-            "Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask"
+            'TBL_CONTENT',
+            'tbl_content',
+            'tpl.mumie_grade_list.html',
+            'Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask',
         );
         $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->mumie_task);
         if ($this->privateGradepoolSet($this->mumie_task)) {
@@ -65,75 +61,73 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     private function privateGradepoolSet($mumie_task)
     {
-        return $mumie_task->getPrivateGradepool() != -1;
+        return -1 != $mumie_task->getPrivateGradepool();
     }
 
     private function setEmptyTable()
     {
-        $this->tpl->setCurrentBlock("tbl_content");
-        $this->css_row = ($this->css_row != "tblrow1")
-            ? "tblrow1"
-            : "tblrow2";
-        $this->tpl->setVariable("CSS_ROW", $this->css_row);
-        $this->tpl->setVariable("VAL_HIDDEN", "hidden");
-        $this->tpl->setVariable("VAL_NO_GRADE", $this->i18N->txt('frm_grade_overview_no_submission_made'));
-        $this->tpl->setCurrentBlock("tbl_content");
+        $this->tpl->setCurrentBlock('tbl_content');
+        $this->css_row = ('tblrow1' != $this->css_row)
+            ? 'tblrow1'
+            : 'tblrow2';
+        $this->tpl->setVariable('CSS_ROW', $this->css_row);
+        $this->tpl->setVariable('VAL_HIDDEN', 'hidden');
+        $this->tpl->setVariable('VAL_NO_GRADE', $this->i18N->txt('frm_grade_overview_no_submission_made'));
+        $this->tpl->setCurrentBlock('tbl_content');
         $this->tpl->parseCurrentBlock();
     }
 
     private function setTableRow($parentObj, $xapi_grade)
     {
-        $this->tpl->setCurrentBlock("tbl_content");
-        $this->css_row = ($this->css_row != "tblrow1")
-            ? "tblrow1"
-            : "tblrow2";
-        $this->tpl->setVariable("CSS_ROW", $this->css_row);
-        $this->tpl->setVariable("VAL_GRADE", round($xapi_grade->result->score->raw * 100));
-        $this->tpl->setVariable("VAL_HIDDEN", "");
-        $this->tpl->setVariable("VAL_NO_GRADE", "");
+        $this->tpl->setCurrentBlock('tbl_content');
+        $this->css_row = ('tblrow1' != $this->css_row)
+            ? 'tblrow1'
+            : 'tblrow2';
+        $this->tpl->setVariable('CSS_ROW', $this->css_row);
+        $this->tpl->setVariable('VAL_GRADE', round($xapi_grade->result->score->raw * 100));
+        $this->tpl->setVariable('VAL_HIDDEN', '');
+        $this->tpl->setVariable('VAL_NO_GRADE', '');
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'user_id', $this->user_id);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'score', $xapi_grade->result->score->raw);
         $this->ctrl->setParameterByClass('ilObjMumieTaskGUI', 'timestamp', strtotime($xapi_grade->timestamp));
-        $this->tpl->setVariable("LINK", $this->ctrl->getLinkTarget($parentObj, 'gradeOverride'));
+        $this->tpl->setVariable('LINK', $this->ctrl->getLinkTarget($parentObj, 'gradeOverride'));
         $dateTime = date('d.m.Y - H:i', strtotime($xapi_grade->timestamp));
-        $this->tpl->setVariable("VAL_DATE", $dateTime);
-        $this->tpl->setCurrentBlock("tbl_content");
+        $this->tpl->setVariable('VAL_DATE', $dateTime);
+        $this->tpl->setCurrentBlock('tbl_content');
         $this->tpl->parseCurrentBlock();
     }
 
-    //necessary functions for list to be added to form
+    // necessary functions for list to be added to form
     public function insert($a_tpl)
     {
-        $a_tpl->setCurrentBlock("prop_custom");
-        $a_tpl->setVariable("CUSTOM_CONTENT", $this->render());
+        $a_tpl->setCurrentBlock('prop_custom');
+        $a_tpl->setVariable('CUSTOM_CONTENT', $this->render());
         $a_tpl->parseCurrentBlock();
     }
 
-
     public function getHiddenTitle()
     {
-        return "";
+        return '';
     }
 
     public function getTitle()
     {
-        return "";
+        return '';
     }
-
 
     public function getFormLabelFor()
     {
-        return "";
+        return '';
     }
 
     public function getType()
     {
-        return "";
+        return '';
     }
 
     public function getSubForm()
     {
-        return "";
+        return '';
     }
 
     public function hideSubForm()
@@ -143,14 +137,14 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
 
     public function getAlert()
     {
-        return "";
+        return '';
     }
 
     /**
-    * Get Post Variable.
-    *
-    * @return	string	Post Variable
-    */
+     * Get Post Variable.
+     *
+     * @return string Post Variable
+     */
     public function getFieldId()
     {
     }
@@ -160,17 +154,20 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
         $this->setParent($a_parentform);
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter)
+     */
     public function setParent($a_val)
     {
     }
 
     public function getInfo()
     {
-        return "";
+        return '';
     }
 
     public function getRequired()
     {
-        return "";
+        return '';
     }
 }

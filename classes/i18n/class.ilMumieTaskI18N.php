@@ -1,6 +1,7 @@
 <?php
+
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2013 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
@@ -25,6 +26,6 @@ class ilMumieTaskI18N
 
     public function globalTxt($key): string
     {
-        return$this->language->txt($key);
+        return $this->language->txt($key);
     }
 }
