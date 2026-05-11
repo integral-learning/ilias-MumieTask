@@ -10,7 +10,7 @@
     $(document).ready(function () {
       const dropzone = document.getElementById("xmum-dropzone");
       const multiProblemInputElem = document.getElementById("xmum_multi_problems");
-      const DRAG_OVER_CLASS = "ilFileDragOver";
+      const DRAG_OVER_CLASS = "mumie-drag-over";
       dropzone.addEventListener("dragover", (event) => {
         event.preventDefault();
       })

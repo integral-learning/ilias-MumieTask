@@ -1,6 +1,7 @@
 <?php
+
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
@@ -29,40 +30,46 @@ class ilMumieTaskIdHashingService
     {
         $service = new ilMumieTaskIdHashingService($user_id, $task);
         $service->upsertHash();
+
         return $service->getHash();
     }
 
     public static function getUserFromHash($hash)
     {
-        global $ilDB;
-        $result = $ilDB->fetchObject(
-            $ilDB->query(
+        global $DIC;
+        $db = $DIC->database();
+        $result = $db->fetchObject(
+            $db->query(
                 'SELECT * FROM '
                 . self::TABLE_NAME
-                . " WHERE hash = "
-                . $ilDB->quote($hash, "text")
-            )
+                . ' WHERE hash = '
+                . $db->quote($hash, 'text'),
+            ),
         );
 
         return $result->usr_id;
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
+     */
     private function upsertHash()
     {
-        global $ilDB;
+        global $DIC;
+        $db = $DIC->database();
         $this->hash = $this->generateHash();
-        if ($this->task != null && $this->task->getPrivateGradepool() == 1) {
+        if (null != $this->task && 1 == $this->task->getPrivateGradepool()) {
             $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
         }
-        $result = $ilDB->fetchObject(
-            $ilDB->query(
+        $result = $db->fetchObject(
+            $db->query(
                 'SELECT * FROM '
                 . self::TABLE_NAME
-                . " WHERE usr_id = "
-                . $ilDB->quote($this->user_id, "integer")
-                . " AND hash = "
-                . $ilDB->quote($this->hash, 'text')
-            )
+                . ' WHERE usr_id = '
+                . $db->quote($this->user_id, 'integer')
+                . ' AND hash = '
+                . $db->quote($this->hash, 'text'),
+            ),
         );
         if (!is_null($result)) {
             $this->id = $result->id;
@@ -74,41 +81,40 @@ class ilMumieTaskIdHashingService
 
     private function create()
     {
-        global $ilDB;
-        $ilDB->insert(
+        global $DIC;
+        $db = $DIC->database();
+        $db->insert(
             self::TABLE_NAME,
-            array(
-                'id' => array('integer', $ilDB->nextID(self::TABLE_NAME)),
-                'usr_id' => array('integer', $this->user_id),
-                'hash' => array('text', $this->hash),
-            )
+            [
+                'id' => ['integer', $db->nextID(self::TABLE_NAME)],
+                'usr_id' => ['integer', $this->user_id],
+                'hash' => ['text', $this->hash],
+            ],
         );
     }
 
     private function update()
     {
-        global $ilDB;
-        $ilDB->update(
+        global $DIC;
+        $DIC->database()->update(
             self::TABLE_NAME,
-            array(
-                'hash' => array('text', $this->hash),
-                "usr_id" => array('integer', $this->user_id),
-            ),
-            array(
-                'id' => array('integer', $this->id)
-            )
+            [
+                'hash' => ['text', $this->hash],
+                'usr_id' => ['integer', $this->user_id],
+            ],
+            [
+                'id' => ['integer', $this->id],
+            ],
         );
     }
 
     private function generateHash()
     {
-        require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskAdminSettings.php');
-        $adminSettings = ilMumieTaskAdminSettings::getInstance();
-        return hash("sha512", $this->user_id . substr(ilMumieTaskAdminSettings::getInstance()->getApiKey(), 0, 10));
+        return hash('sha512', $this->user_id . substr(ilMumieTaskAdminSettings::getInstance()->getApiKey(), 0, 10));
     }
 
     /**
-     * Get the value of hash
+     * Get the value of hash.
      */
     public function getHash()
     {

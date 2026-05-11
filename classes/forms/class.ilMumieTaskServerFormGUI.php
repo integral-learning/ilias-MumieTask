@@ -1,21 +1,20 @@
 <?php
 
 /**
- * MumieTask plugin
+ * MumieTask plugin.
  *
  * @copyright   2019 integral-learning GmbH (https://www.integral-learning.de/)
  * @author      Tobias Goltz (tobias.goltz@integral-learning.de)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/i18n/class.ilMumieTaskI18N.php');
-
 /**
- * This form is used to add, edit and validate MUMIE Server configurations
+ * This form is used to add, edit and validate MUMIE Server configurations.
  */
 class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
 {
     private ilMumieTaskI18N $i18N;
+
     public function __construct()
     {
         parent::__construct();
@@ -39,15 +38,13 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
     {
         global $DIC;
         $id = $_GET['server_id'];
-        $DIC->ctrl()->setParameter($this, "server_id", $id);
+        $DIC->ctrl()->setParameter($this, 'server_id', $id);
 
         $ok = parent::checkInput();
         if ($ok) {
-            require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/classes/class.ilMumieTaskServer.php');
-
             $server = new ilMumieTaskServer();
-            $server->setName($this->getInput("name"));
-            $server->setUrlPrefix($this->getInput("url_prefix"));
+            $server->setName($this->getInput('name'));
+            $server->setUrlPrefix($this->getInput('url_prefix'));
 
             $name_exists = $server->nameExistsInDb();
             $url_prefix_exists = $server->urlPrefixExistsInDb();
@@ -79,6 +76,7 @@ class ilMumieTaskServerFormGUI extends ilPropertyFormGUI
                 }
             }
         }
+
         return $ok;
     }
 }
