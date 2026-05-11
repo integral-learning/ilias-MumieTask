@@ -2,6 +2,22 @@
 
 All important changes to this plugin will be documented in this file.
 
+## TODO
+### Added
+- Teachers can now select worksheets in the problem selector. Worksheets are a collection of problems with a custom correction workflow
+- Admin settings for the problem selector URL
+
+### Changed
+- Plugin now supports Ilias 9.18
+
+### Removed
+- Plugin no longer supports Ilias 8
+
+### Fixed
+- Fixed an issue where the selected language was not sent to the LEMON server
+- Cancelling MUMIE Task creation no longer leaves a dummy entry in the repository
+- Fixed dropzone styling under Ilias 9
+
 ## [v3.1] - 2023-07-10
 ### Changed
 - Plugin now supports Ilias 8.3
