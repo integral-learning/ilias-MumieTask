@@ -30,7 +30,7 @@ class ilMumieTaskTemplateEngine
      */
     public static function getDropzoneTemplate(): ilTemplate
     {
-        return self::getTemplate('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/MumieTasks/tpl.file-drop-zone.html');
+        return self::getTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/MumieTasks/tpl.file-drop-zone.html');
     }
 
     /**
@@ -40,7 +40,7 @@ class ilMumieTaskTemplateEngine
     public static function getStudentGradingInfoboxTemplate(ilObjMumieTask $mumie_task, string $user_id, string $description = ''): ilTemplate
     {
         $i18N = new ilMumieTaskI18N();
-        $template = ilMumieTaskTemplateEngine::getTemplate('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeList/tpl.grade-list-info-box.html');
+        $template = ilMumieTaskTemplateEngine::getTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/GradeList/tpl.grade-list-info-box.html');
         $template->setVariable('STUDENT_NAME', $i18N->txt('student_name'));
         $template->setVariable('STUDENT_NAME_VALUE', ilMumieTaskUserService::getFullName($user_id));
         $template->setVariable('GENERAL_DEADLINE', $i18N->txt('frm_user_overview_list_general_deadline'));
@@ -83,7 +83,7 @@ class ilMumieTaskTemplateEngine
             return ilMumieTaskTemplateEngine::EMPTY_CELL;
         }
         if (ilMumieTaskGradeOverrideService::wasGradeOverridden($user_id, $mumie_task)) {
-            $template = ilMumieTaskTemplateEngine::getTemplate('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html');
+            $template = ilMumieTaskTemplateEngine::getTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/GradeOverview/tpl.overridden-grade-cell-html.html');
             $template->setVariable('VAL_GRADE', $grade->getPercentileScore());
 
             return $template->get();

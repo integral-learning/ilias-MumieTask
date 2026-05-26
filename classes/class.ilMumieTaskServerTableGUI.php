@@ -39,7 +39,7 @@ class ilMumieTaskServerTableGUI extends ilTable2GUI
         $this->setEnableHeader(true);
         $this->setFormAction($DIC->ctrl()->getFormAction($a_parent_obj));
         $this->addCommandButton('addServer', $i18n->txt('add_server'));
-        $this->setRowTemplate('tpl.servers_row.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask');
+        $this->setRowTemplate('tpl.servers_row.html', ilMumieTaskPlugin::getPluginPath());
         $this->getServerData();
     }
 

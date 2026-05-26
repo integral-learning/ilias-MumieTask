@@ -42,7 +42,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             'TBL_CONTENT',
             'tbl_content',
             'tpl.mumie_user_list.html',
-            'Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask',
+            ilMumieTaskPlugin::getPluginPath(),
         );
 
         foreach ($members as $user_id) {
@@ -99,7 +99,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
      */
     private function getDeadlineSetCellContent($user_id, $mumie_task): string
     {
-        $tpl = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.deadline-cell-extension-set.html', true, true);
+        $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/GradeOverview/tpl.deadline-cell-extension-set.html', true, true);
         $deadline = ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task)->get();
         $tpl->setVariable('DEADLINE', $deadline);
         $tpl->setVariable('LINK_EDIT_DEADLINE_EXTENSION', $this->ctrl->getLinkTarget($this->parent_obj, 'displayDeadlineExtension'));
@@ -117,7 +117,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
             return self::EMPTY_CELL;
         }
         if (ilMumieTaskGradeOverrideService::wasGradeOverridden($grade->getUserId(), $grade->getMumieTask())) {
-            $tpl = new ilTemplate('Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/GradeOverview/tpl.overridden-grade-cell-html.html', true, true);
+            $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/GradeOverview/tpl.overridden-grade-cell-html.html', true, true);
             $tpl->setVariable('VAL_GRADE', $grade->getPercentileScore());
             $tpl->setVariable('OVERRIDDEN_MOUSEOVER', $this->i18N->txt('user_gradeoverview_overridden_explanation'));
 
