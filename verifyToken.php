@@ -29,9 +29,7 @@ ilMumieTaskInitialisation::init($_REQUEST['clientId']);
 
 // once the global exists we can verify the token
 
-error_log('MumieTask verifyToken request: POST=' . json_encode($_POST) . ' GET=' . json_encode($_GET));
 $response = ilMumieTaskSSOService::verifyToken();
-error_log('MumieTask verifyToken response: ' . json_encode($response));
 
 echo json_encode($response);
 
