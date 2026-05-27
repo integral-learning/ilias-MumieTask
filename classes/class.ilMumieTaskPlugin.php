@@ -20,6 +20,7 @@ class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
     public static function getPluginPath(): string
     {
         global $DIC;
+
         return $DIC['component.repository']->getPluginById(self::ID)->getPath();
     }
 

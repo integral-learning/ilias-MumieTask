@@ -14,6 +14,8 @@
  *
  * @param string clientId from the post request params
  */
+require_once 'components/ILIAS/Init/classes/class.ilInitialisation.php';
+
 class ilMumieTaskInitialisation extends ilInitialisation
 {
     public static function init($clientId)
