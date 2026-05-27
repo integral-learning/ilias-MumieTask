@@ -14,13 +14,22 @@
  *
  * @param string clientId from the post request params
  */
-require_once 'components/ILIAS/Init/classes/class.ilInitialisation.php';
-
 class ilMumieTaskInitialisation extends ilInitialisation
 {
     public static function init($clientId)
     {
         define('CLIENT_ID', $clientId);
-        parent::initILIAS();
+        try {
+            parent::initILIAS();
+        } catch (\Throwable $e) {
+            error_log('MumieTask init failed: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            http_response_code(500);
+            echo json_encode([
+                'error' => $e->getMessage(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            exit;
+        }
     }
 }

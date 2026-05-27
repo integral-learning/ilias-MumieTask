@@ -20,14 +20,11 @@ if ('POST' != $method) {
     exit(0);
 }
 
-chdir('../../../../../../../../');
+chdir(__DIR__ . '/../../../../../../../..');
+require_once 'vendor/composer/vendor/autoload.php';
 
 $_GET['client_id'] = $_REQUEST['clientId'];
-// Initialise Ilias and the $ilDB global
-require_once 'components/ILIAS/Context/classes/class.ilContext.php';
 ilContext::init(ilContext::CONTEXT_REST);
-
-require_once __DIR__ . '/classes/class.ilMumieTaskInitialisation.php';
 ilMumieTaskInitialisation::init($_REQUEST['clientId']);
 
 // once the global exists we can verify the token
