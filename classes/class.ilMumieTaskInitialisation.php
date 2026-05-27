@@ -19,17 +19,6 @@ class ilMumieTaskInitialisation extends ilInitialisation
     public static function init($clientId)
     {
         define('CLIENT_ID', $clientId);
-        try {
-            parent::initILIAS();
-        } catch (\Throwable $e) {
-            error_log('MumieTask init failed: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
-            http_response_code(500);
-            echo json_encode([
-                'error' => $e->getMessage(),
-                'file' => $e->getFile() . ':' . $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            exit;
-        }
+        parent::initILIAS();
     }
 }
