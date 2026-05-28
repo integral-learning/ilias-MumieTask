@@ -27,8 +27,6 @@ $_GET['client_id'] = $_REQUEST['clientId'];
 ilContext::init(ilContext::CONTEXT_REST);
 ilMumieTaskInitialisation::init($_REQUEST['clientId']);
 
-// once the global exists we can verify the token
-
 $response = ilMumieTaskSSOService::verifyToken();
 
 echo json_encode($response);
