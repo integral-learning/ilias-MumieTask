@@ -2,6 +2,13 @@
 
 All important changes to this plugin will be documented in this file.
 
+## TODO
+### Changed
+- Plugin now supports Ilias 10.7
+
+### Removed
+- Plugin no longer supports Ilias 9
+
 ## [v4.0] - 2026-05-11
 ### Added
 - Teachers can now select worksheets in the problem selector. Worksheets are a collection of problems with a custom correction workflow
