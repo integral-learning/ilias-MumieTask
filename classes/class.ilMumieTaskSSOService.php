@@ -82,7 +82,7 @@ class ilMumieTaskSSOService
      */
     private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $height = 600): string
     {
-        $tpl = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/launch_form.html', true, true);
+        $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/launch_form.html', true, true);
         $tpl->setVariable('TASKURL', $taskObj->getLoginUrl());
         $tpl->setVariable('TARGET', 1 == $taskObj->getLaunchcontainer() ? 'MumieTaskLaunchFrame' : '_blank');
         $tpl->setVariable('USER_ID', $hashed_user);

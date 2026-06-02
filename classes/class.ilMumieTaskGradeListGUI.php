@@ -43,7 +43,7 @@ class ilMumieTaskGradeListGUI extends ilTable2GUI
             'TBL_CONTENT',
             'tbl_content',
             'tpl.mumie_grade_list.html',
-            'Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask',
+            ilMumieTaskPlugin::getPluginPath(),
         );
         $user_grades = ilMumieTaskGradeSync::getGradesForUser($this->user_id, $this->mumie_task);
         if ($this->privateGradepoolSet($this->mumie_task)) {
