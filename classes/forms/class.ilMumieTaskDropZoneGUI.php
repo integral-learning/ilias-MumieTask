@@ -33,7 +33,7 @@ class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
         $dropzone_template->setVariable('MULTI_PROBLEM_LIST_HEADER', $this->i18n->txt('multi_problem_list_description'));
         $dropzone_template->setVariable('TXT_DRAG_PROBLEMS_HERE', $this->i18n->txt('form_drag_mt_here'));
         $dropzone_template->setVariable('POST_VAR', $this->getPostVar());
-        $DIC->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskDropzone.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilMumieTaskPlugin::getPluginPath() . '/js/ilMumieTaskDropzone.js');
 
         return $dropzone_template->get();
     }

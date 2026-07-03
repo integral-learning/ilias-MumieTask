@@ -19,7 +19,7 @@ class ilMumieTaskTemplateEngine
     {
         global $DIC;
         $tpl = $DIC->ui()->mainTemplate();
-        $tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css');
+        $tpl->addCss(ilMumieTaskPlugin::getPluginPath() . '/templates/mumie.css');
 
         return new ilTemplate($path, true, true);
     }
