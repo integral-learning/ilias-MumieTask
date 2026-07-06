@@ -21,7 +21,7 @@ class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
     {
         global $DIC;
 
-        return $DIC['component.repository']->getPluginById(self::ID)->getPath();
+        return './' . $DIC['component.factory']->getPlugin(self::ID)->getRelativeDirectory();
     }
 
     protected function uninstallCustom(): void
