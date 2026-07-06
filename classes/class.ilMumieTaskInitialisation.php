@@ -19,6 +19,6 @@ class ilMumieTaskInitialisation extends ilInitialisation
     public static function init($clientId)
     {
         define('CLIENT_ID', $clientId);
-        parent::initILIAS();
+        entry_point('ILIAS Legacy Initialisation Adapter');
     }
 }

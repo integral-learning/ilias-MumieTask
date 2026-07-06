@@ -25,6 +25,7 @@ require_once 'vendor/composer/vendor/autoload.php';
 
 $_GET['client_id'] = $_REQUEST['clientId'];
 ilContext::init(ilContext::CONTEXT_REST);
+require_once 'artifacts/bootstrap_default.php';
 ilMumieTaskInitialisation::init($_REQUEST['clientId']);
 
 $response = ilMumieTaskSSOService::verifyToken();
