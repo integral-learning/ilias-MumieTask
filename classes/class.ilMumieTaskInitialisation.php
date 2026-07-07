@@ -9,8 +9,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /**
- * ILIAS initialisation for verifyToken script
- * This is needed to initialise the $ilDB object.
+ * ILIAS initialisation for verifyToken script.
+ * Bootstraps the ILIAS service container (via the "ILIAS Legacy Initialisation
+ * Adapter" entry point) so verifyToken.php can access $ilDB and other services.
  *
  * @param string clientId from the post request params
  */

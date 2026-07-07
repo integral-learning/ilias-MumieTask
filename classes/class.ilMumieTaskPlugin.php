@@ -11,6 +11,8 @@ class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
 {
     public const ID = 'xmum';
 
+    private static ?string $relative_directory = null;
+
     // must correspond to the plugin subdirectory
     public function getPluginName(): string
     {
@@ -23,9 +25,7 @@ class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
      */
     public static function getPluginPath(): string
     {
-        global $DIC;
-
-        return 'public/' . $DIC['component.factory']->getPlugin(self::ID)->getRelativeDirectory();
+        return 'public/' . self::getAssetPath();
     }
 
     /**
@@ -35,9 +35,12 @@ class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
      */
     public static function getAssetPath(): string
     {
-        global $DIC;
+        if (null === self::$relative_directory) {
+            global $DIC;
+            self::$relative_directory = $DIC['component.factory']->getPlugin(self::ID)->getRelativeDirectory();
+        }
 
-        return $DIC['component.factory']->getPlugin(self::ID)->getRelativeDirectory();
+        return self::$relative_directory;
     }
 
     protected function uninstallCustom(): void
