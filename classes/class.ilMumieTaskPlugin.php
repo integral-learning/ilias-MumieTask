@@ -17,11 +17,27 @@ class ilMumieTaskPlugin extends ilRepositoryObjectPlugin
         return 'MumieTask';
     }
 
+    /**
+     * Path to the plugin directory relative to the ILIAS root, for use with
+     * ilTemplate (new ilTemplate(...), addBlockFile(), setRowTemplate()).
+     */
     public static function getPluginPath(): string
     {
         global $DIC;
 
         return 'public/' . $DIC['component.factory']->getPlugin(self::ID)->getRelativeDirectory();
+    }
+
+    /**
+     * Path to the plugin directory relative to the web root, for use with
+     * ilGlobalTemplate::addCss()/addJavaScript(), whose values are emitted
+     * as-is into the HTML as browser-facing URLs.
+     */
+    public static function getAssetPath(): string
+    {
+        global $DIC;
+
+        return $DIC['component.factory']->getPlugin(self::ID)->getRelativeDirectory();
     }
 
     protected function uninstallCustom(): void
