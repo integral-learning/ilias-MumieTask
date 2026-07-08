@@ -10,6 +10,7 @@
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 {
     public const DUMMY_TITLE = '-- Empty MumieTask --';
+    public const WORKSHEET_PREFIX = 'worksheet_';
     private static $MUMIE_TASK_TABLE_NAME = 'xmum_mumie_task';
     private $server;
     private $mumie_course;
@@ -329,6 +330,28 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         $this->taskurl = $taskurl;
 
         return $this;
+    }
+
+    /**
+     * Whether this task points to a MUMIE worksheet rather than a plain problem.
+     * Worksheets are identified by the "worksheet_" prefix on the taskurl.
+     */
+    public function isWorksheet(): bool
+    {
+        return str_starts_with((string) $this->getTaskurl(), self::WORKSHEET_PREFIX);
+    }
+
+    /**
+     * Get the worksheet id (taskurl with the "worksheet_" prefix stripped),
+     * or null if this task is not a worksheet.
+     */
+    public function getWorksheetId(): ?string
+    {
+        if (!$this->isWorksheet()) {
+            return null;
+        }
+
+        return substr($this->getTaskurl(), strlen(self::WORKSHEET_PREFIX));
     }
 
     /**

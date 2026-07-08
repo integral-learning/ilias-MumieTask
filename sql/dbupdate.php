@@ -408,3 +408,14 @@ if (!$ilDB->tableColumnExists('xmum_admin_settings', 'problem_selector_url')) {
     $ilDB->manipulate("UPDATE xmum_admin_settings SET problem_selector_url = 'https://pool.mumie.net'");
 }
 ?>
+<#17>
+<?php
+if (!$ilDB->tableExists('xmum_crypto_key')) {
+    $ilDB->createTable('xmum_crypto_key', [
+        'id' => ['type' => 'integer', 'length' => 4, 'notnull' => true],
+        'private_key_pem' => ['type' => 'clob', 'notnull' => true],
+        'created_at' => ['type' => 'integer', 'length' => 4, 'notnull' => true],
+    ]);
+    $ilDB->addPrimaryKey('xmum_crypto_key', ['id']);
+}
+?>
