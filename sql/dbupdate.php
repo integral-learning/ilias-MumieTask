@@ -419,3 +419,12 @@ if (!$ilDB->tableExists('xmum_crypto_key')) {
     $ilDB->addPrimaryKey('xmum_crypto_key', ['id']);
 }
 ?>
+<#18>
+<?php
+// The 'org' column was originally created with a length of 7 characters,
+// which is too short for real-world org identifiers (e.g. "il112767").
+$ilDB->modifyTableColumn('xmum_admin_settings', 'org', [
+    'type' => 'text',
+    'length' => 255,
+]);
+?>
