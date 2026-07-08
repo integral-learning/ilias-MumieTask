@@ -101,7 +101,36 @@ class ilMumieTaskGradeSync
             'includeAll' => true,
         ];
 
+        if ($this->requiresContext()) {
+            $params['context'] = $this->getContext();
+        }
+
         return $params;
+    }
+
+    /**
+     * Worksheets with a deadline require per-user deadline context, so they can be
+     * corrected as soon as their deadline has passed.
+     */
+    private function requiresContext(): bool
+    {
+        return $this->task->isWorksheet() && $this->task->hasDeadline();
+    }
+
+    private function getContext(): array
+    {
+        $user_contexts = [];
+        foreach ($this->user_ids as $user_id) {
+            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $user_id, $this->task);
+            $user_contexts[$this->getSyncIdForUser($user_id)] = ['deadline' => $deadline->getUnixTime() * 1000];
+        }
+
+        return [
+            self::getMumieId($this->task) => [
+                'language' => $this->task->getLanguage(),
+                'userContexts' => $user_contexts,
+            ],
+        ];
     }
 
     private function getXapiRequestHeaders($payload)
