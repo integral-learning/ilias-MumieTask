@@ -82,6 +82,8 @@ class ilMumieTaskSSOService
      */
     private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $height = 600): string
     {
+        global $DIC;
+
         $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/launch_form.html', true, true);
         $tpl->setVariable('TASKURL', $taskObj->getLoginUrl());
         $tpl->setVariable('TARGET', 1 == $taskObj->getLaunchcontainer() ? 'MumieTaskLaunchFrame' : '_blank');
@@ -93,6 +95,18 @@ class ilMumieTaskSSOService
         $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
         $tpl->setVariable('WIDTH', '100%');
         $tpl->setVariable('HEIGHT', $height);
+
+        if ($taskObj->isWorksheet() && $taskObj->hasDeadline()) {
+            $deadlineDate = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $DIC->user()->getId(), $taskObj);
+            $deadlineMilliseconds = $deadlineDate->getUnixTime() * 1000;
+            $username = strtolower('gsso_' . ilMumieTaskAdminSettings::getInstance()->getOrg() . '_' . $hashed_user);
+            $signature = ilMumieTaskCryptographyService::signDeadline($deadlineMilliseconds, $username, $taskObj->getWorksheetId());
+
+            $tpl->setCurrentBlock('deadline');
+            $tpl->setVariable('DEADLINE', (string) $deadlineMilliseconds);
+            $tpl->setVariable('DEADLINE_SIGNATURE', $signature);
+            $tpl->parseCurrentBlock();
+        }
 
         if (1 == $taskObj->getLaunchcontainer()) {
             $tpl->setVariable('BUTTONTYPE', 'hidden'); // embed the iframe and launch it immediately via $script
