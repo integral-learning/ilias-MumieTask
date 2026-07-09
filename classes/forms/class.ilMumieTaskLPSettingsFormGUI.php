@@ -19,10 +19,11 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 
     private ilMumieTaskI18N $i18N;
 
-    public function __construct($disable_grade_pool_selection)
+    public function __construct($disable_grade_pool_selection, $is_worksheet = false)
     {
         parent::__construct();
         $this->disable_grade_pool_selection = $disable_grade_pool_selection;
+        $this->is_worksheet = $is_worksheet;
         $this->i18N = new ilMumieTaskI18N();
     }
 
@@ -33,6 +34,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     private $deadline_item;
     private $timelimit_item;
     private $disable_grade_pool_selection;
+    private $is_worksheet;
 
     public function setFields()
     {
@@ -80,13 +82,15 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $deadline_mode_option_fixed->addSubItem($this->deadline_item);
         $this->deadline_mode_item->addOption($deadline_mode_option_fixed);
 
-        $this->timelimit_item = new ilDurationInputGUI($this->i18N->txt('frm_timelimit'), 'timelimit');
-        $this->timelimit_item->setInfo($this->i18N->txt('frm_timelimit_desc'));
-        $this->timelimit_item->setShowHours(true);
-        $this->timelimit_item->setShowMinutes(true);
-        $deadline_mode_option_timelimit = new ilRadioOption($this->i18N->txt('frm_deadline_mode_timelimit'), self::DEADLINE_MODE_TIMELIMIT);
-        $deadline_mode_option_timelimit->addSubItem($this->timelimit_item);
-        $this->deadline_mode_item->addOption($deadline_mode_option_timelimit);
+        if ($this->is_worksheet) {
+            $this->timelimit_item = new ilDurationInputGUI($this->i18N->txt('frm_timelimit'), 'timelimit');
+            $this->timelimit_item->setInfo($this->i18N->txt('frm_timelimit_desc'));
+            $this->timelimit_item->setShowHours(true);
+            $this->timelimit_item->setShowMinutes(true);
+            $deadline_mode_option_timelimit = new ilRadioOption($this->i18N->txt('frm_deadline_mode_timelimit'), self::DEADLINE_MODE_TIMELIMIT);
+            $deadline_mode_option_timelimit->addSubItem($this->timelimit_item);
+            $this->deadline_mode_item->addOption($deadline_mode_option_timelimit);
+        }
 
         $this->addItem($this->deadline_mode_item);
     }

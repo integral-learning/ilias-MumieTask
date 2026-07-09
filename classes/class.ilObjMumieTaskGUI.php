@@ -517,7 +517,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     private function getDeadlineMode(): string
     {
-        if ($this->object->hasTimelimit()) {
+        if ($this->object->isWorksheet() && $this->object->hasTimelimit()) {
             return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT;
         }
         if ($this->object->hasDeadline()) {
@@ -546,7 +546,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
             return;
         }
-        if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT === $mode) {
+        if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT === $mode && $this->object->isWorksheet()) {
             $timelimit_input = $this->form->getInput('timelimit');
             $this->object->setDeadline(null);
             $this->object->setTimelimit(((int) ($timelimit_input['hh'] ?? 0)) * 3600 + ((int) ($timelimit_input['mm'] ?? 0)) * 60);
@@ -565,7 +565,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $ctrl = $DIC->ctrl();
 
-        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet());
+        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet(), $this->object->isWorksheet());
         $form->setFields();
         $form->setTitle($this->i18N->txt('tab_lp_settings'));
 
