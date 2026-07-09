@@ -11,6 +11,7 @@
     $(document).ready(function () {
         const structure = JSON.parse(document.getElementById('server_data').getAttribute('value'));
         const lmsSelectorUrl = document.getElementById('problem_selector').getAttribute('value');
+        const problemSelectorSsoUrl = document.getElementById('problem_selector_sso_url').getAttribute('value');
 
         const serverController = (function () {
             let serverStructure;
@@ -155,20 +156,50 @@
                 }, false);
             }
 
+            function getOrigin(url) {
+                try {
+                    return new URL(url).origin;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            // The problem selector logs the current user in via SSO only when opening the
+            // configured MUMIE server itself. Other MUMIE course servers are opened without
+            // SSO, since ILIAS has no account there - mirroring the reference implementation.
+            function shouldUseSSO(serverUrl) {
+                return getOrigin(lmsSelectorUrl) === getOrigin(serverUrl);
+            }
+
             return {
                 init: function () {
                     problemSelectorButton.onclick = function (e) {
                         e.preventDefault();
+                        const selectedServerUrl = serverController.getSelectedServer().url_prefix;
+                        const problemLang = langController.getSelectedLanguage();
+                        const origin = window.location.origin;
+
+                        if (shouldUseSSO(selectedServerUrl)) {
+                            problemSelectorWindow = window.open(
+                                problemSelectorSsoUrl
+                                + '&serverUrl=' + encodeURIComponent(selectedServerUrl)
+                                + '&problemLang=' + problemLang
+                                + '&origin=' + encodeURIComponent(origin)
+                                , '_blank'
+                            );
+                            return;
+                        }
+
                         problemSelectorWindow = window.open(
                             lmsSelectorUrl
                             + '/lms-problem-selector?'
                             + 'org='
                             + mumieOrg
                             + '&serverUrl='
-                            + encodeURIComponent(serverController.getSelectedServer().url_prefix)
+                            + encodeURIComponent(selectedServerUrl)
                             + "&problemLang="
-                            + langController.getSelectedLanguage()
-                            + "&origin=" + encodeURIComponent(window.location.origin)
+                            + problemLang
+                            + "&origin=" + encodeURIComponent(origin)
                             , '_blank'
                         );
                     };

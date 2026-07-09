@@ -136,4 +136,29 @@ class ilMumieTaskSSOService
 
         return $tpl->get();
     }
+
+    /**
+     * Builds an auto-submitting hidden form that logs the currently logged in
+     * ILIAS user into the MUMIE problem selector via SSO, so it opens the same
+     * way it does for a student's task launch.
+     */
+    public function getProblemSelectorLaunchForm(string $serverUrl, string $problemLang, string $origin): string
+    {
+        global $DIC;
+        $admin_settings = ilMumieTaskAdminSettings::getInstance();
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser((string) $DIC->user()->getId());
+        $ssotoken = new ilMumieTaskSSOToken($hashed_user);
+        $ssotoken->insertOrRefreshToken();
+
+        $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/problem_selector_sso_form.html', true, true);
+        $tpl->setVariable('SSO_URL', rtrim($admin_settings->getProblemSelectorUrl(), '/') . '/api/sso/problem-selector');
+        $tpl->setVariable('USER_ID', $hashed_user);
+        $tpl->setVariable('TOKEN', $ssotoken->getToken());
+        $tpl->setVariable('ORG', htmlspecialchars($admin_settings->getOrg()));
+        $tpl->setVariable('SERVER_URL', htmlspecialchars($serverUrl));
+        $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
+        $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
+
+        return $tpl->get();
+    }
 }

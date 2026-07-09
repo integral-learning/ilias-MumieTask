@@ -64,10 +64,28 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case 'forceGradeUpdate':
             case 'deleteDeadlineExtension':
             case 'setStatusToNotAttempted':
+            case 'launchProblemSelector':
                 $this->checkPermission('read');
                 $this->$cmd();
                 break;
         }
+    }
+
+    /**
+     * Logs the current user into the MUMIE problem selector via SSO, mirroring the
+     * signed launch used for student task access. Only used when the selected
+     * server is the same origin as the configured problem selector - other
+     * MUMIE course servers are opened without SSO, as ILIAS has no account there.
+     */
+    public function launchProblemSelector(): void
+    {
+        $sso_service = new ilMumieTaskSSOService();
+        echo $sso_service->getProblemSelectorLaunchForm(
+            (string) ($_GET['serverUrl'] ?? ''),
+            (string) ($_GET['problemLang'] ?? ''),
+            (string) ($_GET['origin'] ?? ''),
+        );
+        exit;
     }
 
     public function setTabs(): void
