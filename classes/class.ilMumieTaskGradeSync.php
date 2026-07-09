@@ -240,14 +240,12 @@ class ilMumieTaskGradeSync
      */
     private function isGradeBeforeDueDate($grade)
     {
-        if (!$this->task->hasDeadline() && !$this->task->hasTimelimit()) {
+        if (!$this->task->hasAnyDeadline()) {
             return true;
         }
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task)) {
-            return strtotime($grade->timestamp) <= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
-        }
+        $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($this->getIliasId($grade), $this->task);
 
-        return strtotime($grade->timestamp) <= $this->task->getDeadline();
+        return null === $deadline || strtotime($grade->timestamp) <= $deadline->getUnixTime();
     }
 
     private function getLatestGrade($xapi_grades)

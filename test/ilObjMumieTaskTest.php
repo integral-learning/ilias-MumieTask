@@ -105,4 +105,27 @@ class ilObjMumieTaskTest extends TestCase
         $task->setTimelimit(3600);
         $this->assertTrue($task->requiresDeadlineSignature());
     }
+
+    public function testHasAnyDeadlineIsTrueForPlainProblemWithFixedDeadline()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTaskurl('some/plain/problem/path');
+        $task->setDeadline(time() + 3600);
+        $this->assertTrue($task->hasAnyDeadline());
+    }
+
+    public function testHasAnyDeadlineIsTrueForPlainProblemWithTimelimit()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTaskurl('some/plain/problem/path');
+        $task->setTimelimit(3600);
+        $this->assertTrue($task->hasAnyDeadline());
+    }
+
+    public function testHasAnyDeadlineIsFalseWithoutDeadlineOrTimelimit()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTaskurl('some/plain/problem/path');
+        $this->assertFalse($task->hasAnyDeadline());
+    }
 }

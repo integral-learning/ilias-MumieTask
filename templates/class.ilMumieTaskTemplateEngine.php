@@ -65,7 +65,7 @@ class ilMumieTaskTemplateEngine
 
     private static function getDeadlineExtensionInformation(ilObjMumieTask $mumie_task, $user_id): string
     {
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task) && $mumie_task->requiresDeadlineSignature()) {
+        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task) && $mumie_task->hasAnyDeadline()) {
             return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task);
         }
 

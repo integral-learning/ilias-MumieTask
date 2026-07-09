@@ -69,7 +69,7 @@ class ilMumieTaskGradeOverviewGUI extends ilTable2GUI
 
     private function getDeadlineCellContent($user_id, $mumie_task)
     {
-        if (!$mumie_task->requiresDeadlineSignature()) {
+        if (!$mumie_task->hasAnyDeadline()) {
             return self::EMPTY_CELL;
         }
         if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task)) {

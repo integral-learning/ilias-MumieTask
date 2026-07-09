@@ -73,7 +73,7 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
             $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
 
-            if (!$task->requiresDeadlineSignature()) {
+            if (!$task->hasAnyDeadline()) {
                 parent::insertDescription();
 
                 return;

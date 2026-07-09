@@ -609,12 +609,21 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     }
 
     /**
+     * True whenever an effective deadline exists, whether fixed or timelimit-based -
+     * used for anything not specific to worksheets (deadline display, extensions, grade filtering).
+     */
+    public function hasAnyDeadline(): bool
+    {
+        return $this->hasDeadline() || $this->hasTimelimit();
+    }
+
+    /**
      * Worksheets can either have a fixed general deadline or a per-user deadline that starts
      * counting down as soon as a student first opens them.
      */
     public function requiresDeadlineSignature(): bool
     {
-        return $this->isWorksheet() && ($this->hasDeadline() || $this->hasTimelimit());
+        return $this->isWorksheet() && $this->hasAnyDeadline();
     }
 
     public function getWorksheet()
