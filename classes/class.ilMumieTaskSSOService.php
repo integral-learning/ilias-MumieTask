@@ -138,6 +138,12 @@ class ilMumieTaskSSOService
     }
 
     /**
+     * The MUMIE server assigns the "Lecturing" role instead of the "Studying"
+     * default only if the SSO user id ends with this exact literal suffix.
+     */
+    private const LECTURER_SUFFIX = '@lecturer@';
+
+    /**
      * Builds an auto-submitting hidden form that logs the currently logged in
      * ILIAS user into the MUMIE problem selector via SSO, so it opens the same
      * way it does for a student's task launch.
@@ -146,7 +152,7 @@ class ilMumieTaskSSOService
     {
         global $DIC;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser((string) $DIC->user()->getId());
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser((string) $DIC->user()->getId()) . self::LECTURER_SUFFIX;
         $ssotoken = new ilMumieTaskSSOToken($hashed_user);
         $ssotoken->insertOrRefreshToken();
 
