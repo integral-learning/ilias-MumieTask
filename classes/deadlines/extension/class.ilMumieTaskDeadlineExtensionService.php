@@ -30,13 +30,18 @@ class ilMumieTaskDeadlineExtensionService
 
     public static function upsertDeadlineExtension($mumie_task, $date_time_input, $user_id)
     {
-        $deadline_extension = new ilMumieTaskDeadlineExtension(strtotime($date_time_input), $user_id, $mumie_task->getId());
+        self::upsertDeadlineExtensionFromUnixTime($mumie_task, strtotime($date_time_input), $user_id);
+        self::sendUpdateSuccessMessage(new ilMumieTaskDeadlineExtension(strtotime($date_time_input), $user_id, $mumie_task->getId()));
+    }
+
+    public static function upsertDeadlineExtensionFromUnixTime($mumie_task, int $unix_time, $user_id): void
+    {
+        $deadline_extension = new ilMumieTaskDeadlineExtension($unix_time, $user_id, $mumie_task->getId());
         if (!self::hasDeadlineExtension($user_id, $mumie_task)) {
             self::insertDeadlineExtension($deadline_extension);
         } else {
             self::updateDeadlineExtension($deadline_extension);
         }
-        self::sendUpdateSuccessMessage($deadline_extension);
     }
 
     public static function deleteDeadlineExtension($mumie_task, $user_id)

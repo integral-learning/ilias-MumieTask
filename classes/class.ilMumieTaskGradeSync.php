@@ -114,7 +114,7 @@ class ilMumieTaskGradeSync
      */
     private function requiresContext(): bool
     {
-        return $this->task->isWorksheet() && $this->task->hasDeadline();
+        return $this->task->requiresDeadlineSignature();
     }
 
     private function getContext(): array
@@ -122,7 +122,8 @@ class ilMumieTaskGradeSync
         $user_contexts = [];
         foreach ($this->user_ids as $user_id) {
             $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $user_id, $this->task);
-            $user_contexts[$this->getSyncIdForUser($user_id)] = ['deadline' => $deadline->getUnixTime() * 1000];
+            $deadline_ms = null !== $deadline ? $deadline->getUnixTime() * 1000 : 0;
+            $user_contexts[$this->getSyncIdForUser($user_id)] = ['deadline' => $deadline_ms];
         }
 
         return [
@@ -239,7 +240,7 @@ class ilMumieTaskGradeSync
      */
     private function isGradeBeforeDueDate($grade)
     {
-        if (!$this->task->hasDeadline()) {
+        if (!$this->task->hasDeadline() && !$this->task->hasTimelimit()) {
             return true;
         }
         if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task)) {

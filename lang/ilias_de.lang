@@ -105,6 +105,14 @@ frm_list_grade_overview_after_deadline#:#Die Abgabefrist ist überschritten. Wei
 frm_grade_overview_override_error#:#Beim Eintragen der Bewertung ist ein Fehler aufgetreten
 frm_grade_overview_no_submission_made#:#Es gab bisher keine Abgabe
 frm_lp_deadline_desc#:#Falls diese Option aktiviert ist, werden keine Bewertungen, die nach dem gewählten Datum erzielt wurden, mit ILIAS synchronisiert.
+frm_deadline_mode#:#Abgabefrist
+frm_deadline_mode_desc#:#Legen Sie fest, ob dieses Worksheet keine Frist, eine feste Abgabefrist für alle oder ein individuelles Zeitlimit ab dem ersten Öffnen hat.
+frm_deadline_mode_none#:#Keine Frist
+frm_deadline_mode_fixed#:#Feste Abgabefrist
+frm_deadline_mode_timelimit#:#Zeitlimit ab Öffnen
+frm_timelimit#:#Zeitlimit
+frm_timelimit_desc#:#Die Abgabefrist für jeden Studierenden beginnt individuell, sobald das Worksheet zum ersten Mal geöffnet wird.
+frm_user_overview_list_timelimit#:#Zeitlimit ab Öffnen:
 grade_override_removed#:#Manuel ausgewählte Bewertung für <b>%s</b> erfolgreich entfernt.
 btn_remove_grade_override#:#Auswahl zurücksetzen
 grade_override_desc#:#Neue Abgaben werden automatisch in ILIAS übernommen, sofern die Abgabefrist noch nicht abgelaufen ist. Um eine andere Abgabe für die Bewertung zu verwenden, können Sie auf die entsprechende Schaltfläche in der Tabelle klicken.<br><br>Eine manuell ausgewählte Bewertung wird auch durch zukünftige Abgaben des Studierenden <b>nicht</b> ersetzt werden.

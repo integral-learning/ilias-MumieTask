@@ -428,3 +428,17 @@ $ilDB->modifyTableColumn('xmum_admin_settings', 'org', [
     'length' => 255,
 ]);
 ?>
+<#19>
+<?php
+if (!$ilDB->tableColumnExists('xmum_mumie_task', 'timelimit')) {
+    $ilDB->addTableColumn(
+        'xmum_mumie_task',
+        'timelimit',
+        [
+            'type' => 'integer',
+            'length' => '4',
+            'notnull' => false,
+        ],
+    );
+}
+?>

@@ -96,16 +96,22 @@ class ilMumieTaskSSOService
         $tpl->setVariable('WIDTH', '100%');
         $tpl->setVariable('HEIGHT', $height);
 
-        if ($taskObj->isWorksheet() && $taskObj->hasDeadline()) {
-            $deadlineDate = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $DIC->user()->getId(), $taskObj);
-            $deadlineMilliseconds = $deadlineDate->getUnixTime() * 1000;
-            $username = strtolower('gsso_' . ilMumieTaskAdminSettings::getInstance()->getOrg() . '_' . $hashed_user);
-            $signature = ilMumieTaskCryptographyService::signDeadline($deadlineMilliseconds, $username, $taskObj->getWorksheetId());
+        if ($taskObj->isWorksheet() && $taskObj->hasTimelimit()) {
+            ilMumieTaskDeadlineService::ensureTimelimitStarted((string) $DIC->user()->getId(), $taskObj);
+        }
 
-            $tpl->setCurrentBlock('deadline');
-            $tpl->setVariable('DEADLINE', (string) $deadlineMilliseconds);
-            $tpl->setVariable('DEADLINE_SIGNATURE', $signature);
-            $tpl->parseCurrentBlock();
+        if ($taskObj->requiresDeadlineSignature()) {
+            $deadlineDate = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $DIC->user()->getId(), $taskObj);
+            if (null !== $deadlineDate) {
+                $deadlineMilliseconds = $deadlineDate->getUnixTime() * 1000;
+                $username = strtolower('gsso_' . ilMumieTaskAdminSettings::getInstance()->getOrg() . '_' . $hashed_user);
+                $signature = ilMumieTaskCryptographyService::signDeadline($deadlineMilliseconds, $username, $taskObj->getWorksheetId());
+
+                $tpl->setCurrentBlock('deadline');
+                $tpl->setVariable('DEADLINE', (string) $deadlineMilliseconds);
+                $tpl->setVariable('DEADLINE_SIGNATURE', $signature);
+                $tpl->parseCurrentBlock();
+            }
         }
 
         if (1 == $taskObj->getLaunchcontainer()) {

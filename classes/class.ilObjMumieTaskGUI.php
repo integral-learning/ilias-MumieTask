@@ -485,9 +485,53 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
         $values['privategradepool'] = $this->object->getPrivateGradepool();
+        $values['deadline_mode'] = $this->getDeadlineMode();
         $values['deadline'] = $this->object->getDeadlineDateTime();
+        $values['timelimit'] = $this->getTimelimitAsArray();
         $this->form->setValuesByArray($values);
         $this->tpl->setContent($this->form->getHTML());
+    }
+
+    private function getDeadlineMode(): string
+    {
+        if ($this->object->hasTimelimit()) {
+            return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT;
+        }
+        if ($this->object->hasDeadline()) {
+            return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_FIXED;
+        }
+
+        return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_NONE;
+    }
+
+    private function getTimelimitAsArray(): array
+    {
+        $seconds = (int) $this->object->getTimelimit();
+
+        return [
+            'hh' => intdiv($seconds, 3600),
+            'mm' => intdiv($seconds % 3600, 60),
+        ];
+    }
+
+    private function applyDeadlineMode(): void
+    {
+        $mode = $this->form->getInput('deadline_mode');
+        if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_FIXED === $mode) {
+            $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
+            $this->object->setTimelimit(null);
+
+            return;
+        }
+        if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT === $mode) {
+            $timelimit_input = $this->form->getInput('timelimit');
+            $this->object->setDeadline(null);
+            $this->object->setTimelimit(((int) ($timelimit_input['hh'] ?? 0)) * 3600 + ((int) ($timelimit_input['mm'] ?? 0)) * 60);
+
+            return;
+        }
+        $this->object->setDeadline(null);
+        $this->object->setTimelimit(null);
     }
 
     /**
@@ -534,7 +578,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->object->setPrivateGradepool((int) $this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
-        $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
+        $this->applyDeadlineMode();
         $this->object->doUpdate();
         if ($is_gradepool_setting_update) {
             ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(

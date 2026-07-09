@@ -73,13 +73,18 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
             $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
 
-            if (!$task->hasDeadline()) {
+            if (!$task->requiresDeadlineSignature()) {
                 parent::insertDescription();
 
                 return;
             }
 
             $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($DIC->user()->getId(), $task);
+            if (null === $deadline) {
+                parent::insertDescription();
+
+                return;
+            }
 
             $DIC->ui()->mainTemplate()->addCss(ilMumieTaskPlugin::getAssetPath() . '/templates/mumie.css');
             $this->tpl->setVariable('TXT_DESC', $this->getDescriptionWithDeadlineBadge($deadline, $task));

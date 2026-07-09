@@ -5,6 +5,7 @@ All important changes to this plugin will be documented in this file.
 ## TODO
 ### Added
 - Worksheets with deadline
+- Worksheets with a time limit starting when a student first opens them
 
 ### Changed
 - Plugin now supports Ilias 11.1

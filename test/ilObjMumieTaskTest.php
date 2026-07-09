@@ -53,4 +53,56 @@ class ilObjMumieTaskTest extends TestCase
         $this->assertTrue($task->isWorksheet());
         $this->assertEquals('', $task->getWorksheetId());
     }
+
+    public function testHasTimelimitIsTrueForPositiveValue()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTimelimit(3600);
+        $this->assertTrue($task->hasTimelimit());
+    }
+
+    public function testHasTimelimitIsFalseForZero()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTimelimit(0);
+        $this->assertFalse($task->hasTimelimit());
+    }
+
+    public function testHasTimelimitIsFalseForNull()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTimelimit(null);
+        $this->assertFalse($task->hasTimelimit());
+    }
+
+    public function testRequiresDeadlineSignatureIsFalseForPlainProblemWithDeadline()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTaskurl('some/plain/problem/path');
+        $task->setDeadline(time() + 3600);
+        $this->assertFalse($task->requiresDeadlineSignature());
+    }
+
+    public function testRequiresDeadlineSignatureIsFalseForWorksheetWithoutDeadlineOrTimelimit()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTaskurl('worksheet_14981');
+        $this->assertFalse($task->requiresDeadlineSignature());
+    }
+
+    public function testRequiresDeadlineSignatureIsTrueForWorksheetWithFixedDeadline()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTaskurl('worksheet_14981');
+        $task->setDeadline(time() + 3600);
+        $this->assertTrue($task->requiresDeadlineSignature());
+    }
+
+    public function testRequiresDeadlineSignatureIsTrueForWorksheetWithTimelimit()
+    {
+        $task = new ilObjMumieTask();
+        $task->setTaskurl('worksheet_14981');
+        $task->setTimelimit(3600);
+        $this->assertTrue($task->requiresDeadlineSignature());
+    }
 }

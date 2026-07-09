@@ -28,6 +28,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $activation_ending_time;
     private $activation_visibility;
     private $deadline;
+    private $timelimit;
 
     /**
      * Constructor.
@@ -93,6 +94,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setOnline($rec['online']);
             $this->setPrivateGradepool($rec['privategradepool']);
             $this->setDeadline($rec['deadline']);
+            $this->setTimelimit($rec['timelimit']);
             $this->setWorksheet($rec['worksheet']);
         }
 
@@ -137,6 +139,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'privategradepool' => ['integer', $this->getPrivateGradepool()],
                 'online' => ['integer', $this->getOnline()],
                 'deadline' => ['integer', $this->getDeadline()],
+                'timelimit' => ['integer', $this->getTimelimit()],
                 'worksheet' => ['text', $this->getWorksheet()],
             ],
             [
@@ -588,6 +591,30 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function getDeadlineDateTime(): ilMumieTaskDateTime
     {
         return new ilMumieTaskDateTime($this->deadline);
+    }
+
+    public function hasTimelimit(): bool
+    {
+        return !empty($this->timelimit) && $this->timelimit > 0;
+    }
+
+    public function getTimelimit()
+    {
+        return $this->timelimit;
+    }
+
+    public function setTimelimit($timelimit): void
+    {
+        $this->timelimit = $timelimit;
+    }
+
+    /**
+     * Worksheets can either have a fixed general deadline or a per-user deadline that starts
+     * counting down as soon as a student first opens them.
+     */
+    public function requiresDeadlineSignature(): bool
+    {
+        return $this->isWorksheet() && ($this->hasDeadline() || $this->hasTimelimit());
     }
 
     public function getWorksheet()
