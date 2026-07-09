@@ -152,7 +152,7 @@ class ilMumieTaskSSOService
     {
         global $DIC;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
-        $hashed_user = ilMumieTaskIdHashingService::getHashForUser((string) $DIC->user()->getId()) . self::LECTURER_SUFFIX;
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser((string) $DIC->user()->getId(), null, self::LECTURER_SUFFIX);
         $ssotoken = new ilMumieTaskSSOToken($hashed_user);
         $ssotoken->insertOrRefreshToken();
 

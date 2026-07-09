@@ -64,8 +64,13 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             case 'forceGradeUpdate':
             case 'deleteDeadlineExtension':
             case 'setStatusToNotAttempted':
-            case 'launchProblemSelector':
                 $this->checkPermission('read');
+                $this->$cmd();
+                break;
+
+            case 'launchProblemSelector':
+                // Logs the user in as a lecturer, so this needs more than read access.
+                $this->checkPermission('write');
                 $this->$cmd();
                 break;
         }
