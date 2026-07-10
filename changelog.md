@@ -6,7 +6,7 @@ All important changes to this plugin will be documented in this file.
 ### Added
 - Worksheets with deadline
 - Worksheets with a time limit starting when a student first opens them
-- SSO login for teachers in the problem selector, allowing them to create their own worksheets there
+- Teachers can now create their own worksheets directly in the problem selector, without a separate login
 
 ### Changed
 - Plugin now supports Ilias 11.1
