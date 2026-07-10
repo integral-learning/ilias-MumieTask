@@ -171,9 +171,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $tpl->setOnScreenMessage('failure', $this->i18N->txt('msg_no_connection_to_server') . $this->object->getServer());
         }
         $this->setPropertyValues();
-        $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
+        $tpl->addJavaScript(ilMumieTaskPlugin::getAssetPath() . '/js/ilMumieTaskForm.js');
         $tpl->setContent($this->form->getHTML());
-        $tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css');
+        $tpl->addCss(ilMumieTaskPlugin::getAssetPath() . '/templates/mumie.css');
     }
 
     /**
@@ -221,7 +221,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
-            $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
+            $tpl->addJavaScript(ilMumieTaskPlugin::getAssetPath() . '/js/ilMumieTaskForm.js');
 
             return;
         }
@@ -667,7 +667,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
             return;
         }
-        $this->tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css');
+        $this->tpl->addCss(ilMumieTaskPlugin::getAssetPath() . '/templates/mumie.css');
         $this->form->setFields($this, $this->form);
     }
 
