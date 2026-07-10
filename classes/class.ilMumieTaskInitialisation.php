@@ -15,7 +15,7 @@
  *
  * @param string clientId from the post request params
  */
-class ilMumieTaskInitialisation extends ilInitialisation
+class ilMumieTaskInitialisation
 {
     public static function init($clientId)
     {

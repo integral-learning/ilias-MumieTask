@@ -2,7 +2,7 @@
 
 All important changes to this plugin will be documented in this file.
 
-## [v6.0] - 2026-07-07
+## TODO
 ### Changed
 - Plugin now supports Ilias 11.1
 
