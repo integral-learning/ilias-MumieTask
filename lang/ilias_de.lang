@@ -113,6 +113,7 @@ frm_deadline_mode_timelimit#:#Zeitlimit ab Öffnen
 frm_timelimit#:#Zeitlimit
 frm_timelimit_desc#:#Die Abgabefrist für jeden Studierenden beginnt individuell, sobald das Worksheet zum ersten Mal geöffnet wird.
 frm_user_overview_list_timelimit#:#Zeitlimit ab Öffnen:
+frm_deadline_mode_required_for_worksheet#:#Für dieses Worksheet ist entweder eine feste Abgabefrist oder ein Zeitlimit erforderlich, damit die Korrektur ausgelöst werden kann.
 grade_override_removed#:#Manuel ausgewählte Bewertung für <b>%s</b> erfolgreich entfernt.
 btn_remove_grade_override#:#Auswahl zurücksetzen
 grade_override_desc#:#Neue Abgaben werden automatisch in ILIAS übernommen, sofern die Abgabefrist noch nicht abgelaufen ist. Um eine andere Abgabe für die Bewertung zu verwenden, können Sie auf die entsprechende Schaltfläche in der Tabelle klicken.<br><br>Eine manuell ausgewählte Bewertung wird auch durch zukünftige Abgaben des Studierenden <b>nicht</b> ersetzt werden.

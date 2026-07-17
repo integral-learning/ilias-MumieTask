@@ -111,6 +111,31 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     {
         $ok = parent::checkInput();
 
+        if ($this->is_worksheet && !$this->hasEffectiveDeadlineInput()) {
+            $ok = false;
+            $this->deadline_mode_item->setAlert($this->i18N->txt('frm_deadline_mode_required_for_worksheet'));
+        }
+
         return $ok;
+    }
+
+    /**
+     * Whether the submitted deadline_mode actually results in an effective deadline -
+     * "fixed" with an empty date, or "timelimit" with 0 hours and 0 minutes, are just
+     * as ineffective as "none" and must be rejected the same way.
+     */
+    private function hasEffectiveDeadlineInput(): bool
+    {
+        $mode = $this->getInput('deadline_mode');
+        if (self::DEADLINE_MODE_FIXED === $mode) {
+            return false !== strtotime((string) $this->getInput('deadline'));
+        }
+        if (self::DEADLINE_MODE_TIMELIMIT === $mode) {
+            $timelimit = $this->getInput('timelimit');
+
+            return (((int) ($timelimit['hh'] ?? 0)) * 60 + (int) ($timelimit['mm'] ?? 0)) > 0;
+        }
+
+        return false;
     }
 }
