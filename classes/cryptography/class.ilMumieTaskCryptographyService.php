@@ -34,10 +34,7 @@ class ilMumieTaskCryptographyService
         );
     }
 
-    /**
-     * @param OpenSSLAsymmetricKey $privateKey
-     */
-    public static function sign(string $data, $privateKey): string
+    public static function sign(string $data, OpenSSLAsymmetricKey $privateKey): string
     {
         openssl_sign($data, $signature, $privateKey, self::SIGN_ALGO);
 
@@ -51,10 +48,7 @@ class ilMumieTaskCryptographyService
         return $details['key'];
     }
 
-    /**
-     * @return OpenSSLAsymmetricKey
-     */
-    private static function getOrGeneratePrivateKey()
+    private static function getOrGeneratePrivateKey(): OpenSSLAsymmetricKey
     {
         $pem = ilMumieTaskCryptoKeyRepository::loadPrivateKeyPem();
         if (null !== $pem) {

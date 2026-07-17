@@ -335,19 +335,11 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         return $this;
     }
 
-    /**
-     * Whether this task points to a MUMIE worksheet rather than a plain problem.
-     * Worksheets are identified by the "worksheet_" prefix on the taskurl.
-     */
     public function isWorksheet(): bool
     {
         return str_starts_with((string) $this->getTaskurl(), self::WORKSHEET_PREFIX);
     }
 
-    /**
-     * Get the worksheet id (taskurl with the "worksheet_" prefix stripped),
-     * or null if this task is not a worksheet.
-     */
     public function getWorksheetId(): ?string
     {
         if (!$this->isWorksheet()) {
@@ -608,19 +600,11 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         $this->timelimit = $timelimit;
     }
 
-    /**
-     * True whenever an effective deadline exists, whether fixed or timelimit-based -
-     * used for anything not specific to worksheets (deadline display, extensions, grade filtering).
-     */
     public function hasAnyDeadline(): bool
     {
         return $this->hasDeadline() || $this->hasTimelimit();
     }
 
-    /**
-     * Worksheets can either have a fixed general deadline or a per-user deadline that starts
-     * counting down as soon as a student first opens them.
-     */
     public function requiresDeadlineSignature(): bool
     {
         return $this->isWorksheet() && $this->hasAnyDeadline();

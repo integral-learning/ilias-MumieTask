@@ -164,9 +164,9 @@
                 }
             }
 
-            // The problem selector logs the current user in via SSO only when opening the
-            // configured MUMIE server itself. Other MUMIE course servers are opened without
-            // SSO, since ILIAS has no account there - mirroring the reference implementation.
+            /**
+             * Other MUMIE course servers are opened without SSO, since ILIAS has no account there.
+             */
             function shouldUseSSO(serverUrl) {
                 return getOrigin(lmsSelectorUrl) === getOrigin(serverUrl);
             }

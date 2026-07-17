@@ -29,8 +29,7 @@ class ilMumieTaskIdHashingService
     }
 
     /**
-     * A suffix (e.g. "@lecturer@") is persisted as part of the hash, so a lookup
-     * by that suffixed hash can find it again.
+     * The suffix is persisted as part of the hash so that a later lookup by that same suffixed hash finds it again.
      */
     public static function getHashForUser($user_id, $task = null, $suffix = null)
     {

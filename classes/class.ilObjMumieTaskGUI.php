@@ -77,10 +77,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     }
 
     /**
-     * Logs the current user into the MUMIE problem selector via SSO, mirroring the
-     * signed launch used for student task access. Only used when the selected
-     * server is the same origin as the configured problem selector - other
-     * MUMIE course servers are opened without SSO, as ILIAS has no account there.
+     * Only called for the configured problem selector's own origin - other MUMIE course servers
+     * are opened without SSO, since ILIAS has no account there.
      */
     public function launchProblemSelector(): void
     {

@@ -109,8 +109,7 @@ class ilMumieTaskGradeSync
     }
 
     /**
-     * Worksheets with a deadline require per-user deadline context, so they can be
-     * corrected as soon as their deadline has passed.
+     * MUMIE only corrects a worksheet once its deadline has passed, so it needs per-user deadline context.
      */
     private function requiresContext(): bool
     {

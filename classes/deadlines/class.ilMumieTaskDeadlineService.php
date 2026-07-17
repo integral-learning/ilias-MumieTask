@@ -10,8 +10,7 @@
 class ilMumieTaskDeadlineService
 {
     /**
-     * Returns null if the task has neither a fixed deadline nor a timelimit that has
-     * already started (e.g. a timelimit-based worksheet the user has not opened yet).
+     * Null means no deadline applies yet, e.g. a timelimit-based worksheet the user has not opened.
      */
     public static function getDeadlineDateForUser(string $user_id, ilObjMumieTask $task): ?ilMumieTaskDateTime
     {
@@ -33,9 +32,7 @@ class ilMumieTaskDeadlineService
     }
 
     /**
-     * Starts a timelimit-based worksheet's individual deadline the first time a
-     * given user opens it, by storing it as a deadline extension. A no-op if the
-     * task has no timelimit or the user's deadline has already been started.
+     * No-op if the task has no timelimit or this user's countdown has already started.
      */
     public static function ensureTimelimitStarted(string $user_id, ilObjMumieTask $task): void
     {

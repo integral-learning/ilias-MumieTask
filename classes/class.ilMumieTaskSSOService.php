@@ -143,11 +143,6 @@ class ilMumieTaskSSOService
      */
     private const LECTURER_SUFFIX = '@lecturer@';
 
-    /**
-     * Builds an auto-submitting hidden form that logs the currently logged in
-     * ILIAS user into the MUMIE problem selector via SSO, so it opens the same
-     * way it does for a student's task launch.
-     */
     public function getProblemSelectorLaunchForm(string $serverUrl, string $problemLang, string $origin): string
     {
         global $DIC;

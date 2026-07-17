@@ -120,9 +120,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     }
 
     /**
-     * Whether the submitted deadline_mode actually results in an effective deadline -
-     * "fixed" with an empty date, or "timelimit" with 0 hours and 0 minutes, are just
-     * as ineffective as "none" and must be rejected the same way.
+     * An empty "fixed" date or a 0h/0m "timelimit" are just as ineffective as "none".
      */
     private function hasEffectiveDeadlineInput(): bool
     {
