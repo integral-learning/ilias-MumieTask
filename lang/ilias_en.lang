@@ -76,6 +76,7 @@ edit_task#:#Edit
 activation_limited_visibility_info#:#Users can see this MUMIE task outside of the chosen availability period, but cannot work on it
 frm_online_info#:#Make this MUMIE Task visible and usable to all users with reading permission
 frm_online_disabled_warning#:#This MUMIE Task cannot be set online because a decision is still pending. Please go to grading settings.
+frm_online_disabled_worksheet_warning#:#This worksheet cannot be set online until a deadline or time limit is set. Please go to grading settings.
 open_prb_selector#:#Open problem selector
 open_prb_selector_desc#:#Click here to open a more detailed selection screen. You can filter all problems by category and enter search terms.
 frm_list_grade#:#Grade

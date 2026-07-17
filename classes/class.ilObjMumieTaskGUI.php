@@ -657,7 +657,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $DIC;
         $form = new ilMumieTaskFormAvailabilityGUI();
-        $form->setFields(!$this->object->isGradepoolSet());
+        $form->setFields(
+            !$this->object->isGradepoolSet(),
+            $this->object->isWorksheet() && !$this->object->hasAnyDeadline(),
+        );
         $form->addCommandButton('submitAvailabilitySettings', $this->i18N->globalTxt('save'));
         $form->addCommandButton('editProperties', $this->i18N->globalTxt('cancel'));
         $form->setFormAction($DIC->ctrl()->getFormAction($this));
