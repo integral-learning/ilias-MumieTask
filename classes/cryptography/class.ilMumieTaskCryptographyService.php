@@ -19,7 +19,8 @@ class ilMumieTaskCryptographyService
     private const SIGN_ALGO = OPENSSL_ALGO_SHA512;
 
     /**
-     * Plain concatenation of deadline (ms), username and worksheet id, no separators.
+     * Format is dictated by the MUMIE side - keep deadline+username+worksheetId concatenated
+     * without separators or verification breaks.
      */
     public static function buildSignaturePayload(int $deadlineMilliseconds, string $username, string $worksheetId): string
     {
