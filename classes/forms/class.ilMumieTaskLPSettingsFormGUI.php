@@ -13,20 +13,30 @@
  */
 class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 {
+    public const DEADLINE_MODE_NONE = 'none';
+    public const DEADLINE_MODE_FIXED = 'fixed';
+    public const DEADLINE_MODE_TIMELIMIT = 'timelimit';
+
     private ilMumieTaskI18N $i18N;
 
-    public function __construct($disable_grade_pool_selection)
+    public function __construct($disable_grade_pool_selection, $is_worksheet = false, $disable_deadline_mode_selection = false)
     {
         parent::__construct();
         $this->disable_grade_pool_selection = $disable_grade_pool_selection;
+        $this->is_worksheet = $is_worksheet;
+        $this->disable_deadline_mode_selection = $disable_deadline_mode_selection;
         $this->i18N = new ilMumieTaskI18N();
     }
 
     private $modus_item;
     private $gradepool_item;
     private $passing_threshold_item;
+    private $deadline_mode_item;
     private $deadline_item;
+    private $timelimit_item;
     private $disable_grade_pool_selection;
+    private $is_worksheet;
+    private $disable_deadline_mode_selection;
 
     public function setFields()
     {
@@ -61,11 +71,39 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->addItem($this->passing_threshold_item);
         $this->passing_threshold_item->setInfo($this->i18N->txt('frm_passing_grade_desc'));
 
+        $this->deadline_mode_item = new ilRadioGroupInputGUI($this->i18N->txt('frm_deadline_mode'), 'deadline_mode');
+        $this->deadline_mode_item->setInfo($this->i18N->txt('frm_deadline_mode_desc'));
+
+        $deadline_mode_option_none = new ilRadioOption($this->i18N->txt('frm_deadline_mode_none'), self::DEADLINE_MODE_NONE);
+        $deadline_mode_option_none->setDisabled($this->disable_deadline_mode_selection);
+        $this->deadline_mode_item->addOption($deadline_mode_option_none);
+
         $this->deadline_item = new ilDateTimeInputGUI($this->i18N->txt('frm_grade_overview_list_deadline'), 'deadline');
         $this->deadline_item->setInfo($this->i18N->txt('frm_lp_deadline_desc'));
         $this->deadline_item->setShowTime(true);
+        $deadline_mode_option_fixed = new ilRadioOption($this->i18N->txt('frm_deadline_mode_fixed'), self::DEADLINE_MODE_FIXED);
+        $deadline_mode_option_fixed->addSubItem($this->deadline_item);
+        $deadline_mode_option_fixed->setDisabled($this->disable_deadline_mode_selection);
+        $this->deadline_mode_item->addOption($deadline_mode_option_fixed);
 
-        $this->addItem($this->deadline_item);
+        if ($this->is_worksheet) {
+            $this->timelimit_item = new ilDurationInputGUI($this->i18N->txt('frm_timelimit'), 'timelimit');
+            $this->timelimit_item->setInfo($this->i18N->txt('frm_timelimit_desc'));
+            $this->timelimit_item->setShowHours(true);
+            $this->timelimit_item->setShowMinutes(true);
+            $deadline_mode_option_timelimit = new ilRadioOption($this->i18N->txt('frm_deadline_mode_timelimit'), self::DEADLINE_MODE_TIMELIMIT);
+            $deadline_mode_option_timelimit->addSubItem($this->timelimit_item);
+            $deadline_mode_option_timelimit->setDisabled($this->disable_deadline_mode_selection);
+            $this->deadline_mode_item->addOption($deadline_mode_option_timelimit);
+        }
+
+        if ($this->disable_deadline_mode_selection) {
+            $this->deadline_mode_item->setInfo(
+                $this->i18N->txt('frm_deadline_mode_desc') . '<br><br>' . $this->i18N->txt('frm_deadline_mode_locked'),
+            );
+        }
+
+        $this->addItem($this->deadline_mode_item);
     }
 
     private function getGradepoolInfo()
@@ -84,6 +122,29 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     {
         $ok = parent::checkInput();
 
+        if ($this->is_worksheet && !$this->disable_deadline_mode_selection && !$this->hasEffectiveDeadlineInput()) {
+            $ok = false;
+            $this->deadline_mode_item->setAlert($this->i18N->txt('frm_deadline_mode_required_for_worksheet'));
+        }
+
         return $ok;
+    }
+
+    /**
+     * An empty "fixed" date or a 0h/0m "timelimit" are just as ineffective as "none".
+     */
+    private function hasEffectiveDeadlineInput(): bool
+    {
+        $mode = $this->getInput('deadline_mode');
+        if (self::DEADLINE_MODE_FIXED === $mode) {
+            return false !== strtotime((string) $this->getInput('deadline'));
+        }
+        if (self::DEADLINE_MODE_TIMELIMIT === $mode) {
+            $timelimit = $this->getInput('timelimit');
+
+            return (((int) ($timelimit['hh'] ?? 0)) * 60 + (int) ($timelimit['mm'] ?? 0)) > 0;
+        }
+
+        return false;
     }
 }

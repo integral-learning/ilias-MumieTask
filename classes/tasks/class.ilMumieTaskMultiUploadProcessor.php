@@ -58,6 +58,7 @@ class ilMumieTaskMultiUploadProcessor
         $new_task->setLaunchcontainer($base_task->getLaunchcontainer());
         $new_task->setMumieCoursefile($task_dto->getPathToCoursefile());
         $new_task->setDeadline($base_task->getDeadline());
+        $new_task->setTimelimit($base_task->getTimelimit());
         $new_task->setOnline($base_task->getOnline());
         $new_task->setPrivateGradepool($base_task->getPrivateGradepool());
         $new_task->update();

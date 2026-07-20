@@ -82,6 +82,8 @@ class ilMumieTaskSSOService
      */
     private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $height = 600): string
     {
+        global $DIC;
+
         $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/launch_form.html', true, true);
         $tpl->setVariable('TASKURL', $taskObj->getLoginUrl());
         $tpl->setVariable('TARGET', 1 == $taskObj->getLaunchcontainer() ? 'MumieTaskLaunchFrame' : '_blank');
@@ -93,6 +95,24 @@ class ilMumieTaskSSOService
         $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
         $tpl->setVariable('WIDTH', '100%');
         $tpl->setVariable('HEIGHT', $height);
+
+        if ($taskObj->isWorksheet() && $taskObj->hasTimelimit()) {
+            ilMumieTaskDeadlineService::ensureTimelimitStarted((string) $DIC->user()->getId(), $taskObj);
+        }
+
+        if ($taskObj->requiresDeadlineSignature()) {
+            $deadlineDate = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $DIC->user()->getId(), $taskObj);
+            if (null !== $deadlineDate) {
+                $deadlineMilliseconds = $deadlineDate->getUnixTime() * 1000;
+                $username = strtolower('gsso_' . ilMumieTaskAdminSettings::getInstance()->getOrg() . '_' . $hashed_user);
+                $signature = ilMumieTaskCryptographyService::signDeadline($deadlineMilliseconds, $username, $taskObj->getWorksheetId());
+
+                $tpl->setCurrentBlock('deadline');
+                $tpl->setVariable('DEADLINE', (string) $deadlineMilliseconds);
+                $tpl->setVariable('DEADLINE_SIGNATURE', $signature);
+                $tpl->parseCurrentBlock();
+            }
+        }
 
         if (1 == $taskObj->getLaunchcontainer()) {
             $tpl->setVariable('BUTTONTYPE', 'hidden'); // embed the iframe and launch it immediately via $script
@@ -113,6 +133,32 @@ class ilMumieTaskSSOService
             $tpl->setVariable('BUTTONTYPE', 'submit');
         }
         // otherwise leave a button to launch in a new tab
+
+        return $tpl->get();
+    }
+
+    /**
+     * The MUMIE server assigns the "Lecturing" role instead of the "Studying"
+     * default only if the SSO user id ends with this exact literal suffix.
+     */
+    private const LECTURER_SUFFIX = '@lecturer@';
+
+    public function getProblemSelectorLaunchForm(string $serverUrl, string $problemLang, string $origin): string
+    {
+        global $DIC;
+        $admin_settings = ilMumieTaskAdminSettings::getInstance();
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser((string) $DIC->user()->getId(), null, self::LECTURER_SUFFIX);
+        $ssotoken = new ilMumieTaskSSOToken($hashed_user);
+        $ssotoken->insertOrRefreshToken();
+
+        $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/problem_selector_sso_form.html', true, true);
+        $tpl->setVariable('SSO_URL', rtrim($admin_settings->getProblemSelectorUrl(), '/') . '/api/sso/problem-selector');
+        $tpl->setVariable('USER_ID', $hashed_user);
+        $tpl->setVariable('TOKEN', $ssotoken->getToken());
+        $tpl->setVariable('ORG', htmlspecialchars($admin_settings->getOrg()));
+        $tpl->setVariable('SERVER_URL', htmlspecialchars($serverUrl));
+        $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
+        $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
 
         return $tpl->get();
     }

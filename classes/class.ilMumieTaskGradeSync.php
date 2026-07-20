@@ -101,7 +101,36 @@ class ilMumieTaskGradeSync
             'includeAll' => true,
         ];
 
+        if ($this->requiresContext()) {
+            $params['context'] = $this->getContext();
+        }
+
         return $params;
+    }
+
+    /**
+     * MUMIE only corrects a worksheet once its deadline has passed, so it needs per-user deadline context.
+     */
+    private function requiresContext(): bool
+    {
+        return $this->task->requiresDeadlineSignature();
+    }
+
+    private function getContext(): array
+    {
+        $user_contexts = [];
+        foreach ($this->user_ids as $user_id) {
+            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $user_id, $this->task);
+            $deadline_ms = null !== $deadline ? $deadline->getUnixTime() * 1000 : 0;
+            $user_contexts[$this->getSyncIdForUser($user_id)] = ['deadline' => $deadline_ms];
+        }
+
+        return [
+            self::getMumieId($this->task) => [
+                'language' => $this->task->getLanguage(),
+                'userContexts' => $user_contexts,
+            ],
+        ];
     }
 
     private function getXapiRequestHeaders($payload)
@@ -210,14 +239,12 @@ class ilMumieTaskGradeSync
      */
     private function isGradeBeforeDueDate($grade)
     {
-        if (!$this->task->hasDeadline()) {
+        if (!$this->task->hasAnyDeadline()) {
             return true;
         }
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task)) {
-            return strtotime($grade->timestamp) <= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
-        }
+        $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($this->getIliasId($grade), $this->task);
 
-        return strtotime($grade->timestamp) <= $this->task->getDeadline();
+        return null === $deadline || strtotime($grade->timestamp) <= $deadline->getUnixTime();
     }
 
     private function getLatestGrade($xapi_grades)

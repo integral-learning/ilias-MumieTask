@@ -75,7 +75,8 @@ frm_force_update_btn#:#Update erzwingen
 edit_task#:#Bearbeiten
 activation_limited_visibility_info#:#Nutzer können diese MumieTask außerhalb des gewählten Zeitraums sehen, aber nicht bearbeiten
 frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MumieTask sehen und bearbeiten
-frm_online_disabled_warning#:#Diese MUMIE-Task kann nicht online gestellt werden, da noch eine Entscheidung aussteht. Bitte rufen sie die Bewertungseinstellungen auf. 
+frm_online_disabled_warning#:#Diese MUMIE-Task kann nicht online gestellt werden, da noch eine Entscheidung aussteht. Bitte rufen sie die Bewertungseinstellungen auf.
+frm_online_disabled_worksheet_warning#:#Dieses Worksheet kann nicht online gestellt werden, solange keine Abgabefrist oder kein Zeitlimit gesetzt ist. Bitte rufen Sie die Bewertungseinstellungen auf.
 open_prb_selector#:#Aufgabenauswahl öffnen
 open_prb_selector_desc#:#Klicken Sie hier, um eine detaillierte Auswahl zu öffnen. Sie können alle verfügbaren Aufgaben nach Kategorien filtern und nach beliebigen Begriffen durchsuchen.
 frm_list_grade#:#Bewertung
@@ -105,6 +106,16 @@ frm_list_grade_overview_after_deadline#:#Die Abgabefrist ist überschritten. Wei
 frm_grade_overview_override_error#:#Beim Eintragen der Bewertung ist ein Fehler aufgetreten
 frm_grade_overview_no_submission_made#:#Es gab bisher keine Abgabe
 frm_lp_deadline_desc#:#Falls diese Option aktiviert ist, werden keine Bewertungen, die nach dem gewählten Datum erzielt wurden, mit ILIAS synchronisiert.
+frm_deadline_mode#:#Abgabefrist
+frm_deadline_mode_desc#:#Legen Sie fest, ob dieses Worksheet keine Frist, eine feste Abgabefrist für alle oder ein individuelles Zeitlimit ab dem ersten Öffnen hat.
+frm_deadline_mode_none#:#Keine Frist
+frm_deadline_mode_fixed#:#Feste Abgabefrist
+frm_deadline_mode_timelimit#:#Zeitlimit ab Öffnen
+frm_timelimit#:#Zeitlimit
+frm_timelimit_desc#:#Die Abgabefrist für jeden Studierenden beginnt individuell, sobald das Worksheet zum ersten Mal geöffnet wird.
+frm_user_overview_list_timelimit#:#Zeitlimit ab Öffnen:
+frm_deadline_mode_required_for_worksheet#:#Für dieses Worksheet ist entweder eine feste Abgabefrist oder ein Zeitlimit erforderlich, damit die Korrektur ausgelöst werden kann.
+frm_deadline_mode_locked#:#Die Abgabefrist-Art kann nicht mehr geändert werden, da für mindestens einen Studierenden bereits eine individuelle Frist hinterlegt ist.
 grade_override_removed#:#Manuel ausgewählte Bewertung für <b>%s</b> erfolgreich entfernt.
 btn_remove_grade_override#:#Auswahl zurücksetzen
 grade_override_desc#:#Neue Abgaben werden automatisch in ILIAS übernommen, sofern die Abgabefrist noch nicht abgelaufen ist. Um eine andere Abgabe für die Bewertung zu verwenden, können Sie auf die entsprechende Schaltfläche in der Tabelle klicken.<br><br>Eine manuell ausgewählte Bewertung wird auch durch zukünftige Abgaben des Studierenden <b>nicht</b> ersetzt werden.

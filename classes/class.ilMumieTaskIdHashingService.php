@@ -17,18 +17,23 @@ class ilMumieTaskIdHashingService
     private $user_id;
     private $hash;
     private $task;
+    private $suffix;
 
     public const TABLE_NAME = 'xmum_id_hashes';
 
-    private function __construct($user_id, $task)
+    private function __construct($user_id, $task, $suffix = null)
     {
         $this->user_id = $user_id;
         $this->task = $task;
+        $this->suffix = $suffix;
     }
 
-    public static function getHashForUser($user_id, $task = null)
+    /**
+     * The suffix is persisted as part of the hash so that a later lookup by that same suffixed hash finds it again.
+     */
+    public static function getHashForUser($user_id, $task = null, $suffix = null)
     {
-        $service = new ilMumieTaskIdHashingService($user_id, $task);
+        $service = new ilMumieTaskIdHashingService($user_id, $task, $suffix);
         $service->upsertHash();
 
         return $service->getHash();
@@ -47,7 +52,7 @@ class ilMumieTaskIdHashingService
             ),
         );
 
-        return $result->usr_id;
+        return $result->usr_id ?? null;
     }
 
     /**
@@ -60,6 +65,9 @@ class ilMumieTaskIdHashingService
         $this->hash = $this->generateHash();
         if (null != $this->task && 1 == $this->task->getPrivateGradepool()) {
             $this->hash .= '@gradepool' . $this->task->getParentRef() . '@';
+        }
+        if (null != $this->suffix) {
+            $this->hash .= $this->suffix;
         }
         $result = $db->fetchObject(
             $db->query(

@@ -9,21 +9,41 @@
  */
 class ilMumieTaskDeadlineService
 {
-    public static function getDeadlineDateForUser(string $user_id, ilObjMumieTask $task): ilMumieTaskDateTime
+    /**
+     * Null means no deadline applies yet, e.g. a timelimit-based worksheet the user has not opened.
+     */
+    public static function getDeadlineDateForUser(string $user_id, ilObjMumieTask $task): ?ilMumieTaskDateTime
     {
         if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
             return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $task);
         }
+        if ($task->hasDeadline()) {
+            return $task->getDeadlineDateTime();
+        }
 
-        return $task->getDeadlineDateTime();
+        return null;
     }
 
     public static function hasDeadlinePassedForUser(string $user_id, ilObjMumieTask $task): bool
     {
-        if (!$task->hasDeadline()) {
-            return false;
+        $deadline = self::getDeadlineDateForUser($user_id, $task);
+
+        return null !== $deadline && $deadline->hasPassed();
+    }
+
+    /**
+     * No-op if the task has no timelimit or this user's countdown has already started.
+     */
+    public static function ensureTimelimitStarted(string $user_id, ilObjMumieTask $task): void
+    {
+        if (!$task->hasTimelimit() || ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $task)) {
+            return;
         }
 
-        return self::getDeadlineDateForUser($user_id, $task)->hasPassed();
+        ilMumieTaskDeadlineExtensionService::upsertDeadlineExtensionFromUnixTime(
+            $task,
+            time() + $task->getTimelimit(),
+            $user_id,
+        );
     }
 }

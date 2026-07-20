@@ -30,13 +30,18 @@ class ilMumieTaskDeadlineExtensionService
 
     public static function upsertDeadlineExtension($mumie_task, $date_time_input, $user_id)
     {
-        $deadline_extension = new ilMumieTaskDeadlineExtension(strtotime($date_time_input), $user_id, $mumie_task->getId());
+        self::upsertDeadlineExtensionFromUnixTime($mumie_task, strtotime($date_time_input), $user_id);
+        self::sendUpdateSuccessMessage(new ilMumieTaskDeadlineExtension(strtotime($date_time_input), $user_id, $mumie_task->getId()));
+    }
+
+    public static function upsertDeadlineExtensionFromUnixTime($mumie_task, int $unix_time, $user_id): void
+    {
+        $deadline_extension = new ilMumieTaskDeadlineExtension($unix_time, $user_id, $mumie_task->getId());
         if (!self::hasDeadlineExtension($user_id, $mumie_task)) {
             self::insertDeadlineExtension($deadline_extension);
         } else {
             self::updateDeadlineExtension($deadline_extension);
         }
-        self::sendUpdateSuccessMessage($deadline_extension);
     }
 
     public static function deleteDeadlineExtension($mumie_task, $user_id)
@@ -56,6 +61,23 @@ class ilMumieTaskDeadlineExtensionService
         global $DIC;
         $db = $DIC->database();
         $db->manipulate('DELETE FROM xmum_deadline_ext WHERE task_id = ' . $db->quote($task->getId(), 'integer'));
+    }
+
+    /**
+     * True once at least one student has a per-user extension row for this task, e.g. from
+     * ensureTimelimitStarted() on first open or a manually granted fixed-deadline extension.
+     * Switching deadline_mode while this is true would strand those rows under a mode they were
+     * never created for, so this is the point at which the mode should no longer be changeable.
+     */
+    public static function hasAnyExtensionForTask($task): bool
+    {
+        global $DIC;
+        $db = $DIC->database();
+        $result = $db->query(
+            'SELECT 1 FROM xmum_deadline_ext WHERE task_id = ' . $db->quote($task->getId(), 'integer') . ' LIMIT 1',
+        );
+
+        return null !== $db->fetchAssoc($result);
     }
 
     private static function insertDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)

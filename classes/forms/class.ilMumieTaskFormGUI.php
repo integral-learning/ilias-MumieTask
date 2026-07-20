@@ -36,6 +36,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $worksheet_item;
     private $dropzone_item;
     private $problem_selector_item;
+    private $problem_selector_sso_url_item;
 
     private $server_options = [];
 
@@ -112,6 +113,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
 
         $this->problem_selector_item = new ilHiddenInputGUI('problem_selector');
         $this->addItem($this->problem_selector_item);
+
+        $this->problem_selector_sso_url_item = new ilHiddenInputGUI('problem_selector_sso_url');
+        $this->addItem($this->problem_selector_sso_url_item);
 
         $this->worksheet_item = new ilHiddenInputGUI('xmum_worksheet');
         $this->addItem($this->worksheet_item);
@@ -214,6 +218,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         }
         $this->problem_selector_item->setValue(ilMumieTaskAdminSettings::getInstance()
             ->getProblemSelectorUrl());
+        $this->problem_selector_sso_url_item->setValue(
+            $DIC->ctrl()->getLinkTargetByClass('ilObjMumieTaskGUI', 'launchProblemSelector'),
+        );
     }
 
     /**

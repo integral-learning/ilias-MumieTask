@@ -10,6 +10,7 @@
 class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
 {
     public const DUMMY_TITLE = '-- Empty MumieTask --';
+    public const WORKSHEET_PREFIX = 'worksheet_';
     private static $MUMIE_TASK_TABLE_NAME = 'xmum_mumie_task';
     private $server;
     private $mumie_course;
@@ -27,6 +28,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     private $activation_ending_time;
     private $activation_visibility;
     private $deadline;
+    private $timelimit;
 
     /**
      * Constructor.
@@ -92,6 +94,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
             $this->setOnline($rec['online']);
             $this->setPrivateGradepool($rec['privategradepool']);
             $this->setDeadline($rec['deadline']);
+            $this->setTimelimit($rec['timelimit']);
             $this->setWorksheet($rec['worksheet']);
         }
 
@@ -136,6 +139,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 'privategradepool' => ['integer', $this->getPrivateGradepool()],
                 'online' => ['integer', $this->getOnline()],
                 'deadline' => ['integer', $this->getDeadline()],
+                'timelimit' => ['integer', $this->getTimelimit()],
                 'worksheet' => ['text', $this->getWorksheet()],
             ],
             [
@@ -329,6 +333,20 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
         $this->taskurl = $taskurl;
 
         return $this;
+    }
+
+    public function isWorksheet(): bool
+    {
+        return str_starts_with((string) $this->getTaskurl(), self::WORKSHEET_PREFIX);
+    }
+
+    public function getWorksheetId(): ?string
+    {
+        if (!$this->isWorksheet()) {
+            return null;
+        }
+
+        return substr($this->getTaskurl(), strlen(self::WORKSHEET_PREFIX));
     }
 
     /**
@@ -565,6 +583,31 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     public function getDeadlineDateTime(): ilMumieTaskDateTime
     {
         return new ilMumieTaskDateTime($this->deadline);
+    }
+
+    public function hasTimelimit(): bool
+    {
+        return !empty($this->timelimit) && $this->timelimit > 0;
+    }
+
+    public function getTimelimit()
+    {
+        return $this->timelimit;
+    }
+
+    public function setTimelimit($timelimit): void
+    {
+        $this->timelimit = $timelimit;
+    }
+
+    public function hasAnyDeadline(): bool
+    {
+        return $this->hasDeadline() || $this->hasTimelimit();
+    }
+
+    public function requiresDeadlineSignature(): bool
+    {
+        return $this->isWorksheet() && $this->hasAnyDeadline();
     }
 
     public function getWorksheet()

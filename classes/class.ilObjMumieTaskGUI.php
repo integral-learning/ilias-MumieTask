@@ -67,7 +67,28 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 $this->checkPermission('read');
                 $this->$cmd();
                 break;
+
+            case 'launchProblemSelector':
+                // Logs the user in as a lecturer, so this needs more than read access.
+                $this->checkPermission('write');
+                $this->$cmd();
+                break;
         }
+    }
+
+    /**
+     * Only called for the configured problem selector's own origin - other MUMIE course servers
+     * are opened without SSO, since ILIAS has no account there.
+     */
+    public function launchProblemSelector(): void
+    {
+        $sso_service = new ilMumieTaskSSOService();
+        echo $sso_service->getProblemSelectorLaunchForm(
+            (string) ($_GET['serverUrl'] ?? ''),
+            (string) ($_GET['problemLang'] ?? ''),
+            (string) ($_GET['origin'] ?? ''),
+        );
+        exit;
     }
 
     public function setTabs(): void
@@ -485,9 +506,56 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
         $values['privategradepool'] = $this->object->getPrivateGradepool();
+        $values['deadline_mode'] = $this->getDeadlineMode();
         $values['deadline'] = $this->object->getDeadlineDateTime();
+        $values['timelimit'] = $this->getTimelimitAsArray();
         $this->form->setValuesByArray($values);
         $this->tpl->setContent($this->form->getHTML());
+    }
+
+    private function getDeadlineMode(): string
+    {
+        if ($this->object->isWorksheet() && $this->object->hasTimelimit()) {
+            return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT;
+        }
+        if ($this->object->hasDeadline()) {
+            return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_FIXED;
+        }
+
+        return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_NONE;
+    }
+
+    private function getTimelimitAsArray(): array
+    {
+        $seconds = (int) $this->object->getTimelimit();
+
+        return [
+            'hh' => intdiv($seconds, 3600),
+            'mm' => intdiv($seconds % 3600, 60),
+        ];
+    }
+
+    private function applyDeadlineMode(): void
+    {
+        if (ilMumieTaskDeadlineExtensionService::hasAnyExtensionForTask($this->object)) {
+            return;
+        }
+        $mode = $this->form->getInput('deadline_mode');
+        if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_FIXED === $mode) {
+            $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
+            $this->object->setTimelimit(null);
+
+            return;
+        }
+        if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT === $mode && $this->object->isWorksheet()) {
+            $timelimit_input = $this->form->getInput('timelimit');
+            $this->object->setDeadline(null);
+            $this->object->setTimelimit(((int) ($timelimit_input['hh'] ?? 0)) * 3600 + ((int) ($timelimit_input['mm'] ?? 0)) * 60);
+
+            return;
+        }
+        $this->object->setDeadline(null);
+        $this->object->setTimelimit(null);
     }
 
     /**
@@ -498,7 +566,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $ctrl = $DIC->ctrl();
 
-        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet());
+        $form = new ilMumieTaskLPSettingsFormGUI(
+            $this->object->isGradepoolSet(),
+            $this->object->isWorksheet(),
+            ilMumieTaskDeadlineExtensionService::hasAnyExtensionForTask($this->object),
+        );
         $form->setFields();
         $form->setTitle($this->i18N->txt('tab_lp_settings'));
 
@@ -534,7 +606,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->object->setPrivateGradepool((int) $this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
-        $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
+        $this->applyDeadlineMode();
         $this->object->doUpdate();
         if ($is_gradepool_setting_update) {
             ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(
@@ -590,7 +662,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $DIC;
         $form = new ilMumieTaskFormAvailabilityGUI();
-        $form->setFields(!$this->object->isGradepoolSet());
+        $form->setFields(
+            !$this->object->isGradepoolSet(),
+            $this->object->isWorksheet() && !$this->object->hasAnyDeadline(),
+        );
         $form->addCommandButton('submitAvailabilitySettings', $this->i18N->globalTxt('save'));
         $form->addCommandButton('editProperties', $this->i18N->globalTxt('cancel'));
         $form->setFormAction($DIC->ctrl()->getFormAction($this));

@@ -45,7 +45,9 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
         );
         $this->deadline_input->setShowTime(true);
         $deadline_date = ilMumieTaskDeadlineService::getDeadlineDateForUser($this->user_id, $this->mumie_task);
-        $this->deadline_input->setDate($deadline_date);
+        if (null !== $deadline_date) {
+            $this->deadline_input->setDate($deadline_date);
+        }
         $this->addItem($this->deadline_input);
     }
 
@@ -60,7 +62,7 @@ class ilMumieTaskDeadlineExtensionForm extends ilPropertyFormGUI
     public function checkInput(): bool
     {
         $ok = parent::checkInput();
-        if ($this->mumie_task->getDeadline() > strtotime($this->getInput(self::DEADLINE_PARAM))) {
+        if ($this->mumie_task->hasDeadline() && $this->mumie_task->getDeadline() > strtotime($this->getInput(self::DEADLINE_PARAM))) {
             $ok = false;
             $this->deadline_input->setAlert($this->i18n->txt('frm_deadline_extension_before_general_deadline_error'));
         }

@@ -24,12 +24,12 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
         $this->i18N = new ilMumieTaskI18N();
     }
 
-    public function setFields($disable_online_selection)
+    public function setFields($disable_gradepool_pending, $disable_worksheet_without_deadline = false)
     {
         $online_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_activation_online'), 'online');
 
-        $online_item->setInfo($this->getOnlineItemInfo($disable_online_selection));
-        $online_item->setDisabled($disable_online_selection);
+        $online_item->setInfo($this->getOnlineItemInfo($disable_gradepool_pending, $disable_worksheet_without_deadline));
+        $online_item->setDisabled($disable_gradepool_pending || $disable_worksheet_without_deadline);
         $this->addItem($online_item);
         $this->online_item = $online_item;
 
@@ -64,11 +64,14 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
         parent::setValuesByArray($values, $a_restrict_to_value_keys);
     }
 
-    private function getOnlineItemInfo($disable_online_selection)
+    private function getOnlineItemInfo($disable_gradepool_pending, $disable_worksheet_without_deadline)
     {
         $online_info = $this->i18N->txt('frm_online_info');
-        if ($disable_online_selection) {
+        if ($disable_gradepool_pending) {
             $online_info .= '<br><br>' . $this->i18N->txt('frm_online_disabled_warning');
+        }
+        if ($disable_worksheet_without_deadline) {
+            $online_info .= '<br><br>' . $this->i18N->txt('frm_online_disabled_worksheet_warning');
         }
 
         return $online_info;
