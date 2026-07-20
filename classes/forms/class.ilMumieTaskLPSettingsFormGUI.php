@@ -19,11 +19,12 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
 
     private ilMumieTaskI18N $i18N;
 
-    public function __construct($disable_grade_pool_selection, $is_worksheet = false)
+    public function __construct($disable_grade_pool_selection, $is_worksheet = false, $disable_deadline_mode_selection = false)
     {
         parent::__construct();
         $this->disable_grade_pool_selection = $disable_grade_pool_selection;
         $this->is_worksheet = $is_worksheet;
+        $this->disable_deadline_mode_selection = $disable_deadline_mode_selection;
         $this->i18N = new ilMumieTaskI18N();
     }
 
@@ -35,6 +36,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     private $timelimit_item;
     private $disable_grade_pool_selection;
     private $is_worksheet;
+    private $disable_deadline_mode_selection;
 
     public function setFields()
     {
@@ -73,6 +75,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->deadline_mode_item->setInfo($this->i18N->txt('frm_deadline_mode_desc'));
 
         $deadline_mode_option_none = new ilRadioOption($this->i18N->txt('frm_deadline_mode_none'), self::DEADLINE_MODE_NONE);
+        $deadline_mode_option_none->setDisabled($this->disable_deadline_mode_selection);
         $this->deadline_mode_item->addOption($deadline_mode_option_none);
 
         $this->deadline_item = new ilDateTimeInputGUI($this->i18N->txt('frm_grade_overview_list_deadline'), 'deadline');
@@ -80,6 +83,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
         $this->deadline_item->setShowTime(true);
         $deadline_mode_option_fixed = new ilRadioOption($this->i18N->txt('frm_deadline_mode_fixed'), self::DEADLINE_MODE_FIXED);
         $deadline_mode_option_fixed->addSubItem($this->deadline_item);
+        $deadline_mode_option_fixed->setDisabled($this->disable_deadline_mode_selection);
         $this->deadline_mode_item->addOption($deadline_mode_option_fixed);
 
         if ($this->is_worksheet) {
@@ -89,7 +93,14 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
             $this->timelimit_item->setShowMinutes(true);
             $deadline_mode_option_timelimit = new ilRadioOption($this->i18N->txt('frm_deadline_mode_timelimit'), self::DEADLINE_MODE_TIMELIMIT);
             $deadline_mode_option_timelimit->addSubItem($this->timelimit_item);
+            $deadline_mode_option_timelimit->setDisabled($this->disable_deadline_mode_selection);
             $this->deadline_mode_item->addOption($deadline_mode_option_timelimit);
+        }
+
+        if ($this->disable_deadline_mode_selection) {
+            $this->deadline_mode_item->setInfo(
+                $this->i18N->txt('frm_deadline_mode_desc') . '<br><br>' . $this->i18N->txt('frm_deadline_mode_locked'),
+            );
         }
 
         $this->addItem($this->deadline_mode_item);
@@ -111,7 +122,7 @@ class ilMumieTaskLPSettingsFormGUI extends ilPropertyFormGUI
     {
         $ok = parent::checkInput();
 
-        if ($this->is_worksheet && !$this->hasEffectiveDeadlineInput()) {
+        if ($this->is_worksheet && !$this->disable_deadline_mode_selection && !$this->hasEffectiveDeadlineInput()) {
             $ok = false;
             $this->deadline_mode_item->setAlert($this->i18N->txt('frm_deadline_mode_required_for_worksheet'));
         }

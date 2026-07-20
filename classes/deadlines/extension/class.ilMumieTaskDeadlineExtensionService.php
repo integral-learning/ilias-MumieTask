@@ -63,6 +63,23 @@ class ilMumieTaskDeadlineExtensionService
         $db->manipulate('DELETE FROM xmum_deadline_ext WHERE task_id = ' . $db->quote($task->getId(), 'integer'));
     }
 
+    /**
+     * True once at least one student has a per-user extension row for this task, e.g. from
+     * ensureTimelimitStarted() on first open or a manually granted fixed-deadline extension.
+     * Switching deadline_mode while this is true would strand those rows under a mode they were
+     * never created for, so this is the point at which the mode should no longer be changeable.
+     */
+    public static function hasAnyExtensionForTask($task): bool
+    {
+        global $DIC;
+        $db = $DIC->database();
+        $result = $db->query(
+            'SELECT 1 FROM xmum_deadline_ext WHERE task_id = ' . $db->quote($task->getId(), 'integer') . ' LIMIT 1',
+        );
+
+        return null !== $db->fetchAssoc($result);
+    }
+
     private static function insertDeadlineExtension(ilMumieTaskDeadlineExtension $deadline_extension)
     {
         global $DIC;

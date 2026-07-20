@@ -537,6 +537,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
     private function applyDeadlineMode(): void
     {
+        if (ilMumieTaskDeadlineExtensionService::hasAnyExtensionForTask($this->object)) {
+            return;
+        }
         $mode = $this->form->getInput('deadline_mode');
         if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_FIXED === $mode) {
             $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
@@ -563,7 +566,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $ctrl = $DIC->ctrl();
 
-        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet(), $this->object->isWorksheet());
+        $form = new ilMumieTaskLPSettingsFormGUI(
+            $this->object->isGradepoolSet(),
+            $this->object->isWorksheet(),
+            ilMumieTaskDeadlineExtensionService::hasAnyExtensionForTask($this->object),
+        );
         $form->setFields();
         $form->setTitle($this->i18N->txt('tab_lp_settings'));
 
