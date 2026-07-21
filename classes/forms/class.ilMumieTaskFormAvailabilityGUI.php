@@ -33,7 +33,7 @@ class ilMumieTaskFormAvailabilityGUI extends ilPropertyFormGUI
         $this->addItem($online_item);
         $this->online_item = $online_item;
 
-        $act_type_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_visibility_until'), 'activation_type');
+        $act_type_item = new ilCheckboxInputGUI($this->i18N->globalTxt('rep_time_based_availability'), 'activation_type');
 
         $duration_item = new ilDateDurationInputGUI($this->i18N->globalTxt('rep_time_period'), 'access_period');
         $duration_item->setRequired(true);
