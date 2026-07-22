@@ -88,7 +88,22 @@ class ilMumieTaskGradeSync
         $response = json_decode($curl->exec());
         $curl->close();
 
+        if ($this->hasError($response)) {
+            ilLoggerFactory::getLogger('xmum')->warning('MumieTask: xAPI grade sync request failed with status ' . $response->status);
+
+            return [];
+        }
+
         return $response;
+    }
+
+    /**
+     * The Pool responds with a single object carrying a "status" field (instead of
+     * an array of xAPI statements) when the sync request itself failed.
+     */
+    private function hasError($response): bool
+    {
+        return is_object($response) && isset($response->status) && 200 !== $response->status;
     }
 
     private function getXapiRequestBody($getOnlyChangedGrades)
