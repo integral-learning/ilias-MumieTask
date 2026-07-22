@@ -14,6 +14,9 @@ All important changes to this plugin will be documented in this file.
 ### Removed
 - Plugin no longer supports Ilias 10
 
+### Fixed
+- Fixed a crash when saving LP settings for a worksheet with a deadline, caused by a malformed entry in the MUMIE grade sync response
+
 ## [v5.0] - 2026-06-02
 ### Changed
 - Plugin now supports Ilias 10.7

@@ -213,6 +213,10 @@ class ilMumieTaskGradeSync
         $grades_by_user = new stdClass();
         if ($response) {
             foreach ($response as $xapi_grade) {
+                if (!is_object($xapi_grade) || !isset($xapi_grade->actor->account->name)) {
+                    ilLoggerFactory::getLogger('xmum')->warning('MumieTask: Skipping malformed xAPI grade sync response entry of type ' . gettype($xapi_grade));
+                    continue;
+                }
                 $ilias_id = $this->getIliasId($xapi_grade);
                 if (!isset($grades_by_user->$ilias_id)) {
                     $grades_by_user->{$ilias_id} = [];
