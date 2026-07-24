@@ -15,6 +15,9 @@ All important changes to this plugin will be documented in this file.
 - Plugin no longer supports Ilias 10
 - Removed the admin option to share a user's first name, last name or e-mail address with MUMIE servers. No personal user data is sent for SSO anymore, only a pseudonymous user id.
 
+### Fixed
+- Fixed a crash when saving LP settings for a worksheet with a deadline, caused by a malformed entry in the MUMIE grade sync response
+
 ## [v5.0] - 2026-06-02
 ### Changed
 - Plugin now supports Ilias 10.7

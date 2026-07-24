@@ -616,7 +616,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
 
         if ($force_grade_update) {
-            ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
+            try {
+                ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
+            } catch (Exception $e) {
+                ilLoggerFactory::getLogger('xmum')->warning('Error when updating grades for MUMIE Task: ' . $this->object->getId());
+                ilLoggerFactory::getLogger('xmum')->warning($e);
+            }
         }
 
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), false);

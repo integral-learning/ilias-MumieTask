@@ -160,7 +160,7 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
                 $item->setTimingType(ilObjectActivation::TIMINGS_ACTIVATION);
                 $item->setTimingStart($this->getActivationStartingTime());
                 $item->setTimingEnd($this->getActivationEndingTime());
-                $item->toggleVisible($this->getActivationVisibility());
+                $item->toggleVisible((bool) $this->getActivationVisibility());
             }
 
             $item->update($this->ref_id);
