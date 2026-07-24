@@ -442,3 +442,11 @@ if (!$ilDB->tableColumnExists('xmum_mumie_task', 'timelimit')) {
     );
 }
 ?>
+<#20>
+<?php
+foreach (['share_first_name', 'share_last_name', 'share_email'] as $column) {
+    if ($ilDB->tableColumnExists('xmum_admin_settings', $column)) {
+        $ilDB->dropTableColumn('xmum_admin_settings', $column);
+    }
+}
+?>
