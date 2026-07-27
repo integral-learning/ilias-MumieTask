@@ -52,7 +52,7 @@ frm_sync_lp#:#Grade synchronization
 frm_sync_lp_desc#:#Choose whether to automatically load grades from the MUMIE server into ILIAS for this MUMIE Task
 frm_privategradepool#:#Share grades with other courses
 frm_privategradepool_desc#:#Choose whether to share grades with other ILIAS repositories.
-<br>If sharing is enabled, points that were earned for MUMIE problems in other repositories will be automatically synchronized with this repository\'s gradebook.
+<br>If sharing is enabled, points that were earned for MUMIE problems or worksheets in other repositories will be automatically synchronized with this repository\'s gradebook.
 <br>If not, this repository will neither be able to import nor to export grades.
 frm_privategradepool_decided#:#<b>Note:</b><br> This decision was <b>final</b> and affects all other MUMIE Tasks in this course.
 frm_privategradepool_undecided#:#<b style="color:red">Warning:</b><br> This decision is <b>final</b> and affects all other MUMIE Tasks in this course.
