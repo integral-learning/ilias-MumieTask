@@ -258,6 +258,14 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
             ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         }
+
+        if ($mumieTask->isDummy()) {
+            // Only multi-select problems were chosen, so this placeholder never became a real task itself.
+            $this->removeObjectAndRedirectToParent();
+
+            return;
+        }
+
         $tpl->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
 
         $DIC->ctrl()->redirect($this, 'editProperties');
@@ -460,6 +468,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      * @throws ilInvalidTreeStructureException
      */
     public function cancelDummy(): void
+    {
+        $this->removeObjectAndRedirectToParent();
+    }
+
+    /**
+     * Delete this object and return to the parent container's repository listing.
+     *
+     * @throws ilRepositoryException
+     * @throws ilCtrlException
+     * @throws ilObjectNotFoundException
+     * @throws ilDatabaseException
+     * @throws ilInvalidTreeStructureException
+     */
+    private function removeObjectAndRedirectToParent(): void
     {
         global $DIC;
         $tree = $DIC->repositoryTree();
