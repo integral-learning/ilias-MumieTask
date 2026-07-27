@@ -36,7 +36,7 @@ class ilMumieTaskSSOService
 
         if (!is_null($mumietoken->getToken()) && $mumietoken->getToken() == $token && null != $user_rec) {
             $current = time();
-            if (($current - $mumietoken->getTimecreated()) >= 1000) {
+            if (($current - $mumietoken->getTimecreated()) >= 60) {
                 $response->status = 'invalid';
             } else {
                 $response->status = 'valid';
