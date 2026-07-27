@@ -70,7 +70,7 @@ frm_online_info#:#Make this MUMIE Task visible and usable to all users with read
 frm_online_disabled_warning#:#This MUMIE Task cannot be set online because a decision is still pending. Please go to grading settings.
 frm_online_disabled_worksheet_warning#:#This worksheet cannot be set online until a deadline or time limit is set. Please go to grading settings.
 open_prb_selector#:#Open problem selector
-open_prb_selector_desc#:#Click here to open a more detailed selection screen. You can filter all problems by category and enter search terms.
+open_prb_selector_desc#:#Click here to open a more detailed selection screen. You can filter all problems and worksheets by category and enter search terms.
 frm_list_grade#:#Grade
 frm_user_overview_list_grade_desc#:#<br><br>By default the newest submission before the deadline is used. If you want to use a different submission, you can click on the corresponding button to overwrite the current grade.
 frm_user_overview_list_change_grade#:#Change Grade
