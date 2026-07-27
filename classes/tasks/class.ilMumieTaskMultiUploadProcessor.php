@@ -55,9 +55,10 @@ class ilMumieTaskMultiUploadProcessor
     private static function generateMumieTask(ilMumieTaskTaskDTO $task_dto, ilObjMumieTask $base_task)
     {
         $new_task = self::generateEmptyMumieTask($base_task->getParentRef(), $base_task->getType());
+        $server = ilMumieTaskServer::fromUrl($task_dto->getServer());
 
         $new_task->setTitle($task_dto->getName());
-        $new_task->setServer($task_dto->getServer());
+        $new_task->setServer($server->getUrlPrefix());
         $new_task->setMumieCourse($task_dto->getCourse());
         $new_task->setTaskurl($task_dto->getLink());
         $new_task->setLanguage($task_dto->getLanguage());
