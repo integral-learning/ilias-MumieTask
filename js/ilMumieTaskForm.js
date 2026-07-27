@@ -210,6 +210,15 @@
                         const problemLang = langController.getSelectedLanguage();
                         const origin = window.location.origin;
 
+                        console.log('[MumieTask DEBUG] multi-select click', {
+                            lmsSelectorUrl: lmsSelectorUrl,
+                            selectedServerUrl: selectedServerUrl,
+                            lmsSelectorOrigin: getOrigin(lmsSelectorUrl),
+                            selectedServerOrigin: getOrigin(selectedServerUrl),
+                            shouldUseSSO: shouldUseSSO(selectedServerUrl),
+                            problemSelectorSsoUrl: problemSelectorSsoUrl,
+                        });
+
                         if (shouldUseSSO(selectedServerUrl)) {
                             problemSelectorWindow = window.open(
                                 problemSelectorSsoUrl
