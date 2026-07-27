@@ -87,6 +87,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             (string) ($_GET['serverUrl'] ?? ''),
             (string) ($_GET['problemLang'] ?? ''),
             (string) ($_GET['origin'] ?? ''),
+            filter_var($_GET['multiSelect'] ?? false, FILTER_VALIDATE_BOOLEAN),
         );
         exit;
     }
