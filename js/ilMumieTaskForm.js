@@ -141,7 +141,13 @@
                     if (event.origin !== lmsSelectorUrl) {
                         return;
                     }
-                    const importObj = JSON.parse(event.data);
+                    let importObj;
+                    try {
+                        importObj = JSON.parse(event.data);
+                    } catch (error) {
+                        sendFailure(error.message);
+                        return;
+                    }
                     if (Array.isArray(importObj)) {
                         try {
                             window.ilMumieTaskDropzone.setData(JSON.stringify(importObj.map(task => JSON.stringify(task))));
