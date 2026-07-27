@@ -143,7 +143,7 @@ class ilMumieTaskSSOService
      */
     private const LECTURER_SUFFIX = '@lecturer@';
 
-    public function getProblemSelectorLaunchForm(string $serverUrl, string $problemLang, string $origin): string
+    public function getProblemSelectorLaunchForm(string $serverUrl, string $problemLang, string $origin, bool $multiSelect = false): string
     {
         global $DIC;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
@@ -159,6 +159,7 @@ class ilMumieTaskSSOService
         $tpl->setVariable('SERVER_URL', htmlspecialchars($serverUrl));
         $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
         $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
+        $tpl->setVariable('MULTI_SELECT', $multiSelect ? 'true' : 'false');
 
         return $tpl->get();
     }
