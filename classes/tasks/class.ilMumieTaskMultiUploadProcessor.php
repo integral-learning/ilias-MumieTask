@@ -63,6 +63,7 @@ class ilMumieTaskMultiUploadProcessor
         $new_task->setLanguage($task_dto->getLanguage());
         $new_task->setLaunchcontainer($base_task->getLaunchcontainer());
         $new_task->setMumieCoursefile($task_dto->getPathToCoursefile());
+        $new_task->setWorksheet($task_dto->getWorksheet());
         $new_task->setDeadline($base_task->getDeadline());
         $new_task->setTimelimit($base_task->getTimelimit());
         $new_task->setOnline($base_task->getOnline());
@@ -84,6 +85,11 @@ class ilMumieTaskMultiUploadProcessor
 
     private static function isValidProblem(ilMumieTaskTaskDTO $task_dto): bool
     {
+        if (str_starts_with($task_dto->getLink(), ilObjMumieTask::WORKSHEET_PREFIX)) {
+            // Worksheets are not part of the course's regular task structure and can't be looked up there.
+            return true;
+        }
+
         $server = ilMumieTaskServer::fromUrl($task_dto->getServer());
         $server->buildStructure();
         $course = $server->getCoursebyName($task_dto->getCourse());
