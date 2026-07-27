@@ -10,6 +10,7 @@ All important changes to this plugin will be documented in this file.
 
 ### Changed
 - Plugin now supports Ilias 11.1
+- Tightened the SSO token verification window from ~16 minutes to 60 seconds, matching the other LMS plugin implementations
 
 ### Removed
 - Plugin no longer supports Ilias 10
