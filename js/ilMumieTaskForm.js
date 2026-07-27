@@ -142,6 +142,16 @@
                         return;
                     }
                     const importObj = JSON.parse(event.data);
+                    if (Array.isArray(importObj)) {
+                        try {
+                            window.ilMumieTaskDropzone.setData(JSON.stringify(importObj.map(task => JSON.stringify(task))));
+                            sendSuccess();
+                            window.focus();
+                        } catch (error) {
+                            sendFailure(error.message);
+                        }
+                        return;
+                    }
                     const worksheet = importObj.worksheet ?? null;
                     try {
                         langController.setLanguage(importObj.language);
