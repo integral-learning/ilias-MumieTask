@@ -9,6 +9,8 @@
  */
 class ilMumieTaskMultiUploadProcessor
 {
+    private const MAX_TASKS_PER_UPLOAD = 50;
+
     public static function process(ilObjMumieTask $base_task, string $tasks_json)
     {
         global $DIC;
@@ -24,6 +26,10 @@ class ilMumieTaskMultiUploadProcessor
     {
         try {
             $task_dtos = self::parseTaskDTOs($tasks_json);
+
+            if (0 === count($task_dtos) || count($task_dtos) > self::MAX_TASKS_PER_UPLOAD) {
+                return false;
+            }
 
             return !in_array(
                 false,

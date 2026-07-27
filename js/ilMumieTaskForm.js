@@ -147,7 +147,14 @@
                     if (event.origin !== lmsSelectorUrl) {
                         return;
                     }
-                    const importObj = JSON.parse(event.data);
+                    let importObj;
+                    try {
+                        importObj = JSON.parse(event.data);
+                    } catch (error) {
+                        console.log('[MumieTask DEBUG] failed to parse message data', error);
+                        sendFailure(error.message);
+                        return;
+                    }
                     if (Array.isArray(importObj)) {
                         console.log('[MumieTask DEBUG] message is a multi-select array', importObj);
                         try {
