@@ -29,10 +29,10 @@ properties#:#Settings
 mumie_server#:#MUMIE server
 mumie_server_desc#:#Please select a MUMIE server to get an updated list of available tasks and courses.
 mumie_course#:#MUMIE course
-mumie_select_problem#:#Select a MUMIE Problem
-mumie_problem#:#MUMIE problem
-mumie_problem_desc#:#A MUMIE problem is a single graded exercise on MUMIE
-frm_tsk_problem_not_found#:#This problem doesn't exist in the selected course
+mumie_select_problem#:#Select a MUMIE Problem or Worksheet
+mumie_problem#:#MUMIE problem or worksheet
+mumie_problem_desc#:#A MUMIE problem or worksheet is a single graded exercise on MUMIE
+frm_tsk_problem_not_found#:#This problem or worksheet doesn't exist in the selected course
 launchcontainer#:#Launch container
 launchcontainer_desc#:#Please select whether the activity should be opened in a new browser tab or embedded into the ILIAS environment
 window#:#New window
@@ -118,7 +118,7 @@ form_drag_mt_here#:#Drag MUMIE Problems or Worksheets here
 multi_create_success#:#Successfully created %s additional MUMIE Tasks!
 mumie_problems#:#MUMIE Problems / Worksheets
 open_dnd_prb_selector#:#Open multi problem selector
-dnd_prb_selector_desc#:#Clicking here will open the multi problem selection screen. Simply choose the problems you want to import.<br><br>
+dnd_prb_selector_desc#:#Clicking here will open the multi problem selection screen. Simply choose the problems or worksheets you want to import.<br><br>
 frm_tsk_problems_not_found#:#One or more of the selected items could not be found.
-dropzone_description#:#Once you click <b>Save</b>, Ilias will automatically create new MUMIE-Tasks for the selected problems. The settings for <i>Launch container</i>, <i>online</i> and <i>Deadline</i> will be copied from this currently opened MUMIE Task.
+dropzone_description#:#Once you click <b>Save</b>, Ilias will automatically create new MUMIE-Tasks for the selected problems and worksheets. The settings for <i>Launch container</i>, <i>online</i> and <i>Deadline</i> will be copied from this currently opened MUMIE Task.
 multi_problem_list_description#:#You have selected the following MUMIE Problems and Worksheets
