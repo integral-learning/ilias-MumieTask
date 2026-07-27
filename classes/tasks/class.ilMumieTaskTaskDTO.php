@@ -39,6 +39,10 @@ class ilMumieTaskTaskDTO
      * @var string
      */
     private $link;
+    /**
+     * @var object|null
+     */
+    private $worksheet;
 
     public function __construct(string $task_json)
     {
@@ -49,6 +53,7 @@ class ilMumieTaskTaskDTO
         $this->path_to_coursefile = $task->path_to_coursefile;
         $this->language = $task->language;
         $this->link = $task->link;
+        $this->worksheet = $task->worksheet ?? null;
     }
 
     public function getServer(): string
@@ -82,5 +87,10 @@ class ilMumieTaskTaskDTO
     public function getLink()
     {
         return $this->link;
+    }
+
+    public function getWorksheet(): string
+    {
+        return null !== $this->worksheet ? json_encode($this->worksheet) : '';
     }
 }
