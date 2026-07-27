@@ -138,16 +138,24 @@
             function addMessageListener() {
                 window.addEventListener('message', (event) => {
                     event.preventDefault();
+                    console.log('[MumieTask DEBUG] message received', {
+                        eventOrigin: event.origin,
+                        lmsSelectorUrl: lmsSelectorUrl,
+                        originMatches: event.origin === lmsSelectorUrl,
+                        rawData: event.data,
+                    });
                     if (event.origin !== lmsSelectorUrl) {
                         return;
                     }
                     const importObj = JSON.parse(event.data);
                     if (Array.isArray(importObj)) {
+                        console.log('[MumieTask DEBUG] message is a multi-select array', importObj);
                         try {
                             window.ilMumieTaskDropzone.setData(JSON.stringify(importObj.map(task => JSON.stringify(task))));
                             sendSuccess();
                             window.focus();
                         } catch (error) {
+                            console.log('[MumieTask DEBUG] multi-select handling threw', error);
                             sendFailure(error.message);
                         }
                         return;
