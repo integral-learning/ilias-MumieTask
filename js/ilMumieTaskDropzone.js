@@ -16,7 +16,10 @@
       })
       dropzone.ondrop = (event) => {
         dropzone.classList.remove(DRAG_OVER_CLASS);
-        const taskJsonString = event.dataTransfer.getData("mumie/jsonArray");
+        applyTasksJson(event.dataTransfer.getData("mumie/jsonArray"));
+      }
+
+      function applyTasksJson(taskJsonString) {
         multiProblemInputElem.setAttribute("value", taskJsonString);
         problemListController.setData(taskJsonString);
       }
@@ -62,6 +65,10 @@
           }
         }
       })();
+
+      window.ilMumieTaskDropzone = {
+        setData: applyTasksJson,
+      };
     })
   }
 )(jQuery)
