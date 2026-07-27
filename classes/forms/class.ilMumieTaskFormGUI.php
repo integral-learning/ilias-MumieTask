@@ -154,11 +154,15 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             return $ok;
         }
 
-        if (null == $task && $is_dummy) {
-            $ok = false;
-            $this->problem_display_item->setAlert($this->i18N->globalTxt('required_field'));
+        $multi_problems_input = $this->getInput('xmum_multi_problems');
 
-            return $ok;
+        if (null == $task && $is_dummy) {
+            if (empty($multi_problems_input)) {
+                $ok = false;
+                $this->problem_display_item->setAlert($this->i18N->globalTxt('required_field'));
+
+                return $ok;
+            }
         } elseif (null == $task) {
             $ok = false;
             $this->problem_display_item->setAlert($this->i18N->txt('frm_tsk_problem_not_found'));
@@ -166,7 +170,6 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             return $ok;
         }
 
-        $multi_problems_input = $this->getInput('xmum_multi_problems');
         if (!empty($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input)) {
             $ok = false;
             $this->dropzone_item->setAlert($this->i18N->txt('frm_tsk_problems_not_found'));
