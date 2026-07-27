@@ -8,8 +8,13 @@
 
 (function ($) {
     $(document).ready(function () {
+      console.log('[MumieTaskDropzone DEBUG] ready fired');
       const dropzone = document.getElementById("xmum-dropzone");
       const multiProblemInputElem = document.getElementById("xmum_multi_problems");
+      console.log('[MumieTaskDropzone DEBUG] elements found', {
+          dropzone: dropzone,
+          multiProblemInputElem: multiProblemInputElem,
+      });
       const DRAG_OVER_CLASS = "mumie-drag-over";
       dropzone.addEventListener("dragover", (event) => {
         event.preventDefault();
@@ -69,6 +74,7 @@
       window.ilMumieTaskDropzone = {
         setData: applyTasksJson,
       };
+      console.log('[MumieTaskDropzone DEBUG] window.ilMumieTaskDropzone set', window.ilMumieTaskDropzone);
     })
   }
 )(jQuery)
