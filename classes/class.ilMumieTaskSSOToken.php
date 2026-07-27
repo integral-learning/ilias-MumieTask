@@ -15,7 +15,7 @@
 class ilMumieTaskSSOToken
 {
     public const MUMIETOKENS_TABLE_NAME = 'xmum_sso_tokens';
-    public const TOKEN_LENGTH = 20;
+    public const TOKEN_LENGTH = 30;
     private $token;
     private $user;
     private $timecreated;
