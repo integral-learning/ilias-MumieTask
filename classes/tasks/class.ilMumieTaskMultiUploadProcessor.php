@@ -81,6 +81,9 @@ class ilMumieTaskMultiUploadProcessor
         $server = ilMumieTaskServer::fromUrl($task_dto->getServer());
         $server->buildStructure();
         $course = $server->getCoursebyName($task_dto->getCourse());
+        if (null === $course) {
+            return false;
+        }
         $task = $course->getTaskByLink($task_dto->getLink());
 
         return !is_null($task);
