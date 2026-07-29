@@ -2,13 +2,6 @@
 add_server#:#Add MUMIE server
 add_server_desc#:#Click here to add a new MUMIE server to ILIAS
 id#:#ID
-frm_share_first_name#:#First name 
-frm_share_first_name_desc#:#Choose, whether a user's first name should be shared with MUMIE servers
-frm_share_last_name#:#Last name
-frm_share_last_name_desc#:#Choose, whether a user's last name should be shared with MUMIE servers
-frm_share_email#:#E-Mail
-frm_share_email_desc#:#Choose, whether a user's e-mail address should be shared with MUMIE servers
-tab_shared_data#:#Privacy
 tab_servers#:#Servers
 tab_authentication#:#Authentication
 tab_problem_selector#:#Developer options
@@ -20,7 +13,6 @@ frm_auth_api#:#MUMIE API Key
 frm_auth_api_desc#:#Specify the MUMIE API key for grade synchronization
 frm_auth_org#:#MUMIE Org
 frm_auth_org_desc#:#Specify the MUMIE organization key, i.e "rwth"
-frm_shared_data_description#:#Choose which user data should be shared with MUMIE servers
 frm_server_description#:# TODO
 url_prefix#:#Server URL
 server_not_valid#:#There is no MUMIE server for this URL

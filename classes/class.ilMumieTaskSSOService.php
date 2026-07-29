@@ -16,8 +16,7 @@ class ilMumieTaskSSOService
     /**
      * Verifies MUMIE tokens for SSO.
      *
-     * @return json object $response containing the field status: valid or invalid
-     *              and any user data that the admin has selected for sharing (user_id, firstname, lastname,email)
+     * @return json object $response containing the field status: valid or invalid, and the pseudonymous user_id
      */
     public static function verifyToken()
     {
@@ -34,7 +33,6 @@ class ilMumieTaskSSOService
         $user_query = $db->query('SELECT * FROM usr_data WHERE usr_id = ' . $db->quote($il_user_id, 'integer'));
         $user_rec = $db->fetchAssoc($user_query);
         $response = new stdClass();
-        $admin_settings = ilMumieTaskAdminSettings::getInstance();
 
         if (!is_null($mumietoken->getToken()) && $mumietoken->getToken() == $token && null != $user_rec) {
             $current = time();
@@ -43,16 +41,6 @@ class ilMumieTaskSSOService
             } else {
                 $response->status = 'valid';
                 $response->userid = $hashed_id;
-
-                if ($admin_settings->getShareFirstName()) {
-                    $response->firstname = $user_rec['firstname'];
-                }
-                if ($admin_settings->getShareLastName()) {
-                    $response->lastname = $user_rec['lastname'];
-                }
-                if ($admin_settings->getShareEmail()) {
-                    $response->email = $user_rec['email'];
-                }
             }
         } else {
             $response->status = 'invalid';

@@ -36,7 +36,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
             case 'editServer':
             case 'cancelServer':
             case 'listServers':
-            case 'sharedData':
             case 'authentication':
             case 'problemSelector':
             default:
@@ -75,12 +74,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
             $ctrl->getLinkTarget($this, 'listServers'),
         );
         $tabs->addTab(
-            'tab_shared_data',
-            $i18N->txt('tab_shared_data'),
-            $ctrl->getLinkTarget($this, 'sharedData'),
-        );
-
-        $tabs->addTab(
             'tab_authentication',
             $i18N->txt('tab_authentication'),
             $ctrl->getLinkTarget($this, 'authentication'),
@@ -102,84 +95,6 @@ class ilMumieTaskConfigGUI extends ilPluginConfigGUI
         $server_gui = new ilMumieTaskServerTableGUI($this, 'listServers');
         $server_gui->init($this);
         $DIC->ui()->mainTemplate()->setContent($server_gui->getHTML());
-    }
-
-    /**
-     * Display options for sharing personal data.
-     */
-    public function sharedData()
-    {
-        global $DIC;
-        $DIC->tabs()->activateTab('tab_shared_data');
-        $this->initShareDataForm();
-
-        $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
-    }
-
-    /**
-     * Define and initialize the form for privacy options.
-     */
-    public function initShareDataForm($load_saved_values = true)
-    {
-        global $DIC;
-        $admin_settings = ilMumieTaskAdminSettings::getInstance();
-        $form = new ilPropertyFormGUI();
-        $form->setFormAction($DIC->ctrl()->getFormAction($this));
-        $form->setTitle($this->i18N->txt('tab_shared_data'));
-        $form->setDescription($this->i18N->txt('frm_shared_data_description'));
-
-        $first_name_item = new ilCheckboxInputGUI($this->i18N->txt('frm_share_first_name'), 'shareFirstName');
-        $first_name_item->setInfo($this->i18N->txt('frm_share_first_name_desc'));
-        if ($admin_settings->getShareFirstName() && $load_saved_values) {
-            $first_name_item->setValue('1');
-            $first_name_item->setChecked(true);
-        }
-        $last_name_item = new ilCheckboxInputGUI($this->i18N->txt('frm_share_last_name'), 'shareLastName');
-        $last_name_item->setInfo($this->i18N->txt('frm_share_last_name_desc'));
-        if ($admin_settings->getShareLastName() && $load_saved_values) {
-            $last_name_item->setValue('1');
-            $last_name_item->setChecked(true);
-        }
-
-        $email_item = new ilCheckboxInputGUI($this->i18N->txt('frm_share_email'), 'shareEmail');
-        $email_item->setInfo($this->i18N->txt('frm_share_email_desc'));
-        if ($admin_settings->getShareEmail() && $load_saved_values) {
-            $email_item->setValue('1');
-            $email_item->setChecked(true);
-        }
-
-        $form->addItem($first_name_item);
-        $form->addItem($last_name_item);
-        $form->addItem($email_item);
-        $form->addCommandButton('submitSharedData', $this->i18N->globalTxt('save'));
-        $form->addCommandButton('config', $this->i18N->globalTxt('cancel'));
-        $this->form = $form;
-    }
-
-    /**
-     * Submit changes made in the shared data form.
-     *
-     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
-     */
-    private function submitSharedData()
-    {
-        global $DIC;
-        $this->initShareDataForm(false);
-        if (!$this->form->checkInput()) {
-            $this->form->setValuesByPost();
-            $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
-
-            return;
-        }
-
-        $admin_settings = ilMumieTaskAdminSettings::getInstance();
-        $admin_settings->setShareFirstName((int) $this->form->getInput('shareFirstName'));
-        $admin_settings->setShareLastName((int) $this->form->getInput('shareLastName'));
-        $admin_settings->setShareEmail((int) $this->form->getInput('shareEmail'));
-        $admin_settings->update();
-        $cmd = 'sharedData';
-        $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
-        $this->$cmd();
     }
 
     /**
