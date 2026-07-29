@@ -46,30 +46,48 @@ class ilMumieTaskParticipantService
 
     public static function getAllMemberIds(ilObjMumieTask $mumie_task): array
     {
-        if (self::isInBaseRepository($mumie_task)) {
-            return self::getAllUserIds();
+        $container_ref_id = self::findEnclosingCourseOrGroupRefId($mumie_task->getRefId());
+        if (null === $container_ref_id) {
+            return self::getMemberIdsWithoutCourseContext($mumie_task);
         }
 
-        return ilParticipants::getInstance($mumie_task->getParentRef())->getMembers();
+        return ilParticipants::getInstance($container_ref_id)->getMembers();
     }
 
-    private static function isInBaseRepository(ilObjMumieTask $mumie_task): bool
+    /**
+     * @return null if the task isn't inside a Course or Group (e.g. base repository)
+     */
+    private static function findEnclosingCourseOrGroupRefId(int $ref_id): ?int
     {
-        return 1 == $mumie_task->getParentRef();
+        global $DIC;
+        $tree = $DIC->repositoryTree();
+
+        foreach (array_reverse($tree->getPathFull($ref_id)) as $node) {
+            if (in_array($node['type'], ['crs', 'grp'], true)) {
+                return (int) $node['child'];
+            }
+        }
+
+        return null;
     }
 
-    private static function getAllUserIds(): array
+    /**
+     * Without a Course/Group roster to scope by, fall back to users who already have
+     * LP data for this task (i.e. have opened or submitted it at least once), instead
+     * of syncing every user on the platform.
+     */
+    private static function getMemberIdsWithoutCourseContext(ilObjMumieTask $mumie_task): array
     {
         global $DIC;
         $db = $DIC->database();
         $result = $db->query(
-            'SELECT usr_id FROM usr_data;',
+            'SELECT DISTINCT usr_id FROM ut_lp_marks WHERE obj_id = ' . $db->quote($mumie_task->getId(), 'integer'),
         );
-        $allIds = [];
-        while ($user_id = $db->fetchAssoc($result)) {
-            array_push($allIds, $user_id['usr_id']);
+        $ids = [];
+        while ($row = $db->fetchAssoc($result)) {
+            $ids[] = (int) $row['usr_id'];
         }
 
-        return $allIds;
+        return $ids;
     }
 }

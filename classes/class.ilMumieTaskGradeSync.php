@@ -18,12 +18,12 @@ class ilMumieTaskGradeSync
     private $admin_settings;
     private $force_update;
 
-    public function __construct($task, $force_update)
+    public function __construct($task, $force_update, ?array $user_ids = null)
     {
         $this->admin_settings = ilMumieTaskAdminSettings::getInstance();
         $this->task = $task;
         $this->force_update = $force_update;
-        $this->user_ids = ilMumieTaskParticipantService::getAllMemberIds($task);
+        $this->user_ids = $user_ids ?? ilMumieTaskParticipantService::getAllMemberIds($task);
     }
 
     public function getSyncIdForUser($user_id)
@@ -165,11 +165,14 @@ class ilMumieTaskGradeSync
         return $this->getValidGradeByUser($this->getNewXapiGrades());
     }
 
+    /**
+     * @return null if there is no new xAPI grade for this user since the last sync
+     */
     public function getValidAndNewXapiGradesForUser($user_id)
     {
         $grades_by_user = $this->getValidAndNewXapiGradesByUser();
 
-        return $grades_by_user[$user_id];
+        return $grades_by_user[$user_id] ?? null;
     }
 
     /**

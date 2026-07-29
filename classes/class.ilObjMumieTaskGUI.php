@@ -351,10 +351,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $ctrl = $DIC->ctrl();
 
-        ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
+            ilMumieTaskLPStatus::updateGrades($this->object);
             $ctrl->redirectByClass(['ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'], 'showObjectSummary');
         } else {
+            ilMumieTaskLPStatus::updateGradeForUser($this->object, $DIC->user()->getId());
             $this->setProgressInfo();
             $ctrl->redirectByClass(['ilObjMumieTaskGUI', 'ilLearningProgressGUI']);
         }

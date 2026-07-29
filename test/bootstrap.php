@@ -28,3 +28,4 @@ if (!class_exists('ilObjectPlugin')) {
 }
 
 require_once __DIR__ . '/../classes/class.ilObjMumieTask.php';
+require_once __DIR__ . '/../classes/class.ilMumieTaskGradeSync.php';

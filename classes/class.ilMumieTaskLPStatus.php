@@ -86,13 +86,16 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
         if (!self::isGradable($task)) {
             return;
         }
-        $grade_sync = new ilMumieTaskGradeSync($task, $force_update);
+        $grade_sync = new ilMumieTaskGradeSync($task, $force_update, [$user_id]);
 
         if ($force_update) {
             self::deleteLPForTask($task, $user_id);
         }
 
         $xapi_grade = $grade_sync->getValidAndNewXapiGradesForUser($user_id);
+        if (null === $xapi_grade) {
+            return;
+        }
         self::upsertXapiGrade($xapi_grade, $task, $user_id);
     }
 
@@ -160,24 +163,6 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
                 'usr_id' => ['int', $user_id],
             ],
         );
-    }
-
-    /**
-     * Update grade for all MumieTasks that are found in a given ilContainer (e.g. Course).
-     *
-     * @param int $refId RefId of the ilContainer
-     */
-    public static function updateGradesForIlContainer($refId)
-    {
-        $mumieTasks = ilMumieTaskLPStatus::getMumieTasksInRepository($refId);
-        foreach ($mumieTasks as $mumieTask) {
-            try {
-                self::updateGrades($mumieTask);
-            } catch (Exception $e) {
-                ilLoggerFactory::getLogger('xmum')->info('Error when updating grades for MUMIE Task: ' . $mumieTask->getId());
-                ilLoggerFactory::getLogger('xmum')->info($e);
-            }
-        }
     }
 
     /**
@@ -262,12 +247,16 @@ class ilMumieTaskLPStatus extends ilLPStatusPlugin
 
     private static function deleteLPForTask($task, $user_id = 0)
     {
-        ilChangeEvent::_deleteReadEvents($task->getId());
+        if ($user_id > 0) {
+            ilChangeEvent::_deleteReadEventsForUsers($task->getId(), [$user_id]);
+        } else {
+            ilChangeEvent::_deleteReadEvents($task->getId());
+        }
         global $DIC;
         $db = $DIC->database();
         $query = 'DELETE FROM ut_lp_marks WHERE obj_id = ' . $db->quote($task->getId(), 'integer');
         if ($user_id > 0) {
-            $query .= ' AND usr_id = ' . $db->quote($task->getId(), 'integer');
+            $query .= ' AND usr_id = ' . $db->quote($user_id, 'integer');
         }
         $db->manipulate($query);
     }
