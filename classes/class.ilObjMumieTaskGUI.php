@@ -254,16 +254,17 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $this->saveFormValues();
 
-        if ($force_grade_update) {
-            ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
-            ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
-        }
-
         if ($mumieTask->isDummy()) {
             // Only multi-select problems were chosen, so this placeholder never became a real task itself.
+            // Skip the grade update below: the placeholder has no MUMIE task of its own to sync.
             $this->removeObjectAndRedirectToParent();
 
             return;
+        }
+
+        if ($force_grade_update) {
+            ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
+            ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         }
 
         $tpl->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
