@@ -148,13 +148,10 @@ class ilMumieTaskSSOService
         $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
         $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
 
-        ilLoggerFactory::getLogger('xmum')->info(
-            'MumieTask DEBUG: getProblemSelectorLaunchForm multiSelect=' . var_export($multiSelect, true),
-        );
-
         if ($multiSelect) {
-            $tpl->setCurrentBlock('multi_select');
-            $tpl->parseCurrentBlock();
+            // The block has no variables of its own, so touchBlock() is required to keep it -
+            // parseCurrentBlock() alone treats a variable-less block as empty and drops it.
+            $tpl->touchBlock('multi_select');
         }
 
         return $tpl->get();
