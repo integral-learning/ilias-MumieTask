@@ -170,12 +170,33 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             return $ok;
         }
 
-        if (!empty($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input)) {
-            $ok = false;
-            $this->dropzone_item->setAlert($this->i18N->txt('frm_tsk_problems_not_found'));
+        if (!empty($multi_problems_input)) {
+            $validation_error = ilMumieTaskMultiUploadProcessor::getValidationError($multi_problems_input);
+            if (null !== $validation_error) {
+                $ok = false;
+                $this->dropzone_item->setAlert($this->getMultiProblemsErrorMessage($validation_error));
+            }
         }
 
         return $ok;
+    }
+
+    /**
+     * Map a ilMumieTaskMultiUploadProcessor validation error to a human-readable message.
+     */
+    private function getMultiProblemsErrorMessage(string $validation_error): string
+    {
+        switch ($validation_error) {
+            case 'empty':
+                return $this->i18N->txt('frm_tsk_problems_empty');
+            case 'too_many':
+                return sprintf(
+                    $this->i18N->txt('frm_tsk_problems_too_many'),
+                    ilMumieTaskMultiUploadProcessor::MAX_TASKS_PER_UPLOAD,
+                );
+            default:
+                return $this->i18N->txt('frm_tsk_problems_not_found');
+        }
     }
 
     /**

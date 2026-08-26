@@ -9,7 +9,7 @@
  */
 class ilMumieTaskMultiUploadProcessor
 {
-    private const MAX_TASKS_PER_UPLOAD = 50;
+    public const MAX_TASKS_PER_UPLOAD = 50;
 
     public static function process(ilObjMumieTask $base_task, string $tasks_json)
     {
@@ -24,28 +24,44 @@ class ilMumieTaskMultiUploadProcessor
 
     public static function isValid(string $tasks_json): bool
     {
+        return null === self::getValidationError($tasks_json);
+    }
+
+    /**
+     * @return string|null one of "empty", "too_many", "not_found", or null if the payload is valid
+     */
+    public static function getValidationError(string $tasks_json): ?string
+    {
         try {
             $task_dtos = self::parseTaskDTOs($tasks_json);
-
-            if (0 === count($task_dtos) || count($task_dtos) > self::MAX_TASKS_PER_UPLOAD) {
-                return false;
-            }
-
-            return !in_array(
-                false,
-                array_map(function ($task_dto) {
-                    return self::isValidProblem($task_dto);
-                }, $task_dtos),
-                true,
-            );
-        } catch (Exception $exception) {
-            return false;
+        } catch (Throwable $exception) {
+            return 'not_found';
         }
+
+        if (0 === count($task_dtos)) {
+            return 'empty';
+        }
+        if (count($task_dtos) > self::MAX_TASKS_PER_UPLOAD) {
+            return 'too_many';
+        }
+
+        $all_valid = !in_array(
+            false,
+            array_map(function ($task_dto) {
+                return self::isValidProblem($task_dto);
+            }, $task_dtos),
+            true,
+        );
+
+        return $all_valid ? null : 'not_found';
     }
 
     private static function parseTaskDTOs(string $tasks_json): array
     {
         $tasks = json_decode($tasks_json);
+        if (!is_array($tasks)) {
+            throw new InvalidArgumentException('Multi-select payload is not a JSON array.');
+        }
 
         return array_map(function (string $task) {
             return new ilMumieTaskTaskDTO($task);
