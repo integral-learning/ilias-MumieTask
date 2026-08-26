@@ -148,6 +148,10 @@ class ilMumieTaskSSOService
         $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
         $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
 
+        ilLoggerFactory::getLogger('xmum')->info(
+            'MumieTask DEBUG: getProblemSelectorLaunchForm multiSelect=' . var_export($multiSelect, true),
+        );
+
         if ($multiSelect) {
             $tpl->setCurrentBlock('multi_select');
             $tpl->parseCurrentBlock();

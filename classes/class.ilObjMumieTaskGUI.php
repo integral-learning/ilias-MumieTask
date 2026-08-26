@@ -82,13 +82,22 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function launchProblemSelector(): void
     {
+        $raw_multi_select = $_GET['multiSelect'] ?? null;
+        $filtered_multi_select = filter_var($_GET['multiSelect'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        ilLoggerFactory::getLogger('xmum')->info(
+            'MumieTask DEBUG: launchProblemSelector raw multiSelect=' . var_export($raw_multi_select, true)
+            . ' filtered=' . var_export($filtered_multi_select, true),
+        );
+
         $sso_service = new ilMumieTaskSSOService();
-        echo $sso_service->getProblemSelectorLaunchForm(
+        $form = $sso_service->getProblemSelectorLaunchForm(
             (string) ($_GET['serverUrl'] ?? ''),
             (string) ($_GET['problemLang'] ?? ''),
             (string) ($_GET['origin'] ?? ''),
-            filter_var($_GET['multiSelect'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            $filtered_multi_select,
         );
+        ilLoggerFactory::getLogger('xmum')->info('MumieTask DEBUG: rendered SSO form = ' . $form);
+        echo $form;
         exit;
     }
 
