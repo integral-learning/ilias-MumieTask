@@ -125,6 +125,13 @@ class ilObjMumieTask extends ilObjectPlugin implements ilLPStatusPluginInterface
     {
         global $DIC;
 
+        // A worksheet without a deadline or time limit has no point at which MUMIE would correct it,
+        // so it must never go online. Enforce this here, since it's the only place all update paths
+        // (availability form, multi-select import) funnel through.
+        if ($this->isWorksheet() && !$this->hasAnyDeadline()) {
+            $this->setOnline(0);
+        }
+
         $DIC->database()->update(
             ilObjMumieTask::$MUMIE_TASK_TABLE_NAME,
             [
