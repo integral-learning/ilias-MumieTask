@@ -122,7 +122,6 @@ grade_override_desc#:#Neue Abgaben werden automatisch in ILIAS übernommen, sofe
 student_name#:#Name
 deadline_extension_desc#:#Hier können Sie Studierenden individuelle Fristverlängerungen gewähren. Falls Sie bereits manuell eine andere Bewertung ausgewählt haben, hat diese Fristverlängerung keine Auswirkung.
 frm_multi_problem_header#:#Zusätzliche MUMIE-Probleme oder Worksheets erzeugen
-form_drag_mt_here#:#Ziehe Sie die MUMIE-Problems oder Worksheets hierhinein
 multi_create_success#:#Es wurden %s weitere MUMIE-Tasks erstellt!
 mumie_problems#:#MUMIE-Problems / Worksheets
 open_dnd_prb_selector#:#Mehrfach-Aufgabenauswahl öffnen

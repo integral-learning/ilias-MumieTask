@@ -122,7 +122,6 @@ grade_override_desc#:#Grades are automatically updated in ILIAS to the latest su
 student_name#:#Name
 deadline_extension_desc#:#Here you can grant a deadline extension to the student. If you have already manually selected a grade for them, this setting will not have any effect.
 frm_multi_problem_header#:#Create additional MUMIE Problems or Worksheets
-form_drag_mt_here#:#Drag MUMIE Problems or Worksheets here
 multi_create_success#:#Successfully created %s additional MUMIE Tasks!
 mumie_problems#:#MUMIE Problems / Worksheets
 open_dnd_prb_selector#:#Open multi problem selector

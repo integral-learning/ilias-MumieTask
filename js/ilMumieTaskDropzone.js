@@ -8,29 +8,12 @@
 
 (function ($) {
     $(document).ready(function () {
-      const dropzone = document.getElementById("xmum-dropzone");
       const multiProblemInputElem = document.getElementById("xmum_multi_problems");
-      const DRAG_OVER_CLASS = "mumie-drag-over";
-      dropzone.addEventListener("dragover", (event) => {
-        event.preventDefault();
-      })
-      dropzone.ondrop = (event) => {
-        dropzone.classList.remove(DRAG_OVER_CLASS);
-        applyTasksJson(event.dataTransfer.getData("mumie/jsonArray"));
-      }
 
       function applyTasksJson(taskJsonString) {
         multiProblemInputElem.setAttribute("value", taskJsonString);
         problemListController.setData(taskJsonString);
       }
-      dropzone.addEventListener("dragenter", (event) => {
-        event.preventDefault();
-        dropzone.classList.add(DRAG_OVER_CLASS);
-      })
-      dropzone.addEventListener("dragleave", (event) => {
-        event.preventDefault();
-        dropzone.classList.remove(DRAG_OVER_CLASS);
-      })
 
       const problemListController = (function () {
         const problemListElement = document.getElementById("xmum_selected_multi_problems");
@@ -69,6 +52,11 @@
       window.ilMumieTaskDropzone = {
         setData: applyTasksJson,
       };
+
+      const restoredValue = multiProblemInputElem.getAttribute("value");
+      if (restoredValue) {
+        problemListController.setData(restoredValue);
+      }
     })
   }
 )(jQuery)
