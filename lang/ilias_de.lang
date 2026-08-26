@@ -129,5 +129,6 @@ dnd_prb_selector_desc#:#Hier klicken, um die Mehrfach-Aufgabenauswahl zu öffnen
 frm_tsk_problems_not_found#:#Ein oder mehrere der ausgewählten Elemente konnten nicht auf dem Server gefunden werden
 frm_tsk_problems_empty#:#Es wurden keine Aufgaben oder Worksheets ausgewählt.
 frm_tsk_problems_too_many#:#Sie haben mehr Elemente ausgewählt als die maximal erlaubten %s pro Import.
+frm_tsk_problems_unreachable#:#Einer der ausgewählten MUMIE-Server konnte nicht erreicht werden. Bitte versuchen Sie es später erneut.
 dropzone_description#:#Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben und Worksheets erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> und <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
 multi_problem_list_description#:#Sie haben die folgenden MUMIE-Problems und Worksheets ausgewählt
