@@ -138,7 +138,7 @@
             function addMessageListener() {
                 window.addEventListener('message', (event) => {
                     event.preventDefault();
-                    if (event.origin !== lmsSelectorUrl) {
+                    if (event.origin !== getOrigin(lmsSelectorUrl)) {
                         return;
                     }
                     let importObj;
