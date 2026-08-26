@@ -28,7 +28,7 @@ class ilMumieTaskMultiUploadProcessor
     }
 
     /**
-     * @return string|null one of "empty", "too_many", "not_found", or null if the payload is valid
+     * @return string|null one of "empty", "too_many", "unreachable", "not_found", or null if the payload is valid
      */
     public static function getValidationError(string $tasks_json): ?string
     {
@@ -45,13 +45,19 @@ class ilMumieTaskMultiUploadProcessor
             return 'too_many';
         }
 
-        $all_valid = !in_array(
-            false,
-            array_map(function ($task_dto) {
-                return self::isValidProblem($task_dto);
-            }, $task_dtos),
-            true,
-        );
+        try {
+            $all_valid = !in_array(
+                false,
+                array_map(function ($task_dto) {
+                    return self::isValidProblem($task_dto);
+                }, $task_dtos),
+                true,
+            );
+        } catch (ilCurlConnectionException $exception) {
+            return 'unreachable';
+        } catch (Throwable $exception) {
+            return 'not_found';
+        }
 
         return $all_valid ? null : 'not_found';
     }

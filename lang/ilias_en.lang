@@ -121,5 +121,6 @@ dnd_prb_selector_desc#:#Clicking here will open the multi problem selection scre
 frm_tsk_problems_not_found#:#One or more of the selected items could not be found.
 frm_tsk_problems_empty#:#No problems or worksheets were selected.
 frm_tsk_problems_too_many#:#You selected more items than the maximum of %s allowed per import.
+frm_tsk_problems_unreachable#:#One of the selected MUMIE servers could not be reached. Please try again later.
 dropzone_description#:#Once you click <b>Save</b>, Ilias will automatically create new MUMIE-Tasks for the selected problems and worksheets. The settings for <i>Launch container</i>, <i>online</i> and <i>Deadline</i> will be copied from this currently opened MUMIE Task.
 multi_problem_list_description#:#You have selected the following MUMIE Problems and Worksheets

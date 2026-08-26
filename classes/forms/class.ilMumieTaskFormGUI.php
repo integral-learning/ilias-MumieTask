@@ -194,6 +194,8 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
                     $this->i18N->txt('frm_tsk_problems_too_many'),
                     ilMumieTaskMultiUploadProcessor::MAX_TASKS_PER_UPLOAD,
                 );
+            case 'unreachable':
+                return $this->i18N->txt('frm_tsk_problems_unreachable');
             default:
                 return $this->i18N->txt('frm_tsk_problems_not_found');
         }
