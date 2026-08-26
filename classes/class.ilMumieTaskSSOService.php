@@ -159,7 +159,12 @@ class ilMumieTaskSSOService
         $tpl->setVariable('SERVER_URL', htmlspecialchars($serverUrl));
         $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
         $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
-        $tpl->setVariable('MULTI_SELECT', $multiSelect ? 'true' : 'false');
+
+        if ($multiSelect) {
+            // The block has no variables of its own, so touchBlock() is required to keep it -
+            // parseCurrentBlock() alone treats a variable-less block as empty and drops it.
+            $tpl->touchBlock('multi_select');
+        }
 
         return $tpl->get();
     }
