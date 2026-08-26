@@ -242,8 +242,14 @@
                         problemSelectorWindow = window.open(
                           lmsSelectorUrl
                           + '/lms-problem-selector?'
-                          + "serverUrl="
-                          + encodeURIComponent(selectedServerUrl),
+                          + 'org='
+                          + mumieOrg
+                          + '&serverUrl='
+                          + encodeURIComponent(selectedServerUrl)
+                          + "&problemLang="
+                          + problemLang
+                          + "&origin=" + encodeURIComponent(origin)
+                          + '&multiSelect=true',
                           "_blank",
                           'toolbar=0,location=0,menubar=0'
                         );
