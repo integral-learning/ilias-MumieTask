@@ -62,7 +62,7 @@ frm_privategradepool#:#Punkte mit anderen Kursen teilen
 frm_privategradepool_desc#:#Bestimmen Sie, ob MUMIE-Punktzahlen mit anderen Kursen geteilt werden.
 frm_privategradepool_decided#:#<b>Hinweis:</b><br> Diese Entscheidung war <b>endgültig</b> und gilt auch für alle anderen MUMIE-Tasks in diesem Kurs.
 frm_privategradepool_undecided#:#<b style="color:red">Achtung:</b><br> Diese Entscheidung ist <b>endgültig</b> und gilt auch für alle anderen MUMIE-Tasks in diesem Kurs.
-<br>Falls diese Option aktiviert ist, werden Punkte, die für das Bearbeiten von MUMIE-Aufgaben in anderen ILIAS-Repositories vergeben wurden, auch in diesen Kurs übernommen.
+<br>Falls diese Option aktiviert ist, werden Punkte, die für das Bearbeiten von MUMIE-Aufgaben oder Worksheets in anderen ILIAS-Repositories vergeben wurden, auch in diesen Kurs übernommen.
 <br>Falls diese Option deaktiviert ist, werden weder Punkte aus anderen ILIAS-Repositories übernommen noch werden hier erziehlte Punkte mit anderen Kursen geteilt.
 frm_enable#:#Aktiviert
 frm_disable#:#Deaktiviert
@@ -78,7 +78,7 @@ frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MumieTask sehen und
 frm_online_disabled_warning#:#Diese MUMIE-Task kann nicht online gestellt werden, da noch eine Entscheidung aussteht. Bitte rufen sie die Bewertungseinstellungen auf.
 frm_online_disabled_worksheet_warning#:#Dieses Worksheet kann nicht online gestellt werden, solange keine Abgabefrist oder kein Zeitlimit gesetzt ist. Bitte rufen Sie die Bewertungseinstellungen auf.
 open_prb_selector#:#Aufgabenauswahl öffnen
-open_prb_selector_desc#:#Klicken Sie hier, um eine detaillierte Auswahl zu öffnen. Sie können alle verfügbaren Aufgaben nach Kategorien filtern und nach beliebigen Begriffen durchsuchen.
+open_prb_selector_desc#:#Klicken Sie hier, um eine detaillierte Auswahl zu öffnen. Sie können alle verfügbaren Aufgaben und Worksheets nach Kategorien filtern und nach beliebigen Begriffen durchsuchen.
 frm_list_grade#:#Bewertung
 frm_user_overview_list_grade_desc#:#<br><br>Es wird die neueste Abgabe vor dem Abgabe Datum genutzt. Wenn eine andere Abgabe genutzt werden soll, drücken sie den Knopf neben der entsprechenden Abgabe.
 frm_user_overview_list_change_grade#:#Bewertung ändern
@@ -129,5 +129,5 @@ dnd_prb_selector_desc#:#Hier klicken, um die Mehrfach-Aufgabenauswahl zu öffnen
 frm_tsk_problems_not_found#:#Ein oder mehrere der ausgewählten Elemente konnten nicht auf dem Server gefunden werden
 frm_tsk_problems_empty#:#Es wurden keine Aufgaben oder Worksheets ausgewählt.
 frm_tsk_problems_too_many#:#Sie haben mehr Elemente ausgewählt als die maximal erlaubten %s pro Import.
-dropzone_description#:#Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> und <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
+dropzone_description#:#Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben und Worksheets erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> und <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
 multi_problem_list_description#:#Sie haben die folgenden MUMIE-Problems und Worksheets ausgewählt
