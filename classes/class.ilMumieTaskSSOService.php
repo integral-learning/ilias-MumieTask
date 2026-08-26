@@ -147,7 +147,11 @@ class ilMumieTaskSSOService
         $tpl->setVariable('SERVER_URL', htmlspecialchars($serverUrl));
         $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
         $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
-        $tpl->setVariable('MULTI_SELECT', $multiSelect ? 'true' : 'false');
+
+        if ($multiSelect) {
+            $tpl->setCurrentBlock('multi_select');
+            $tpl->parseCurrentBlock();
+        }
 
         return $tpl->get();
     }
