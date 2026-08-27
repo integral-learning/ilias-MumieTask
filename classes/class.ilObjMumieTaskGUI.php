@@ -87,6 +87,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             (string) ($_GET['serverUrl'] ?? ''),
             (string) ($_GET['problemLang'] ?? ''),
             (string) ($_GET['origin'] ?? ''),
+            filter_var($_GET['multiSelect'] ?? false, FILTER_VALIDATE_BOOLEAN),
         );
         exit;
     }
@@ -253,10 +254,19 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $this->saveFormValues();
 
+        if ($mumieTask->isDummy()) {
+            // Only multi-select problems were chosen, so this placeholder never became a real task itself.
+            // Skip the grade update below: the placeholder has no MUMIE task of its own to sync.
+            $this->removeObjectAndRedirectToParent();
+
+            return;
+        }
+
         if ($force_grade_update) {
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
             ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         }
+
         $tpl->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
 
         $DIC->ctrl()->redirect($this, 'editProperties');
@@ -459,6 +469,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      * @throws ilInvalidTreeStructureException
      */
     public function cancelDummy(): void
+    {
+        $this->removeObjectAndRedirectToParent();
+    }
+
+    /**
+     * Delete this object and return to the parent container's repository listing.
+     *
+     * @throws ilRepositoryException
+     * @throws ilCtrlException
+     * @throws ilObjectNotFoundException
+     * @throws ilDatabaseException
+     * @throws ilInvalidTreeStructureException
+     */
+    private function removeObjectAndRedirectToParent(): void
     {
         global $DIC;
         $tree = $DIC->repositoryTree();

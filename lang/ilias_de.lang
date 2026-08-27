@@ -29,10 +29,10 @@ properties#:#Einstellungen
 mumie_server#:#MUMIE-Server
 mumie_server_desc#:#Bitte wählen sie einen MUMIE-Server um eine aktuelle Liste an verfügbaren Kursen und MumieTasks zu erhalten.
 mumie_course#:#MUMIE-Kurs
-mumie_select_problem#:#Wählen Sie ein MUMIE-Problem
-mumie_problem#:#MUMIE-Problem
-mumie_problem_desc#:#Ein MUMIE-Problem ist eine benotete Übung auf der MUMIE-Plattform
-frm_tsk_problem_not_found#:#Dieses Problem konnte auf dem ausgewählten Server nicht gefunden werden.
+mumie_select_problem#:#Wählen Sie ein MUMIE-Problem oder Worksheet
+mumie_problem#:#MUMIE-Problem oder Worksheet
+mumie_problem_desc#:#Ein MUMIE-Problem oder Worksheet ist eine benotete Übung auf der MUMIE-Plattform
+frm_tsk_problem_not_found#:#Dieses Problem oder Worksheet konnte auf dem ausgewählten Server nicht gefunden werden.
 launchcontainer#:#Start-Container
 launchcontainer_desc#:#Bitte wählen Sie, ob diese Aktivität in einem neuen Browser-Tab geöffnet oder in die Ilias-Umgebung eingebettet werden soll.
 window#:#Neues Fenster
@@ -54,7 +54,7 @@ frm_privategradepool#:#Punkte mit anderen Kursen teilen
 frm_privategradepool_desc#:#Bestimmen Sie, ob MUMIE-Punktzahlen mit anderen Kursen geteilt werden.
 frm_privategradepool_decided#:#<b>Hinweis:</b><br> Diese Entscheidung war <b>endgültig</b> und gilt auch für alle anderen MUMIE-Tasks in diesem Kurs.
 frm_privategradepool_undecided#:#<b style="color:red">Achtung:</b><br> Diese Entscheidung ist <b>endgültig</b> und gilt auch für alle anderen MUMIE-Tasks in diesem Kurs.
-<br>Falls diese Option aktiviert ist, werden Punkte, die für das Bearbeiten von MUMIE-Aufgaben in anderen ILIAS-Repositories vergeben wurden, auch in diesen Kurs übernommen.
+<br>Falls diese Option aktiviert ist, werden Punkte, die für das Bearbeiten von MUMIE-Aufgaben oder Worksheets in anderen ILIAS-Repositories vergeben wurden, auch in diesen Kurs übernommen.
 <br>Falls diese Option deaktiviert ist, werden weder Punkte aus anderen ILIAS-Repositories übernommen noch werden hier erziehlte Punkte mit anderen Kursen geteilt.
 frm_enable#:#Aktiviert
 frm_disable#:#Deaktiviert
@@ -70,7 +70,7 @@ frm_online_info#:#Alle Nutzer mit Lese-Rechten können diese MumieTask sehen und
 frm_online_disabled_warning#:#Diese MUMIE-Task kann nicht online gestellt werden, da noch eine Entscheidung aussteht. Bitte rufen sie die Bewertungseinstellungen auf.
 frm_online_disabled_worksheet_warning#:#Dieses Worksheet kann nicht online gestellt werden, solange keine Abgabefrist oder kein Zeitlimit gesetzt ist. Bitte rufen Sie die Bewertungseinstellungen auf.
 open_prb_selector#:#Aufgabenauswahl öffnen
-open_prb_selector_desc#:#Klicken Sie hier, um eine detaillierte Auswahl zu öffnen. Sie können alle verfügbaren Aufgaben nach Kategorien filtern und nach beliebigen Begriffen durchsuchen.
+open_prb_selector_desc#:#Klicken Sie hier, um eine detaillierte Auswahl zu öffnen. Sie können alle verfügbaren Aufgaben und Worksheets nach Kategorien filtern und nach beliebigen Begriffen durchsuchen.
 frm_list_grade#:#Bewertung
 frm_user_overview_list_grade_desc#:#<br><br>Es wird die neueste Abgabe vor dem Abgabe Datum genutzt. Wenn eine andere Abgabe genutzt werden soll, drücken sie den Knopf neben der entsprechenden Abgabe.
 frm_user_overview_list_change_grade#:#Bewertung ändern
@@ -113,12 +113,14 @@ btn_remove_grade_override#:#Auswahl zurücksetzen
 grade_override_desc#:#Neue Abgaben werden automatisch in ILIAS übernommen, sofern die Abgabefrist noch nicht abgelaufen ist. Um eine andere Abgabe für die Bewertung zu verwenden, können Sie auf die entsprechende Schaltfläche in der Tabelle klicken.<br><br>Eine manuell ausgewählte Bewertung wird auch durch zukünftige Abgaben des Studierenden <b>nicht</b> ersetzt werden.
 student_name#:#Name
 deadline_extension_desc#:#Hier können Sie Studierenden individuelle Fristverlängerungen gewähren. Falls Sie bereits manuell eine andere Bewertung ausgewählt haben, hat diese Fristverlängerung keine Auswirkung.
-frm_multi_problem_header#:#Zusätzliche MUMIE-Probleme erzeugen
-form_drag_mt_here#:#Ziehe Sie die MUMIE-Problems hierhinein
-multi_create_success#:#Es wurden %s weitere MUMIE-Tasks über Drag&Drop erstellt!
-mumie_problems#:#MUMIE-Problems
+frm_multi_problem_header#:#Zusätzliche MUMIE-Probleme oder Worksheets erzeugen
+multi_create_success#:#Es wurden %s weitere MUMIE-Tasks erstellt!
+mumie_problems#:#MUMIE-Problems / Worksheets
 open_dnd_prb_selector#:#Mehrfach-Aufgabenauswahl öffnen
-dnd_prb_selector_desc#:#Hier klicken, um die Mehrfach-Aufgabenauswahl zu öffnen. Wählen sie einfach die Aufgaben aus, die Sie importieren möchten, und ziehen sie diese in das untere Feld.
-frm_tsk_problems_not_found#:#Ein oder mehrere Problems konnten nicht auf dem Server gefunden werden
-dropzone_description#:#Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> und <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
-multi_problem_list_description#:#Sie haben die folgenden MUMIE-Problems ausgewählt
+dnd_prb_selector_desc#:#Hier klicken, um die Mehrfach-Aufgabenauswahl zu öffnen. Wählen Sie einfach die Aufgaben aus, die Sie importieren möchten.
+frm_tsk_problems_not_found#:#Ein oder mehrere der ausgewählten Elemente konnten nicht auf dem Server gefunden werden
+frm_tsk_problems_empty#:#Es wurden keine Aufgaben oder Worksheets ausgewählt.
+frm_tsk_problems_too_many#:#Sie haben mehr Elemente ausgewählt als die maximal erlaubten %s pro Import.
+frm_tsk_problems_unreachable#:#Einer der ausgewählten MUMIE-Server konnte nicht erreicht werden. Bitte versuchen Sie es später erneut.
+dropzone_description#:#Sobald Sie auf <b>Speichern</b> klicken, wird Ilias automatisch MUMIE-Tasks für die ausgewählten Aufgaben und Worksheets erstellen. Dabei werden die Einstellungen für <i>Start-Container</i>, <i>online</i> und <i>Abgabefrist</i> von der derzeit ausgewählten MUMIE-Task übernommen.
+multi_problem_list_description#:#Sie haben die folgenden MUMIE-Problems und Worksheets ausgewählt
