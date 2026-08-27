@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="test/bootstrap.php"
+         colors="true"
+         failOnWarning="true"
+         failOnDeprecation="true"
+         failOnNotice="true"
+>
+    <testsuites>
+        <testsuite name="MumieTask">
+            <directory suffix="Test.php">test</directory>
+            <!--
+                Makes real HTTP requests to an external MUMIE demo server and google.com -
+                not something CI should depend on. Run manually when touching ilMumieTaskServer.
+            -->
+            <exclude>test/ilMumieTaskServerTest.php</exclude>
+        </testsuite>
+    </testsuites>
+</phpunit>
