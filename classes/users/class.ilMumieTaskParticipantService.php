@@ -62,20 +62,24 @@ class ilMumieTaskParticipantService
         global $DIC;
         $tree = $DIC->repositoryTree();
 
-        foreach (array_reverse($tree->getPathFull($ref_id)) as $node) {
-            if (in_array($node['type'], ['crs', 'grp'], true)) {
-                return (int) $node['child'];
-            }
+        $crs_ref_id = $tree->checkForParentType($ref_id, 'crs');
+        $grp_ref_id = $tree->checkForParentType($ref_id, 'grp');
+
+        if (0 === $crs_ref_id && 0 === $grp_ref_id) {
+            return null;
+        }
+        if (0 === $crs_ref_id) {
+            return $grp_ref_id;
+        }
+        if (0 === $grp_ref_id) {
+            return $crs_ref_id;
         }
 
-        return null;
+        // Both exist and, being ancestors of the same node, are on the same path: whichever
+        // one is nested inside the other is the one nearer to $ref_id.
+        return $tree->checkForParentType($crs_ref_id, 'grp') === $grp_ref_id ? $crs_ref_id : $grp_ref_id;
     }
 
-    /**
-     * Without a Course/Group roster to scope by, fall back to users who already have
-     * LP data for this task (i.e. have opened or submitted it at least once), instead
-     * of syncing every user on the platform.
-     */
     private static function getMemberIdsWithoutCourseContext(ilObjMumieTask $mumie_task): array
     {
         global $DIC;
