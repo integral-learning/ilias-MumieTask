@@ -81,7 +81,7 @@ class ilMumieTaskServerStructure implements JsonSerializable
     {
         foreach ($this->courses as $course) {
             foreach ($course->getName() as $translation) {
-                if ($translation->value == $name) {
+                if (0 === strcasecmp($translation->value, $name)) {
                     return $course;
                 }
             }

@@ -36,7 +36,7 @@ class ilMumieTaskSSOService
 
         if (!is_null($mumietoken->getToken()) && $mumietoken->getToken() == $token && null != $user_rec) {
             $current = time();
-            if (($current - $mumietoken->getTimecreated()) >= 1000) {
+            if (($current - $mumietoken->getTimecreated()) >= 60) {
                 $response->status = 'invalid';
             } else {
                 $response->status = 'valid';
@@ -131,7 +131,7 @@ class ilMumieTaskSSOService
      */
     private const LECTURER_SUFFIX = '@lecturer@';
 
-    public function getProblemSelectorLaunchForm(string $serverUrl, string $problemLang, string $origin): string
+    public function getProblemSelectorLaunchForm(string $serverUrl, string $problemLang, string $origin, bool $multiSelect = false): string
     {
         global $DIC;
         $admin_settings = ilMumieTaskAdminSettings::getInstance();
@@ -147,6 +147,12 @@ class ilMumieTaskSSOService
         $tpl->setVariable('SERVER_URL', htmlspecialchars($serverUrl));
         $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
         $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
+
+        if ($multiSelect) {
+            // The block has no variables of its own, so touchBlock() is required to keep it -
+            // parseCurrentBlock() alone treats a variable-less block as empty and drops it.
+            $tpl->touchBlock('multi_select');
+        }
 
         return $tpl->get();
     }

@@ -39,16 +39,29 @@ class ilMumieTaskTaskDTO
      * @var string
      */
     private $link;
+    /**
+     * @var object|null
+     */
+    private $worksheet;
 
     public function __construct(string $task_json)
     {
         $task = json_decode($task_json);
+        if (!is_object($task)) {
+            throw new InvalidArgumentException('Multi-select task payload is not a JSON object.');
+        }
+        foreach (['name', 'server', 'course', 'path_to_coursefile', 'language', 'link'] as $required_field) {
+            if (!isset($task->{$required_field})) {
+                throw new InvalidArgumentException(sprintf('Multi-select task payload is missing required field "%s".', $required_field));
+            }
+        }
         $this->name = $task->name;
         $this->server = $task->server;
         $this->course = $task->course;
         $this->path_to_coursefile = $task->path_to_coursefile;
         $this->language = $task->language;
         $this->link = $task->link;
+        $this->worksheet = $task->worksheet ?? null;
     }
 
     public function getServer(): string
@@ -82,5 +95,10 @@ class ilMumieTaskTaskDTO
     public function getLink()
     {
         return $this->link;
+    }
+
+    public function getWorksheet(): string
+    {
+        return null !== $this->worksheet ? json_encode($this->worksheet) : '';
     }
 }

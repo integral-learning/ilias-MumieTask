@@ -10,6 +10,7 @@ All important changes to this plugin will be documented in this file.
 
 ### Changed
 - Plugin now supports Ilias 11.1
+- Tightened the SSO token verification window from ~16 minutes to 60 seconds, matching the other LMS plugin implementations
 
 ### Removed
 - Plugin no longer supports Ilias 10
@@ -17,6 +18,7 @@ All important changes to this plugin will be documented in this file.
 
 ### Fixed
 - Fixed a crash when saving LP settings for a worksheet with a deadline, caused by a malformed entry in the MUMIE grade sync response
+- The multi-problem selector now uses SSO when the configured problem selector and the selected MUMIE server share the same origin, matching the single-problem selector's behavior
 
 ## [v5.0] - 2026-06-02
 ### Changed
