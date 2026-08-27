@@ -13,6 +13,8 @@
  *
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI, ilLearningProgressGUI, ilLPListOfObjectsGUI,ilObjPluginDispatchGUI, ilLPListOfSettingsGUI, ilMumieTaskLPGUI
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilMumieTaskLPTableGUI
+ *
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
 {
@@ -79,6 +81,8 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     /**
      * Only called for the configured problem selector's own origin - other MUMIE course servers
      * are opened without SSO, since ILIAS has no account there.
+     *
+     * @SuppressWarnings("PHPMD.ExitExpression")
      */
     public function launchProblemSelector(): void
     {

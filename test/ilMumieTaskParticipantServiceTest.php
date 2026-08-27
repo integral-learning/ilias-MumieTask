@@ -16,6 +16,9 @@ class ilMumieTaskFakeTree
         $this->parent_by_ref_id_and_type = $parent_by_ref_id_and_type;
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
+     */
     public function checkForParentType(int $a_ref_id, string $a_type, bool $a_exclude_source_check = false): int
     {
         return $this->parent_by_ref_id_and_type[$a_ref_id][$a_type] ?? 0;

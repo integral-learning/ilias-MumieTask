@@ -58,7 +58,7 @@ class ilMumieTaskGradeSyncTest extends TestCase
     {
         $triggered = [];
         set_error_handler(function (int $errno, string $errstr) use (&$triggered) {
-            $triggered[] = $errstr;
+            $triggered[] = "$errno: $errstr";
 
             return true;
         });
