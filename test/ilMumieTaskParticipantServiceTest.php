@@ -40,6 +40,27 @@ class ilMumieTaskFakeDIC
     }
 }
 
+/**
+ * A bare ilObjMumieTask with a controllable ref_id/id - the real class inherits getRefId()/getId()
+ * from ILIAS core (not part of this plugin's stub), so tests need a stand-in to supply them.
+ */
+class ilMumieTaskParticipantServiceTestTask extends ilObjMumieTask
+{
+    public function __construct(private int $ref_id, private int $id)
+    {
+    }
+
+    public function getRefId()
+    {
+        return $this->ref_id;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+}
+
 class ilMumieTaskParticipantServiceTest extends TestCase
 {
     private $original_dic;
@@ -48,12 +69,38 @@ class ilMumieTaskParticipantServiceTest extends TestCase
     {
         global $DIC;
         $this->original_dic = $DIC ?? null;
+        ilChangeEvent::$get_all_user_ids_results = [];
     }
 
     protected function tearDown(): void
     {
         global $DIC;
         $DIC = $this->original_dic;
+    }
+
+    public function testGetAllMemberIdsFallsBackToReadEventUsersWhenNoCourseOrGroupContext()
+    {
+        global $DIC;
+        $DIC = new ilMumieTaskFakeDIC(new ilMumieTaskFakeTree([]));
+        ilChangeEvent::$get_all_user_ids_results = [555 => [11, 22]];
+
+        $task = new ilMumieTaskParticipantServiceTestTask(100, 555);
+
+        $this->assertSame([11, 22], ilMumieTaskParticipantService::getAllMemberIds($task));
+    }
+
+    public function testGetAllMemberIdsWithoutCourseContextIsScopedToTheGivenTask()
+    {
+        global $DIC;
+        $DIC = new ilMumieTaskFakeDIC(new ilMumieTaskFakeTree([]));
+        ilChangeEvent::$get_all_user_ids_results = [
+            555 => [11, 22],
+            556 => [33],
+        ];
+
+        $task = new ilMumieTaskParticipantServiceTestTask(100, 555);
+
+        $this->assertSame([11, 22], ilMumieTaskParticipantService::getAllMemberIds($task));
     }
 
     public function testReturnsNullWhenNeitherCourseNorGroupIsAnAncestor()

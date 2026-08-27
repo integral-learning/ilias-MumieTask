@@ -80,18 +80,14 @@ class ilMumieTaskParticipantService
         return $tree->checkForParentType($crs_ref_id, 'grp') === $grp_ref_id ? $crs_ref_id : $grp_ref_id;
     }
 
+    /**
+     * ut_lp_marks would only tell us about users a sync already succeeded for, which is
+     * never true for a user's very first grade. read_event is written on every access to
+     * the task (see ilObjMumieTask::updateAccess()), which always happens before a user can
+     * reach the MUMIE server at all, so it has no such chicken-and-egg gap.
+     */
     private static function getMemberIdsWithoutCourseContext(ilObjMumieTask $mumie_task): array
     {
-        global $DIC;
-        $db = $DIC->database();
-        $result = $db->query(
-            'SELECT DISTINCT usr_id FROM ut_lp_marks WHERE obj_id = ' . $db->quote($mumie_task->getId(), 'integer'),
-        );
-        $ids = [];
-        while ($row = $db->fetchAssoc($result)) {
-            $ids[] = (int) $row['usr_id'];
-        }
-
-        return $ids;
+        return ilChangeEvent::_getAllUserIds($mumie_task->getId());
     }
 }

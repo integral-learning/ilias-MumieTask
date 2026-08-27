@@ -22,8 +22,127 @@ class ilMumieTaskGradeSyncTestDouble extends ilMumieTaskGradeSync
     }
 }
 
+/**
+ * Minimal ilDB stand-in for ilMumieTaskAdminSettings::load()'s single admin-settings query -
+ * the only DB touch left in the real constructor once getAllMemberIds() is routed through the
+ * ilChangeEvent stub (see ilMumieTaskParticipantService::getMemberIdsWithoutCourseContext)
+ * instead of a live database.
+ */
+class ilMumieTaskGradeSyncFakeDb
+{
+    /**
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
+     */
+    public function query($sql)
+    {
+        return null;
+    }
+
+    /**
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
+     */
+    public function fetchObject($result)
+    {
+        return (object) ['id' => 1, 'problem_selector_url' => '', 'api_key' => 'key', 'org' => 'org'];
+    }
+}
+
+class ilMumieTaskGradeSyncFakeTree
+{
+    /**
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
+     */
+    public function checkForParentType(int $a_ref_id, string $a_type, bool $a_exclude_source_check = false): int
+    {
+        return 0;
+    }
+}
+
+class ilMumieTaskGradeSyncFakeDic
+{
+    public function __construct(private $db, private $tree)
+    {
+    }
+
+    public function database()
+    {
+        return $this->db;
+    }
+
+    public function repositoryTree()
+    {
+        return $this->tree;
+    }
+}
+
+/**
+ * @see ilMumieTaskParticipantServiceTestTask
+ */
+class ilMumieTaskGradeSyncTestTask extends ilObjMumieTask
+{
+    public function __construct(private int $ref_id, private int $id)
+    {
+    }
+
+    public function getRefId()
+    {
+        return $this->ref_id;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+}
+
 class ilMumieTaskGradeSyncTest extends TestCase
 {
+    private $original_dic;
+
+    protected function setUp(): void
+    {
+        global $DIC;
+        $this->original_dic = $DIC ?? null;
+        ilChangeEvent::$get_all_user_ids_results = [];
+    }
+
+    protected function tearDown(): void
+    {
+        global $DIC;
+        $DIC = $this->original_dic;
+    }
+
+    public function testConstructorUsesExplicitUserIdsWithoutConsultingAllMembers()
+    {
+        global $DIC;
+        $DIC = new ilMumieTaskGradeSyncFakeDic(new ilMumieTaskGradeSyncFakeDb(), new ilMumieTaskGradeSyncFakeTree());
+        // If the ctor looked this up instead of using the given ids, we'd see these instead.
+        ilChangeEvent::$get_all_user_ids_results = [777 => [999]];
+
+        $sync = new ilMumieTaskGradeSync(new ilMumieTaskGradeSyncTestTask(100, 777), false, [7, 8]);
+
+        $this->assertSame([7, 8], $this->getUserIds($sync));
+    }
+
+    public function testConstructorFallsBackToAllMemberIdsWhenUserIdsOmitted()
+    {
+        global $DIC;
+        $DIC = new ilMumieTaskGradeSyncFakeDic(new ilMumieTaskGradeSyncFakeDb(), new ilMumieTaskGradeSyncFakeTree());
+        ilChangeEvent::$get_all_user_ids_results = [777 => [11, 22]];
+
+        $sync = new ilMumieTaskGradeSync(new ilMumieTaskGradeSyncTestTask(100, 777), false);
+
+        $this->assertSame([11, 22], $this->getUserIds($sync));
+    }
+
+    private function getUserIds(ilMumieTaskGradeSync $sync): array
+    {
+        $property = new ReflectionProperty($sync, 'user_ids');
+        $property->setAccessible(true);
+
+        return $property->getValue($sync);
+    }
+
     public function testGetValidAndNewXapiGradesForUserReturnsGradeWhenPresent()
     {
         $grade = (object) ['result' => (object) ['score' => (object) ['scaled' => 0.8]]];
