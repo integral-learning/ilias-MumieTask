@@ -10,6 +10,8 @@
 
 /**
  * This form is used to edit and validate the general settings of MumieTasks.
+ *
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class ilMumieTaskFormGUI extends ilPropertyFormGUI
 {

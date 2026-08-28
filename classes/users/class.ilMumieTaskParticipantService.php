@@ -46,30 +46,48 @@ class ilMumieTaskParticipantService
 
     public static function getAllMemberIds(ilObjMumieTask $mumie_task): array
     {
-        if (self::isInBaseRepository($mumie_task)) {
-            return self::getAllUserIds();
+        $container_ref_id = self::findEnclosingCourseOrGroupRefId($mumie_task->getRefId());
+        if (null === $container_ref_id) {
+            return self::getMemberIdsWithoutCourseContext($mumie_task);
         }
 
-        return ilParticipants::getInstance($mumie_task->getParentRef())->getMembers();
+        return ilParticipants::getInstance($container_ref_id)->getMembers();
     }
 
-    private static function isInBaseRepository(ilObjMumieTask $mumie_task): bool
-    {
-        return 1 == $mumie_task->getParentRef();
-    }
-
-    private static function getAllUserIds(): array
+    /**
+     * @return null if the task isn't inside a Course or Group (e.g. base repository)
+     */
+    private static function findEnclosingCourseOrGroupRefId(int $ref_id): ?int
     {
         global $DIC;
-        $db = $DIC->database();
-        $result = $db->query(
-            'SELECT usr_id FROM usr_data;',
-        );
-        $allIds = [];
-        while ($user_id = $db->fetchAssoc($result)) {
-            array_push($allIds, $user_id['usr_id']);
+        $tree = $DIC->repositoryTree();
+
+        $crs_ref_id = $tree->checkForParentType($ref_id, 'crs');
+        $grp_ref_id = $tree->checkForParentType($ref_id, 'grp');
+
+        if (0 === $crs_ref_id && 0 === $grp_ref_id) {
+            return null;
+        }
+        if (0 === $crs_ref_id) {
+            return $grp_ref_id;
+        }
+        if (0 === $grp_ref_id) {
+            return $crs_ref_id;
         }
 
-        return $allIds;
+        // Both exist and, being ancestors of the same node, are on the same path: whichever
+        // one is nested inside the other is the one nearer to $ref_id.
+        return $tree->checkForParentType($crs_ref_id, 'grp') === $grp_ref_id ? $crs_ref_id : $grp_ref_id;
+    }
+
+    /**
+     * ut_lp_marks would only tell us about users a sync already succeeded for, which is
+     * never true for a user's very first grade. read_event is written on every access to
+     * the task (see ilObjMumieTask::updateAccess()), which always happens before a user can
+     * reach the MUMIE server at all, so it has no such chicken-and-egg gap.
+     */
+    private static function getMemberIdsWithoutCourseContext(ilObjMumieTask $mumie_task): array
+    {
+        return ilChangeEvent::_getAllUserIds($mumie_task->getId());
     }
 }

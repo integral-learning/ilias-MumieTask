@@ -28,6 +28,9 @@ jobs:
       - name: phplint
         run: vendor/bin/parallel-lint --exclude vendor .
 
+      - name: phpunit
+        run: vendor/bin/phpunit
+
       - name: phpmd
         continue-on-error: true
         run: vendor/bin/phpmd . text unusedcode,design --exclude vendor

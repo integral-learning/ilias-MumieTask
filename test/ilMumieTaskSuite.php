@@ -10,6 +10,9 @@ class ilMumieTaskSuite extends TestSuite
         $suite->addTestSuite('ilMumieTaskServerTest');
         $suite->addTestSuite('ilObjMumieTaskTest');
         $suite->addTestSuite('ilMumieTaskCryptographyServiceTest');
+        $suite->addTestSuite('ilMumieTaskGradeSyncTest');
+        $suite->addTestSuite('ilMumieTaskParticipantServiceTest');
+        $suite->addTestSuite('ilMumieTaskLPStatusTest');
 
         return $suite;
     }
