@@ -29,14 +29,6 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
     public function initCommands(): array
     {
-        // Very hacky solution to update all grades for MumieTasks that are direct children of an ilContainer (e.g. Course)
-        try {
-            ilMumieTaskLPStatus::updateGradesForIlContainer($_GET['ref_id']);
-        } catch (Exception $e) {
-            ilLoggerFactory::getLogger('xmum')->info('Error when updating MUMIE grades:');
-            ilLoggerFactory::getLogger('xmum')->info($e);
-        }
-
         return [
             [
                 'permission' => 'read',
@@ -73,15 +65,20 @@ class ilObjMumieTaskListGUI extends ilObjectPluginListGUI
 
             $task = ilMumieTaskObjService::getMumieTaskFromObjectReference($this->obj_id);
 
-            if (!$task->hasDeadline()) {
+            if (!$task->hasAnyDeadline()) {
                 parent::insertDescription();
 
                 return;
             }
 
             $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($DIC->user()->getId(), $task);
+            if (null === $deadline) {
+                parent::insertDescription();
 
-            $DIC->ui()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css');
+                return;
+            }
+
+            $DIC->ui()->mainTemplate()->addCss(ilMumieTaskPlugin::getAssetPath() . '/templates/mumie.css');
             $this->tpl->setVariable('TXT_DESC', $this->getDescriptionWithDeadlineBadge($deadline, $task));
             $this->tpl->setCurrentBlock('item_description');
             $this->tpl->parseCurrentBlock();

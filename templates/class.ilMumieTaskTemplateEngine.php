@@ -19,7 +19,7 @@ class ilMumieTaskTemplateEngine
     {
         global $DIC;
         $tpl = $DIC->ui()->mainTemplate();
-        $tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css');
+        $tpl->addCss(ilMumieTaskPlugin::getAssetPath() . '/templates/mumie.css');
 
         return new ilTemplate($path, true, true);
     }
@@ -65,7 +65,7 @@ class ilMumieTaskTemplateEngine
 
     private static function getDeadlineExtensionInformation(ilObjMumieTask $mumie_task, $user_id): string
     {
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task) && $mumie_task->hasDeadline()) {
+        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($user_id, $mumie_task) && $mumie_task->hasAnyDeadline()) {
             return ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($user_id, $mumie_task);
         }
 

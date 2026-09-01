@@ -13,6 +13,8 @@
  *
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI, ilLearningProgressGUI, ilLPListOfObjectsGUI,ilObjPluginDispatchGUI, ilLPListOfSettingsGUI, ilMumieTaskLPGUI
  * @ilCtrl_Calls ilObjMumieTaskGUI: ilMumieTaskLPTableGUI
+ *
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class ilObjMumieTaskGUI extends ilObjectPluginGUI
 {
@@ -67,7 +69,31 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
                 $this->checkPermission('read');
                 $this->$cmd();
                 break;
+
+            case 'launchProblemSelector':
+                // Logs the user in as a lecturer, so this needs more than read access.
+                $this->checkPermission('write');
+                $this->$cmd();
+                break;
         }
+    }
+
+    /**
+     * Only called for the configured problem selector's own origin - other MUMIE course servers
+     * are opened without SSO, since ILIAS has no account there.
+     *
+     * @SuppressWarnings("PHPMD.ExitExpression")
+     */
+    public function launchProblemSelector(): void
+    {
+        $sso_service = new ilMumieTaskSSOService();
+        echo $sso_service->getProblemSelectorLaunchForm(
+            (string) ($_GET['serverUrl'] ?? ''),
+            (string) ($_GET['problemLang'] ?? ''),
+            (string) ($_GET['origin'] ?? ''),
+            filter_var($_GET['multiSelect'] ?? false, FILTER_VALIDATE_BOOLEAN),
+        );
+        exit;
     }
 
     public function setTabs(): void
@@ -171,9 +197,9 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $tpl->setOnScreenMessage('failure', $this->i18N->txt('msg_no_connection_to_server') . $this->object->getServer());
         }
         $this->setPropertyValues();
-        $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
+        $tpl->addJavaScript(ilMumieTaskPlugin::getAssetPath() . '/js/ilMumieTaskForm.js');
         $tpl->setContent($this->form->getHTML());
-        $tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css');
+        $tpl->addCss(ilMumieTaskPlugin::getAssetPath() . '/templates/mumie.css');
     }
 
     /**
@@ -221,7 +247,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         if (!$this->form->checkInput()) {
             $this->form->setValuesByPost();
             $tpl->setContent($this->form->getHTML());
-            $tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskForm.js');
+            $tpl->addJavaScript(ilMumieTaskPlugin::getAssetPath() . '/js/ilMumieTaskForm.js');
 
             return;
         }
@@ -232,10 +258,19 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
         $this->saveFormValues();
 
+        if ($mumieTask->isDummy()) {
+            // Only multi-select problems were chosen, so this placeholder never became a real task itself.
+            // Skip the grade update below: the placeholder has no MUMIE task of its own to sync.
+            $this->removeObjectAndRedirectToParent();
+
+            return;
+        }
+
         if ($force_grade_update) {
             ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
             ilMumieTaskGradeOverrideService::deleteGradeOverridesForTask($this->object);
         }
+
         $tpl->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), true);
 
         $DIC->ctrl()->redirect($this, 'editProperties');
@@ -330,10 +365,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $ctrl = $DIC->ctrl();
 
-        ilMumieTaskLPStatus::updateGrades($this->object);
         if ($this->checkPermissionBool('read_learning_progress')) {
+            ilMumieTaskLPStatus::updateGrades($this->object);
             $ctrl->redirectByClass(['ilObjMumieTaskGUI', 'ilLearningProgressGUI', 'ilLPListOfObjectsGUI'], 'showObjectSummary');
         } else {
+            ilMumieTaskLPStatus::updateGradeForUser($this->object, $DIC->user()->getId());
             $this->setProgressInfo();
             $ctrl->redirectByClass(['ilObjMumieTaskGUI', 'ilLearningProgressGUI']);
         }
@@ -439,6 +475,20 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
      */
     public function cancelDummy(): void
     {
+        $this->removeObjectAndRedirectToParent();
+    }
+
+    /**
+     * Delete this object and return to the parent container's repository listing.
+     *
+     * @throws ilRepositoryException
+     * @throws ilCtrlException
+     * @throws ilObjectNotFoundException
+     * @throws ilDatabaseException
+     * @throws ilInvalidTreeStructureException
+     */
+    private function removeObjectAndRedirectToParent(): void
+    {
         global $DIC;
         $tree = $DIC->repositoryTree();
         $ref_id = $this->object->getRefId();
@@ -485,9 +535,56 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         $values['lp_modus'] = $this->object->getLpModus();
         $values['passing_grade'] = $this->object->getPassingGrade();
         $values['privategradepool'] = $this->object->getPrivateGradepool();
+        $values['deadline_mode'] = $this->getDeadlineMode();
         $values['deadline'] = $this->object->getDeadlineDateTime();
+        $values['timelimit'] = $this->getTimelimitAsArray();
         $this->form->setValuesByArray($values);
         $this->tpl->setContent($this->form->getHTML());
+    }
+
+    private function getDeadlineMode(): string
+    {
+        if ($this->object->isWorksheet() && $this->object->hasTimelimit()) {
+            return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT;
+        }
+        if ($this->object->hasDeadline()) {
+            return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_FIXED;
+        }
+
+        return ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_NONE;
+    }
+
+    private function getTimelimitAsArray(): array
+    {
+        $seconds = (int) $this->object->getTimelimit();
+
+        return [
+            'hh' => intdiv($seconds, 3600),
+            'mm' => intdiv($seconds % 3600, 60),
+        ];
+    }
+
+    private function applyDeadlineMode(): void
+    {
+        if (ilMumieTaskDeadlineExtensionService::hasAnyExtensionForTask($this->object)) {
+            return;
+        }
+        $mode = $this->form->getInput('deadline_mode');
+        if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_FIXED === $mode) {
+            $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
+            $this->object->setTimelimit(null);
+
+            return;
+        }
+        if (ilMumieTaskLPSettingsFormGUI::DEADLINE_MODE_TIMELIMIT === $mode && $this->object->isWorksheet()) {
+            $timelimit_input = $this->form->getInput('timelimit');
+            $this->object->setDeadline(null);
+            $this->object->setTimelimit(((int) ($timelimit_input['hh'] ?? 0)) * 3600 + ((int) ($timelimit_input['mm'] ?? 0)) * 60);
+
+            return;
+        }
+        $this->object->setDeadline(null);
+        $this->object->setTimelimit(null);
     }
 
     /**
@@ -498,7 +595,11 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         global $DIC;
         $ctrl = $DIC->ctrl();
 
-        $form = new ilMumieTaskLPSettingsFormGUI($this->object->isGradepoolSet());
+        $form = new ilMumieTaskLPSettingsFormGUI(
+            $this->object->isGradepoolSet(),
+            $this->object->isWorksheet(),
+            ilMumieTaskDeadlineExtensionService::hasAnyExtensionForTask($this->object),
+        );
         $form->setFields();
         $form->setTitle($this->i18N->txt('tab_lp_settings'));
 
@@ -534,7 +635,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
             $this->object->setPrivateGradepool((int) $this->form->getInput('privategradepool'));
         }
         $this->object->setPassingGrade($this->form->getInput('passing_grade'));
-        $this->object->setDeadline(strtotime($this->form->getInput('deadline')));
+        $this->applyDeadlineMode();
         $this->object->doUpdate();
         if ($is_gradepool_setting_update) {
             ilMumieTaskLPStatus::updateGradepoolSettingsForAllMumieTaskInRepository(
@@ -544,7 +645,12 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
         }
 
         if ($force_grade_update) {
-            ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
+            try {
+                ilMumieTaskLPStatus::updateGrades($this->object, $force_grade_update);
+            } catch (Exception $e) {
+                ilLoggerFactory::getLogger('xmum')->warning('Error when updating grades for MUMIE Task: ' . $this->object->getId());
+                ilLoggerFactory::getLogger('xmum')->warning($e);
+            }
         }
 
         $DIC->ui()->mainTemplate()->setOnScreenMessage('success', $this->i18N->txt('msg_suc_saved'), false);
@@ -590,7 +696,10 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
     {
         global $DIC;
         $form = new ilMumieTaskFormAvailabilityGUI();
-        $form->setFields(!$this->object->isGradepoolSet());
+        $form->setFields(
+            !$this->object->isGradepoolSet(),
+            $this->object->isWorksheet() && !$this->object->hasAnyDeadline(),
+        );
         $form->addCommandButton('submitAvailabilitySettings', $this->i18N->globalTxt('save'));
         $form->addCommandButton('editProperties', $this->i18N->globalTxt('cancel'));
         $form->setFormAction($DIC->ctrl()->getFormAction($this));
@@ -667,7 +776,7 @@ class ilObjMumieTaskGUI extends ilObjectPluginGUI
 
             return;
         }
-        $this->tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/templates/mumie.css');
+        $this->tpl->addCss(ilMumieTaskPlugin::getAssetPath() . '/templates/mumie.css');
         $this->form->setFields($this, $this->form);
     }
 

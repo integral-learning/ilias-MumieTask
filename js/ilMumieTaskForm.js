@@ -11,6 +11,7 @@
     $(document).ready(function () {
         const structure = JSON.parse(document.getElementById('server_data').getAttribute('value'));
         const lmsSelectorUrl = document.getElementById('problem_selector').getAttribute('value');
+        const problemSelectorSsoUrl = document.getElementById('problem_selector_sso_url').getAttribute('value');
 
         const serverController = (function () {
             let serverStructure;
@@ -137,10 +138,26 @@
             function addMessageListener() {
                 window.addEventListener('message', (event) => {
                     event.preventDefault();
-                    if (event.origin !== lmsSelectorUrl) {
+                    if (event.origin !== getOrigin(lmsSelectorUrl)) {
                         return;
                     }
-                    const importObj = JSON.parse(event.data);
+                    let importObj;
+                    try {
+                        importObj = JSON.parse(event.data);
+                    } catch (error) {
+                        sendFailure(error.message);
+                        return;
+                    }
+                    if (Array.isArray(importObj)) {
+                        try {
+                            window.ilMumieTaskDropzone.setData(JSON.stringify(importObj.map(task => JSON.stringify(task))));
+                            sendSuccess();
+                            window.focus();
+                        } catch (error) {
+                            sendFailure(error.message);
+                        }
+                        return;
+                    }
                     const worksheet = importObj.worksheet ?? null;
                     try {
                         langController.setLanguage(importObj.language);
@@ -155,31 +172,84 @@
                 }, false);
             }
 
+            function getOrigin(url) {
+                try {
+                    return new URL(url).origin;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            /**
+             * Other MUMIE course servers are opened without SSO, since ILIAS has no account there.
+             */
+            function shouldUseSSO(serverUrl) {
+                return getOrigin(lmsSelectorUrl) === getOrigin(serverUrl);
+            }
+
             return {
                 init: function () {
                     problemSelectorButton.onclick = function (e) {
                         e.preventDefault();
+                        const selectedServerUrl = serverController.getSelectedServer().url_prefix;
+                        const problemLang = langController.getSelectedLanguage();
+                        const origin = window.location.origin;
+
+                        if (shouldUseSSO(selectedServerUrl)) {
+                            problemSelectorWindow = window.open(
+                                problemSelectorSsoUrl
+                                + '&serverUrl=' + encodeURIComponent(selectedServerUrl)
+                                + '&problemLang=' + problemLang
+                                + '&origin=' + encodeURIComponent(origin)
+                                , '_blank'
+                            );
+                            return;
+                        }
+
                         problemSelectorWindow = window.open(
                             lmsSelectorUrl
                             + '/lms-problem-selector?'
                             + 'org='
                             + mumieOrg
                             + '&serverUrl='
-                            + encodeURIComponent(serverController.getSelectedServer().url_prefix)
+                            + encodeURIComponent(selectedServerUrl)
                             + "&problemLang="
-                            + langController.getSelectedLanguage()
-                            + "&origin=" + encodeURIComponent(window.location.origin)
+                            + problemLang
+                            + "&origin=" + encodeURIComponent(origin)
                             , '_blank'
                         );
                     };
 
                     multiProblemSelectorButton.onclick = function(e) {
                         e.preventDefault();
+                        const selectedServerUrl = serverController.getSelectedServer().url_prefix;
+                        const problemLang = langController.getSelectedLanguage();
+                        const origin = window.location.origin;
+
+                        if (shouldUseSSO(selectedServerUrl)) {
+                            problemSelectorWindow = window.open(
+                                problemSelectorSsoUrl
+                                + '&serverUrl=' + encodeURIComponent(selectedServerUrl)
+                                + '&problemLang=' + problemLang
+                                + '&origin=' + encodeURIComponent(origin)
+                                + '&multiSelect=true'
+                                , '_blank',
+                                'toolbar=0,location=0,menubar=0'
+                            );
+                            return;
+                        }
+
                         problemSelectorWindow = window.open(
                           lmsSelectorUrl
                           + '/lms-problem-selector?'
-                          + "serverUrl="
-                          + encodeURIComponent(serverController.getSelectedServer().url_prefix),
+                          + 'org='
+                          + mumieOrg
+                          + '&serverUrl='
+                          + encodeURIComponent(selectedServerUrl)
+                          + "&problemLang="
+                          + problemLang
+                          + "&origin=" + encodeURIComponent(origin)
+                          + '&multiSelect=true',
                           "_blank",
                           'toolbar=0,location=0,menubar=0'
                         );

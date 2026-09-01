@@ -2,6 +2,24 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v6.0] - 2026-09-01
+### Added
+- Worksheets with deadline
+- Worksheets with a time limit starting when a student first opens them
+- Teachers can now create their own worksheets directly in the problem selector, without a separate login
+
+### Changed
+- Plugin now supports Ilias 11.1
+- Tightened the SSO token verification window from ~16 minutes to 60 seconds, matching the other LMS plugin implementations
+
+### Removed
+- Plugin no longer supports Ilias 10
+- Removed the admin option to share a user's first name, last name or e-mail address with MUMIE servers. No personal user data is sent for SSO anymore, only a pseudonymous user id.
+
+### Fixed
+- Fixed a crash when saving LP settings for a worksheet with a deadline, caused by a malformed entry in the MUMIE grade sync response
+- The multi-problem selector now uses SSO when the configured problem selector and the selected MUMIE server share the same origin, matching the single-problem selector's behavior
+
 ## [v5.0] - 2026-06-02
 ### Changed
 - Plugin now supports Ilias 10.7

@@ -51,7 +51,21 @@ class ilMumieTaskGradeOverviewFormGUI extends ilPropertyFormGUI
             <b>' . $this->i18N->txt('frm_user_overview_list_general_deadline') . '</b>
             <span style="margin-left:50px"> ' . $this->objMumieTask->getDeadlineDateTime() . '</span>
             </span>');
+        } elseif ($this->objMumieTask->hasTimelimit()) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage('info', '<span>
+            <b>' . $this->i18N->txt('frm_user_overview_list_timelimit') . '</b>
+            <span style="margin-left:50px"> ' . $this->formatTimelimit($this->objMumieTask->getTimelimit()) . '</span>
+            </span>');
         }
+    }
+
+    /**
+     * getTimelimit() is a duration in seconds, not a point in time - gmdate('H:i', ...)
+     * would misinterpret it as a Unix timestamp and wrap at 24h.
+     */
+    private function formatTimelimit(int $seconds): string
+    {
+        return sprintf('%02d:%02d', intdiv($seconds, 3600), intdiv($seconds % 3600, 60));
     }
 
     private function setTable($parentObj, $form)

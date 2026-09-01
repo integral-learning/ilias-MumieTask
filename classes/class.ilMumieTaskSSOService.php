@@ -16,8 +16,7 @@ class ilMumieTaskSSOService
     /**
      * Verifies MUMIE tokens for SSO.
      *
-     * @return json object $response containing the field status: valid or invalid
-     *              and any user data that the admin has selected for sharing (user_id, firstname, lastname,email)
+     * @return json object $response containing the field status: valid or invalid, and the pseudonymous user_id
      */
     public static function verifyToken()
     {
@@ -34,25 +33,14 @@ class ilMumieTaskSSOService
         $user_query = $db->query('SELECT * FROM usr_data WHERE usr_id = ' . $db->quote($il_user_id, 'integer'));
         $user_rec = $db->fetchAssoc($user_query);
         $response = new stdClass();
-        $admin_settings = ilMumieTaskAdminSettings::getInstance();
 
         if (!is_null($mumietoken->getToken()) && $mumietoken->getToken() == $token && null != $user_rec) {
             $current = time();
-            if (($current - $mumietoken->getTimecreated()) >= 1000) {
+            if (($current - $mumietoken->getTimecreated()) >= 60) {
                 $response->status = 'invalid';
             } else {
                 $response->status = 'valid';
                 $response->userid = $hashed_id;
-
-                if ($admin_settings->getShareFirstName()) {
-                    $response->firstname = $user_rec['firstname'];
-                }
-                if ($admin_settings->getShareLastName()) {
-                    $response->lastname = $user_rec['lastname'];
-                }
-                if ($admin_settings->getShareEmail()) {
-                    $response->email = $user_rec['email'];
-                }
             }
         } else {
             $response->status = 'invalid';
@@ -82,6 +70,8 @@ class ilMumieTaskSSOService
      */
     private function getHTMLCode($taskObj, $ssotoken, $hashed_user, $height = 600): string
     {
+        global $DIC;
+
         $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/launch_form.html', true, true);
         $tpl->setVariable('TASKURL', $taskObj->getLoginUrl());
         $tpl->setVariable('TARGET', 1 == $taskObj->getLaunchcontainer() ? 'MumieTaskLaunchFrame' : '_blank');
@@ -93,6 +83,24 @@ class ilMumieTaskSSOService
         $tpl->setVariable('PROBLEMPATH', $taskObj->getTaskurl());
         $tpl->setVariable('WIDTH', '100%');
         $tpl->setVariable('HEIGHT', $height);
+
+        if ($taskObj->isWorksheet() && $taskObj->hasTimelimit()) {
+            ilMumieTaskDeadlineService::ensureTimelimitStarted((string) $DIC->user()->getId(), $taskObj);
+        }
+
+        if ($taskObj->requiresDeadlineSignature()) {
+            $deadlineDate = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $DIC->user()->getId(), $taskObj);
+            if (null !== $deadlineDate) {
+                $deadlineMilliseconds = $deadlineDate->getUnixTime() * 1000;
+                $username = strtolower('gsso_' . ilMumieTaskAdminSettings::getInstance()->getOrg() . '_' . $hashed_user);
+                $signature = ilMumieTaskCryptographyService::signDeadline($deadlineMilliseconds, $username, $taskObj->getWorksheetId());
+
+                $tpl->setCurrentBlock('deadline');
+                $tpl->setVariable('DEADLINE', (string) $deadlineMilliseconds);
+                $tpl->setVariable('DEADLINE_SIGNATURE', $signature);
+                $tpl->parseCurrentBlock();
+            }
+        }
 
         if (1 == $taskObj->getLaunchcontainer()) {
             $tpl->setVariable('BUTTONTYPE', 'hidden'); // embed the iframe and launch it immediately via $script
@@ -113,6 +121,38 @@ class ilMumieTaskSSOService
             $tpl->setVariable('BUTTONTYPE', 'submit');
         }
         // otherwise leave a button to launch in a new tab
+
+        return $tpl->get();
+    }
+
+    /**
+     * The MUMIE server assigns the "Lecturing" role instead of the "Studying"
+     * default only if the SSO user id ends with this exact literal suffix.
+     */
+    private const LECTURER_SUFFIX = '@lecturer@';
+
+    public function getProblemSelectorLaunchForm(string $serverUrl, string $problemLang, string $origin, bool $multiSelect = false): string
+    {
+        global $DIC;
+        $admin_settings = ilMumieTaskAdminSettings::getInstance();
+        $hashed_user = ilMumieTaskIdHashingService::getHashForUser((string) $DIC->user()->getId(), null, self::LECTURER_SUFFIX);
+        $ssotoken = new ilMumieTaskSSOToken($hashed_user);
+        $ssotoken->insertOrRefreshToken();
+
+        $tpl = new ilTemplate(ilMumieTaskPlugin::getPluginPath() . '/templates/problem_selector_sso_form.html', true, true);
+        $tpl->setVariable('SSO_URL', rtrim($admin_settings->getProblemSelectorUrl(), '/') . '/api/sso/problem-selector');
+        $tpl->setVariable('USER_ID', $hashed_user);
+        $tpl->setVariable('TOKEN', $ssotoken->getToken());
+        $tpl->setVariable('ORG', htmlspecialchars($admin_settings->getOrg()));
+        $tpl->setVariable('SERVER_URL', htmlspecialchars($serverUrl));
+        $tpl->setVariable('PROBLEM_LANG', htmlspecialchars($problemLang));
+        $tpl->setVariable('ORIGIN', htmlspecialchars($origin));
+
+        if ($multiSelect) {
+            // The block has no variables of its own, so touchBlock() is required to keep it -
+            // parseCurrentBlock() alone treats a variable-less block as empty and drops it.
+            $tpl->touchBlock('multi_select');
+        }
 
         return $tpl->get();
     }

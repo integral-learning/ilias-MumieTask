@@ -408,3 +408,45 @@ if (!$ilDB->tableColumnExists('xmum_admin_settings', 'problem_selector_url')) {
     $ilDB->manipulate("UPDATE xmum_admin_settings SET problem_selector_url = 'https://pool.mumie.net'");
 }
 ?>
+<#17>
+<?php
+if (!$ilDB->tableExists('xmum_crypto_key')) {
+    $ilDB->createTable('xmum_crypto_key', [
+        'id' => ['type' => 'integer', 'length' => 4, 'notnull' => true],
+        'private_key_pem' => ['type' => 'clob', 'notnull' => true],
+        'created_at' => ['type' => 'integer', 'length' => 4, 'notnull' => true],
+    ]);
+    $ilDB->addPrimaryKey('xmum_crypto_key', ['id']);
+}
+?>
+<#18>
+<?php
+// The 'org' column was originally created with a length of 7 characters,
+// which is too short for real-world org identifiers (e.g. "il112767").
+$ilDB->modifyTableColumn('xmum_admin_settings', 'org', [
+    'type' => 'text',
+    'length' => 255,
+]);
+?>
+<#19>
+<?php
+if (!$ilDB->tableColumnExists('xmum_mumie_task', 'timelimit')) {
+    $ilDB->addTableColumn(
+        'xmum_mumie_task',
+        'timelimit',
+        [
+            'type' => 'integer',
+            'length' => '4',
+            'notnull' => false,
+        ],
+    );
+}
+?>
+<#20>
+<?php
+foreach (['share_first_name', 'share_last_name', 'share_email'] as $column) {
+    if ($ilDB->tableColumnExists('xmum_admin_settings', $column)) {
+        $ilDB->dropTableColumn('xmum_admin_settings', $column);
+    }
+}
+?>

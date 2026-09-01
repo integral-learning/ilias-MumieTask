@@ -10,6 +10,8 @@
 
 /**
  * This form is used to edit and validate the general settings of MumieTasks.
+ *
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class ilMumieTaskFormGUI extends ilPropertyFormGUI
 {
@@ -36,6 +38,7 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
     private $worksheet_item;
     private $dropzone_item;
     private $problem_selector_item;
+    private $problem_selector_sso_url_item;
 
     private $server_options = [];
 
@@ -113,6 +116,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         $this->problem_selector_item = new ilHiddenInputGUI('problem_selector');
         $this->addItem($this->problem_selector_item);
 
+        $this->problem_selector_sso_url_item = new ilHiddenInputGUI('problem_selector_sso_url');
+        $this->addItem($this->problem_selector_sso_url_item);
+
         $this->worksheet_item = new ilHiddenInputGUI('xmum_worksheet');
         $this->addItem($this->worksheet_item);
 
@@ -150,11 +156,15 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             return $ok;
         }
 
-        if (null == $task && $is_dummy) {
-            $ok = false;
-            $this->problem_display_item->setAlert($this->i18N->globalTxt('required_field'));
+        $multi_problems_input = $this->getInput('xmum_multi_problems');
 
-            return $ok;
+        if (null == $task && $is_dummy) {
+            if (empty($multi_problems_input)) {
+                $ok = false;
+                $this->problem_display_item->setAlert($this->i18N->globalTxt('required_field'));
+
+                return $ok;
+            }
         } elseif (null == $task) {
             $ok = false;
             $this->problem_display_item->setAlert($this->i18N->txt('frm_tsk_problem_not_found'));
@@ -162,13 +172,35 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
             return $ok;
         }
 
-        $multi_problems_input = $this->getInput('xmum_multi_problems');
-        if (!empty($multi_problems_input) && !ilMumieTaskMultiUploadProcessor::isValid($multi_problems_input)) {
-            $ok = false;
-            $this->dropzone_item->setAlert($this->i18N->txt('frm_tsk_problems_not_found'));
+        if (!empty($multi_problems_input)) {
+            $validation_error = ilMumieTaskMultiUploadProcessor::getValidationError($multi_problems_input);
+            if (null !== $validation_error) {
+                $ok = false;
+                $this->dropzone_item->setAlert($this->getMultiProblemsErrorMessage($validation_error));
+            }
         }
 
         return $ok;
+    }
+
+    /**
+     * Map a ilMumieTaskMultiUploadProcessor validation error to a human-readable message.
+     */
+    private function getMultiProblemsErrorMessage(string $validation_error): string
+    {
+        switch ($validation_error) {
+            case 'empty':
+                return $this->i18N->txt('frm_tsk_problems_empty');
+            case 'too_many':
+                return sprintf(
+                    $this->i18N->txt('frm_tsk_problems_too_many'),
+                    ilMumieTaskMultiUploadProcessor::MAX_TASKS_PER_UPLOAD,
+                );
+            case 'unreachable':
+                return $this->i18N->txt('frm_tsk_problems_unreachable');
+            default:
+                return $this->i18N->txt('frm_tsk_problems_not_found');
+        }
     }
 
     /**
@@ -214,6 +246,9 @@ class ilMumieTaskFormGUI extends ilPropertyFormGUI
         }
         $this->problem_selector_item->setValue(ilMumieTaskAdminSettings::getInstance()
             ->getProblemSelectorUrl());
+        $this->problem_selector_sso_url_item->setValue(
+            $DIC->ctrl()->getLinkTargetByClass('ilObjMumieTaskGUI', 'launchProblemSelector'),
+        );
     }
 
     /**

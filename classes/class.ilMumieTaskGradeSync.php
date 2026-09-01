@@ -18,12 +18,12 @@ class ilMumieTaskGradeSync
     private $admin_settings;
     private $force_update;
 
-    public function __construct($task, $force_update)
+    public function __construct($task, $force_update, ?array $user_ids = null)
     {
         $this->admin_settings = ilMumieTaskAdminSettings::getInstance();
         $this->task = $task;
         $this->force_update = $force_update;
-        $this->user_ids = ilMumieTaskParticipantService::getAllMemberIds($task);
+        $this->user_ids = $user_ids ?? ilMumieTaskParticipantService::getAllMemberIds($task);
     }
 
     public function getSyncIdForUser($user_id)
@@ -88,7 +88,22 @@ class ilMumieTaskGradeSync
         $response = json_decode($curl->exec());
         $curl->close();
 
+        if ($this->hasError($response)) {
+            ilLoggerFactory::getLogger('xmum')->warning('MumieTask: xAPI grade sync request failed with status ' . $response->status);
+
+            return [];
+        }
+
         return $response;
+    }
+
+    /**
+     * The Pool responds with a single object carrying a "status" field (instead of
+     * an array of xAPI statements) when the sync request itself failed.
+     */
+    private function hasError($response): bool
+    {
+        return is_object($response) && isset($response->status) && 200 !== $response->status;
     }
 
     private function getXapiRequestBody($getOnlyChangedGrades)
@@ -101,7 +116,36 @@ class ilMumieTaskGradeSync
             'includeAll' => true,
         ];
 
+        if ($this->requiresContext()) {
+            $params['context'] = $this->getContext();
+        }
+
         return $params;
+    }
+
+    /**
+     * MUMIE only corrects a worksheet once its deadline has passed, so it needs per-user deadline context.
+     */
+    private function requiresContext(): bool
+    {
+        return $this->task->requiresDeadlineSignature();
+    }
+
+    private function getContext(): array
+    {
+        $user_contexts = [];
+        foreach ($this->user_ids as $user_id) {
+            $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser((string) $user_id, $this->task);
+            $deadline_ms = null !== $deadline ? $deadline->getUnixTime() * 1000 : 0;
+            $user_contexts[$this->getSyncIdForUser($user_id)] = ['deadline' => $deadline_ms];
+        }
+
+        return [
+            self::getMumieId($this->task) => [
+                'language' => $this->task->getLanguage(),
+                'userContexts' => $user_contexts,
+            ],
+        ];
     }
 
     private function getXapiRequestHeaders($payload)
@@ -121,11 +165,14 @@ class ilMumieTaskGradeSync
         return $this->getValidGradeByUser($this->getNewXapiGrades());
     }
 
+    /**
+     * @return null if there is no new xAPI grade for this user since the last sync
+     */
     public function getValidAndNewXapiGradesForUser($user_id)
     {
         $grades_by_user = $this->getValidAndNewXapiGradesByUser();
 
-        return $grades_by_user[$user_id];
+        return $grades_by_user[$user_id] ?? null;
     }
 
     /**
@@ -184,6 +231,10 @@ class ilMumieTaskGradeSync
         $grades_by_user = new stdClass();
         if ($response) {
             foreach ($response as $xapi_grade) {
+                if (!is_object($xapi_grade) || !isset($xapi_grade->actor->account->name)) {
+                    ilLoggerFactory::getLogger('xmum')->warning('MumieTask: Skipping malformed xAPI grade sync response entry of type ' . gettype($xapi_grade));
+                    continue;
+                }
                 $ilias_id = $this->getIliasId($xapi_grade);
                 if (!isset($grades_by_user->$ilias_id)) {
                     $grades_by_user->{$ilias_id} = [];
@@ -210,14 +261,12 @@ class ilMumieTaskGradeSync
      */
     private function isGradeBeforeDueDate($grade)
     {
-        if (!$this->task->hasDeadline()) {
+        if (!$this->task->hasAnyDeadline()) {
             return true;
         }
-        if (ilMumieTaskDeadlineExtensionService::hasDeadlineExtension($this->getIliasId($grade), $this->task)) {
-            return strtotime($grade->timestamp) <= ilMumieTaskDeadlineExtensionService::getDeadlineExtensionDate($this->getIliasId($grade), $this->task)->getUnixTime();
-        }
+        $deadline = ilMumieTaskDeadlineService::getDeadlineDateForUser($this->getIliasId($grade), $this->task);
 
-        return strtotime($grade->timestamp) <= $this->task->getDeadline();
+        return null === $deadline || strtotime($grade->timestamp) <= $deadline->getUnixTime();
     }
 
     private function getLatestGrade($xapi_grades)

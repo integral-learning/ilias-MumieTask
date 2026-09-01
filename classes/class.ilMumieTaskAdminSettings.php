@@ -18,9 +18,6 @@ class ilMumieTaskAdminSettings
     public const TABLE_NAME = 'xmum_admin_settings';
 
     protected string $problem_selector_url;
-    protected int $share_first_name;
-    protected int $share_last_name;
-    protected int $share_email;
     protected string $api_key;
     protected string $org;
     protected int $id;
@@ -48,9 +45,6 @@ class ilMumieTaskAdminSettings
         $result = $db->fetchObject($db->query('SELECT * FROM ' . ilMumieTaskAdminSettings::TABLE_NAME . ' WHERE id = 1'));
         $this->id = $result->id;
         $this->problem_selector_url = $result->problem_selector_url;
-        $this->share_first_name = $result->share_first_name;
-        $this->share_last_name = $result->share_last_name;
-        $this->share_email = $result->share_email;
         $this->api_key = $result->api_key;
         $this->org = $result->org;
     }
@@ -62,9 +56,6 @@ class ilMumieTaskAdminSettings
             ilMumieTaskAdminSettings::TABLE_NAME,
             [
                 'problem_selector_url' => ['text', $this->problem_selector_url],
-                'share_first_name' => ['integer', $this->share_first_name],
-                'share_last_name' => ['integer', $this->share_last_name],
-                'share_email' => ['integer', $this->share_email],
                 'api_key' => ['text', $this->api_key],
                 'org' => ['text', $this->org],
             ],
@@ -72,42 +63,6 @@ class ilMumieTaskAdminSettings
                 'id' => ['int', $this->id],
             ],
         );
-    }
-
-    public function getShareFirstName(): int
-    {
-        return $this->share_first_name;
-    }
-
-    public function setShareFirstName(int $share_first_name): static
-    {
-        $this->share_first_name = $share_first_name;
-
-        return $this;
-    }
-
-    public function getShareLastName(): int
-    {
-        return $this->share_last_name;
-    }
-
-    public function setShareLastName(int $share_last_name): static
-    {
-        $this->share_last_name = $share_last_name;
-
-        return $this;
-    }
-
-    public function getShareEmail(): int
-    {
-        return $this->share_email;
-    }
-
-    public function setShareEmail(int $share_email): static
-    {
-        $this->share_email = $share_email;
-
-        return $this;
     }
 
     public function getApiKey(): string

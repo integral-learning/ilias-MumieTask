@@ -10,6 +10,7 @@
 class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
 {
     private ilMumieTaskI18N $i18n;
+    private string $value = '';
 
     public function __construct($a_title = '', $post_var = '')
     {
@@ -31,9 +32,9 @@ class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
         $dropzone_template = ilMumieTaskTemplateEngine::getDropzoneTemplate();
         $dropzone_template->setVariable('DESCRIPTION', $this->i18n->txt('dropzone_description'));
         $dropzone_template->setVariable('MULTI_PROBLEM_LIST_HEADER', $this->i18n->txt('multi_problem_list_description'));
-        $dropzone_template->setVariable('TXT_DRAG_PROBLEMS_HERE', $this->i18n->txt('form_drag_mt_here'));
         $dropzone_template->setVariable('POST_VAR', $this->getPostVar());
-        $DIC->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/MumieTask/js/ilMumieTaskDropzone.js');
+        $dropzone_template->setVariable('VALUE', ilLegacyFormElementsUtil::prepareFormOutput($this->value));
+        $DIC->ui()->mainTemplate()->addJavaScript(ilMumieTaskPlugin::getAssetPath() . '/js/ilMumieTaskDropzone.js');
 
         return $dropzone_template->get();
     }
@@ -43,10 +44,8 @@ class ilMumieTaskDropZoneGUI extends ilFormPropertyGUI
         return true;
     }
 
-    /**
-     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
-     */
     public function setValueByArray($a_values)
     {
+        $this->value = (string) ($a_values[$this->getPostVar()] ?? '');
     }
 }
