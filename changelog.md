@@ -2,7 +2,7 @@
 
 All important changes to this plugin will be documented in this file.
 
-## TODO
+## [v6.0] - 2026-09-01
 ### Added
 - Worksheets with deadline
 - Worksheets with a time limit starting when a student first opens them
