@@ -80,18 +80,10 @@ class ilMumieTaskGradeSyncFakeDic
  */
 class ilMumieTaskGradeSyncTestTask extends ilObjMumieTask
 {
-    public function __construct(private int $ref_id, private int $id)
+    public function __construct(int $ref_id, int $id)
     {
-    }
-
-    public function getRefId()
-    {
-        return $this->ref_id;
-    }
-
-    public function getId()
-    {
-        return $this->id;
+        $this->ref_id = $ref_id;
+        $this->id = $id;
     }
 }
 
