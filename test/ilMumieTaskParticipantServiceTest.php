@@ -46,18 +46,18 @@ class ilMumieTaskFakeDIC
  */
 class ilMumieTaskParticipantServiceTestTask extends ilObjMumieTask
 {
-    public function __construct(private int $ref_id, private int $id)
+    public function __construct(private int $fake_ref_id, private int $fake_id)
     {
     }
 
     public function getRefId()
     {
-        return $this->ref_id;
+        return $this->fake_ref_id;
     }
 
     public function getId()
     {
-        return $this->id;
+        return $this->fake_id;
     }
 }
 
