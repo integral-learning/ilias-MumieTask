@@ -24,7 +24,20 @@ if (!interface_exists('ilLPStatusPluginInterface')) {
 }
 
 if (!class_exists('ilObjectPlugin')) {
-    eval('class ilObjectPlugin { public function __construct($a_ref_id = 0) {} }');
+    eval('class ilObjectPlugin {
+        protected ?int $ref_id = null;
+        protected int $id = 0;
+
+        public function __construct($a_ref_id = 0) {}
+
+        public function getId(): int {
+            return $this->id;
+        }
+
+        final public function getRefId(): int {
+            return $this->ref_id ?? 0;
+        }
+    }');
 }
 
 if (!class_exists('ilLPStatus')) {

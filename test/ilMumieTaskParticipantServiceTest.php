@@ -41,23 +41,18 @@ class ilMumieTaskFakeDIC
 }
 
 /**
- * A bare ilObjMumieTask with a controllable ref_id/id - the real class inherits getRefId()/getId()
- * from ILIAS core (not part of this plugin's stub), so tests need a stand-in to supply them.
+ * A bare ilObjMumieTask with a controllable ref_id/id. Skips ilObject's own
+ * constructor (which needs a fully wired $DIC) and sets the inherited
+ * protected ref_id/id properties directly instead - getRefId() is final on
+ * ilObject and getId() must keep its `: int` return type, so both stay
+ * inherited rather than overridden.
  */
 class ilMumieTaskParticipantServiceTestTask extends ilObjMumieTask
 {
-    public function __construct(private int $ref_id, private int $id)
+    public function __construct(int $ref_id, int $id)
     {
-    }
-
-    public function getRefId()
-    {
-        return $this->ref_id;
-    }
-
-    public function getId()
-    {
-        return $this->id;
+        $this->ref_id = $ref_id;
+        $this->id = $id;
     }
 }
 
