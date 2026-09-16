@@ -2,6 +2,10 @@
 
 All important changes to this plugin will be documented in this file.
 
+## [v6.1] - 2026-09-16
+### Fixed
+- Fixed a fatal error during `composer du` / `cli/setup.php build` that could block setup on any install: two internal test doubles redeclared inherited ilObject properties/methods (`$ref_id`, `$id`, `getRefId()`, `getId()`) in a way PHP 8.3/8.4 rejects at class-declaration time. No behavior change for the plugin itself, only test code.
+
 ## [v6.0] - 2026-09-01
 ### Added
 - Worksheets with deadline
